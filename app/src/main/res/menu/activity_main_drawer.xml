@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    <item android:title="我的萌萌屋">
+        <menu>
+            <item
+                android:id="@+id/nav_orders"
+                android:icon="@drawable/drawer_order"
+                android:title="我的訂單" />
+        </menu>
+    </item>
+
+    <item android:title="商品分類">
+        <menu>
+            <item
+                android:id="@+id/nav_category1"
+                android:icon="@drawable/drawer_grid"
+                android:title="所有商品" />
+            <item
+                android:id="@+id/nav_category2"
+                android:icon="@drawable/drawer_new"
+                android:title="新品上架" />
+            <item
+                android:id="@+id/nav_category3"
+                android:icon="@drawable/drawer_pencil"
+                android:title="文具用品" />
+            <item
+                android:id="@+id/nav_category4"
+                android:icon="@drawable/drawer_aquarium"
+                android:title="日韓精選" />
+            <item
+                android:id="@+id/nav_category5"
+                android:icon="@drawable/drawer_cake"
+                android:title="生日專區" />
+            <item
+                android:id="@+id/nav_category6"
+                android:icon="@drawable/drawer_bottle"
+                android:title="生活用品" />
+        </menu>
+    </item>
+
+    <item android:title="關於我們">
+        <menu>
+            <item
+                android:id="@+id/nav_service"
+                android:icon="@drawable/drawer_people"
+                android:title="客服中心" />
+            <item
+                android:id="@+id/nav_about"
+                android:icon="@drawable/drawer_about"
+                android:title="關於萌萌屋" />
+        </menu>
+    </item>
+
+    <!--<group android:checkableBehavior="single">-->
+        <!--<item-->
+            <!--android:id="@+id/nav_camera"-->
+            <!--android:icon="@drawable/drawer_grid"-->
+            <!--android:title="商品列表" />-->
+        <!--<item-->
+            <!--android:id="@+id/nav_gallery"-->
+            <!--android:icon="@drawable/drawer_search"-->
+            <!--android:title="搜索商品" />-->
+        <!--<item-->
+            <!--android:id="@+id/nav_slideshow"-->
+            <!--android:icon="@drawable/drawer_love"-->
+            <!--android:title="我的收藏" />-->
+        <!--<item-->
+            <!--android:id="@+id/nav_manage"-->
+            <!--android:icon="@drawable/drawer_order"-->
+            <!--android:title="我的訂單" />-->
+    <!--</group>-->
+
+</menu>
