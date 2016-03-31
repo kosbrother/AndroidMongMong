@@ -107,8 +107,8 @@ public class GoodsGridFragment  extends Fragment {
         this.category_id = category_id;
         products.clear();
         layoutProgress.setVisibility(View.VISIBLE);
-        new NewsTask().execute();
         page = 1;
+        new NewsTask().execute();
 
         try {
             MainActivity activity = (MainActivity) getActivity();

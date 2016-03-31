@@ -43,7 +43,6 @@
             android:id="@+id/item_imageview"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:src="@drawable/test_image2"
             android:scaleType="centerCrop"
             />
 
