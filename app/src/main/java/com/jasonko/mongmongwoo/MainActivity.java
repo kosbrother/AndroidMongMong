@@ -21,6 +21,9 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -37,9 +40,12 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.github.siyamed.shapeimageview.CircularImageView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.jasonko.mongmongwoo.api.UserApi;
 import com.jasonko.mongmongwoo.fragments.GoodsGridFragment;
 import com.jasonko.mongmongwoo.model.User;
+import com.jasonko.mongmongwoo.utils.NetworkUtil;
 
 import org.json.JSONObject;
 
@@ -66,7 +72,17 @@ public class MainActivity extends AppCompatActivity
     String address = "";
     String fb_uid = "";
 
-//    private int count = 0;
+    MenuItem menuItem;
+    RelativeLayout spotLightShoppingCarLayout;
+    Button spotLightConfirmButton;
+
+    TextView titleText;
+    int category_id=10; //10所有商品
+
+    GoodsGridFragment goodsGridFragment;
+    LinearLayout no_net_layout;
+
+    private Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,11 +91,25 @@ public class MainActivity extends AppCompatActivity
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_main);
 
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
-        TextView titleText = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        titleText = (TextView) toolbar.findViewById(R.id.toolbar_title);
         titleText.setText("萌萌屋");
+        no_net_layout = (LinearLayout) findViewById(R.id.no_net_layout);
+
+                spotLightShoppingCarLayout = (RelativeLayout) findViewById(R.id.spotlight_shopping_car_layout);
+        spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
+        spotLightConfirmButton = (Button) findViewById(R.id.confirm_button);
+        spotLightConfirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
+            }
+        });
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -175,18 +205,8 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-
-
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
-
-//        PagerSlidingTabStrip tabsStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-//        // Attach the view pager to the tab strip
-//        tabsStrip.setViewPager(viewPager);
-//        tabsStrip.setIndicatorColor(getResources().getColor(R.color.movie_indicator));
-//        tabsStrip.setIndicatorHeight(10);
-//        tabsStrip.setTextColorResource(R.color.white);
-//        tabsStrip.setBackgroundColor(getResources().getColor(R.color.gray_background));
 
     }
 
@@ -216,7 +236,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (Settings.checkIsLogIn(this)){
+        if (Settings.checkIsLogIn(this)) {
             User savedUser = Settings.getSavedUser(this);
             Glide.with(MainActivity.this)
                     .load(savedUser.getFb_pic())
@@ -226,12 +246,26 @@ public class MainActivity extends AppCompatActivity
                     .into(userImage);
             userText.setText(savedUser.getUser_name());
             loginButton.setVisibility(View.GONE);
-        }else {
+        } else {
             loginButton.setVisibility(View.VISIBLE);
         }
 
+        if (menuItem != null){
+            ShoppingCarPreference pref = new ShoppingCarPreference();
+            int count = pref.getShoppingCarItemSize(MainActivity.this);
+            menuItem.setIcon(buildCounterDrawable(count, R.drawable.icon_shopping_car_2));
+        }
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
+
+        if (NetworkUtil.getConnectivityStatus(this) == 0){
+            no_net_layout.setVisibility(View.VISIBLE);
+        }else {
+            no_net_layout.setVisibility(View.GONE);
+            if(goodsGridFragment != null && goodsGridFragment.getProductsSize()==0){
+                goodsGridFragment.notifyCategoryChanged(category_id);
+            }
+        }
     }
 
     @Override
@@ -244,11 +278,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.main, menu);
 
-//        MenuItem menuItem = menu.findItem(R.id.action_shopping_car);
-        MenuItem menuItem;
         if (menu.findItem(99)==null) {
             menuItem = menu.add(0, 99, 0, "購物車");
         }else {
@@ -272,23 +302,6 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-//        int id = item.getItemId();
-//
-//        //noinspection SimplifiableIfStatement
-//        switch (id){
-//            case R.id.action_search:
-//                Intent searchIntent = new Intent(MainActivity.this, SearchActivity.class);
-//                startActivity(searchIntent);
-//                return true;
-//            case R.id.action_shopping_car:
-//                Intent shoppingCarIntent = new Intent(MainActivity.this, ShoppingCarActivity.class);
-//                startActivity(shoppingCarIntent);
-//                return true;
-//        }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -300,10 +313,62 @@ public class MainActivity extends AppCompatActivity
 
         if (id == R.id.nav_orders) {
             if (Settings.checkIsLogIn(this)){
-                Intent intent = new Intent(MainActivity.this, PastOrderActivity.class);
-                startActivity(intent);
+                if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
+                    Intent intent = new Intent(MainActivity.this, PastOrderActivity.class);
+                    startActivity(intent);
+                }else {
+                    Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+                }
             }else {
                 Toast.makeText(this, "請先使用FB登入", Toast.LENGTH_SHORT).show();
+            }
+        } else if (id == R.id.nav_category1) {
+            titleText.setText("所有商品");
+            category_id = 10;
+            if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
+                goodsGridFragment.notifyCategoryChanged(category_id);
+            }else {
+                Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+            }
+        } else if (id == R.id.nav_category2) {
+            titleText.setText("新品上架");
+            category_id = 11;
+            if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
+                goodsGridFragment.notifyCategoryChanged(category_id);
+            }else {
+                Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+            }
+        } else if (id == R.id.nav_category3) {
+            titleText.setText("文具用品");
+            category_id = 12;
+            if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
+                goodsGridFragment.notifyCategoryChanged(category_id);
+            }else {
+                Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+            }
+        } else if (id == R.id.nav_category4) {
+            titleText.setText("日韓精選");
+            category_id = 13;
+            if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
+                goodsGridFragment.notifyCategoryChanged(category_id);
+            }else {
+                Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+            }
+        } else if (id == R.id.nav_category5) {
+            titleText.setText("生日專區");
+            category_id = 14;
+            if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
+                goodsGridFragment.notifyCategoryChanged(category_id);
+            }else {
+                Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+            }
+        } else if (id == R.id.nav_category6) {
+            titleText.setText("生活小物");
+            category_id = 16;
+            if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
+                goodsGridFragment.notifyCategoryChanged(category_id);
+            }else {
+                Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.nav_service) {
             Intent searchIntent = new Intent(MainActivity.this, ServiceActivity.class);
@@ -319,8 +384,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
-//        final int PAGE_COUNT = 9;
-//        private String tabTitles[] = new String[]{"新品上架", "所有商品", "限時優惠","小編推薦","生日禮物","日韓精選","可愛小物","文具用品","生活用品"};
 
         public SampleFragmentPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -333,28 +396,10 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public Fragment getItem(int position) {
-            Fragment newFragment;
-//            switch (position){
-//                case 0:
-//                    newFragment = CategoryGoodsFragment.newInstance(1);
-//                    break;
-//                case 1:
-//                    newFragment = GoodsGridFragment.newInstance();
-//                    break;
-//               default:
-//                    newFragment = CategoryGoodsFragment.newInstance(position);
-//
-//            }
-//            newFragment = CategoryGoodsFragment.newInstance(1);
-            newFragment = GoodsGridFragment.newInstance();
-            return newFragment;
+            goodsGridFragment = GoodsGridFragment.newInstance(category_id);
+            return goodsGridFragment;
         }
 
-//        @Override
-//        public CharSequence getPageTitle(int position) {
-//            // Generate title based on item position
-//            return tabTitles[position];
-//        }
     }
 
     private Bundle getFacebookData(JSONObject object) {
@@ -434,6 +479,38 @@ public class MainActivity extends AppCompatActivity
 
     public void doIncrease() {
         invalidateOptionsMenu();
+    }
+
+    public void showShoppingCarInstruction(){
+        spotLightShoppingCarLayout.setVisibility(View.VISIBLE);
+    }
+
+    public void sendFragmentCategoryName(int category_id){
+        String name;
+        switch (category_id){
+            case 10:
+                name = "所有商品";
+                break;
+            case 11:
+                name = "新品上架";
+                break;
+            case 12:
+                name = "文具用品";
+                break;
+            case 13:
+                name = "日韓精選";
+                break;
+            case 14:
+                name = "生日專區";
+                break;
+            case 16:
+                name = "生活小物";
+                break;
+            default:
+                name = "所有商品";
+        }
+        mTracker.setScreenName("Fragment~" + name);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
 }

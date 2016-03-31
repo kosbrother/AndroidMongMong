@@ -72,10 +72,10 @@ public class ShoppingCarGoodsAdapter extends RecyclerView.Adapter<ShoppingCarGoo
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.textName.setText(shoppingProducts.get(position).getName());
+        holder.textName.setText(shoppingProducts.get(position).getName()+" - "+shoppingProducts.get(position).getSelectedSpec().getStyle());
         holder.textPrice.setText("$" + Integer.toString(shoppingProducts.get(position).getPrice()));
         Glide.with(mActivity)
-                .load(shoppingProducts.get(position).getPic_url())
+                .load(shoppingProducts.get(position).getSelectedSpec().getPic_url())
                 .centerCrop()
                 .placeholder(R.drawable.icon_head)
                 .crossFade()

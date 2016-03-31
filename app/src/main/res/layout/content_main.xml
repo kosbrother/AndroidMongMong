@@ -17,10 +17,81 @@
         <!--android:layout_width="match_parent"-->
         <!--android:layout_height="36dp" />-->
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/viewpager"
+    <LinearLayout
+        android:id="@+id/no_net_layout"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        />
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        >
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/icon_problem"
+            />
+        <TextView
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:text="無網路連接,請檢查網路連線,並重啟APP~"
+            android:textSize="17dp"
+            android:layout_marginTop="10dp"
+            android:textStyle="bold"
+            />
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/viewpager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
+
+        <RelativeLayout
+            android:id="@+id/spotlight_shopping_car_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#e08F8F8F"
+            >
+            <ImageView
+                android:id="@+id/arrow_image"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/icon_arrow"
+                android:layout_marginTop="5dp"
+                />
+            <TextView
+                android:id="@+id/info_text"
+                android:layout_below="@id/arrow_image"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:text="商品加入購物車後,可在此查看與結帳"
+                android:textSize="16dp"
+                android:textColor="@color/white"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginRight="5dp"
+                />
+            <Button
+                android:id="@+id/confirm_button"
+                android:layout_below="@id/info_text"
+                android:layout_width="80dp"
+                android:layout_height="35dp"
+                android:layout_alignParentRight="true"
+                android:text="確定"
+                android:background="@drawable/button_blue_selector"
+                android:textColor="@color/white"
+                android:layout_marginTop="10dp"
+                android:layout_marginRight="5dp"
+                />
+        </RelativeLayout>
+
+    </FrameLayout>
+
 </LinearLayout>

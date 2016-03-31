@@ -19,6 +19,7 @@ public class StoreGridAdapter extends BaseAdapter {
 
     private SelectDeliverStoreActivity mActivity;
     private ArrayList<Store> stores;
+    private int selectedStorePosition = -1;
 
     public StoreGridAdapter(SelectDeliverStoreActivity activity, ArrayList<Store> stores) {
         mActivity = activity;
@@ -48,16 +49,31 @@ public class StoreGridAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(mActivity).inflate(R.layout.item_store_grid, null);
         }
 
-        TextView storeText = (TextView) convertView.findViewById(R.id.store_text);
+        final TextView storeText = (TextView) convertView.findViewById(R.id.store_text);
         storeText.setText(stores.get(position).getName());
         convertView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Store theStore = stores.get(position);
                 mActivity.setStoreInfo(theStore);
+
+                selectedStorePosition = position;
+                notifyDataSetChanged();
             }
         });
 
+        if (position == selectedStorePosition){
+            storeText.setBackgroundResource(R.drawable.button_yellow_selector);
+            storeText.setTextColor(mActivity.getResources().getColor(R.color.white));
+        }else {
+            storeText.setBackgroundResource(R.drawable.button_yellow_round_selector);
+            storeText.setTextColor(mActivity.getResources().getColor(R.color.gray_background));
+        }
+
         return convertView;
+    }
+
+    public void resetSelectedStorePosition(){
+        selectedStorePosition = -1;
     }
 }

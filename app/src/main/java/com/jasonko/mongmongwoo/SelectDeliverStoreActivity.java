@@ -5,19 +5,22 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -25,12 +28,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.jasonko.mongmongwoo.adpters.StoreGridAdapter;
-import com.jasonko.mongmongwoo.api.MapApi;
+import com.jasonko.mongmongwoo.api.DensityApi;
 import com.jasonko.mongmongwoo.api.StoreApi;
 import com.jasonko.mongmongwoo.model.County;
 import com.jasonko.mongmongwoo.model.Road;
 import com.jasonko.mongmongwoo.model.Store;
 import com.jasonko.mongmongwoo.model.Town;
+import com.jasonko.mongmongwoo.utils.NetworkUtil;
 
 import java.util.ArrayList;
 
@@ -40,7 +44,7 @@ import java.util.ArrayList;
 public class SelectDeliverStoreActivity extends AppCompatActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
-    private LatLng storeLatLng;
+//    private LatLng storeLatLng;
 
     private Spinner countySpinners;
     private Spinner townSpinners;
@@ -60,6 +64,9 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
     private ArrayList<Road> roadArray;
     private ArrayList<Store> storeArray;
 
+    private StoreGridAdapter storeGridAdapter;
+    private ProgressBar myProgressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,11 +76,16 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        Tracker mTracker = application.getDefaultTracker();
+        mTracker.setScreenName("Activity Select Store");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.icon_back_white);
         toolbar.setTitleTextColor(0xFFFFFFFF);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
+//        toolbar.setNavigationIcon(R.drawable.icon_back_white);
+        getSupportActionBar().setDisplayShowHomeEnabled(false);
         getSupportActionBar().setTitle("選擇超商地址");
 
         countySpinners = (Spinner) findViewById(R.id.spinner1);
@@ -84,6 +96,7 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         storeAddress = (TextView) findViewById(R.id.select_store_address);
         selectStoreButton = (Button) findViewById(R.id.select_store_button);
         linearMap = (LinearLayout) findViewById(R.id.linear_store_map);
+        myProgressBar = (ProgressBar) findViewById(R.id.my_progress_bar);
 
         final ArrayList<County> counties = StoreApi.getCounties();
         ArrayAdapter<County> countyArrayAdapter = new ArrayAdapter<>(this, R.layout.myspinner, counties);
@@ -93,8 +106,19 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         countySpinners.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                county_id = counties.get(position).getCounty_id();
-                new TownsTask().execute();
+                if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this)!=0) {
+                    county_id = counties.get(position).getCounty_id();
+                    linearMap.setVisibility(View.GONE);
+                    selectStoreButton.setVisibility(View.GONE);
+                    if (storeGridAdapter != null) {
+                        storeGridAdapter.resetSelectedStorePosition();
+                        storeArray.clear();
+                        storeGridAdapter.notifyDataSetChanged();
+                    }
+                    new TownsTask().execute();
+                }else {
+                    Toast.makeText(SelectDeliverStoreActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -106,8 +130,19 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         townSpinners.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                town_id = townArray.get(position).getTown_id();
-                new RoadsTask().execute();
+                if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this)!=0) {
+                    town_id = townArray.get(position).getTown_id();
+                    linearMap.setVisibility(View.GONE);
+                    selectStoreButton.setVisibility(View.GONE);
+                    if (storeGridAdapter != null) {
+                        storeGridAdapter.resetSelectedStorePosition();
+                        storeArray.clear();
+                        storeGridAdapter.notifyDataSetChanged();
+                    }
+                    new RoadsTask().execute();
+                }else {
+                    Toast.makeText(SelectDeliverStoreActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -119,8 +154,19 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         roadSpinners.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                road_id = roadArray.get(position).getRoad_id();
-                new StoresTask().execute();
+                if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this)!=0) {
+                    road_id = roadArray.get(position).getRoad_id();
+                    linearMap.setVisibility(View.GONE);
+                    selectStoreButton.setVisibility(View.GONE);
+                    if (storeGridAdapter != null) {
+                        storeGridAdapter.resetSelectedStorePosition();
+                        storeArray.clear();
+                        storeGridAdapter.notifyDataSetChanged();
+                    }
+                    new StoresTask().execute();
+                }else {
+                    Toast.makeText(SelectDeliverStoreActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -144,16 +190,6 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
 
     }
 
-
-    /**
-     * Manipulates the map once available.
-     * This callback is triggered when the map is ready to be used.
-     * This is where we can add markers or lines, add listeners or move the camera. In this case,
-     * we just add a marker near Sydney, Australia.
-     * If Google Play services is not installed on the device, the user will be prompted to install
-     * it inside the SupportMapFragment. This method will only be triggered once the user has
-     * installed Google Play services and returned to the app.
-     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -170,7 +206,11 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         storeName.setText(theSelectedStore.getName());
         storeAddress.setText(theSelectedStore.getAddress());
         linearMap.setVisibility(View.VISIBLE);
-        new NewsTask().execute();
+        selectStoreButton.setVisibility(View.VISIBLE);
+        mMap.clear();
+        mMap.addMarker(new MarkerOptions().position(theStore.getLatLng()));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(theStore.getLatLng()));
+        mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
     }
 
 
@@ -181,35 +221,18 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == android.R.id.home) {
-            finish();
-        }
         return super.onOptionsItemSelected(menuItem);
     }
 
 
-    private class NewsTask extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            storeLatLng = MapApi.getLatLanFromAddress(theSelectedStore.getAddress());
-            if (storeLatLng != null) {
-                Log.i("DeliverStoreActivity", storeLatLng.toString());
-            }
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            mMap.clear();
-            mMap.addMarker(new MarkerOptions().position(storeLatLng));
-            mMap.moveCamera(CameraUpdateFactory.newLatLng(storeLatLng));
-            mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
-        }
-    }
-
 
     private class TownsTask extends AsyncTask {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            myProgressBar.setVisibility(View.VISIBLE);
+        }
 
         @Override
         protected Object doInBackground(Object[] params) {
@@ -230,6 +253,12 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
     private class RoadsTask extends AsyncTask {
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            myProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
         protected Object doInBackground(Object[] params) {
             roadArray = StoreApi.getRoads(county_id,town_id);
             return true;
@@ -248,6 +277,12 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
     private class StoresTask extends AsyncTask {
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            myProgressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
         protected Object doInBackground(Object[] params) {
             storeArray = StoreApi.getStores(county_id,town_id,road_id);
             return true;
@@ -255,9 +290,20 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
 
         @Override
         protected void onPostExecute(Object result) {
+            myProgressBar.setVisibility(View.GONE);
             if (storeArray!=null){
-                StoreGridAdapter adapter = new StoreGridAdapter(SelectDeliverStoreActivity.this, storeArray);
-                storeGridView.setAdapter(adapter);
+                storeGridAdapter = new StoreGridAdapter(SelectDeliverStoreActivity.this, storeArray);
+                storeGridView.setAdapter(storeGridAdapter);
+
+                ViewGroup.LayoutParams params= storeGridView.getLayoutParams();
+                int height_size;
+                if (storeArray.size()%2 == 0){
+                    height_size = storeArray.size()/2;
+                }else {
+                    height_size = storeArray.size()/2 + 1;
+                }
+                params.height= (int) DensityApi.convertDpToPixel(55 * height_size, SelectDeliverStoreActivity.this);
+                storeGridView.setLayoutParams(params);
             }else {
                 Toast.makeText(SelectDeliverStoreActivity.this,"此區無寄送店面", Toast.LENGTH_SHORT).show();
             }

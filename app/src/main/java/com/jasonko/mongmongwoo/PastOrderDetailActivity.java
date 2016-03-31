@@ -30,7 +30,6 @@ public class PastOrderDetailActivity extends AppCompatActivity {
     TextView shippingNameText;
     TextView shippingPhoneText;
     TextView shippingStoreNameText;
-    TextView shippingStoreAddressText;
 
     TextView order_id_text;
     TextView order_status_text;

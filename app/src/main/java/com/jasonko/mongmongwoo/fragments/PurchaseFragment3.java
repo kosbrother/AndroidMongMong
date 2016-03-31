@@ -9,10 +9,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.jasonko.mongmongwoo.R;
+import com.jasonko.mongmongwoo.Settings;
 import com.jasonko.mongmongwoo.ShoppingCarActivity;
 import com.jasonko.mongmongwoo.ShoppingCarPreference;
 import com.jasonko.mongmongwoo.adpters.ShoppingCarListBuyGoodsAdapter;
@@ -38,6 +40,7 @@ public class PurchaseFragment3 extends Fragment {
     Button sendButton;
 
     Order theOrder;
+    ProgressBar progressBar;
 
     public static PurchaseFragment3 newInstance() {
         PurchaseFragment3 fragment = new PurchaseFragment3();
@@ -56,6 +59,7 @@ public class PurchaseFragment3 extends Fragment {
         shippingStoreNameText = (TextView) view.findViewById(R.id.fragment3_shipping_store_name_text);
         shippingStoreAddressText = (TextView) view.findViewById(R.id.fragment3_shipping_store_address_text);
         sendButton = (Button) view.findViewById(R.id.fragment3_send_button);
+        progressBar = (ProgressBar) view.findViewById(R.id.my_progress_bar);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_buy_goods);
         recyclerView.setHasFixedSize(true);
@@ -82,6 +86,7 @@ public class PurchaseFragment3 extends Fragment {
         if (isVisibleToUser) {
             //相当于Fragment的onResume
             ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+            activity.sendShoppoingFragment(3);
             theOrder = activity.getOrder();
 
             shippingPriceText.setText(Integer.toString(theOrder.getShipPrice()));
@@ -105,18 +110,34 @@ public class PurchaseFragment3 extends Fragment {
     private class NewsTask extends AsyncTask {
 
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+        }
+
+        @Override
         protected Object doInBackground(Object[] params) {
-            OrderApi.httpPostOrder("1153503537995545",theOrder.getProductPrice(), theOrder.getShipPrice(), theOrder.getTotalPrice(), theOrder.getShippingName(), theOrder.getShippingPhone(), "54482", theOrder.getShippingStore().getStore_id(), theOrder.getOrderProducts());
-            return true;
+            String message = OrderApi.httpPostOrder(theOrder.getUid(),theOrder.getProductPrice(), theOrder.getShipPrice(), theOrder.getTotalPrice(), theOrder.getShippingName(), theOrder.getShippingPhone(), theOrder.getShippingStore().getStore_code(), theOrder.getShippingStore().getName(), theOrder.getShippingStore().getStore_id(), theOrder.getOrderProducts());
+            if (message.indexOf("Error")!=-1){
+                return false;
+            }else {
+                return true;
+            }
         }
 
         @Override
         protected void onPostExecute(Object result) {
+            progressBar.setVisibility(View.GONE);
             if ((boolean)result == true){
                 Toast.makeText(getActivity(), "訂單成功送出", Toast.LENGTH_SHORT).show();
                 ShoppingCarPreference prefs = new ShoppingCarPreference();
                 prefs.removeAllShoppingItems(getActivity());
                 getActivity().finish();
+
+                Settings.saveUserStoreData(getActivity(), theOrder.getShippingStore());
+                Settings.saveUserShippingNameAndPhone(getActivity(), theOrder.getShippingName(),theOrder.getShippingPhone());
+            }else {
+                Toast.makeText(getActivity(), "訂單未成功送出 資料異常", Toast.LENGTH_SHORT).show();
             }
         }
     }

@@ -20,10 +20,26 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorAccent">#737373</item>
+        <item name="apcStyles">@style/AppPageControlStyle</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+
+    <style name="AppPageControlStyle">
+        <!-- To change indicator size -->
+        <item name="apc_indicatorSize">2dp</item>
+        <!-- To change distance between indicators -->
+        <item name="apc_indicatorDistance">2dp</item>
+        <!-- To change current item indicator size -->
+        <item name="apc_currentIndicatorSize">3dp</item>
+        <!-- To change indicator colors -->
+        <item name="apc_colorCurrentDefault">#1de9b6</item>
+        <item name="apc_colorCurrentPressed">#a7ffeb</item>
+        <item name="apc_colorNormalDefault">#009688</item>
+        <item name="apc_colorNormalPressed">#4db6ac</item>
+    </style>
 
 </resources>

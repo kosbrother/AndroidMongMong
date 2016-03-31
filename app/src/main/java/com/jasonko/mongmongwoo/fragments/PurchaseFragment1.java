@@ -88,11 +88,15 @@ public class PurchaseFragment1 extends Fragment {
             noItemLayout.setVisibility(View.GONE);
             ShoppingCarActivity activity = (ShoppingCarActivity)getActivity();
             activity.setBreadCurmbsVisibility(View.VISIBLE);
+            activity.sendShoppoingFragment(1);
         }
 
         if (!Settings.checkIsLogIn(getActivity())){
             noLoginBuyButtons.setVisibility(View.VISIBLE);
             confirmButton.setVisibility(View.GONE);
+        }else {
+            ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+            activity.getOrder().setUid(Settings.getSavedUser(getActivity()).getFb_uid());
         }
 
         fb_buy_button.setOnClickListener(new View.OnClickListener() {
@@ -146,7 +150,6 @@ public class PurchaseFragment1 extends Fragment {
                 getActivity(),
                 android.R.layout.select_dialog_singlechoice);
         arrayAdapter.add("全家,OK,萊爾富超商取貨付款 $60");
-        arrayAdapter.add("宅配貨到付款 $150");
 
         builderSingle.setAdapter(
                 arrayAdapter,

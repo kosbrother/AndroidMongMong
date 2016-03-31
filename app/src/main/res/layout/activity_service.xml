@@ -24,66 +24,37 @@
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
         android:textSize="18dp"
-        android:text="萌萌屋提供以下兩種客戶服務方式, 我們在收到您的訊息後會盡快回覆您"
+        android:text="聯繫萌萌屋客服,請透過我們的 LINE@ 帳號與我們聯絡： \n\n客服時間：星一~星五 08:00~18:00 \n\nLINE@ ID: @kya5456n \n(直接點擊下方icon可開啟LINE加入 ^^)"
         />
 
+
+
     <LinearLayout
+        android:id="@+id/add_line_button_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="2"
+        android:layout_height="120dp"
+        android:gravity="center"
+        android:orientation="vertical"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:background="@drawable/button_store_selector"
         >
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            >
+        <ImageView
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:background="@drawable/icon_line"
+            />
 
-            <ImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:background="@drawable/icon_email"
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:text="EMAIL"
-                android:layout_marginTop="5dp"
-                />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="120dp"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:orientation="vertical"
-            >
-
-            <ImageView
-                android:layout_width="70dp"
-                android:layout_height="70dp"
-                android:background="@drawable/icon_line"
-                />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="20dp"
-                android:text="LINE"
-                android:layout_marginTop="5dp"
-                />
-
-        </LinearLayout>
-
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20dp"
+            android:text="LINE"
+            android:layout_marginTop="5dp"
+            />
     </LinearLayout>
+
+
 
 </LinearLayout>

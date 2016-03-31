@@ -57,7 +57,7 @@ public class ShoppingCarListBuyGoodsAdapter extends RecyclerView.Adapter<Shoppin
     // Replace the contents of a view (invoked by the layout manager)
     @Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
-        holder.textName.setText(shoppingProducts.get(position).getName());
+        holder.textName.setText(shoppingProducts.get(position).getName()+" - "+ shoppingProducts.get(position).getSelectedSpec().getStyle());
         holder.textPrice.setText("$" + Integer.toString(shoppingProducts.get(position).getPrice()) + " x " + Integer.toString(shoppingProducts.get(position).getBuy_count()));
 
 //        holder.mView.setOnClickListener(new View.OnClickListener() {

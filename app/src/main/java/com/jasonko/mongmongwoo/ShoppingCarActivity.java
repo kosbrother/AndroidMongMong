@@ -27,6 +27,8 @@ import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.jasonko.mongmongwoo.api.UserApi;
 import com.jasonko.mongmongwoo.fragments.PurchaseFragment1;
 import com.jasonko.mongmongwoo.fragments.PurchaseFragment2;
@@ -35,6 +37,7 @@ import com.jasonko.mongmongwoo.model.Order;
 import com.jasonko.mongmongwoo.model.Product;
 import com.jasonko.mongmongwoo.model.Store;
 import com.jasonko.mongmongwoo.model.User;
+import com.jasonko.mongmongwoo.utils.NetworkUtil;
 import com.jasonko.mongmongwoo.utils.NonSwipeableViewPager;
 
 import org.json.JSONObject;
@@ -54,7 +57,7 @@ public class ShoppingCarActivity extends AppCompatActivity {
     MenuItem menuItem;
     Order theOrder;
 
-    LinearLayout loginLayout;
+//    LinearLayout loginLayout;
     TextView breadCrumb1;
     TextView breadCrumb2;
     TextView breadCrumb3;
@@ -71,6 +74,9 @@ public class ShoppingCarActivity extends AppCompatActivity {
     String address = "";
     String fb_uid = "";
 
+    LinearLayout no_net_layout;
+    Tracker mTracker;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,18 +89,14 @@ public class ShoppingCarActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("結帳");
 
-        loginLayout = (LinearLayout) findViewById(R.id.shopping_car_login_layout);
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+
         breadCrumb1 = (TextView) findViewById(R.id.bread_crumbs_1_text);
         breadCrumb2 = (TextView) findViewById(R.id.bread_crumbs_2_text);
         breadCrumb3 = (TextView) findViewById(R.id.bread_crumbs_3_text);
         breadCrumbsLayout = (LinearLayout) findViewById(R.id.bread_crumbs_layout);
-
-//        if (Settings.checkIsLogIn(this)){
-//            loginLayout.setVisibility(View.GONE);
-//            viewPager.setVisibility(View.VISIBLE);
-//        }else {
-//            loginLayout.setVisibility(View.VISIBLE);
-//        }
+        no_net_layout = (LinearLayout) findViewById(R.id.no_net_layout);
 
         callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.login_button_main);
@@ -124,6 +126,7 @@ public class ShoppingCarActivity extends AppCompatActivity {
 
                             User theUser = new User(user_name, "", gender, "", "", fb_uid, picUrl);
                             Settings.saveUserFBData(ShoppingCarActivity.this, theUser);
+                            getOrder().setUid(fb_uid);
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -167,6 +170,11 @@ public class ShoppingCarActivity extends AppCompatActivity {
 
 
         theOrder = new Order();
+        if (Settings.getSavedStore(this)!= null){
+            theOrder.setShippingStore(Settings.getSavedStore(this));
+            theOrder.setShippingName(Settings.getShippingName(this));
+            theOrder.setShippingPhone(Settings.getShippingPhone(this));
+        }
 
         viewPager = (NonSwipeableViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
@@ -340,6 +348,11 @@ public class ShoppingCarActivity extends AppCompatActivity {
 
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
+        if (NetworkUtil.getConnectivityStatus(this) == 0){
+            no_net_layout.setVisibility(View.VISIBLE);
+        }else {
+            no_net_layout.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -396,6 +409,11 @@ public class ShoppingCarActivity extends AppCompatActivity {
                 Log.i(TAG,"上傳失敗");
             }
         }
+    }
+
+    public void sendShoppoingFragment(int fragmentPosition){
+        mTracker.setScreenName("Shopping Fragment " + Integer.toString(fragmentPosition));
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
 }

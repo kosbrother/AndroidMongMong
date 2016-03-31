@@ -1,11 +1,13 @@
 package com.jasonko.mongmongwoo.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -50,6 +52,13 @@ public class PurchaseFragment2 extends Fragment {
                         activity.getOrder().setShippingName(shippingNameEditText.getText().toString());
                         activity.getOrder().setShippingPhone(shippingPhoneEditText.getText().toString());
                         activity.setPagerPostition(2);
+
+                        View view = getActivity().getCurrentFocus();
+                        if (view != null) {
+                            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                        }
+
                     }else {
                         Toast.makeText(getActivity(),"收件人名稱跟電話接不可空白", Toast.LENGTH_SHORT).show();                    }
                 }else {
@@ -65,6 +74,14 @@ public class PurchaseFragment2 extends Fragment {
                 startActivityForResult(selectStoreIntent, 200);
             }
         });
+
+        ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+        activity.sendShoppoingFragment(2);
+        if ( activity.getOrder().getShippingStore() != null) {
+            selectStoreButton.setText(activity.getOrder().getShippingStore().getName());
+            shippingNameEditText.setText(activity.getOrder().getShippingName());
+            shippingPhoneEditText.setText(activity.getOrder().getShippingPhone());
+        }
 
         return view;
     }

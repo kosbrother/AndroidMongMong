@@ -51,16 +51,21 @@
             <Button
                 android:id="@+id/item_car_count_button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="30dp"
                 android:text="數量 1"
                 android:layout_marginRight="5dp"
+                android:background="@drawable/edittext_selector"
+                android:textSize="15dp"
                 />
             <Button
                 android:id="@+id/item_car_delete_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="46dp"
+                android:layout_height="25dp"
                 android:text="刪除"
                 android:layout_marginRight="5dp"
+                android:background="@drawable/edittext_selector"
+                android:textSize="15dp"
+                android:padding="3dp"
                 />
 
         </LinearLayout>

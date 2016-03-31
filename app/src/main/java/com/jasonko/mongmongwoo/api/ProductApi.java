@@ -128,21 +128,10 @@ public class ProductApi {
         return null;
     }
 
-    public static ArrayList<Product> getProducts(){
-        ArrayList<Product> products = new ArrayList<>();
-        String url = host + "/admin/items.json";
-        String message = getMessageFromServer("GET", null, null, url);
-        if (message == null) {
-            return null;
-        } else {
-            parseItems(products, message);
-        }
-        return products;
-    }
 
-    public static ArrayList<Product> getCategoryProducts(int category_id){
+    public static ArrayList<Product> getCategoryProducts(int category_id, int page){
         ArrayList<Product> products = new ArrayList<>();
-        String url = host + "/api/v1/categories/"+ Integer.toString(category_id)+ ".json";
+        String url = host + "/api/v1/categories/"+ Integer.toString(category_id)+"?page="+Integer.toString(page);
         String message = getMessageFromServer("GET", null, null, url);
         if (message == null) {
             return null;
@@ -154,8 +143,7 @@ public class ProductApi {
 
     private static void parseItems(ArrayList<Product> products, String message) {
         try {
-            JSONObject cateObject = new JSONObject(message);
-            JSONArray itemsArray = cateObject.getJSONArray("新品上架");
+            JSONArray itemsArray = new JSONArray(message);
             for (int i = 0; i < itemsArray.length(); i++){
                 JSONObject itemObject = itemsArray.getJSONObject(i);
 
@@ -168,7 +156,7 @@ public class ProductApi {
                     id = itemObject.getInt("id");
                     name = itemObject.getString("name");
                     price = itemObject.getInt("price");
-                    pic_url = host + itemObject.getString("cover");
+                    pic_url = host + itemObject.getJSONObject("cover").getString("url");
                 }catch (Exception e){
 
                 }

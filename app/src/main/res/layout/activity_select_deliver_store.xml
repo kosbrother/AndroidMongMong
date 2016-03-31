@@ -19,152 +19,181 @@
 
     </android.support.design.widget.AppBarLayout>
 
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        >
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            >
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="依門市地址搜索"
-        android:textSize="18dp"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="依門市地址搜索"
+                android:textSize="18dp"
+                android:layout_marginTop="10dp"
+                android:layout_marginLeft="10dp"
+                />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="3"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                >
+
+                <Spinner
+                    android:id="@+id/spinner1"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    >
+                </Spinner>
+
+                <Spinner
+                    android:id="@+id/spinner2"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    >
+                </Spinner>
+
+                <Spinner
+                    android:id="@+id/spinner3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    >
+                </Spinner>
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_background"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                ></LinearLayout>
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:orientation="vertical"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="搜索結果"
+                    android:textSize="18dp"
+
+                    />
+
+
+                <ProgressBar
+                    android:id="@+id/my_progress_bar"
+                    style="@android:style/Widget.ProgressBar.Large"
+                    android:layout_width="40dp"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    />
+
+
+                <GridView
+                    android:id="@+id/store_grid"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:numColumns="2"
+                    android:gravity="center"
+                    android:columnWidth="5dp"
+                    android:stretchMode="columnWidth"
+                    android:horizontalSpacing="10dp"
+                    android:verticalSpacing="10dp"
+                    android:layout_marginTop="5dp"
+                    >
+                </GridView>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linear_store_map"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:visibility="gone"
+                >
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray_background"
+                    android:layout_marginTop="0dp"
+                    android:layout_marginBottom="5dp"
+                    ></LinearLayout>
+
+                <TextView
+                    android:id="@+id/select_store_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="全家益昇門市"
+                    android:textSize="18dp"
+                    />
+
+                <TextView
+                    android:id="@+id/select_store_address"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="台中市大里區國光路一段20號"
+                    android:textSize="18dp"
+                    />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray_background"
+                    android:layout_marginTop="5dp"
+                    android:layout_marginBottom="5dp"
+                    ></LinearLayout>
+
+                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                    android:layout_width="match_parent"
+                    android:layout_height="250dp"
+                    android:id="@+id/map"
+                    android:name="com.google.android.gms.maps.SupportMapFragment" />
+            </LinearLayout>
+
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/select_store_button"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:text="選擇此門市"
+        android:background="@drawable/button_green_selector"
+        android:textColor="@color/white"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
         />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="3"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="5dp"
-        >
-
-        <Spinner
-            android:id="@+id/spinner1"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            >
-        </Spinner>
-
-        <Spinner
-            android:id="@+id/spinner2"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            >
-        </Spinner>
-
-        <Spinner
-            android:id="@+id/spinner3"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            >
-        </Spinner>
-
-    </LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/gray_background"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
-        ></LinearLayout>
-
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:orientation="vertical"
-        >
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="搜索結果"
-            android:textSize="18dp"
-
-            />
-
-        <GridView
-            android:id="@+id/store_grid"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:numColumns="2"
-            android:gravity="center"
-            android:columnWidth="5dp"
-            android:stretchMode="columnWidth"
-            android:horizontalSpacing="10dp"
-            android:verticalSpacing="10dp"
-            >
-        </GridView>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/linear_store_map"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:visibility="gone"
-        >
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/gray_background"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            ></LinearLayout>
-
-        <TextView
-            android:id="@+id/select_store_name"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="全家益昇門市"
-            android:textSize="18dp"
-            />
-
-        <TextView
-            android:id="@+id/select_store_address"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="台中市大里區國光路一段20號"
-            android:textSize="18dp"
-            />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/gray_background"
-            android:layout_marginTop="5dp"
-            android:layout_marginBottom="5dp"
-            ></LinearLayout>
-
-        <fragment xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:id="@+id/map"
-            android:name="com.google.android.gms.maps.SupportMapFragment" />
-
-        <Button
-            android:id="@+id/select_store_button"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="選擇此門市"
-            />
-
-    </LinearLayout>
-
-
 
 </LinearLayout>

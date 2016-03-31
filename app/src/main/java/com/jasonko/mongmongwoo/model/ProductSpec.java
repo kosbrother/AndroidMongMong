@@ -1,9 +1,11 @@
 package com.jasonko.mongmongwoo.model;
 
+import java.io.Serializable;
+
 /**
  * Created by kolichung on 3/22/16.
  */
-public class ProductSpec {
+public class ProductSpec implements Serializable {
 
     public ProductSpec(int spec_id, String style, int amount, String pic_url) {
         this.spec_id = spec_id;

@@ -35,9 +35,9 @@ public class OrderApi {
     public static final String host = "http://106.185.34.142";
     public static final boolean DEBUG = true;
 
-    public static ArrayList<PastOrder> getOrdersByUid(String uid){
+    public static ArrayList<PastOrder> getOrdersByUid(String uid, int page){
         ArrayList<PastOrder> pastOrders = new ArrayList<>();
-        String url = host + "/api/v1/orders/user_owned_orders/"+ uid;
+        String url = host + "/api/v1/orders/user_owned_orders/"+ uid+"?page="+Integer.toString(page);
         String message = getMessageFromServer("GET", null, null, url);
         if (message == null) {
             return null;
@@ -71,6 +71,7 @@ public class OrderApi {
 
             String storeCode= "";
             int store_id = 0;
+            String storeName = "";
 
             try{
                 productPrice = jsonObject.getInt("items_price");
@@ -82,11 +83,12 @@ public class OrderApi {
 
                 storeCode = infoObject.getString("ship_store_code");
                 store_id = infoObject.getInt("ship_store_id");
+                storeName = infoObject.getString("ship_store_name");
 
             }catch (Exception e){
 
             }
-            shippingStore = new Store(store_id,storeCode,"","");
+            shippingStore = new Store(store_id,storeCode,storeName,"");
 
             try{
                 JSONArray itemsArray = jsonObject.getJSONArray("items");
@@ -143,7 +145,7 @@ public class OrderApi {
                 try {
                     order_id = itemObject.getInt("id");
                     total_price = itemObject.getInt("total");
-                    date = itemObject.getString("created_at");
+                    date = itemObject.getString("created_on");
                     status = itemObject.getString("status");
                     switch (status){
                         case "order_placed":
@@ -174,7 +176,7 @@ public class OrderApi {
         return null;
     }
 
-    public static String httpPostOrder(String uid, int items_price, int ship_fee, int total, String ship_name, String ship_phone, String ship_store_code, int ship_store_id, ArrayList<Product> products){
+    public static String httpPostOrder(String uid, int items_price, int ship_fee, int total, String ship_name, String ship_phone, String ship_store_code, String ship_store_name, int ship_store_id, ArrayList<Product> products){
 
         String url = host + "/api/v1/orders";
         JSONObject jsonObject = new JSONObject();
@@ -187,20 +189,23 @@ public class OrderApi {
             jsonObject.put("ship_phone", ship_phone);
             jsonObject.put("ship_store_code", ship_store_code);
             jsonObject.put("ship_store_id", Integer.toString(ship_store_id));
-//            jsonObject.put("products[][name]","產品名");
+            jsonObject.put("ship_store_name",ship_store_name);
 
             JSONArray productsArray = new JSONArray();
-            JSONObject productObject = new JSONObject();
-            productObject.put("name", "產品222");
-            productObject.put("quantity", Integer.toString(3));
-            productObject.put("price", Integer.toString(2000));
-            productsArray.put(productObject);
+            for (int i=0; i< products.size();i++) {
+                JSONObject productObject = new JSONObject();
+                productObject.put("name", products.get(i).getName());
+                productObject.put("quantity", Integer.toString(products.get(i).getBuy_count()));
+                productObject.put("price", Integer.toString(products.get(i).getPrice()));
+                productObject.put("style", products.get(i).getSelectedSpec().getStyle());
+                productsArray.put(productObject);
+            }
             jsonObject.put("products",productsArray);
             return post(url, jsonObject.toString());
         }catch (Exception e){
             Log.i("HTTP error", e.toString());
         }
-        return "success upload";
+        return "error";
 
     }
 

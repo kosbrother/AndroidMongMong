@@ -12,6 +12,7 @@
         android:padding="10dp"
         android:gravity="center"
         android:background="@drawable/round_non_select_style"
+        android:maxLines="1"
         />
 
 </LinearLayout>

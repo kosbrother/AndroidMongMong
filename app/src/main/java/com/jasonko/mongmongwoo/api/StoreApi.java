@@ -160,16 +160,21 @@ public class StoreApi {
                 String store_code = "";
                 String name = "";
                 String address = "";
+                double lat = 0;
+                double lng = 0;
 
                 try {
                     store_id = itemObject.getInt("id");
                     store_code = itemObject.getString("store_code");
                     name = itemObject.getString("name");
                     address = itemObject.getString("address");
+                    lat = itemObject.getDouble("lat");
+                    lng = itemObject.getDouble("lng");
                 }catch (Exception e){
 
                 }
                 Store newStore = new Store(store_id,store_code,name,address);
+                newStore.setLatLng(lat,lng);
                 stores.add(newStore);
             }
         }catch (Exception e){

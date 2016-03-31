@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_id": "mongmongwoo",
+    "project_number": "1072522342435",
+    "name": "MongMongWoo"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1072522342435:android:3fb3995c039bc216",
+        "client_id": "android:com.jasonko.mongmongwoo",
+        "client_type": 1,
+        "android_client_info": {
+          "package_name": "com.jasonko.mongmongwoo",
+          "certificate_hash": []
+        }
+      },
+      "oauth_client": [],
+      "api_key": [],
+      "services": {
+        "analytics_service": {
+          "status": 2,
+          "analytics_property": {
+            "tracking_id": "UA-75807775-1"
+          }
+        },
+        "cloud_messaging_service": {
+          "status": 1,
+          "apns_config": []
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "google_signin_service": {
+          "status": 1
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "client_info": [],
+  "ARTIFACT_VERSION": "1"
+}

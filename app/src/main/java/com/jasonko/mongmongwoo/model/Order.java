@@ -7,6 +7,21 @@ import java.util.ArrayList;
  */
 public class Order {
 
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getUid() {
+        if (uid == null){
+            return "9999"; //匿名購買
+        }else {
+            return uid;
+        }
+    }
+
+    String uid;
+
+
     public Order() {
     }
 

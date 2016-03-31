@@ -78,14 +78,8 @@
     </android.support.design.widget.AppBarLayout>
 
 
-    <com.jasonko.mongmongwoo.utils.NonSwipeableViewPager
-        android:id="@+id/viewpager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white" />
-
     <LinearLayout
-        android:id="@+id/shopping_car_login_layout"
+        android:id="@+id/no_net_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:gravity="center"
@@ -93,50 +87,37 @@
         android:visibility="gone"
         >
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="登入購買(推薦)"
-            android:textSize="18dp"
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/icon_problem"
             />
-
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/login_button_main"
-            android:layout_width="wrap_content"
+        <TextView
+            android:layout_width="180dp"
             android:layout_height="wrap_content"
+            android:text="無網路連接,請檢查網路連線,並重啟APP~"
+            android:textSize="17dp"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="(方便查詢購買明細)"
-            android:textSize="18dp"
-            />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="or"
-            android:textSize="18dp"
-            android:layout_marginTop="5dp"
             android:textStyle="bold"
             />
 
-        <Button
-            android:id="@+id/buy_no_login_button"
-            android:layout_width="100dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="5dp"
-            android:textSize="15dp"
-            android:text="匿名購買"
-            android:background="@drawable/button_purchase_car_selector"
-            android:textColor="@color/white"
-            />
-
     </LinearLayout>
+
+    <com.jasonko.mongmongwoo.utils.NonSwipeableViewPager
+        android:id="@+id/viewpager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/white" />
+
+    <com.facebook.login.widget.LoginButton
+        android:id="@+id/login_button_main"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:visibility="gone"
+        />
+
 
 
 </LinearLayout>

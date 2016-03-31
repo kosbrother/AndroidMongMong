@@ -4,14 +4,13 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.GridView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
@@ -26,11 +25,12 @@ import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.github.siyamed.shapeimageview.CircularImageView;
-import com.jasonko.mongmongwoo.adpters.PastOrdersAdapter;
+import com.jasonko.mongmongwoo.adpters.PastOrdersGridAdapter;
 import com.jasonko.mongmongwoo.api.OrderApi;
 import com.jasonko.mongmongwoo.api.UserApi;
 import com.jasonko.mongmongwoo.model.PastOrder;
 import com.jasonko.mongmongwoo.model.User;
+import com.jasonko.mongmongwoo.utils.EndlessScrollListener;
 
 import org.json.JSONObject;
 
@@ -60,8 +60,10 @@ public class PastOrderActivity extends AppCompatActivity {
     String address = "";
     String fb_uid = "";
 
-    RecyclerView recyclerView;
-    ArrayList<PastOrder> pastOrders;
+    GridView mGridView;
+    ArrayList<PastOrder> pastOrders = new ArrayList<>();
+    int mPage = 1;
+    PastOrdersGridAdapter pastOrdersAdapter;
 
     CircularImageView userImage;
     TextView userNameText;
@@ -77,12 +79,6 @@ public class PastOrderActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("我的訂單");
-
-        recyclerView = (RecyclerView) findViewById(R.id.past_order_recycler);
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(PastOrderActivity.this);
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(mLayoutManager);
 
         userImage = (CircularImageView) findViewById(R.id.user_imageview);
         userNameText = (TextView) findViewById(R.id.user_name_text);
@@ -172,6 +168,13 @@ public class PastOrderActivity extends AppCompatActivity {
             }
         });
 
+        mGridView = (GridView) findViewById(R.id.fragment_gridview);
+        mGridView.setOnScrollListener(new EndlessScrollListener() {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount) {
+                new NewsTask().execute();
+            }
+        });
         new NewsTask().execute();
 
     }
@@ -271,8 +274,10 @@ public class PastOrderActivity extends AppCompatActivity {
 
         @Override
         protected Object doInBackground(Object[] params) {
-            pastOrders = OrderApi.getOrdersByUid(user.getFb_uid());
-            if (pastOrders != null){
+            ArrayList<PastOrder> feedBackPastOrders = OrderApi.getOrdersByUid(user.getFb_uid(), mPage);
+            if (feedBackPastOrders != null && feedBackPastOrders.size() > 0){
+                pastOrders.addAll(feedBackPastOrders);
+                mPage = mPage + 1;
                 return true;
             }
             return null;
@@ -281,8 +286,12 @@ public class PastOrderActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Object result) {
             if (result != null) {
-                PastOrdersAdapter adapter = new PastOrdersAdapter(PastOrderActivity.this, pastOrders);
-                recyclerView.setAdapter(adapter);
+                if (pastOrdersAdapter == null) {
+                    pastOrdersAdapter = new PastOrdersGridAdapter(PastOrderActivity.this, pastOrders);
+                    mGridView.setAdapter(pastOrdersAdapter);
+                }else {
+                    pastOrdersAdapter.notifyDataSetChanged();
+                }
             }
         }
     }

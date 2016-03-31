@@ -12,15 +12,18 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.jasonko.mongmongwoo.MainActivity;
 import com.jasonko.mongmongwoo.ProductActivity;
 import com.jasonko.mongmongwoo.R;
+import com.jasonko.mongmongwoo.Settings;
 import com.jasonko.mongmongwoo.ShoppingCarPreference;
 import com.jasonko.mongmongwoo.api.ProductApi;
 import com.jasonko.mongmongwoo.model.Product;
 import com.jasonko.mongmongwoo.model.ProductSpec;
+import com.jasonko.mongmongwoo.utils.NetworkUtil;
 
 import java.util.ArrayList;
 
@@ -94,8 +97,12 @@ public class GoodsGridAdapter extends BaseAdapter {
 //                mActivity.doIncrease();
                 theTaskProductId = theProduct.getId();
                 selectedProductPosition = position;
-                showStyleDialog();
-                new NewsTask().execute();
+                if (NetworkUtil.getConnectivityStatus(mActivity)!=0) {
+                    showStyleDialog();
+                    new NewsTask().execute();
+                }else {
+                    Toast.makeText(mActivity,"無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -165,6 +172,12 @@ public class GoodsGridAdapter extends BaseAdapter {
                 pref.addShoppingItem(mActivity, theProduct);
                 mActivity.doIncrease();
                 alertDialog.cancel();
+
+                if (Settings.checkIsFirstAddShoppingCar(mActivity)){
+                    mActivity.showShoppingCarInstruction();
+                    Settings.setKownShoppingCar(mActivity);
+                }
+
             }
         });
 
@@ -175,7 +188,7 @@ public class GoodsGridAdapter extends BaseAdapter {
         @Override
         protected Object doInBackground(Object[] params) {
             specs = ProductApi.getProductSpects(theTaskProductId);
-            if (specs != null){
+            if (specs!=null && specs.size() != 0){
                 return true;
             }
             return null;
@@ -195,6 +208,8 @@ public class GoodsGridAdapter extends BaseAdapter {
                         .into(styleImage);
                 styleName.setText(specs.get(0).getStyle());
 
+            }else{
+                Toast.makeText(mActivity,"無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
             }
         }
     }

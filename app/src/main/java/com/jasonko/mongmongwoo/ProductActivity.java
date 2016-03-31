@@ -21,15 +21,21 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.androidpagecontrol.PageControl;
 import com.bumptech.glide.Glide;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
 import com.jasonko.mongmongwoo.adpters.StyleGridAdapter;
 import com.jasonko.mongmongwoo.api.ProductApi;
 import com.jasonko.mongmongwoo.fragments.ProductImageFragment;
 import com.jasonko.mongmongwoo.model.Product;
 import com.jasonko.mongmongwoo.model.ProductSpec;
+import com.jasonko.mongmongwoo.utils.NetworkUtil;
 
 /**
  * Created by kolichung on 3/17/16.
@@ -38,6 +44,8 @@ public class ProductActivity extends AppCompatActivity {
 
     TextView nameText;
     TextView priceText;
+    TextView loadingText;
+
     Button addCarButton;
     TextView infoText;
     private ViewPager viewPager;
@@ -46,15 +54,28 @@ public class ProductActivity extends AppCompatActivity {
 
     Product theProduct;
     private StyleGridAdapter styleGridAdapter;
+    MenuItem menuItem;
+
+    RelativeLayout spotLightShoppingCarLayout;
+    Button spotLightConfirmButton;
+
+    LinearLayout no_net_layout;
+    Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
 
+        AnalyticsApplication application = (AnalyticsApplication) getApplication();
+        mTracker = application.getDefaultTracker();
+
         Intent theIntent = getIntent();
         Bundle bundle = theIntent.getExtras();
         theProduct = (Product) bundle.getSerializable("Selected_Product");
+
+        mTracker.setScreenName("Product Name " + theProduct.getName());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.icon_back_white);
@@ -63,12 +84,21 @@ public class ProductActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("商品資訊");
 
+        spotLightShoppingCarLayout = (RelativeLayout) findViewById(R.id.spotlight_shopping_car_layout);
+        spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
+        spotLightConfirmButton = (Button) findViewById(R.id.confirm_button);
+        spotLightConfirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
+            }
+        });
+        no_net_layout = (LinearLayout) findViewById(R.id.no_net_layout);
+
         viewPager = (ViewPager) findViewById(R.id.image_pager);
         pageControl = (PageControl) findViewById(R.id.page_control);
-//        adapter = new SampleFragmentPagerAdapter(getSupportFragmentManager());
-//        viewPager.setAdapter(adapter);
-//        pageControl.setViewPager(viewPager);
 
+        loadingText = (TextView) findViewById(R.id.loading_text);
         nameText = (TextView) findViewById(R.id.product_name_text);
         priceText = (TextView) findViewById(R.id.product_price_text);
         addCarButton = (Button) findViewById(R.id.product_add_car_button);
@@ -79,9 +109,6 @@ public class ProductActivity extends AppCompatActivity {
         addCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                ShoppingCarPreference pref = new ShoppingCarPreference();
-//                theProduct.setBuy_count(1);
-//                pref.addShoppingItem(ProductActivity.this, theProduct);
                 showStyleDialog();
             }
         });
@@ -90,8 +117,24 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+        super.onResume();
+        if (menuItem != null){
+            ShoppingCarPreference pref = new ShoppingCarPreference();
+            int count = pref.getShoppingCarItemSize(ProductActivity.this);
+            menuItem.setIcon(buildCounterDrawable(count, R.drawable.icon_shopping_car_2));
+        }
+
+        if (NetworkUtil.getConnectivityStatus(this) == 0){
+            no_net_layout.setVisibility(View.VISIBLE);
+        }else {
+            no_net_layout.setVisibility(View.GONE);
+        }
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem menuItem;
+
         if (menu.findItem(99)==null) {
             menuItem = menu.add(0, 99, 0, "購物車");
         }else {
@@ -173,6 +216,7 @@ public class ProductActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Object result) {
+            loadingText.setVisibility(View.GONE);
             if (result != null) {
                 SampleFragmentPagerAdapter adapter = new SampleFragmentPagerAdapter(getSupportFragmentManager());
                 viewPager.setAdapter(adapter);
@@ -180,6 +224,8 @@ public class ProductActivity extends AppCompatActivity {
 //                adapter.notifyDataSetChanged();
 //                pageControl.setViewPager(viewPager);
                 infoText.setText(Html.fromHtml(theProduct.getDescription()));
+            }else{
+                Toast.makeText(ProductActivity.this, "無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -240,6 +286,11 @@ public class ProductActivity extends AppCompatActivity {
                 pref.addShoppingItem(ProductActivity.this, theProduct);
                 doIncrease();
                 alertDialog.cancel();
+
+                if (Settings.checkIsFirstAddShoppingCar(ProductActivity.this)){
+                    showShoppingCarInstruction();
+                    Settings.setKownShoppingCar(ProductActivity.this);
+                }
             }
         });
 
@@ -287,5 +338,8 @@ public class ProductActivity extends AppCompatActivity {
         return new BitmapDrawable(getResources(), bitmap);
     }
 
+    public void showShoppingCarInstruction(){
+        spotLightShoppingCarLayout.setVisibility(View.VISIBLE);
+    }
 
 }
