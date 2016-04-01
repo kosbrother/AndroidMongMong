@@ -45,6 +45,8 @@ public class PurchaseFragment1 extends Fragment {
     TextView shippingPriceText;
     TextView totalPriceText;
     Button confirmButton;
+    TextView no_ship_fee_text;
+    TextView ship_text;
 
     int shippingType = -1; // 0 means 超商取貨付款, 1 means 宅配
 
@@ -68,6 +70,8 @@ public class PurchaseFragment1 extends Fragment {
         noLoginBuyButtons = (LinearLayout) view.findViewById(R.id.layout_buy_button);
         fb_buy_button = (Button) view.findViewById(R.id.fragment1_fb_buy_button);
         no_name_buy_button = (Button) view.findViewById(R.id.fragment1_no_name_buy_button);
+        no_ship_fee_text = (TextView) view.findViewById(R.id.no_ship_fee_text);
+        ship_text = (TextView) view.findViewById(R.id.ship_text);
 
         shippingPrice = 0;
 
@@ -162,12 +166,7 @@ public class PurchaseFragment1 extends Fragment {
                                 shippingPrice = 60;
                                 shippingType = 0;
                                 break;
-                            case 1:
-                                shippingPrice = 150;
-                                shippingType = 1;
-                                break;
                         }
-                        shippingPriceText.setText("$" + Integer.toString(shippingPrice));
                         setPricesText();
                     }
                 });
@@ -199,12 +198,24 @@ public class PurchaseFragment1 extends Fragment {
         return view;
     }
 
-    private void setPricesText() {
+    public void setPricesText() {
         totalGoodsPrice = 0;
         for (int i = 0; i< shoppingCarProducts.size(); i++){
             totalGoodsPrice = totalGoodsPrice + shoppingCarProducts.get(i).getPrice() * shoppingCarProducts.get(i).getBuy_count();
         }
         totalGoodsPriceText.setText("$"+ Integer.toString(totalGoodsPrice));
+
+        if (shippingType != -1) {
+            if (totalGoodsPrice >= 490) {
+                shippingPrice = 0;
+                no_ship_fee_text.setVisibility(View.GONE);
+                ship_text.setText("滿490免運");
+            } else {
+                no_ship_fee_text.setVisibility(View.VISIBLE);
+                ship_text.setText("運費");
+            }
+        }
+        shippingPriceText.setText("$" + Integer.toString(shippingPrice));
         totalPriceText.setText("$"+Integer.toString(totalGoodsPrice+shippingPrice));
     }
 

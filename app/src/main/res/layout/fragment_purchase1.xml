@@ -127,13 +127,34 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 >
-                <TextView
+
+                <LinearLayout
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
                     android:layout_weight="1"
-                    android:text="運費"
-                    android:textSize="16dp"
-                    />
+                    android:gravity="center_vertical"
+                    >
+
+                    <TextView
+                        android:id="@+id/ship_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="運費"
+                        android:textSize="16dp"
+                        />
+
+                    <TextView
+                        android:id="@+id/no_ship_fee_text"
+                        android:visibility="gone"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="*購物滿490免運費喔!"
+                        android:textSize="13dp"
+                        android:textColor="#F06767"
+                        />
+
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/fragment1_shippingPriceText"

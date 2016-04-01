@@ -86,6 +86,7 @@ public class ShoppingCarGoodsAdapter extends RecyclerView.Adapter<ShoppingCarGoo
                 ShoppingCarPreference prefs = new ShoppingCarPreference();
                 prefs.removeShoppingItem(mActivity, position);
                 fragment1.updateRecycleView();
+                fragment1.setPricesText();
             }
         });
 
@@ -98,12 +99,6 @@ public class ShoppingCarGoodsAdapter extends RecyclerView.Adapter<ShoppingCarGoo
 
         holder.selectCountButton.setText("數量 "+ Integer.toString(shoppingProducts.get(position).getBuy_count()));
 
-//        holder.mView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//            }
-//        });
     }
 
     // Return the size of your dataset (invoked by the layout manager)
@@ -151,12 +146,13 @@ public class ShoppingCarGoodsAdapter extends RecyclerView.Adapter<ShoppingCarGoo
                 shoppingProducts.get(product_position).setBuy_count(tempCount);
                 ShoppingCarPreference pref = new ShoppingCarPreference();
                 for (int i = 0; i < shoppingProducts.size(); i++) {
-                    pref.removeShoppingItem(mActivity, i);
+                    pref.removeShoppingItem(mActivity, shoppingProducts.size()-1-i);
                 }
                 for (int i = 0; i < shoppingProducts.size(); i++) {
                     pref.addShoppingItem(mActivity, shoppingProducts.get(i));
                 }
                 fragment1.updateRecycleView();
+                fragment1.setPricesText();
             }
         });
         // set negative button: No message
