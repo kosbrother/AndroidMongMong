@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.jasonko.mongmongwoo">
+    package="com.kosbrother.mongmongwoo">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -12,7 +12,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:name="AnalyticsApplication"
+        android:name="com.kosbrother.mongmongwoo.AnalyticsApplication"
         >
         <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebook_app_id"/>
         <meta-data
@@ -20,7 +20,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.kosbrother.mongmongwoo.MainActivity"
             android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"
@@ -37,47 +37,47 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:label="@string/app_name" />
 
-        <activity android:name=".SearchActivity"
+        <activity android:name="com.kosbrother.mongmongwoo.SearchActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme"
             ></activity>
 
-        <activity android:name=".ShoppingCarActivity"
+        <activity android:name="com.kosbrother.mongmongwoo.ShoppingCarActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme"
             ></activity>
 
-        <activity android:name=".AboutActivity"
+        <activity android:name="com.kosbrother.mongmongwoo.AboutActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme"
             ></activity>
 
-        <activity android:name=".ServiceActivity"
+        <activity android:name="com.kosbrother.mongmongwoo.ServiceActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme"
             ></activity>
 
-        <activity android:name=".SelectDeliverStoreActivity"
+        <activity android:name="com.kosbrother.mongmongwoo.SelectDeliverStoreActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme"
             ></activity>
 
-        <activity android:name=".ProductActivity"
+        <activity android:name="com.kosbrother.mongmongwoo.ProductActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme"
             ></activity>
 
-        <activity android:name=".SettingActivity"
+        <activity android:name="com.kosbrother.mongmongwoo.SettingActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme"
             ></activity>
 
-        <activity android:name=".PastOrderActivity"
+        <activity android:name="com.kosbrother.mongmongwoo.PastOrderActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme"
             ></activity>
 
-        <activity android:name=".PastOrderDetailActivity"
+        <activity android:name="com.kosbrother.mongmongwoo.PastOrderDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme"
             ></activity>

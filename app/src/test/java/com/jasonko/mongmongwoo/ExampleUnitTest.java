@@ -1,4 +1,4 @@
-package com.jasonko.mongmongwoo;
+package com.kosbrother.mongmongwoo;
 
 import org.junit.Test;
 
