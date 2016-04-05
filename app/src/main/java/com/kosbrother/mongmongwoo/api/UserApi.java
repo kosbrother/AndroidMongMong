@@ -23,7 +23,7 @@ public class UserApi {
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
     public static String httpPostUser(String user_name, String real_name, String gender, String phone, String address, String fb_uid){
-        String url = host + "/admin/users/import_user";
+        String url = host + "/api/v1/users";
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("user_name", user_name);

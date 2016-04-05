@@ -109,7 +109,11 @@ public class ProductActivity extends AppCompatActivity {
         addCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showStyleDialog();
+                if (theProduct.getSpecs().size()>0) {
+                    showStyleDialog();
+                }else{
+                    Toast.makeText(ProductActivity.this, "樣式讀取中,請稍受再加購物車", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

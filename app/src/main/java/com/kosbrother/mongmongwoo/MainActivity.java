@@ -83,6 +83,7 @@ public class MainActivity extends AppCompatActivity
     LinearLayout no_net_layout;
 
     private Tracker mTracker;
+    ViewPager viewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,7 +102,7 @@ public class MainActivity extends AppCompatActivity
         titleText.setText("萌萌屋");
         no_net_layout = (LinearLayout) findViewById(R.id.no_net_layout);
 
-                spotLightShoppingCarLayout = (RelativeLayout) findViewById(R.id.spotlight_shopping_car_layout);
+        spotLightShoppingCarLayout = (RelativeLayout) findViewById(R.id.spotlight_shopping_car_layout);
         spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
         spotLightConfirmButton = (Button) findViewById(R.id.confirm_button);
         spotLightConfirmButton.setOnClickListener(new View.OnClickListener() {
@@ -205,7 +206,7 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
 
     }
@@ -326,7 +327,11 @@ public class MainActivity extends AppCompatActivity
             titleText.setText("所有商品");
             category_id = 10;
             if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
-                goodsGridFragment.notifyCategoryChanged(category_id);
+                if (goodsGridFragment != null) {
+                    goodsGridFragment.notifyCategoryChanged(category_id);
+                }else {
+                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
+                }
             }else {
                 Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
             }
@@ -334,7 +339,11 @@ public class MainActivity extends AppCompatActivity
             titleText.setText("新品上架");
             category_id = 11;
             if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
-                goodsGridFragment.notifyCategoryChanged(category_id);
+                if (goodsGridFragment != null) {
+                    goodsGridFragment.notifyCategoryChanged(category_id);
+                }else {
+                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
+                }
             }else {
                 Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
             }
@@ -342,7 +351,11 @@ public class MainActivity extends AppCompatActivity
             titleText.setText("文具用品");
             category_id = 12;
             if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
-                goodsGridFragment.notifyCategoryChanged(category_id);
+                if (goodsGridFragment != null) {
+                    goodsGridFragment.notifyCategoryChanged(category_id);
+                }else {
+                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
+                }
             }else {
                 Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
             }
@@ -350,7 +363,11 @@ public class MainActivity extends AppCompatActivity
             titleText.setText("日韓精選");
             category_id = 13;
             if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
-                goodsGridFragment.notifyCategoryChanged(category_id);
+                if (goodsGridFragment != null) {
+                    goodsGridFragment.notifyCategoryChanged(category_id);
+                }else {
+                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
+                }
             }else {
                 Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
             }
@@ -358,7 +375,11 @@ public class MainActivity extends AppCompatActivity
             titleText.setText("生日專區");
             category_id = 14;
             if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
-                goodsGridFragment.notifyCategoryChanged(category_id);
+                if (goodsGridFragment != null) {
+                    goodsGridFragment.notifyCategoryChanged(category_id);
+                }else {
+                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
+                }
             }else {
                 Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
             }
@@ -366,7 +387,11 @@ public class MainActivity extends AppCompatActivity
             titleText.setText("生活小物");
             category_id = 16;
             if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
-                goodsGridFragment.notifyCategoryChanged(category_id);
+                if (goodsGridFragment != null) {
+                    goodsGridFragment.notifyCategoryChanged(category_id);
+                }else {
+                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
+                }
             }else {
                 Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
             }
