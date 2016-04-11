@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -64,7 +65,8 @@ public class MyGcmListenerService extends com.google.android.gms.gcm.GcmListener
 
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setSmallIcon(R.drawable.app_icon9)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon9))
+                .setSmallIcon(R.mipmap.icon_mhouse)
                 .setContentTitle("GCM Message")
                 .setContentText(message)
                 .setAutoCancel(true)
