@@ -19,8 +19,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -76,11 +74,6 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
-        AnalyticsApplication application = (AnalyticsApplication) getApplication();
-        Tracker mTracker = application.getDefaultTracker();
-        mTracker.setScreenName("Activity Select Store");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
-
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(0xFFFFFFFF);
         setSupportActionBar(toolbar);
@@ -106,7 +99,7 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         countySpinners.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this)!=0) {
+                if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this) != 0) {
                     county_id = counties.get(position).getCounty_id();
                     linearMap.setVisibility(View.GONE);
                     selectStoreButton.setVisibility(View.GONE);
@@ -116,8 +109,8 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
                         storeGridAdapter.notifyDataSetChanged();
                     }
                     new TownsTask().execute();
-                }else {
-                    Toast.makeText(SelectDeliverStoreActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SelectDeliverStoreActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -130,7 +123,7 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         townSpinners.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this)!=0) {
+                if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this) != 0) {
                     town_id = townArray.get(position).getTown_id();
                     linearMap.setVisibility(View.GONE);
                     selectStoreButton.setVisibility(View.GONE);
@@ -140,8 +133,8 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
                         storeGridAdapter.notifyDataSetChanged();
                     }
                     new RoadsTask().execute();
-                }else {
-                    Toast.makeText(SelectDeliverStoreActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SelectDeliverStoreActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -154,7 +147,7 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         roadSpinners.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this)!=0) {
+                if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this) != 0) {
                     road_id = roadArray.get(position).getRoad_id();
                     linearMap.setVisibility(View.GONE);
                     selectStoreButton.setVisibility(View.GONE);
@@ -164,8 +157,8 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
                         storeGridAdapter.notifyDataSetChanged();
                     }
                     new StoresTask().execute();
-                }else {
-                    Toast.makeText(SelectDeliverStoreActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(SelectDeliverStoreActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -201,7 +194,7 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
     }
 
-    public void setStoreInfo(Store theStore){
+    public void setStoreInfo(Store theStore) {
         theSelectedStore = theStore;
         storeName.setText(theSelectedStore.getName());
         storeAddress.setText(theSelectedStore.getAddress());
@@ -225,7 +218,6 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
     }
 
 
-
     private class TownsTask extends AsyncTask {
 
         @Override
@@ -242,7 +234,7 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
 
         @Override
         protected void onPostExecute(Object result) {
-            if (townArray != null){
+            if (townArray != null) {
                 ArrayAdapter<Town> townArrayAdapter = new ArrayAdapter<>(SelectDeliverStoreActivity.this, R.layout.myspinner, townArray);
                 townArrayAdapter.setDropDownViewResource(R.layout.myspinner);
                 townSpinners.setAdapter(townArrayAdapter);
@@ -260,13 +252,13 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
 
         @Override
         protected Object doInBackground(Object[] params) {
-            roadArray = StoreApi.getRoads(county_id,town_id);
+            roadArray = StoreApi.getRoads(county_id, town_id);
             return true;
         }
 
         @Override
         protected void onPostExecute(Object result) {
-            if (roadArray != null){
+            if (roadArray != null) {
                 ArrayAdapter<Road> roadArrayAdapter = new ArrayAdapter<>(SelectDeliverStoreActivity.this, R.layout.myspinner, roadArray);
                 roadArrayAdapter.setDropDownViewResource(R.layout.myspinner);
                 roadSpinners.setAdapter(roadArrayAdapter);
@@ -284,28 +276,28 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
 
         @Override
         protected Object doInBackground(Object[] params) {
-            storeArray = StoreApi.getStores(county_id,town_id,road_id);
+            storeArray = StoreApi.getStores(county_id, town_id, road_id);
             return true;
         }
 
         @Override
         protected void onPostExecute(Object result) {
             myProgressBar.setVisibility(View.GONE);
-            if (storeArray!=null){
+            if (storeArray != null) {
                 storeGridAdapter = new StoreGridAdapter(SelectDeliverStoreActivity.this, storeArray);
                 storeGridView.setAdapter(storeGridAdapter);
 
-                ViewGroup.LayoutParams params= storeGridView.getLayoutParams();
+                ViewGroup.LayoutParams params = storeGridView.getLayoutParams();
                 int height_size;
-                if (storeArray.size()%2 == 0){
-                    height_size = storeArray.size()/2;
-                }else {
-                    height_size = storeArray.size()/2 + 1;
+                if (storeArray.size() % 2 == 0) {
+                    height_size = storeArray.size() / 2;
+                } else {
+                    height_size = storeArray.size() / 2 + 1;
                 }
-                params.height= (int) DensityApi.convertDpToPixel(55 * height_size, SelectDeliverStoreActivity.this);
+                params.height = (int) DensityApi.convertDpToPixel(55 * height_size, SelectDeliverStoreActivity.this);
                 storeGridView.setLayoutParams(params);
-            }else {
-                Toast.makeText(SelectDeliverStoreActivity.this,"此區無寄送店面", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(SelectDeliverStoreActivity.this, "此區無寄送店面", Toast.LENGTH_SHORT).show();
             }
         }
     }
