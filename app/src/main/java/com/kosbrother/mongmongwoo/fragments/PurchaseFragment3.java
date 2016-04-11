@@ -113,6 +113,9 @@ public class PurchaseFragment3 extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             progressBar.setVisibility(View.VISIBLE);
+            if (theOrder.getOrderProducts() == null || theOrder.getOrderProducts().size() == 0){
+                Toast.makeText(getActivity(),"購物車商品資料錯誤,請聯絡客服LINE@,感謝您^^", Toast.LENGTH_LONG).show();
+            }
         }
 
         @Override

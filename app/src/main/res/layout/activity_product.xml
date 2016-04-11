@@ -258,6 +258,15 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="5dp"
+                        android:text="*10天到貨：商品購買後，10個工作天內會送到指定寄送地址。"
+                        />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"
+                        android:layout_marginTop="5dp"
                         android:text="*商品運送：本商品為超商取貨付款，外島地區可能無法運送。"
                         />
 

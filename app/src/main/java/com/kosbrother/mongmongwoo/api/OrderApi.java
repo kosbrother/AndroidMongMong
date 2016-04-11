@@ -37,7 +37,7 @@ public class OrderApi {
 
     public static ArrayList<PastOrder> getOrdersByUid(String uid, int page){
         ArrayList<PastOrder> pastOrders = new ArrayList<>();
-        String url = host + "/api/v1/orders/user_owned_orders/"+ uid+"?page="+Integer.toString(page);
+        String url = host + "/api/v2/orders/user_owned_orders/"+ uid+"?page="+Integer.toString(page);
         String message = getMessageFromServer("GET", null, null, url);
         if (message == null) {
             return null;
@@ -147,22 +147,6 @@ public class OrderApi {
                     total_price = itemObject.getInt("total");
                     date = itemObject.getString("created_on");
                     status = itemObject.getString("status");
-                    switch (status){
-                        case "order_placed":
-                            status = "尚未出貨";
-                            break;
-                        case "item_shipping":
-                            status = "已出貨";
-                            break;
-                        case  "item_shipped":
-                            status = "已取貨";
-                            break;
-                        case  "order_cancelled":
-                            status = "訂單取消";
-                            break;
-                        default:
-                            status = "尚未出貨";
-                    }
                 }catch (Exception e){
 
                 }
