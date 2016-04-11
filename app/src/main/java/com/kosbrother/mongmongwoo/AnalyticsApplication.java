@@ -21,10 +21,20 @@ public class AnalyticsApplication extends Application {
     public void onCreate() {
         super.onCreate();
         FacebookSdk.sdkInitialize(this);
-        getGcmToken();
+        initGoogleAnalyticsTracker();
+        startGetGcmToken();
     }
 
-    private void getGcmToken() {
+    private void initGoogleAnalyticsTracker() {
+        GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+        // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+        mTracker = analytics.newTracker("UA-73843935-2");
+        mTracker.setSessionTimeout(300);
+        mTracker.enableExceptionReporting(true);
+        mTracker.enableAutoActivityTracking(true);
+    }
+
+    private void startGetGcmToken() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean sentToken = sharedPreferences
                 .getBoolean(GcmPreferences.SENT_TOKEN_TO_SERVER, false);
@@ -40,11 +50,6 @@ public class AnalyticsApplication extends Application {
      * @return tracker
      */
     synchronized public Tracker getDefaultTracker() {
-        if (mTracker == null) {
-            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
-            mTracker = analytics.newTracker(R.xml.global_tracker);
-        }
         return mTracker;
     }
 }
