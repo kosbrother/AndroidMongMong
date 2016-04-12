@@ -79,7 +79,7 @@ public class MyGcmListenerService extends com.google.android.gms.gcm.GcmListener
         Uri defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon9))
-                .setSmallIcon(R.mipmap.icon_mhouse)
+                .setSmallIcon(R.mipmap.ic_mhouse)
                 .setContentTitle(data.getString("content_title"))
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
