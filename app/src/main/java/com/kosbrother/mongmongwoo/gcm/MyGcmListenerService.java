@@ -18,6 +18,9 @@ import android.support.v4.app.NotificationCompat.BigPictureStyle;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.SimpleTarget;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.kosbrother.mongmongwoo.AnalyticsApplication;
 import com.kosbrother.mongmongwoo.ProductActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.model.Product;
@@ -72,6 +75,7 @@ public class MyGcmListenerService extends com.google.android.gms.gcm.GcmListener
         Bundle bundle = new Bundle();
         bundle.putSerializable("Selected_Product", getProduct(data));
         intent.putExtras(bundle);
+        intent.putExtra(ProductActivity.BOOLEAN_EXTRA_FROM_NOTIFICATION, true);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
@@ -91,6 +95,9 @@ public class MyGcmListenerService extends com.google.android.gms.gcm.GcmListener
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        Tracker mTracker = ((AnalyticsApplication) (getApplication())).getDefaultTracker();
+        mTracker.setScreenName("Notification");
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     @NonNull

@@ -42,6 +42,8 @@ import com.kosbrother.mongmongwoo.utils.NetworkUtil;
  */
 public class ProductActivity extends AppCompatActivity {
 
+    public static final String BOOLEAN_EXTRA_FROM_NOTIFICATION = "BOOLEAN_EXTRA_FROM_NOTIFICATION";
+
     TextView nameText;
     TextView priceText;
     TextView loadingText;
@@ -76,6 +78,14 @@ public class ProductActivity extends AppCompatActivity {
 
         mTracker.setScreenName("Product Name " + theProduct.getName());
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        boolean fromNotification = theIntent.getBooleanExtra(BOOLEAN_EXTRA_FROM_NOTIFICATION, false);
+        if (fromNotification) {
+            mTracker.send(new HitBuilders.EventBuilder()
+                    .setCategory("PRODUCT")
+                    .setAction("CLICK_NOTIFICATION")
+                    .setLabel(theProduct.getName())
+                    .build());
+        }
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.icon_back_white);
@@ -105,13 +115,13 @@ public class ProductActivity extends AppCompatActivity {
         infoText = (TextView) findViewById(R.id.product_information_text);
 
         nameText.setText(theProduct.getName());
-        priceText.setText("NT$ "+ Integer.toString(theProduct.getPrice()));
+        priceText.setText("NT$ " + Integer.toString(theProduct.getPrice()));
         addCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (theProduct.getSpecs().size()>0) {
+                if (theProduct.getSpecs().size() > 0) {
                     showStyleDialog();
-                }else{
+                } else {
                     Toast.makeText(ProductActivity.this, "樣式讀取中,請稍受再加購物車", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -123,15 +133,15 @@ public class ProductActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (menuItem != null){
+        if (menuItem != null) {
             ShoppingCarPreference pref = new ShoppingCarPreference();
             int count = pref.getShoppingCarItemSize(ProductActivity.this);
             menuItem.setIcon(buildCounterDrawable(count, R.drawable.icon_shopping_car_2));
         }
 
-        if (NetworkUtil.getConnectivityStatus(this) == 0){
+        if (NetworkUtil.getConnectivityStatus(this) == 0) {
             no_net_layout.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             no_net_layout.setVisibility(View.GONE);
         }
     }
@@ -139,9 +149,9 @@ public class ProductActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if (menu.findItem(99)==null) {
+        if (menu.findItem(99) == null) {
             menuItem = menu.add(0, 99, 0, "購物車");
-        }else {
+        } else {
             menuItem = menu.findItem(99);
         }
         ShoppingCarPreference pref = new ShoppingCarPreference();
@@ -164,7 +174,7 @@ public class ProductActivity extends AppCompatActivity {
 
         int id = menuItem.getItemId();
 
-        switch (id){
+        switch (id) {
             case android.R.id.home:
                 finish();
                 break;
@@ -191,16 +201,16 @@ public class ProductActivity extends AppCompatActivity {
         public int getCount() {
             if (theProduct.getImages().size() == 0) {
                 return 1;
-            }else {
+            } else {
                 return theProduct.getImages().size();
             }
         }
 
         @Override
         public Fragment getItem(int position) {
-            if (theProduct.getImages().size() == 0){
+            if (theProduct.getImages().size() == 0) {
                 return ProductImageFragment.newInstance(theProduct.getPic_url());
-            }else {
+            } else {
                 return ProductImageFragment.newInstance(theProduct.getImages().get(position).getUrl());
             }
         }
@@ -211,8 +221,8 @@ public class ProductActivity extends AppCompatActivity {
 
         @Override
         protected Object doInBackground(Object[] params) {
-            theProduct = ProductApi.updateProductById(theProduct.getId(),theProduct);
-            if (theProduct != null){
+            theProduct = ProductApi.updateProductById(theProduct.getId(), theProduct);
+            if (theProduct != null) {
                 return true;
             }
             return null;
@@ -228,7 +238,7 @@ public class ProductActivity extends AppCompatActivity {
 //                adapter.notifyDataSetChanged();
 //                pageControl.setViewPager(viewPager);
                 infoText.setText(Html.fromHtml(theProduct.getDescription()));
-            }else{
+            } else {
                 Toast.makeText(ProductActivity.this, "無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
             }
         }
@@ -240,7 +250,7 @@ public class ProductActivity extends AppCompatActivity {
     private TextView styleName;
     private int tempCount;
 
-    public void showStyleDialog(){
+    public void showStyleDialog() {
 
         View view = LayoutInflater.from(ProductActivity.this)
                 .inflate(R.layout.dialog_add_shopping_car_item, null, false);
@@ -256,8 +266,8 @@ public class ProductActivity extends AppCompatActivity {
         minusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (tempCount != 1){
-                    tempCount = tempCount -1;
+                if (tempCount != 1) {
+                    tempCount = tempCount - 1;
                     countText.setText(Integer.toString(tempCount));
                 }
             }
@@ -291,14 +301,14 @@ public class ProductActivity extends AppCompatActivity {
                 doIncrease();
                 alertDialog.cancel();
 
-                if (Settings.checkIsFirstAddShoppingCar(ProductActivity.this)){
+                if (Settings.checkIsFirstAddShoppingCar(ProductActivity.this)) {
                     showShoppingCarInstruction();
                     Settings.setKownShoppingCar(ProductActivity.this);
                 }
             }
         });
 
-        styleGridAdapter = new StyleGridAdapter(this,theProduct.getSpecs(), styleImage,styleName);
+        styleGridAdapter = new StyleGridAdapter(this, theProduct.getSpecs(), styleImage, styleName);
         styleGrid.setAdapter(styleGridAdapter);
 
         Glide.with(this)
@@ -342,7 +352,7 @@ public class ProductActivity extends AppCompatActivity {
         return new BitmapDrawable(getResources(), bitmap);
     }
 
-    public void showShoppingCarInstruction(){
+    public void showShoppingCarInstruction() {
         spotLightShoppingCarLayout.setVisibility(View.VISIBLE);
     }
 
