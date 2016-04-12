@@ -96,7 +96,7 @@ public class MyGcmListenerService extends com.google.android.gms.gcm.GcmListener
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
         Tracker mTracker = ((AnalyticsApplication) (getApplication())).getDefaultTracker();
-        mTracker.setScreenName("Notification");
+        mTracker.setScreenName("Notification" + data.getString("content_title"));
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
