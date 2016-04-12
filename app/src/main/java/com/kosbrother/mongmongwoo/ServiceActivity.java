@@ -10,9 +10,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
 /**
  * Created by kolichung on 3/10/16.
  */
@@ -24,11 +21,6 @@ public class ServiceActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_service);
-
-        AnalyticsApplication application = (AnalyticsApplication) getApplication();
-        Tracker mTracker = application.getDefaultTracker();
-        mTracker.setScreenName("Activity Service");
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.icon_back_white);

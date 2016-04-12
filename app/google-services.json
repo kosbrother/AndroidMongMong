@@ -1,31 +1,40 @@
 {
   "project_info": {
-    "project_id": "mongmongwoo",
-    "project_number": "1072522342435",
-    "name": "MongMongWoo"
+    "project_id": "mongmongwoo-1277",
+    "project_number": "455561524983",
+    "name": "mongmongwoo"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1072522342435:android:3fb3995c039bc216",
-        "client_id": "android:com.jasonko.mongmongwoo",
+        "mobilesdk_app_id": "1:455561524983:android:4298457d84fa70b8",
+        "client_id": "android:com.kosbrother.mongmongwoo",
         "client_type": 1,
         "android_client_info": {
-          "package_name": "com.jasonko.mongmongwoo",
+          "package_name": "com.kosbrother.mongmongwoo",
           "certificate_hash": []
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "455561524983-1cvcdsnn3bog52i37hbklgablqu0tgmu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kosbrother.mongmongwoo",
+            "certificate_hash": "26ABC059D0F8EA578847790C014C98C83F7430CD"
+          }
+        }
+      ],
       "api_key": [],
       "services": {
         "analytics_service": {
           "status": 2,
           "analytics_property": {
-            "tracking_id": "UA-75807775-1"
+            "tracking_id": "UA-73843935-2"
           }
         },
         "cloud_messaging_service": {
-          "status": 1,
+          "status": 2,
           "apns_config": []
         },
         "appinvite_service": {
