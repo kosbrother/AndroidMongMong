@@ -81,6 +81,7 @@ public class MyGcmListenerService extends com.google.android.gms.gcm.GcmListener
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon9))
                 .setSmallIcon(R.mipmap.ic_mhouse)
                 .setContentTitle(data.getString("content_title"))
+                .setContentText(data.getString("content_text"))
                 .setAutoCancel(true)
                 .setSound(defaultSoundUri)
                 .setContentIntent(pendingIntent)
