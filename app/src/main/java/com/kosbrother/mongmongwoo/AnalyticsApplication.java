@@ -28,6 +28,9 @@ public class AnalyticsApplication extends Application {
     private void initGoogleAnalyticsTracker() {
         GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
         // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
+        if (BuildConfig.DEBUG) {
+            analytics.setDryRun(true);
+        }
         mTracker = analytics.newTracker("UA-73843935-2");
         mTracker.setSessionTimeout(300);
         mTracker.enableExceptionReporting(true);
