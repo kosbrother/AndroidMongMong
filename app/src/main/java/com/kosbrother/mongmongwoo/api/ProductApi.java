@@ -23,13 +23,11 @@ import java.util.ArrayList;
  */
 public class ProductApi {
 
-    public static final String  TAG   = "PRODUCT_API";
+    public static final String TAG = "PRODUCT_API";
     public static final boolean DEBUG = true;
-    public static final String host = "http://api.kosbrother.com";
 
-    public static Product updateProductById(int product_id, Product theProduct){
-        String url = host + "/api/v1/items/"+Integer.toString(product_id)+".json";
-        String message = getMessageFromServer("GET", null, null, url);
+    public static Product updateProductById(int productId, Product theProduct) {
+        String message = getMessageFromServer("GET", null, null, UrlCenter.updateProductById(productId));
         if (message == null) {
             return null;
         } else {
@@ -37,10 +35,9 @@ public class ProductApi {
         }
     }
 
-    public static ArrayList<ProductSpec> getProductSpects(int product_id){
+    public static ArrayList<ProductSpec> getProductSpects(int productId) {
         ArrayList<ProductSpec> productSpecs = new ArrayList<>();
-        String url = host + "/api/v1/items/"+Integer.toString(product_id)+"/spec_info";
-        String message = getMessageFromServer("GET", null, null, url);
+        String message = getMessageFromServer("GET", null, null, UrlCenter.getProductSpec(productId));
         if (message == null) {
             return null;
         } else {
@@ -50,26 +47,26 @@ public class ProductApi {
 
     private static ArrayList<ProductSpec> parseProductSytles(String message, ArrayList<ProductSpec> specs) {
 
-        try{
+        try {
             JSONArray specArray = new JSONArray(message);
-            for (int i=0; i< specArray.length(); i++){
+            for (int i = 0; i < specArray.length(); i++) {
                 JSONObject specObject = specArray.getJSONObject(i);
                 int id = specObject.getInt("id");
                 String style = specObject.getString("style");
                 int amount = 0;
                 try {
                     amount = specObject.getInt("style_amount");
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
-                String pic_url = host+specObject.getString("style_pic");
-                specs.add(new ProductSpec(id,style,amount,pic_url));
+                String pic_url = UrlCenter.HOST + specObject.getString("style_pic");
+                specs.add(new ProductSpec(id, style, amount, pic_url));
             }
 
-            return  specs;
+            return specs;
 
-        }catch (Exception e){
-            Log.i(TAG,e.toString());
+        } catch (Exception e) {
+            Log.i(TAG, e.toString());
         }
 
         return null;
@@ -90,29 +87,29 @@ public class ProductApi {
 
             try {
                 description = jsonObject.getString("description");
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
 
-            for (int i=0; i< photosArray.length(); i++ ){
+            for (int i = 0; i < photosArray.length(); i++) {
                 JSONObject photoObject = photosArray.getJSONObject(i);
-                String imageUrl = host + photoObject.getString("image_url");
+                String imageUrl = UrlCenter.HOST + photoObject.getString("image_url");
                 String intro = photoObject.getString("photo_intro");
-                images.add(new ProductImage(imageUrl,"","", intro));
+                images.add(new ProductImage(imageUrl, "", "", intro));
             }
 
-            for (int i=0; i< specArray.length(); i++){
+            for (int i = 0; i < specArray.length(); i++) {
                 JSONObject specObject = specArray.getJSONObject(i);
                 int id = specObject.getInt("id");
                 String style = specObject.getString("style");
                 int amount = 0;
                 try {
                     amount = specObject.getInt("amount");
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
-                String pic_url = host+specObject.getString("pic");
-                specs.add(new ProductSpec(id,style,amount,pic_url));
+                String pic_url = UrlCenter.HOST + specObject.getString("pic");
+                specs.add(new ProductSpec(id, style, amount, pic_url));
             }
 
 
@@ -120,19 +117,19 @@ public class ProductApi {
             theProduct.setImages(images);
             theProduct.setSpecs(specs);
 
-            return  theProduct;
+            return theProduct;
 
-        }catch (Exception e){
-            Log.i(TAG,e.toString());
+        } catch (Exception e) {
+            Log.i(TAG, e.toString());
         }
         return null;
     }
 
 
-    public static ArrayList<Product> getCategoryProducts(int category_id, int page){
+    public static ArrayList<Product> getCategoryProducts(int categoryId, int page) {
         ArrayList<Product> products = new ArrayList<>();
-        String url = host + "/api/v1/categories/"+ Integer.toString(category_id)+"?page="+Integer.toString(page);
-        String message = getMessageFromServer("GET", null, null, url);
+        String message = getMessageFromServer(
+                "GET", null, null, UrlCenter.getCategoryProducts(categoryId, page));
         if (message == null) {
             return null;
         } else {
@@ -144,7 +141,7 @@ public class ProductApi {
     private static void parseItems(ArrayList<Product> products, String message) {
         try {
             JSONArray itemsArray = new JSONArray(message);
-            for (int i = 0; i < itemsArray.length(); i++){
+            for (int i = 0; i < itemsArray.length(); i++) {
                 JSONObject itemObject = itemsArray.getJSONObject(i);
 
                 int id = 0;
@@ -156,14 +153,14 @@ public class ProductApi {
                     id = itemObject.getInt("id");
                     name = itemObject.getString("name");
                     price = itemObject.getInt("price");
-                    pic_url = host + itemObject.getJSONObject("cover").getString("url");
-                }catch (Exception e){
+                    pic_url = UrlCenter.HOST + itemObject.getJSONObject("cover").getString("url");
+                } catch (Exception e) {
 
                 }
-                Product newProduct = new Product(id,name,price,pic_url);
+                Product newProduct = new Product(id, name, price, pic_url);
                 products.add(newProduct);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }

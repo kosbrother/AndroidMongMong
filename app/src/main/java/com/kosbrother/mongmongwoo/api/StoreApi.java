@@ -24,18 +24,13 @@ import java.util.ArrayList;
  */
 public class StoreApi {
 
-    public static final String  TAG   = "MONMON_API";
+    public static final String TAG = "MONMON_API";
     public static final boolean DEBUG = true;
-    public static final String host = "http://api.kosbrother.com";
 
-    public static ArrayList<County> getCounties(){
+    public static ArrayList<County> getCounties() {
         ArrayList<County> counties = new ArrayList<>();
         String message = "[{\"id\":1,\"name\":\"台北市\"},{\"id\":2,\"name\":\"基隆市\"},{\"id\":3,\"name\":\"宜蘭縣\"},{\"id\":4,\"name\":\"新北市\"},{\"id\":5,\"name\":\"新竹市\"},{\"id\":6,\"name\":\"新竹縣\"},{\"id\":7,\"name\":\"桃園市\"},{\"id\":8,\"name\":\"苗栗縣\"},{\"id\":9,\"name\":\"台中市\"},{\"id\":10,\"name\":\"南投縣\"},{\"id\":11,\"name\":\"彰化縣\"},{\"id\":12,\"name\":\"嘉義市\"},{\"id\":13,\"name\":\"嘉義縣\"},{\"id\":14,\"name\":\"雲林縣\"},{\"id\":15,\"name\":\"台南市\"},{\"id\":16,\"name\":\"澎湖縣\"},{\"id\":17,\"name\":\"高雄市\"},{\"id\":18,\"name\":\"台東縣\"},{\"id\":19,\"name\":\"屏東縣\"},{\"id\":20,\"name\":\"花蓮縣\"}]";
-        if (message == null) {
-            return null;
-        } else {
-            parseCounties(counties, message);
-        }
+        parseCounties(counties, message);
         return counties;
     }
 
@@ -43,7 +38,7 @@ public class StoreApi {
 
         try {
             JSONArray itemsArray = new JSONArray(message);
-            for (int i = 0; i < itemsArray.length(); i++){
+            for (int i = 0; i < itemsArray.length(); i++) {
                 JSONObject itemObject = itemsArray.getJSONObject(i);
 
                 int county_id = 0;
@@ -52,22 +47,21 @@ public class StoreApi {
                 try {
                     county_id = itemObject.getInt("id");
                     name = itemObject.getString("name");
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
-                County newCounty = new County(county_id,name);
+                County newCounty = new County(county_id, name);
                 counties.add(newCounty);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
     }
 
-    public static ArrayList<Town> getTowns(int county_id){
+    public static ArrayList<Town> getTowns(int countyId) {
         ArrayList<Town> towns = new ArrayList<>();
-        String url = host + "/api/v1/counties/"+ Integer.toString(county_id)+ "/towns";
-        String message = getMessageFromServer("GET", null, null, url);
+        String message = getMessageFromServer("GET", null, null, UrlCenter.getTowns(countyId));
         if (message == null) {
             return null;
         } else {
@@ -80,7 +74,7 @@ public class StoreApi {
 
         try {
             JSONArray itemsArray = new JSONArray(message);
-            for (int i = 0; i < itemsArray.length(); i++){
+            for (int i = 0; i < itemsArray.length(); i++) {
                 JSONObject itemObject = itemsArray.getJSONObject(i);
 
                 int town_id = 0;
@@ -89,21 +83,20 @@ public class StoreApi {
                 try {
                     town_id = itemObject.getInt("id");
                     name = itemObject.getString("name");
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
-                Town newTown = new Town(town_id,name);
+                Town newTown = new Town(town_id, name);
                 towns.add(newTown);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
 
-    public static ArrayList<Road> getRoads(int county_id, int town_id){
+    public static ArrayList<Road> getRoads(int countyId, int townId) {
         ArrayList<Road> roads = new ArrayList<>();
-        String url = host + "/api/v1/counties/"+Integer.toString(county_id)+"/towns/"+Integer.toString(town_id)+"/roads";
-        String message = getMessageFromServer("GET", null, null, url);
+        String message = getMessageFromServer("GET", null, null, UrlCenter.getRoads(countyId, townId));
         if (message == null) {
             return null;
         } else {
@@ -116,7 +109,7 @@ public class StoreApi {
 
         try {
             JSONArray itemsArray = new JSONArray(message);
-            for (int i = 0; i < itemsArray.length(); i++){
+            for (int i = 0; i < itemsArray.length(); i++) {
                 JSONObject itemObject = itemsArray.getJSONObject(i);
 
                 int road_id = 0;
@@ -125,22 +118,21 @@ public class StoreApi {
                 try {
                     road_id = itemObject.getInt("id");
                     name = itemObject.getString("name");
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
-                Road newRoad = new Road(road_id,name);
+                Road newRoad = new Road(road_id, name);
                 roads.add(newRoad);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
     }
 
-    public static ArrayList<Store> getStores(int county_id, int town_id, int road_id){
+    public static ArrayList<Store> getStores(int county_id, int town_id, int road_id) {
         ArrayList<Store> stores = new ArrayList<>();
-        String url = host + "/api/v1/counties/"+Integer.toString(county_id)+"/towns/"+Integer.toString(town_id)+"/roads/"+Integer.toString(road_id)+"/stores";
-        String message = getMessageFromServer("GET", null, null, url);
+        String message = getMessageFromServer("GET", null, null, UrlCenter.getStores(county_id, town_id, road_id));
         if (message == null) {
             return null;
         } else {
@@ -153,7 +145,7 @@ public class StoreApi {
 
         try {
             JSONArray itemsArray = new JSONArray(message);
-            for (int i = 0; i < itemsArray.length(); i++){
+            for (int i = 0; i < itemsArray.length(); i++) {
                 JSONObject itemObject = itemsArray.getJSONObject(i);
 
                 int store_id = 0;
@@ -170,14 +162,14 @@ public class StoreApi {
                     address = itemObject.getString("address");
                     lat = itemObject.getDouble("lat");
                     lng = itemObject.getDouble("lng");
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
-                Store newStore = new Store(store_id,store_code,name,address);
-                newStore.setLatLng(lat,lng);
+                Store newStore = new Store(store_id, store_code, name, address);
+                newStore.setLatLng(lat, lng);
                 stores.add(newStore);
             }
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
 
