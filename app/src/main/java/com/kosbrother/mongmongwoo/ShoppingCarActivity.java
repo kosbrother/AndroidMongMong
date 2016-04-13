@@ -1,7 +1,6 @@
 package com.kosbrother.mongmongwoo;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -29,7 +28,7 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.kosbrother.mongmongwoo.api.UserApi;
+import com.kosbrother.mongmongwoo.api.WebService;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment1;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment2;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment3;
@@ -46,6 +45,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
+import rx.functions.Action1;
+
 /**
  * Created by kolichung on 3/9/16.
  */
@@ -57,7 +58,7 @@ public class ShoppingCarActivity extends AppCompatActivity {
     MenuItem menuItem;
     Order theOrder;
 
-//    LinearLayout loginLayout;
+    //    LinearLayout loginLayout;
     TextView breadCrumb1;
     TextView breadCrumb2;
     TextView breadCrumb3;
@@ -68,10 +69,7 @@ public class ShoppingCarActivity extends AppCompatActivity {
     CallbackManager callbackManager;
 
     String user_name = "";
-    String real_name ="";
     String gender = "";
-    String phone = "";
-    String address = "";
     String fb_uid = "";
 
     LinearLayout no_net_layout;
@@ -122,10 +120,19 @@ public class ShoppingCarActivity extends AppCompatActivity {
                             user_name = bFacebookData.getString("name");
                             fb_uid = bFacebookData.getString("idFacebook");
                             gender = bFacebookData.getString("gender");
-                            new PostUserTask().execute();
 
                             User theUser = new User(user_name, "", gender, "", "", fb_uid, picUrl);
                             Settings.saveUserFBData(ShoppingCarActivity.this, theUser);
+                            WebService.postUser(theUser.getPostUserJsonString(), new Action1<Boolean>() {
+                                @Override
+                                public void call(Boolean response1) {
+                                    if (response1) {
+                                        Log.i(TAG, "成功上傳");
+                                    } else {
+                                        Log.i(TAG, "上傳失敗");
+                                    }
+                                }
+                            });
                             getOrder().setUid(fb_uid);
 
                         } catch (Exception e) {
@@ -170,7 +177,7 @@ public class ShoppingCarActivity extends AppCompatActivity {
 
 
         theOrder = new Order();
-        if (Settings.getSavedStore(this)!= null){
+        if (Settings.getSavedStore(this) != null) {
             theOrder.setShippingStore(Settings.getSavedStore(this));
             theOrder.setShippingName(Settings.getShippingName(this));
             theOrder.setShippingPhone(Settings.getShippingPhone(this));
@@ -194,7 +201,7 @@ public class ShoppingCarActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
 
-                switch (position){
+                switch (position) {
                     case 0:
                         menuItem.setTitle("返回購物");
                         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -244,27 +251,27 @@ public class ShoppingCarActivity extends AppCompatActivity {
         });
     }
 
-    public void setBreadCurmbsVisibility(int view_param){
+    public void setBreadCurmbsVisibility(int view_param) {
         breadCrumbsLayout.setVisibility(view_param);
     }
 
-    public void setPagerPostition(int postition){
+    public void setPagerPostition(int postition) {
         viewPager.setCurrentItem(postition);
     }
 
-    public void setSelectedStore(Store store){
+    public void setSelectedStore(Store store) {
         theOrder.setShippingStore(store);
     }
 
-    public void performClickFbButton(){
+    public void performClickFbButton() {
         loginButton.performClick();
     }
 
-    public Order getOrder(){
+    public Order getOrder() {
         return theOrder;
     }
 
-    public void saveOrderProducts(ArrayList<Product> products){
+    public void saveOrderProducts(ArrayList<Product> products) {
         theOrder.getOrderProducts().clear();
         theOrder.setOrderProducts(products);
     }
@@ -307,7 +314,7 @@ public class ShoppingCarActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             Fragment newFragment;
-            switch (position){
+            switch (position) {
                 case 0:
                     newFragment = PurchaseFragment1.newInstance();
                     break;
@@ -348,9 +355,9 @@ public class ShoppingCarActivity extends AppCompatActivity {
 
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
-        if (NetworkUtil.getConnectivityStatus(this) == 0){
+        if (NetworkUtil.getConnectivityStatus(this) == 0) {
             no_net_layout.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             no_net_layout.setVisibility(View.GONE);
         }
     }
@@ -388,30 +395,12 @@ public class ShoppingCarActivity extends AppCompatActivity {
                 bundle.putString("gender", object.getString("gender"));
 
             return bundle;
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
 
-    private class PostUserTask extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            String result = UserApi.httpPostUser(user_name, real_name, gender, phone, address, fb_uid);
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            if( result.toString().equals("success") ){
-                Log.i(TAG,"成功上傳");
-            }else {
-                Log.i(TAG,"上傳失敗");
-            }
-        }
-    }
-
-    public void sendShoppoingFragment(int fragmentPosition){
+    public void sendShoppoingFragment(int fragmentPosition) {
         mTracker.setScreenName("Shopping Fragment " + Integer.toString(fragmentPosition));
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }

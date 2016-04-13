@@ -27,7 +27,7 @@ import com.facebook.login.widget.LoginButton;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.kosbrother.mongmongwoo.adpters.PastOrdersGridAdapter;
 import com.kosbrother.mongmongwoo.api.OrderApi;
-import com.kosbrother.mongmongwoo.api.UserApi;
+import com.kosbrother.mongmongwoo.api.WebService;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.utils.EndlessScrollListener;
@@ -39,6 +39,7 @@ import java.net.URL;
 import java.util.ArrayList;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import rx.functions.Action1;
 
 /**
  * Created by kolichung on 3/28/16.
@@ -115,10 +116,19 @@ public class PastOrderActivity extends AppCompatActivity {
                             user_name = bFacebookData.getString("name");
                             fb_uid = bFacebookData.getString("idFacebook");
                             gender = bFacebookData.getString("gender");
-                            new PostUserTask().execute();
 
                             User theUser = new User(user_name, "", gender, "", "", fb_uid, picUrl);
                             Settings.saveUserFBData(PastOrderActivity.this, theUser);
+                            WebService.postUser(theUser.getPostUserJsonString(), new Action1<Boolean>() {
+                                @Override
+                                public void call(Boolean response1) {
+                                    if (response1) {
+                                        Log.i(TAG, "成功上傳");
+                                    } else {
+                                        Log.i(TAG, "上傳失敗");
+                                    }
+                                }
+                            });
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -250,25 +260,6 @@ public class PastOrderActivity extends AppCompatActivity {
             return null;
         }
     }
-
-    private class PostUserTask extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            String result = UserApi.httpPostUser(user_name, real_name, gender, phone, address, fb_uid);
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            if (result.toString().equals("success")) {
-                Log.i(TAG, "成功上傳");
-            } else {
-                Log.i(TAG, "上傳失敗");
-            }
-        }
-    }
-
 
     private class NewsTask extends AsyncTask {
 
