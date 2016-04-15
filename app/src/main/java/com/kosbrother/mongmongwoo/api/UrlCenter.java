@@ -1,8 +1,12 @@
 package com.kosbrother.mongmongwoo.api;
 
+import com.kosbrother.mongmongwoo.BuildConfig;
+
 public class UrlCenter {
 
-    private static final String HOST = "http://api.mmwooo.com";
+    public static final String HOST_TEST = "http://106.185.25.83";
+    public static final String HOST_PRD = "http://api.mmwooo.com";
+    public static final String HOST = BuildConfig.DEBUG ? HOST_TEST : HOST_PRD;
     public static final String API_V1 = "/api/v1";
     public static final String API_V2 = "/api/v2";
 
