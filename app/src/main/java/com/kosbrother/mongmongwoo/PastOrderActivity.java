@@ -1,7 +1,6 @@
 package com.kosbrother.mongmongwoo;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -26,7 +25,6 @@ import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.kosbrother.mongmongwoo.adpters.PastOrdersGridAdapter;
-import com.kosbrother.mongmongwoo.api.OrderApi;
 import com.kosbrother.mongmongwoo.api.WebService;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.User;
@@ -68,6 +66,23 @@ public class PastOrderActivity extends AppCompatActivity {
 
     CircularImageView userImage;
     TextView userNameText;
+    private Action1<ArrayList<PastOrder>> getPastOrdersNextAction =
+            new Action1<ArrayList<PastOrder>>() {
+                @Override
+                public void call(ArrayList<PastOrder> pastOrders) {
+                    if (pastOrders != null && pastOrders.size() > 0) {
+                        PastOrderActivity.this.pastOrders.addAll(pastOrders);
+                        mPage = mPage + 1;
+                        if (pastOrdersAdapter == null) {
+                            pastOrdersAdapter =
+                                    new PastOrdersGridAdapter(PastOrderActivity.this, pastOrders);
+                            mGridView.setAdapter(pastOrdersAdapter);
+                        } else {
+                            pastOrdersAdapter.notifyDataSetChanged();
+                        }
+                    }
+                }
+            };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -182,11 +197,14 @@ public class PastOrderActivity extends AppCompatActivity {
         mGridView.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                new NewsTask().execute();
+                loadPastOrders();
             }
         });
-        new NewsTask().execute();
+        loadPastOrders();
+    }
 
+    private void loadPastOrders() {
+        WebService.getPastOrdersByFbUid(user.getFb_uid(), mPage, getPastOrdersNextAction);
     }
 
     @Override
@@ -261,29 +279,4 @@ public class PastOrderActivity extends AppCompatActivity {
         }
     }
 
-    private class NewsTask extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            ArrayList<PastOrder> feedBackPastOrders = OrderApi.getOrdersByUid(user.getFb_uid(), mPage);
-            if (feedBackPastOrders != null && feedBackPastOrders.size() > 0){
-                pastOrders.addAll(feedBackPastOrders);
-                mPage = mPage + 1;
-                return true;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            if (result != null) {
-                if (pastOrdersAdapter == null) {
-                    pastOrdersAdapter = new PastOrdersGridAdapter(PastOrderActivity.this, pastOrders);
-                    mGridView.setAdapter(pastOrdersAdapter);
-                }else {
-                    pastOrdersAdapter.notifyDataSetChanged();
-                }
-            }
-        }
-    }
 }

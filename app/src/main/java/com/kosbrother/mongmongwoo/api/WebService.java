@@ -1,6 +1,9 @@
 package com.kosbrother.mongmongwoo.api;
 
+import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.Product;
+
+import java.util.ArrayList;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -42,6 +45,20 @@ public class WebService {
                         return ProductApi.parseItem(message, product);
                     }
                 })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction);
+    }
+
+    public static void getPastOrdersByFbUid(
+            final String fbUid, final int page, Action1<ArrayList<PastOrder>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<ArrayList<PastOrder>>() {
+            @Override
+            public void call(Subscriber<? super ArrayList<PastOrder>> subscriber) {
+                subscriber.onNext(OrderApi.getPastOrdersByUid(fbUid, page));
+                subscriber.onCompleted();
+            }
+        })
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onNextAction);
