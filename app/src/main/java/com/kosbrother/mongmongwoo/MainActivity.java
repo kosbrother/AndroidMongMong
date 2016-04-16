@@ -33,7 +33,6 @@ import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
-import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
@@ -43,6 +42,7 @@ import com.github.siyamed.shapeimageview.CircularImageView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.kosbrother.mongmongwoo.api.UserApi;
+import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
 import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
 import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
@@ -59,14 +59,14 @@ public class MainActivity extends AppCompatActivity
 
     CircularImageView userImage;
     TextView userText;
-//    TextView userSettingText;
+    //    TextView userSettingText;
     String TAG = "MainActivity";
     AccessTokenTracker accessTokenTracker;
     LoginButton loginButton;
     CallbackManager callbackManager;
 
     String user_name = "";
-    String real_name ="";
+    String real_name = "";
     String gender = "";
     String phone = "";
     String address = "";
@@ -77,13 +77,14 @@ public class MainActivity extends AppCompatActivity
     Button spotLightConfirmButton;
 
     TextView titleText;
-    int category_id=10; //10所有商品
+    int category_id = 10; //10所有商品
 
     GoodsGridFragment goodsGridFragment;
     LinearLayout no_net_layout;
 
     private Tracker mTracker;
     ViewPager viewPager;
+    private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,6 +208,7 @@ public class MainActivity extends AppCompatActivity
         viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
 
+        csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
     }
 
     @Override
@@ -249,7 +251,7 @@ public class MainActivity extends AppCompatActivity
             loginButton.setVisibility(View.VISIBLE);
         }
 
-        if (menuItem != null){
+        if (menuItem != null) {
             ShoppingCarPreference pref = new ShoppingCarPreference();
             int count = pref.getShoppingCarItemSize(MainActivity.this);
             menuItem.setIcon(buildCounterDrawable(count, R.drawable.icon_shopping_car_2));
@@ -257,11 +259,11 @@ public class MainActivity extends AppCompatActivity
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
 
-        if (NetworkUtil.getConnectivityStatus(this) == 0){
+        if (NetworkUtil.getConnectivityStatus(this) == 0) {
             no_net_layout.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             no_net_layout.setVisibility(View.GONE);
-            if(goodsGridFragment != null && goodsGridFragment.getProductsSize()==0){
+            if (goodsGridFragment != null && goodsGridFragment.getProductsSize() == 0) {
                 goodsGridFragment.notifyCategoryChanged(category_id);
             }
         }
@@ -278,9 +280,9 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
-        if (menu.findItem(99)==null) {
+        if (menu.findItem(99) == null) {
             menuItem = menu.add(0, 99, 0, "購物車");
-        }else {
+        } else {
             menuItem = menu.findItem(99);
         }
         ShoppingCarPreference pref = new ShoppingCarPreference();
@@ -311,87 +313,87 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_orders) {
-            if (Settings.checkIsLogIn(this)){
-                if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
+            if (Settings.checkIsLogIn(this)) {
+                if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
                     Intent intent = new Intent(MainActivity.this, PastOrderActivity.class);
                     startActivity(intent);
-                }else {
-                    Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
                 }
-            }else {
+            } else {
                 Toast.makeText(this, "請先使用FB登入", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.nav_category1) {
             titleText.setText("所有商品");
             category_id = 10;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
+            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
                 if (goodsGridFragment != null) {
                     goodsGridFragment.notifyCategoryChanged(category_id);
-                }else {
+                } else {
                     viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
                 }
-            }else {
-                Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.nav_category2) {
             titleText.setText("新品上架");
             category_id = 11;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
+            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
                 if (goodsGridFragment != null) {
                     goodsGridFragment.notifyCategoryChanged(category_id);
-                }else {
+                } else {
                     viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
                 }
-            }else {
-                Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.nav_category3) {
             titleText.setText("文具用品");
             category_id = 12;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
+            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
                 if (goodsGridFragment != null) {
                     goodsGridFragment.notifyCategoryChanged(category_id);
-                }else {
+                } else {
                     viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
                 }
-            }else {
-                Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.nav_category4) {
             titleText.setText("日韓精選");
             category_id = 13;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
+            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
                 if (goodsGridFragment != null) {
                     goodsGridFragment.notifyCategoryChanged(category_id);
-                }else {
+                } else {
                     viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
                 }
-            }else {
-                Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.nav_category5) {
             titleText.setText("生日專區");
             category_id = 14;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
+            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
                 if (goodsGridFragment != null) {
                     goodsGridFragment.notifyCategoryChanged(category_id);
-                }else {
+                } else {
                     viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
                 }
-            }else {
-                Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.nav_category6) {
             titleText.setText("生活小物");
             category_id = 16;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this)!=0) {
+            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
                 if (goodsGridFragment != null) {
                     goodsGridFragment.notifyCategoryChanged(category_id);
-                }else {
+                } else {
                     viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
                 }
-            }else {
-                Toast.makeText(MainActivity.this,"無網路連線", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.nav_service) {
             Intent searchIntent = new Intent(MainActivity.this, ServiceActivity.class);
@@ -404,6 +406,15 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public void onCustomerServiceFabClick(View view) {
+        csBottomSheetDialogFragment.show(getSupportFragmentManager(), "");
+        mTracker.send(new HitBuilders.EventBuilder()
+                .setCategory("CUSTOMER_SERVICE")
+                .setAction("CLICK")
+                .setLabel("FAB")
+                .build());
     }
 
     public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
@@ -450,7 +461,7 @@ public class MainActivity extends AppCompatActivity
                 bundle.putString("gender", object.getString("gender"));
 
             return bundle;
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
@@ -459,16 +470,16 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected Object doInBackground(Object[] params) {
-            String result = UserApi.httpPostUser(user_name,real_name,gender,phone,address,fb_uid);
+            String result = UserApi.httpPostUser(user_name, real_name, gender, phone, address, fb_uid);
             return result;
         }
 
         @Override
         protected void onPostExecute(Object result) {
-            if( result.toString().equals("success") ){
-                Log.i(TAG,"成功上傳");
-            }else {
-                Log.i(TAG,"上傳失敗");
+            if (result.toString().equals("success")) {
+                Log.i(TAG, "成功上傳");
+            } else {
+                Log.i(TAG, "上傳失敗");
             }
         }
     }
@@ -504,13 +515,13 @@ public class MainActivity extends AppCompatActivity
         invalidateOptionsMenu();
     }
 
-    public void showShoppingCarInstruction(){
+    public void showShoppingCarInstruction() {
         spotLightShoppingCarLayout.setVisibility(View.VISIBLE);
     }
 
-    public void sendFragmentCategoryName(int category_id){
+    public void sendFragmentCategoryName(int category_id) {
         String name;
-        switch (category_id){
+        switch (category_id) {
             case 10:
                 name = "所有商品";
                 break;
