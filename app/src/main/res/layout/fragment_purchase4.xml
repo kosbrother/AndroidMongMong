@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/gray_background">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
+        android:background="@color/white"
+        android:paddingBottom="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="38dp"
+            android:text="@string/congratulation"
+            android:textColor="@color/green_text"
+            android:textSize="16sp" />
+
+        <ImageView
+            android:layout_width="210dp"
+            android:layout_height="144dp"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="85dp"
+            android:src="@mipmap/img_gift" />
+
+        <TextView
+            android:id="@+id/thank_you_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="260dp"
+            android:gravity="center_horizontal"
+            android:textSize="14sp"
+            tools:text="親愛的XX\n你可以在\n萌萌屋祝您平安順心！！" />
+
+        <Button
+            android:id="@+id/finish_btn"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_below="@id/thank_you_tv"
+            android:layout_marginEnd="20dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="24dp"
+            android:background="@color/green_text"
+            android:text="@string/finish"
+            android:textColor="@color/white" />
+    </RelativeLayout>
+</ScrollView>

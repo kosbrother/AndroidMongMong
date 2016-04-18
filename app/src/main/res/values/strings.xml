@@ -9,4 +9,7 @@
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyBRlUmsGRAhNsuHwfhdEKKy4bvoOFiJmM8</string>
 
     <string name="bottom_sheet_customer_service_title">聯繫客服人員</string>
+
+    <string name="congratulation">恭喜您！已成功完成購物！！</string>
+    <string name="finish">完成</string>
 </resources>
