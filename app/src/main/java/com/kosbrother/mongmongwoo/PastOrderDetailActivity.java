@@ -1,7 +1,6 @@
 package com.kosbrother.mongmongwoo;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,15 +13,15 @@ import android.widget.TextView;
 
 import com.kosbrother.mongmongwoo.adpters.PastOrderListAdapter;
 import com.kosbrother.mongmongwoo.api.DensityApi;
-import com.kosbrother.mongmongwoo.api.OrderApi;
+import com.kosbrother.mongmongwoo.api.WebService;
 import com.kosbrother.mongmongwoo.model.PastOrder;
+
+import rx.functions.Action1;
 
 /**
  * Created by kolichung on 3/28/16.
  */
 public class PastOrderDetailActivity extends AppCompatActivity {
-
-    PastOrder thePastOrder;
 
     RecyclerView recyclerView;
     TextView shippingPriceText;
@@ -42,7 +41,7 @@ public class PastOrderDetailActivity extends AppCompatActivity {
 
         Intent theIntent = getIntent();
         Bundle bundle = theIntent.getExtras();
-        thePastOrder = (PastOrder) bundle.getSerializable("THE_ORDER");
+        PastOrder thePastOrder = (PastOrder) bundle.getSerializable("THE_ORDER");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.icon_back_white);
@@ -67,7 +66,32 @@ public class PastOrderDetailActivity extends AppCompatActivity {
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(mLayoutManager);
 
-        new NewsTask().execute();
+        WebService.getPastOrderByOrderId(thePastOrder, new Action1<PastOrder>() {
+            @Override
+            public void call(PastOrder pastOrder) {
+                if (pastOrder == null) {
+                    return;
+                }
+                ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
+                params.height = (int) DensityApi.convertDpToPixel(
+                        50 * pastOrder.getPastOrderProducts().size(), PastOrderDetailActivity.this);
+                recyclerView.setLayoutParams(params);
+
+                PastOrderListAdapter adapter = new PastOrderListAdapter(
+                        PastOrderDetailActivity.this, pastOrder.getPastOrderProducts());
+                recyclerView.setAdapter(adapter);
+
+                shippingPriceText.setText(Integer.toString(pastOrder.getShipPrice()));
+                totalPriceText.setText(Integer.toString(pastOrder.getTotal_price()));
+                shippingNameText.setText("收件人：" + pastOrder.getShippingName());
+                shippingPhoneText.setText(pastOrder.getShippingPhone());
+                shippingStoreNameText.setText(pastOrder.getShippingStore().getName());
+
+                order_id_text.setText("訂單編號：" + Integer.toString(pastOrder.getOrder_id()));
+                order_status_text.setText(pastOrder.getStatus());
+                order_ship_way.setText("運送方式：超商取貨");
+            }
+        });
     }
 
     @Override
@@ -81,40 +105,6 @@ public class PastOrderDetailActivity extends AppCompatActivity {
             finish();
         }
         return super.onOptionsItemSelected(menuItem);
-    }
-
-    private class NewsTask extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            thePastOrder = OrderApi.getPastOrderByOrderId(thePastOrder.getOrder_id(),thePastOrder);
-            if (thePastOrder != null){
-                return true;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            if (result != null) {
-                ViewGroup.LayoutParams params= recyclerView.getLayoutParams();
-                params.height= (int) DensityApi.convertDpToPixel(50 * thePastOrder.getPastOrderProducts().size(), PastOrderDetailActivity.this);
-                recyclerView.setLayoutParams(params);
-
-                PastOrderListAdapter adapter = new PastOrderListAdapter(PastOrderDetailActivity.this,thePastOrder.getPastOrderProducts());
-                recyclerView.setAdapter(adapter);
-
-                shippingPriceText.setText(Integer.toString(thePastOrder.getShipPrice()));
-                totalPriceText.setText(Integer.toString(thePastOrder.getTotal_price()));
-                shippingNameText.setText("收件人：" + thePastOrder.getShippingName());
-                shippingPhoneText.setText(thePastOrder.getShippingPhone());
-                shippingStoreNameText.setText(thePastOrder.getShippingStore().getName());
-
-                order_id_text.setText("訂單編號："+Integer.toString(thePastOrder.getOrder_id()));
-                order_status_text.setText(thePastOrder.getStatus());
-                order_ship_way.setText("運送方式：超商取貨");
-            }
-        }
     }
 
 }

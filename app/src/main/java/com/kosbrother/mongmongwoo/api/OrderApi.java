@@ -44,17 +44,7 @@ public class OrderApi {
         }
     }
 
-    public static PastOrder getPastOrderByOrderId(int orderId, PastOrder theOrder) {
-        String message = getMessageFromServer(
-                "GET", null, null, UrlCenter.getPastOrderByOrderId(orderId));
-        if (message == null) {
-            return null;
-        } else {
-            return parseTheOrder(message, theOrder);
-        }
-    }
-
-    private static PastOrder parseTheOrder(String message, PastOrder theOder) {
+    public static PastOrder parseTheOrder(String message, PastOrder theOder) {
 
         try {
             JSONObject jsonObject = new JSONObject(message);

@@ -64,4 +64,26 @@ public class WebService {
                 .subscribe(onNextAction);
     }
 
+    public static void getPastOrderByOrderId(final PastOrder postOrder, Action1<? super PastOrder> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                subscriber.onNext(OrderApi.getMessageFromServer(
+                        "GET", null, null, UrlCenter.getPastOrderByOrderId(postOrder.getOrder_id())));
+                subscriber.onCompleted();
+            }
+        })
+                .map(new Func1<String, PastOrder>() {
+                    @Override
+                    public PastOrder call(String message) {
+                        if (message == null) {
+                            return null;
+                        }
+                        return OrderApi.parseTheOrder(message, postOrder);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction);
+    }
 }
