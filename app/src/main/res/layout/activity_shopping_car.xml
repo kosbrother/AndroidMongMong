@@ -21,62 +21,76 @@
                 android:id="@+id/bread_crumbs_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:paddingLeft="5dp"
                 android:gravity="center_vertical"
-                >
+                android:orientation="horizontal"
+                android:paddingStart="5dp"
+                android:paddingLeft="5dp">
+
                 <TextView
                     android:id="@+id/bread_crumbs_1_text"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:text="1"
-                    android:textSize="15dp"
+                    android:layout_gravity="end"
                     android:background="@drawable/circle_style"
-                    android:textColor="#FFFFFF"
                     android:gravity="center"
-                    android:layout_gravity="right"
-                    />
-                <LinearLayout
+                    android:text="1"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15dp" />
+
+                <View
                     android:layout_width="30dp"
                     android:layout_height="5dp"
-                    android:orientation="horizontal"
                     android:background="@color/light_gray"
-                    >
-                </LinearLayout>
+                    android:orientation="horizontal"/>
+
                 <TextView
                     android:id="@+id/bread_crumbs_2_text"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:text="2"
-                    android:textSize="15dp"
+                    android:layout_gravity="end"
                     android:background="@drawable/circle_non_select_style"
-                    android:textColor="#FFFFFF"
                     android:gravity="center"
-                    android:layout_gravity="right"
-                    />
-                <LinearLayout
+                    android:text="2"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15dp" />
+
+                <View
                     android:layout_width="30dp"
                     android:layout_height="5dp"
-                    android:orientation="horizontal"
                     android:background="@color/light_gray"
-                    >
-                </LinearLayout>
+                    android:orientation="horizontal"/>
+
                 <TextView
                     android:id="@+id/bread_crumbs_3_text"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
-                    android:text="3"
-                    android:textSize="15dp"
+                    android:layout_gravity="end"
                     android:background="@drawable/circle_non_select_style"
-                    android:textColor="#FFFFFF"
                     android:gravity="center"
-                    android:layout_gravity="right"
-                    />
+                    android:text="3"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15dp" />
+
+                <View
+                    android:layout_width="30dp"
+                    android:layout_height="5dp"
+                    android:background="@color/light_gray"
+                    android:orientation="horizontal" />
+
+                <TextView
+                    android:id="@+id/bread_crumbs_4_text"
+                    android:layout_width="25dp"
+                    android:layout_height="25dp"
+                    android:layout_gravity="end"
+                    android:background="@drawable/circle_non_select_style"
+                    android:gravity="center"
+                    android:text="4"
+                    android:textColor="#FFFFFF"
+                    android:textSize="15dp" />
             </LinearLayout>
 
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
-
 
     <LinearLayout
         android:id="@+id/no_net_layout"
@@ -84,22 +98,20 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone"
-        >
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/icon_problem"
-            />
+            android:src="@drawable/icon_problem" />
+
         <TextView
             android:layout_width="180dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="無網路連接,請檢查網路連線,並重啟APP~"
             android:textSize="17dp"
-            android:layout_marginTop="10dp"
-            android:textStyle="bold"
-            />
+            android:textStyle="bold" />
 
     </LinearLayout>
 
@@ -113,11 +125,8 @@
         android:id="@+id/login_button_main"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:layout_marginBottom="10dp"
-        android:visibility="gone"
-        />
-
-
+        android:layout_marginTop="10dp"
+        android:visibility="gone" />
 
 </LinearLayout>

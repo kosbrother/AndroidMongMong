@@ -33,6 +33,7 @@ import com.kosbrother.mongmongwoo.api.UserApi;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment1;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment2;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment3;
+import com.kosbrother.mongmongwoo.fragments.PurchaseFragment4;
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Store;
@@ -57,10 +58,12 @@ public class ShoppingCarActivity extends AppCompatActivity {
     MenuItem menuItem;
     Order theOrder;
 
-//    LinearLayout loginLayout;
+    //    LinearLayout loginLayout;
     TextView breadCrumb1;
     TextView breadCrumb2;
     TextView breadCrumb3;
+    private TextView breadCrumb4;
+
     LinearLayout breadCrumbsLayout;
 
     AccessTokenTracker accessTokenTracker;
@@ -68,7 +71,7 @@ public class ShoppingCarActivity extends AppCompatActivity {
     CallbackManager callbackManager;
 
     String user_name = "";
-    String real_name ="";
+    String real_name = "";
     String gender = "";
     String phone = "";
     String address = "";
@@ -95,6 +98,7 @@ public class ShoppingCarActivity extends AppCompatActivity {
         breadCrumb1 = (TextView) findViewById(R.id.bread_crumbs_1_text);
         breadCrumb2 = (TextView) findViewById(R.id.bread_crumbs_2_text);
         breadCrumb3 = (TextView) findViewById(R.id.bread_crumbs_3_text);
+        breadCrumb4 = (TextView) findViewById(R.id.bread_crumbs_4_text);
         breadCrumbsLayout = (LinearLayout) findViewById(R.id.bread_crumbs_layout);
         no_net_layout = (LinearLayout) findViewById(R.id.no_net_layout);
 
@@ -170,7 +174,7 @@ public class ShoppingCarActivity extends AppCompatActivity {
 
 
         theOrder = new Order();
-        if (Settings.getSavedStore(this)!= null){
+        if (Settings.getSavedStore(this) != null) {
             theOrder.setShippingStore(Settings.getSavedStore(this));
             theOrder.setShippingName(Settings.getShippingName(this));
             theOrder.setShippingPhone(Settings.getShippingPhone(this));
@@ -194,9 +198,9 @@ public class ShoppingCarActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
 
-                switch (position){
+                switch (position) {
                     case 0:
-                        menuItem.setTitle("返回購物");
+                        menuItem.setTitle("上一步");
                         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
@@ -207,6 +211,7 @@ public class ShoppingCarActivity extends AppCompatActivity {
                         breadCrumb1.setBackgroundResource(R.drawable.circle_style);
                         breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
+                        breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
                         break;
                     case 1:
                         menuItem.setTitle("上一步");
@@ -220,6 +225,7 @@ public class ShoppingCarActivity extends AppCompatActivity {
                         breadCrumb1.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb2.setBackgroundResource(R.drawable.circle_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
+                        breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
                         break;
                     case 2:
                         menuItem.setTitle("上一步");
@@ -233,6 +239,14 @@ public class ShoppingCarActivity extends AppCompatActivity {
                         breadCrumb1.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_style);
+                        breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
+                        break;
+                    case 3:
+                        menuItem.setVisible(false);
+                        breadCrumb1.setBackgroundResource(R.drawable.circle_non_select_style);
+                        breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
+                        breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
+                        breadCrumb4.setBackgroundResource(R.drawable.circle_style);
                         break;
                 }
             }
@@ -244,34 +258,34 @@ public class ShoppingCarActivity extends AppCompatActivity {
         });
     }
 
-    public void setBreadCurmbsVisibility(int view_param){
+    public void setBreadCurmbsVisibility(int view_param) {
         breadCrumbsLayout.setVisibility(view_param);
     }
 
-    public void setPagerPostition(int postition){
+    public void setPagerPostition(int postition) {
         viewPager.setCurrentItem(postition);
     }
 
-    public void setSelectedStore(Store store){
+    public void setSelectedStore(Store store) {
         theOrder.setShippingStore(store);
     }
 
-    public void performClickFbButton(){
+    public void performClickFbButton() {
         loginButton.performClick();
     }
 
-    public Order getOrder(){
+    public Order getOrder() {
         return theOrder;
     }
 
-    public void saveOrderProducts(ArrayList<Product> products){
+    public void saveOrderProducts(ArrayList<Product> products) {
         theOrder.getOrderProducts().clear();
         theOrder.setOrderProducts(products);
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menuItem = menu.add("返回購物");
+        menuItem = menu.add("上一步");
         menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -292,8 +306,8 @@ public class ShoppingCarActivity extends AppCompatActivity {
     }
 
     public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
-        final int PAGE_COUNT = 3;
-        private String tabTitles[] = new String[]{"確認金額", "下一步", "送出訂單"};
+        final int PAGE_COUNT = 4;
+        private String tabTitles[] = new String[]{"確認金額", "下一步", "送出訂單", "完成購物"};
 
         public SampleFragmentPagerAdapter(FragmentManager fm) {
             super(fm);
@@ -307,15 +321,21 @@ public class ShoppingCarActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             Fragment newFragment;
-            switch (position){
+            switch (position) {
                 case 0:
                     newFragment = PurchaseFragment1.newInstance();
                     break;
                 case 1:
                     newFragment = PurchaseFragment2.newInstance();
                     break;
-                default:
+                case 2:
                     newFragment = PurchaseFragment3.newInstance();
+                    break;
+                case 3:
+                    newFragment = PurchaseFragment4.newInstance(theOrder.getShippingName());
+                    break;
+                default:
+                    newFragment = PurchaseFragment1.newInstance();
                     break;
             }
             return newFragment;
@@ -348,9 +368,9 @@ public class ShoppingCarActivity extends AppCompatActivity {
 
         // Logs 'install' and 'app activate' App Events.
         AppEventsLogger.activateApp(this);
-        if (NetworkUtil.getConnectivityStatus(this) == 0){
+        if (NetworkUtil.getConnectivityStatus(this) == 0) {
             no_net_layout.setVisibility(View.VISIBLE);
-        }else {
+        } else {
             no_net_layout.setVisibility(View.GONE);
         }
     }
@@ -388,7 +408,7 @@ public class ShoppingCarActivity extends AppCompatActivity {
                 bundle.putString("gender", object.getString("gender"));
 
             return bundle;
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
         }
     }
@@ -403,15 +423,15 @@ public class ShoppingCarActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Object result) {
-            if( result.toString().equals("success") ){
-                Log.i(TAG,"成功上傳");
-            }else {
-                Log.i(TAG,"上傳失敗");
+            if (result.toString().equals("success")) {
+                Log.i(TAG, "成功上傳");
+            } else {
+                Log.i(TAG, "上傳失敗");
             }
         }
     }
 
-    public void sendShoppoingFragment(int fragmentPosition){
+    public void sendShoppoingFragment(int fragmentPosition) {
         mTracker.setScreenName("Shopping Fragment " + Integer.toString(fragmentPosition));
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
