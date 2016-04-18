@@ -1,158 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/gray_background"
-    >
+    android:orientation="vertical">
 
     <LinearLayout
         android:id="@+id/shopping_car_no_item_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
         android:gravity="center"
-        android:visibility="gone"
-        >
+        android:orientation="vertical"
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:background="@drawable/icon_shopping_car"
-            />
+            android:background="@drawable/icon_shopping_car" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="目前購物車沒有商品"
-            android:textSize="18dp"
-            android:textColor="@color/white"
-            android:layout_marginTop="10dp"
             android:layout_marginBottom="20dp"
-            />
+            android:layout_marginTop="10dp"
+            android:text="目前購物車沒有商品"
+            android:textColor="@color/white"
+            android:textSize="18dp" />
 
     </LinearLayout>
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="20dp"
-        >
+        android:paddingBottom="20dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
             android:background="@color/white"
-            >
+            android:orientation="vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:text="購物明細"
-                android:textStyle="bold"
-                android:textSize="18dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                />
+                android:textSize="18dp" />
 
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/recycler_buy_goods"
                 android:layout_width="match_parent"
-                android:layout_height="100dp"
-                />
+                android:layout_height="100dp" />
 
-            <LinearLayout
+            <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/gray_background"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                ></LinearLayout>
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@color/gray_background" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="8dp"
                 android:text="運送方式"
-                android:textStyle="bold"
-                android:textSize="18dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                />
+                android:textSize="18dp" />
 
             <Button
                 android:id="@+id/deliver_button"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="32dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/button_green_selector"
                 android:text="選擇取貨方式"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                android:background="@drawable/edittext_selector"
-                />
+                android:textColor="@color/white"
+                android:textSize="12sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:orientation="horizontal"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                >
+                android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="商品小計"
-                    android:textSize="16dp"
-                    />
+                    android:textSize="16dp" />
 
                 <TextView
                     android:id="@+id/fragment1_goodsTotalPriceText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="$599"
-                    android:textSize="18dp"
-                    />
+                    android:textSize="18dp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:orientation="horizontal"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                >
+                android:orientation="horizontal">
 
                 <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:orientation="vertical"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    >
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/ship_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="運費"
-                        android:textSize="16dp"
-                        />
+                        android:textSize="16dp" />
 
                     <TextView
                         android:id="@+id/no_ship_fee_text"
-                        android:visibility="gone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="*購物滿490免運費喔!"
-                        android:textSize="13dp"
                         android:textColor="#F06767"
-                        />
+                        android:textSize="13dp"
+                        android:visibility="gone" />
 
                 </LinearLayout>
 
@@ -161,122 +147,112 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="$0"
-                    android:textSize="18dp"
-                    />
+                    android:textSize="18dp" />
             </LinearLayout>
 
-            <LinearLayout
+            <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="@color/gray_background"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                ></LinearLayout>
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@color/gray_background" />
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:orientation="horizontal"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
                 android:gravity="center_vertical"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                >
+                android:orientation="horizontal">
+
                 <TextView
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="結帳金額"
                     android:textSize="16dp"
-                    android:textStyle="bold"
-                    />
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/fragment1_totalPriceText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="$659"
-                    android:textSize="18dp"
-                    />
+                    android:textSize="18dp" />
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:gravity="center"
                 android:layout_marginBottom="20dp"
-                >
+                android:gravity="center"
+                android:orientation="vertical">
 
                 <Button
                     android:id="@+id/fragment1_confirm_button"
                     android:layout_width="match_parent"
-                    android:layout_height="45dp"
-                    android:text="確認金額"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"
+                    android:layout_height="32dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
                     android:background="@drawable/button_green_selector"
+                    android:text="確認金額"
                     android:textColor="@color/white"
-                    />
+                    android:textSize="12sp" />
 
                 <LinearLayout
                     android:id="@+id/layout_buy_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:gravity="center"
-                    android:visibility="gone"
-                    >
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
                     <Button
                         android:id="@+id/fragment1_fb_buy_button"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
+                        android:layout_marginBottom="0dp"
                         android:layout_marginLeft="15dp"
                         android:layout_marginRight="15dp"
-                        android:layout_marginBottom="0dp"
-                        android:text="登入 FB 購買"
-                        android:textColor="@color/white"
                         android:background="@drawable/fb_button_selector"
-                        />
+                        android:text="登入 FB 購買"
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="0dp"
                         android:text="(方便直接從萌萌屋查詢過往訂單)"
                         android:textSize="14dp"
-                        android:layout_marginTop="0dp"
-                        android:textStyle="italic"
-                        />
+                        android:textStyle="italic" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="0dp"
                         android:text="or"
                         android:textSize="18dp"
-                        android:layout_marginTop="0dp"
-                        android:textStyle="bold"
-                        />
+                        android:textStyle="bold" />
 
                     <Button
                         android:id="@+id/fragment1_no_name_buy_button"
                         android:layout_width="match_parent"
                         android:layout_height="40dp"
+                        android:layout_marginBottom="0dp"
                         android:layout_marginLeft="20dp"
                         android:layout_marginRight="20dp"
-                        android:layout_marginBottom="0dp"
-                        android:textColor="@color/white"
                         android:background="@drawable/button_purchase_car_selector"
                         android:text="匿名購買"
-                        />
+                        android:textColor="@color/white" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="0dp"
                         android:text="(適合一次性購買)"
                         android:textSize="14dp"
-                        android:layout_marginTop="0dp"
-                        android:textStyle="italic"
-                        />
+                        android:textStyle="italic" />
                 </LinearLayout>
             </LinearLayout>
 
