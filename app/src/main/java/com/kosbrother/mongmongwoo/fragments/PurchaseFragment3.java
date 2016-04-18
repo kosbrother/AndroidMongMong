@@ -128,10 +128,10 @@ public class PurchaseFragment3 extends Fragment {
         protected void onPostExecute(Object result) {
             progressBar.setVisibility(View.GONE);
             if ((boolean)result == true){
-                Toast.makeText(getActivity(), "訂單成功送出", Toast.LENGTH_SHORT).show();
                 ShoppingCarPreference prefs = new ShoppingCarPreference();
-                prefs.removeAllShoppingItems(getActivity());
-                getActivity().finish();
+                ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+                prefs.removeAllShoppingItems(activity);
+                activity.setPagerPostition(3);
 
                 Settings.saveUserStoreData(getActivity(), theOrder.getShippingStore());
                 Settings.saveUserShippingNameAndPhone(getActivity(), theOrder.getShippingName(),theOrder.getShippingPhone());
