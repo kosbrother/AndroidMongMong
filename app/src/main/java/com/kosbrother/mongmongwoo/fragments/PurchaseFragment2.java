@@ -49,6 +49,7 @@ public class PurchaseFragment2 extends Fragment {
                 ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
                 if ( activity.getOrder().getShippingStore() != null){
                     if ( !shippingNameEditText.getText().toString().equals("") && !shippingPhoneEditText.getText().toString().equals("")){
+                        // TODO: 2016/4/18 wait api to send email
                         activity.getOrder().setShippingName(shippingNameEditText.getText().toString());
                         activity.getOrder().setShippingPhone(shippingPhoneEditText.getText().toString());
                         activity.setPagerPostition(2);
