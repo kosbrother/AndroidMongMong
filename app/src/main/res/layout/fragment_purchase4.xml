@@ -32,13 +32,16 @@
 
         <TextView
             android:id="@+id/thank_you_tv"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
             android:layout_marginTop="260dp"
             android:gravity="center_horizontal"
             android:textSize="14sp"
-            tools:text="親愛的XX\n你可以在\n萌萌屋祝您平安順心！！" />
+            tools:text="親愛的%s，非常感謝您在萌萌屋消費！\n此次購物明細已寄至您的信箱，
+商品抵達您指定超商時，會有簡訊通知，\n還請您稍加留意！萌萌屋全體期待您再次光臨！！" />
 
         <Button
             android:id="@+id/finish_btn"

@@ -17,12 +17,13 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
     public static final String ARG_SHIPPING_NAME = "ARG_SHIPPING_NAME";
 
     private static final String HINT_MESSAGE_LOGIN = "您可以在「我的訂單」掌握商品的最新動向。";
-    private static final String HINT_MESSAGE_NOT_LOGIN = "此次的購物明細已寄至您的信箱，煩請確認。";
+    private static final String HINT_MESSAGE_NOT_LOGIN = "此次購物明細已寄至您的信箱，";
 
     private String thankYouMessage =
             "親愛的%s，非常感謝您在萌萌屋消費！" + "\n"
                     + "%s" + "\n"
-                    + "萌萌屋祝您平安順心！！";
+                    + "商品抵達您指定超商時，會有簡訊通知，" + "\n"
+                    + "還請您多加留意！萌萌屋全體期待您再次光臨！！";
 
     public static Fragment newInstance(String shippingName) {
         PurchaseFragment4 fragment = new PurchaseFragment4();
