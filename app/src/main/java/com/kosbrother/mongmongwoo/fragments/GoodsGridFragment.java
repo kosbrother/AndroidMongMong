@@ -1,6 +1,5 @@
 package com.kosbrother.mongmongwoo.fragments;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,16 +11,18 @@ import android.widget.RelativeLayout;
 import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
-import com.kosbrother.mongmongwoo.api.ProductApi;
+import com.kosbrother.mongmongwoo.api.WebService;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.utils.EndlessScrollListener;
 
 import java.util.ArrayList;
 
+import rx.functions.Action1;
+
 /**
  * Created by kolichung on 3/1/16.
  */
-public class GoodsGridFragment  extends Fragment {
+public class GoodsGridFragment extends Fragment implements Action1<ArrayList<Product>> {
 
     private GridView mGridView;
     private GoodsGridAdapter goodsGridAdapter;
@@ -58,72 +59,63 @@ public class GoodsGridFragment  extends Fragment {
         mGridView.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                new NewsTask().execute();
+                getCategoryProducts();
             }
         });
 
-        if (goodsGridAdapter!=null){
+        if (goodsGridAdapter != null) {
             layoutProgress.setVisibility(View.GONE);
             mGridView.setAdapter(goodsGridAdapter);
-        }else {
+        } else {
             layoutProgress.setVisibility(View.VISIBLE);
-            new NewsTask().execute();
+            getCategoryProducts();
         }
         return view;
     }
 
-    private class NewsTask extends AsyncTask {
-
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            ArrayList<Product> feedBackProducts = ProductApi.getCategoryProducts(category_id, page);
-            if (feedBackProducts!=null && feedBackProducts.size()>0) {
-                products.addAll(feedBackProducts);
-                page = page + 1;
-                return true;
-            }else {
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            layoutProgress.setVisibility(View.GONE);
-            if ((boolean) result){
-                if (goodsGridAdapter == null) {
-                    MainActivity activity = (MainActivity) getActivity();
-                    goodsGridAdapter = new GoodsGridAdapter(activity, products);
-                    mGridView.setAdapter(goodsGridAdapter);
-                }else {
-                    goodsGridAdapter.notifyDataSetChanged();
-                }
-            }
-        }
-    }
-
-    public void notifyCategoryChanged(int category_id){
+    public void notifyCategoryChanged(int category_id) {
 
         this.category_id = category_id;
         products.clear();
         layoutProgress.setVisibility(View.VISIBLE);
         page = 1;
-        new NewsTask().execute();
+        getCategoryProducts();
 
         try {
             MainActivity activity = (MainActivity) getActivity();
             activity.sendFragmentCategoryName(category_id);
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
     }
 
-    public int getProductsSize(){
-        if (products!=null) {
+    public int getProductsSize() {
+        if (products != null) {
             return products.size();
-        }else {
+        } else {
             return 0;
         }
     }
 
+    private void getCategoryProducts() {
+        WebService.getCategoryProducts(category_id, page, this);
+    }
+
+    @Override
+    public void call(ArrayList<Product> newProducts) {
+        if (newProducts != null && newProducts.size() > 0) {
+            products.addAll(newProducts);
+            page = page + 1;
+            if (goodsGridAdapter == null) {
+                MainActivity activity = (MainActivity) getActivity();
+                goodsGridAdapter = new GoodsGridAdapter(activity, products);
+                mGridView.setAdapter(goodsGridAdapter);
+            } else {
+                goodsGridAdapter.notifyDataSetChanged();
+            }
+        } else {
+            // TODO: 2016/4/19 error handle
+        }
+        layoutProgress.setVisibility(View.GONE);
+    }
 }

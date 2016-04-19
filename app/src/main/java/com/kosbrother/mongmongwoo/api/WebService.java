@@ -190,4 +190,17 @@ public class WebService {
                 .subscribe(onNextAction);
     }
 
+    public static void getCategoryProducts(
+            final int category_id, final int page, Action1<? super ArrayList<Product>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<ArrayList<Product>>() {
+            @Override
+            public void call(Subscriber<? super ArrayList<Product>> subscriber) {
+                subscriber.onNext(ProductApi.getCategoryProducts(category_id, page));
+                subscriber.onCompleted();
+            }
+        })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction);
+    }
 }
