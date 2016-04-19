@@ -7,6 +7,7 @@ import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -51,6 +52,8 @@ import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
@@ -205,10 +208,19 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
+        setViewPagerAndTabLayout();
 
         csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
+    }
+
+    private void setViewPagerAndTabLayout() {
+        SampleFragmentPagerAdapter adapter = new SampleFragmentPagerAdapter(getSupportFragmentManager());
+
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(adapter);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -324,83 +336,21 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(this, "請先使用FB登入", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.nav_category1) {
-            titleText.setText("所有商品");
-            category_id = 10;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-                if (goodsGridFragment != null) {
-                    goodsGridFragment.notifyCategoryChanged(category_id);
-                } else {
-                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
-                }
-            } else {
-                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-            }
+            setPagerIfNetworkConnected(0);
         } else if (id == R.id.nav_category2) {
-            titleText.setText("新品上架");
-            category_id = 11;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-                if (goodsGridFragment != null) {
-                    goodsGridFragment.notifyCategoryChanged(category_id);
-                } else {
-                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
-                }
-            } else {
-                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-            }
+            setPagerIfNetworkConnected(1);
         } else if (id == R.id.nav_category3) {
-            titleText.setText("文具用品");
-            category_id = 12;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-                if (goodsGridFragment != null) {
-                    goodsGridFragment.notifyCategoryChanged(category_id);
-                } else {
-                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
-                }
-            } else {
-                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-            }
+            setPagerIfNetworkConnected(2);
         } else if (id == R.id.nav_category4) {
-            titleText.setText("日韓精選");
-            category_id = 13;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-                if (goodsGridFragment != null) {
-                    goodsGridFragment.notifyCategoryChanged(category_id);
-                } else {
-                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
-                }
-            } else {
-                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-            }
+            setPagerIfNetworkConnected(3);
         } else if (id == R.id.nav_category5) {
-            titleText.setText("生日專區");
-            category_id = 14;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-                if (goodsGridFragment != null) {
-                    goodsGridFragment.notifyCategoryChanged(category_id);
-                } else {
-                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
-                }
-            } else {
-                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-            }
+            setPagerIfNetworkConnected(4);
         } else if (id == R.id.nav_category6) {
-            titleText.setText("生活小物");
-            category_id = 16;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-                if (goodsGridFragment != null) {
-                    goodsGridFragment.notifyCategoryChanged(category_id);
-                } else {
-                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
-                }
-            } else {
-                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-            }
+            setPagerIfNetworkConnected(5);
         } else if (id == R.id.nav_service) {
-            Intent searchIntent = new Intent(MainActivity.this, ServiceActivity.class);
-            startActivity(searchIntent);
+            startActivity(new Intent(this, ServiceActivity.class));
         } else if (id == R.id.nav_about) {
-            Intent searchIntent = new Intent(MainActivity.this, AboutActivity.class);
-            startActivity(searchIntent);
+            startActivity(new Intent(this, AboutActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -417,23 +367,47 @@ public class MainActivity extends AppCompatActivity
                 .build());
     }
 
-    public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
+    private void setPagerIfNetworkConnected(int pagerPosition) {
+        if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
+            viewPager.setCurrentItem(pagerPosition, true);
+        } else {
+            Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
 
         public SampleFragmentPagerAdapter(FragmentManager fm) {
             super(fm);
+            addFragment(GoodsGridFragment.newInstance(10), " 所有商品 ");
+            addFragment(GoodsGridFragment.newInstance(11), " 新品上架 ");
+            addFragment(GoodsGridFragment.newInstance(12), " 文具用品 ");
+            addFragment(GoodsGridFragment.newInstance(13), " 日韓精選 ");
+            addFragment(GoodsGridFragment.newInstance(14), " 生日專區 ");
+            addFragment(GoodsGridFragment.newInstance(16), " 生活小物 ");
         }
 
         @Override
         public int getCount() {
-            return 1;
+            return mFragmentList.size();
         }
 
         @Override
         public Fragment getItem(int position) {
-            goodsGridFragment = GoodsGridFragment.newInstance(category_id);
-            return goodsGridFragment;
+            return mFragmentList.get(position);
         }
 
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
+
+        private void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
     }
 
     private Bundle getFacebookData(JSONObject object) {

@@ -23,7 +23,7 @@
         android:id="@+id/fragment_gridview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:numColumns="1"
+        android:numColumns="2"
         android:gravity="center"
         android:columnWidth="8dp"
         android:stretchMode="columnWidth"
