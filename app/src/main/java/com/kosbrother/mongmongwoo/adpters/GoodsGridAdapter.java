@@ -2,7 +2,6 @@ package com.kosbrother.mongmongwoo.adpters;
 
 import android.app.AlertDialog;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,17 +19,19 @@ import com.kosbrother.mongmongwoo.ProductActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.ShoppingCarPreference;
-import com.kosbrother.mongmongwoo.api.ProductApi;
+import com.kosbrother.mongmongwoo.api.WebService;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.ProductSpec;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 
 import java.util.ArrayList;
 
+import rx.functions.Action1;
+
 /**
  * Created by kolichung on 3/1/16.
  */
-public class GoodsGridAdapter extends BaseAdapter {
+public class GoodsGridAdapter extends BaseAdapter implements Action1<ArrayList<ProductSpec>> {
 
     private MainActivity mActivity;
     private ArrayList<Product> products;
@@ -97,11 +98,11 @@ public class GoodsGridAdapter extends BaseAdapter {
 //                mActivity.doIncrease();
                 theTaskProductId = theProduct.getId();
                 selectedProductPosition = position;
-                if (NetworkUtil.getConnectivityStatus(mActivity)!=0) {
+                if (NetworkUtil.getConnectivityStatus(mActivity) != 0) {
                     showStyleDialog();
-                    new NewsTask().execute();
-                }else {
-                    Toast.makeText(mActivity,"無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
+                    WebService.getProductSpecs(theTaskProductId, GoodsGridAdapter.this);
+                } else {
+                    Toast.makeText(mActivity, "無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -121,7 +122,7 @@ public class GoodsGridAdapter extends BaseAdapter {
     }
 
 
-    public void showStyleDialog(){
+    public void showStyleDialog() {
 
         View view = LayoutInflater.from(mActivity)
                 .inflate(R.layout.dialog_add_shopping_car_item, null, false);
@@ -137,8 +138,8 @@ public class GoodsGridAdapter extends BaseAdapter {
         minusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (tempCount != 1){
-                    tempCount = tempCount -1;
+                if (tempCount != 1) {
+                    tempCount = tempCount - 1;
                     countText.setText(Integer.toString(tempCount));
                 }
             }
@@ -173,7 +174,7 @@ public class GoodsGridAdapter extends BaseAdapter {
                 mActivity.doIncrease();
                 alertDialog.cancel();
 
-                if (Settings.checkIsFirstAddShoppingCar(mActivity)){
+                if (Settings.checkIsFirstAddShoppingCar(mActivity)) {
                     mActivity.showShoppingCarInstruction();
                     Settings.setKownShoppingCar(mActivity);
                 }
@@ -183,36 +184,23 @@ public class GoodsGridAdapter extends BaseAdapter {
 
     }
 
-    private class NewsTask extends AsyncTask {
+    @Override
+    public void call(ArrayList<ProductSpec> productSpecs) {
+        specs = productSpecs;
+        if (specs != null && specs.size() != 0) {
+            styleGridAdapter = new StyleGridAdapter(mActivity, specs, styleImage, styleName);
+            styleGrid.setAdapter(styleGridAdapter);
 
-        @Override
-        protected Object doInBackground(Object[] params) {
-            specs = ProductApi.getProductSpects(theTaskProductId);
-            if (specs!=null && specs.size() != 0){
-                return true;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            if (result != null) {
-                styleGridAdapter = new StyleGridAdapter(mActivity,specs, styleImage,styleName);
-                styleGrid.setAdapter(styleGridAdapter);
-
-                Glide.with(mActivity)
-                        .load(specs.get(0).getPic_url())
-                        .centerCrop()
-                        .placeholder(R.drawable.icon_head)
-                        .crossFade()
-                        .into(styleImage);
-                styleName.setText(specs.get(0).getStyle());
-
-            }else{
-                Toast.makeText(mActivity,"無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
-            }
+            Glide.with(mActivity)
+                    .load(specs.get(0).getPic_url())
+                    .centerCrop()
+                    .placeholder(R.drawable.icon_head)
+                    .crossFade()
+                    .into(styleImage);
+            styleName.setText(specs.get(0).getStyle());
+        } else {
+            Toast.makeText(mActivity, "無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
         }
     }
-
 
 }

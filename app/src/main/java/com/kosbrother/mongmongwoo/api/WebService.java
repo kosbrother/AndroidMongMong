@@ -3,6 +3,7 @@ package com.kosbrother.mongmongwoo.api;
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.model.ProductSpec;
 import com.kosbrother.mongmongwoo.model.Road;
 import com.kosbrother.mongmongwoo.model.Store;
 import com.kosbrother.mongmongwoo.model.Town;
@@ -202,5 +203,20 @@ public class WebService {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onNextAction);
+    }
+
+    public static void getProductSpecs(
+            final int theTaskProductId, Action1<? super ArrayList<ProductSpec>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<ArrayList<ProductSpec>>() {
+            @Override
+            public void call(Subscriber<? super ArrayList<ProductSpec>> subscriber) {
+                subscriber.onNext(ProductApi.getProductSpects(theTaskProductId));
+                subscriber.onCompleted();
+            }
+        })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction);
+
     }
 }
