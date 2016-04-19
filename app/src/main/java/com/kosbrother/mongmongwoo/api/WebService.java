@@ -1,5 +1,6 @@
 package com.kosbrother.mongmongwoo.api;
 
+import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Road;
@@ -143,7 +144,6 @@ public class WebService {
     public static void getStores(
             final int county_id, final int town_id, final int road_id,
             Action1<? super ArrayList<Store>> onNextAction) {
-
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -166,4 +166,28 @@ public class WebService {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(onNextAction);
     }
+
+    public static void postOrder(final Order theOrder, Action1<? super String> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                subscriber.onNext(OrderApi.httpPostOrder(
+                        theOrder.getUid(),
+                        theOrder.getProductPrice(),
+                        theOrder.getShipPrice(),
+                        theOrder.getTotalPrice(),
+                        theOrder.getShippingName(),
+                        theOrder.getShippingPhone(),
+                        theOrder.getShippingStore().getStore_code(),
+                        theOrder.getShippingStore().getName(),
+                        theOrder.getShippingStore().getStore_id(),
+                        theOrder.getOrderProducts()));
+                subscriber.onCompleted();
+            }
+        })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction);
+    }
+
 }
