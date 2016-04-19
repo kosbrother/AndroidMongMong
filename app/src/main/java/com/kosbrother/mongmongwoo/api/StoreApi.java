@@ -59,18 +59,7 @@ public class StoreApi {
 
     }
 
-    public static ArrayList<Town> getTowns(int countyId) {
-        ArrayList<Town> towns = new ArrayList<>();
-        String message = getMessageFromServer("GET", null, null, UrlCenter.getTowns(countyId));
-        if (message == null) {
-            return null;
-        } else {
-            parseTowns(towns, message);
-        }
-        return towns;
-    }
-
-    private static void parseTowns(ArrayList<Town> towns, String message) {
+    public static ArrayList<Town> parseTowns(ArrayList<Town> towns, String message) {
 
         try {
             JSONArray itemsArray = new JSONArray(message);
@@ -92,20 +81,10 @@ public class StoreApi {
         } catch (Exception e) {
 
         }
+        return towns;
     }
 
-    public static ArrayList<Road> getRoads(int countyId, int townId) {
-        ArrayList<Road> roads = new ArrayList<>();
-        String message = getMessageFromServer("GET", null, null, UrlCenter.getRoads(countyId, townId));
-        if (message == null) {
-            return null;
-        } else {
-            parseRoads(roads, message);
-        }
-        return roads;
-    }
-
-    private static void parseRoads(ArrayList<Road> roads, String message) {
+    public static ArrayList<Road> parseRoads(ArrayList<Road> roads, String message) {
 
         try {
             JSONArray itemsArray = new JSONArray(message);
@@ -127,21 +106,10 @@ public class StoreApi {
         } catch (Exception e) {
 
         }
-
+        return roads;
     }
 
-    public static ArrayList<Store> getStores(int county_id, int town_id, int road_id) {
-        ArrayList<Store> stores = new ArrayList<>();
-        String message = getMessageFromServer("GET", null, null, UrlCenter.getStores(county_id, town_id, road_id));
-        if (message == null) {
-            return null;
-        } else {
-            parseStore(stores, message);
-        }
-        return stores;
-    }
-
-    private static void parseStore(ArrayList<Store> stores, String message) {
+    public static ArrayList<Store> parseStore(ArrayList<Store> stores, String message) {
 
         try {
             JSONArray itemsArray = new JSONArray(message);
@@ -172,9 +140,8 @@ public class StoreApi {
         } catch (Exception e) {
 
         }
-
+        return stores;
     }
-
 
     public static String getMessageFromServer(String requestMethod, String apiPath, JSONObject json, String apiUrl) {
         URL url;
