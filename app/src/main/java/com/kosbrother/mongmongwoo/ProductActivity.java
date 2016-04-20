@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -31,11 +30,13 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.kosbrother.mongmongwoo.adpters.StyleGridAdapter;
-import com.kosbrother.mongmongwoo.api.ProductApi;
+import com.kosbrother.mongmongwoo.api.WebService;
 import com.kosbrother.mongmongwoo.fragments.ProductImageFragment;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.ProductSpec;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
+
+import rx.functions.Action1;
 
 /**
  * Created by kolichung on 3/17/16.
@@ -127,7 +128,22 @@ public class ProductActivity extends AppCompatActivity {
             }
         });
 
-        new NewsTask().execute();
+        WebService.updateProductById(theProduct, new Action1<Product>() {
+            @Override
+            public void call(Product product) {
+                loadingText.setVisibility(View.GONE);
+                if (product != null) {
+                    SampleFragmentPagerAdapter adapter = new SampleFragmentPagerAdapter(getSupportFragmentManager());
+                    viewPager.setAdapter(adapter);
+                    pageControl.setViewPager(viewPager);
+//                adapter.notifyDataSetChanged();
+//                pageControl.setViewPager(viewPager);
+                    infoText.setText(Html.fromHtml(theProduct.getDescription()));
+                } else {
+                    Toast.makeText(ProductActivity.this, "無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
     @Override
@@ -216,34 +232,6 @@ public class ProductActivity extends AppCompatActivity {
         }
 
     }
-
-    private class NewsTask extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            theProduct = ProductApi.updateProductById(theProduct.getId(), theProduct);
-            if (theProduct != null) {
-                return true;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            loadingText.setVisibility(View.GONE);
-            if (result != null) {
-                SampleFragmentPagerAdapter adapter = new SampleFragmentPagerAdapter(getSupportFragmentManager());
-                viewPager.setAdapter(adapter);
-                pageControl.setViewPager(viewPager);
-//                adapter.notifyDataSetChanged();
-//                pageControl.setViewPager(viewPager);
-                infoText.setText(Html.fromHtml(theProduct.getDescription()));
-            } else {
-                Toast.makeText(ProductActivity.this, "無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
-
 
     private GridView styleGrid;
     private ImageView styleImage;

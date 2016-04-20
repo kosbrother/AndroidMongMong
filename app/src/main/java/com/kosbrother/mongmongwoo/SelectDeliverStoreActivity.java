@@ -1,12 +1,9 @@
 package com.kosbrother.mongmongwoo;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,6 +25,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.kosbrother.mongmongwoo.adpters.StoreGridAdapter;
 import com.kosbrother.mongmongwoo.api.DensityApi;
 import com.kosbrother.mongmongwoo.api.StoreApi;
+import com.kosbrother.mongmongwoo.api.WebService;
 import com.kosbrother.mongmongwoo.model.County;
 import com.kosbrother.mongmongwoo.model.Road;
 import com.kosbrother.mongmongwoo.model.Store;
@@ -35,6 +33,8 @@ import com.kosbrother.mongmongwoo.model.Town;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 
 import java.util.ArrayList;
+
+import rx.functions.Action1;
 
 /**
  * Created by kolichung on 3/11/16.
@@ -108,7 +108,18 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
                         storeArray.clear();
                         storeGridAdapter.notifyDataSetChanged();
                     }
-                    new TownsTask().execute();
+                    myProgressBar.setVisibility(View.VISIBLE);
+                    WebService.getTowns(county_id, new Action1<ArrayList<Town>>() {
+                        @Override
+                        public void call(ArrayList<Town> towns) {
+                            townArray = towns;
+                            if (townArray != null) {
+                                ArrayAdapter<Town> townArrayAdapter = new ArrayAdapter<>(SelectDeliverStoreActivity.this, R.layout.myspinner, townArray);
+                                townArrayAdapter.setDropDownViewResource(R.layout.myspinner);
+                                townSpinners.setAdapter(townArrayAdapter);
+                            }
+                        }
+                    });
                 } else {
                     Toast.makeText(SelectDeliverStoreActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
                 }
@@ -132,7 +143,18 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
                         storeArray.clear();
                         storeGridAdapter.notifyDataSetChanged();
                     }
-                    new RoadsTask().execute();
+                    myProgressBar.setVisibility(View.VISIBLE);
+                    WebService.getRoads(county_id, town_id, new Action1<ArrayList<Road>>() {
+                        @Override
+                        public void call(ArrayList<Road> roads) {
+                            roadArray = roads;
+                            if (roadArray != null) {
+                                ArrayAdapter<Road> roadArrayAdapter = new ArrayAdapter<>(SelectDeliverStoreActivity.this, R.layout.myspinner, roadArray);
+                                roadArrayAdapter.setDropDownViewResource(R.layout.myspinner);
+                                roadSpinners.setAdapter(roadArrayAdapter);
+                            }
+                        }
+                    });
                 } else {
                     Toast.makeText(SelectDeliverStoreActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
                 }
@@ -156,7 +178,30 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
                         storeArray.clear();
                         storeGridAdapter.notifyDataSetChanged();
                     }
-                    new StoresTask().execute();
+                    myProgressBar.setVisibility(View.VISIBLE);
+                    WebService.getStores(county_id, town_id, road_id, new Action1<ArrayList<Store>>() {
+                        @Override
+                        public void call(ArrayList<Store> stores) {
+                            storeArray = stores;
+                            myProgressBar.setVisibility(View.GONE);
+                            if (storeArray != null) {
+                                storeGridAdapter = new StoreGridAdapter(SelectDeliverStoreActivity.this, storeArray);
+                                storeGridView.setAdapter(storeGridAdapter);
+
+                                ViewGroup.LayoutParams params = storeGridView.getLayoutParams();
+                                int height_size;
+                                if (storeArray.size() % 2 == 0) {
+                                    height_size = storeArray.size() / 2;
+                                } else {
+                                    height_size = storeArray.size() / 2 + 1;
+                                }
+                                params.height = (int) DensityApi.convertDpToPixel(55 * height_size, SelectDeliverStoreActivity.this);
+                                storeGridView.setLayoutParams(params);
+                            } else {
+                                Toast.makeText(SelectDeliverStoreActivity.this, "此區無寄送店面", Toast.LENGTH_SHORT).show();
+                            }
+                        }
+                    });
                 } else {
                     Toast.makeText(SelectDeliverStoreActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
                 }
@@ -206,99 +251,4 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         mMap.animateCamera(CameraUpdateFactory.zoomTo(16));
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        return super.onOptionsItemSelected(menuItem);
-    }
-
-
-    private class TownsTask extends AsyncTask {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            myProgressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            townArray = StoreApi.getTowns(county_id);
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            if (townArray != null) {
-                ArrayAdapter<Town> townArrayAdapter = new ArrayAdapter<>(SelectDeliverStoreActivity.this, R.layout.myspinner, townArray);
-                townArrayAdapter.setDropDownViewResource(R.layout.myspinner);
-                townSpinners.setAdapter(townArrayAdapter);
-            }
-        }
-    }
-
-    private class RoadsTask extends AsyncTask {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            myProgressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            roadArray = StoreApi.getRoads(county_id, town_id);
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            if (roadArray != null) {
-                ArrayAdapter<Road> roadArrayAdapter = new ArrayAdapter<>(SelectDeliverStoreActivity.this, R.layout.myspinner, roadArray);
-                roadArrayAdapter.setDropDownViewResource(R.layout.myspinner);
-                roadSpinners.setAdapter(roadArrayAdapter);
-            }
-        }
-    }
-
-    private class StoresTask extends AsyncTask {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            myProgressBar.setVisibility(View.VISIBLE);
-        }
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            storeArray = StoreApi.getStores(county_id, town_id, road_id);
-            return true;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            myProgressBar.setVisibility(View.GONE);
-            if (storeArray != null) {
-                storeGridAdapter = new StoreGridAdapter(SelectDeliverStoreActivity.this, storeArray);
-                storeGridView.setAdapter(storeGridAdapter);
-
-                ViewGroup.LayoutParams params = storeGridView.getLayoutParams();
-                int height_size;
-                if (storeArray.size() % 2 == 0) {
-                    height_size = storeArray.size() / 2;
-                } else {
-                    height_size = storeArray.size() / 2 + 1;
-                }
-                params.height = (int) DensityApi.convertDpToPixel(55 * height_size, SelectDeliverStoreActivity.this);
-                storeGridView.setLayoutParams(params);
-            } else {
-                Toast.makeText(SelectDeliverStoreActivity.this, "此區無寄送店面", Toast.LENGTH_SHORT).show();
-            }
-        }
-    }
 }

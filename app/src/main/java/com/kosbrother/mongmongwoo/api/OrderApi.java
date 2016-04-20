@@ -34,7 +34,7 @@ public class OrderApi {
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
     public static final boolean DEBUG = true;
 
-    public static ArrayList<PastOrder> getOrdersByUid(String uid, int page) {
+    public static ArrayList<PastOrder> getPastOrdersByUid(String uid, int page) {
         ArrayList<PastOrder> pastOrders = new ArrayList<>();
         String message = getMessageFromServer("GET", null, null, UrlCenter.getOrdersByUid(uid, page));
         if (message == null) {
@@ -44,17 +44,7 @@ public class OrderApi {
         }
     }
 
-    public static PastOrder getPastOrderByOrderId(int orderId, PastOrder theOrder) {
-        String message = getMessageFromServer(
-                "GET", null, null, UrlCenter.getPastOrderByOrderId(orderId));
-        if (message == null) {
-            return null;
-        } else {
-            return parseTheOrder(message, theOrder);
-        }
-    }
-
-    private static PastOrder parseTheOrder(String message, PastOrder theOder) {
+    public static PastOrder parseTheOrder(String message, PastOrder theOder) {
 
         try {
             JSONObject jsonObject = new JSONObject(message);

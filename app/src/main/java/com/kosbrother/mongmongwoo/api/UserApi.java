@@ -2,8 +2,6 @@ package com.kosbrother.mongmongwoo.api;
 
 import android.util.Log;
 
-import org.json.JSONObject;
-
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -21,31 +19,20 @@ public class UserApi {
     public static final String TAG = "USER_API";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    public static String httpPostUser(String user_name, String real_name, String gender, String phone, String address, String fb_uid) {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("user_name", user_name);
-            jsonObject.put("real_name", real_name);
-            jsonObject.put("gender", gender);
-            jsonObject.put("phone", phone);
-            jsonObject.put("address", address);
-            jsonObject.put("uid", fb_uid);
-            return post(UrlCenter.postUser(), jsonObject.toString());
-        } catch (Exception e) {
-            Log.i("HTTP error", e.toString());
-        }
-        return "error";
-    }
-
-    public static String post(String url, String json) throws IOException {
+    public static boolean postUser(String jsonString) {
         OkHttpClient client = new OkHttpClient();
-        RequestBody body = RequestBody.create(JSON, json);
+        RequestBody body = RequestBody.create(JSON, jsonString);
         Request request = new Request.Builder()
-                .url(url)
+                .url(UrlCenter.postUser())
                 .post(body)
                 .build();
-        Response response = client.newCall(request).execute();
-        Log.i(TAG, response.body().toString());
-        return response.body().string();
+        try {
+            Response response = client.newCall(request).execute();
+            Log.i(TAG, String.valueOf(response.isSuccessful()));
+            return response.isSuccessful();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

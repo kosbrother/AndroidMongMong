@@ -1,7 +1,6 @@
 package com.kosbrother.mongmongwoo;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -22,13 +21,15 @@ import com.facebook.GraphResponse;
 import com.facebook.appevents.AppEventsLogger;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.kosbrother.mongmongwoo.api.UserApi;
+import com.kosbrother.mongmongwoo.api.WebService;
 import com.kosbrother.mongmongwoo.model.User;
 
 import org.json.JSONObject;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import rx.functions.Action1;
 
 /**
  * Created by kolichung on 3/17/16.
@@ -51,10 +52,7 @@ public class SettingActivity extends AppCompatActivity {
     Button fb;
 
     String user_name = "";
-    String real_name ="";
     String gender = "";
-    String phone = "";
-    String address = "";
     String fb_uid = "";
 
     @Override
@@ -108,10 +106,19 @@ public class SettingActivity extends AppCompatActivity {
                             user_name = bFacebookData.getString("name");
                             fb_uid = bFacebookData.getString("idFacebook");
                             gender = bFacebookData.getString("gender");
-                            new PostUserTask().execute();
 
                             User theUser = new User(user_name, "", gender, "", "", fb_uid, picUrl);
                             Settings.saveUserFBData(SettingActivity.this, theUser);
+                            WebService.postUser(theUser.getPostUserJsonString(), new Action1<Boolean>() {
+                                @Override
+                                public void call(Boolean response1) {
+                                    if (response1) {
+                                        Log.i(TAG, "成功上傳");
+                                    } else {
+                                        Log.i(TAG, "上傳失敗");
+                                    }
+                                }
+                            });
 
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -231,26 +238,8 @@ public class SettingActivity extends AppCompatActivity {
                 bundle.putString("gender", object.getString("gender"));
 
             return bundle;
-        }catch (Exception e){
+        } catch (Exception e) {
             return null;
-        }
-    }
-
-    private class PostUserTask extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            String result = UserApi.httpPostUser(user_name, real_name, gender, phone, address, fb_uid);
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            if( result.toString().equals("success") ){
-                Log.i(TAG,"成功上傳");
-            }else {
-                Log.i(TAG,"上傳失敗");
-            }
         }
     }
 

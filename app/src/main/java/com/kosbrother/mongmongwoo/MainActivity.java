@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
@@ -43,6 +42,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.kosbrother.mongmongwoo.api.UserApi;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
+import com.kosbrother.mongmongwoo.api.WebService;
 import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
 import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
@@ -53,6 +53,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import rx.functions.Action1;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -68,8 +69,6 @@ public class MainActivity extends AppCompatActivity
     String user_name = "";
     String real_name = "";
     String gender = "";
-    String phone = "";
-    String address = "";
     String fb_uid = "";
 
     MenuItem menuItem;
@@ -143,10 +142,19 @@ public class MainActivity extends AppCompatActivity
                             user_name = bFacebookData.getString("name");
                             fb_uid = bFacebookData.getString("idFacebook");
                             gender = bFacebookData.getString("gender");
-                            new PostUserTask().execute();
 
                             User theUser = new User(user_name, "", gender, "", "", fb_uid, picUrl);
                             Settings.saveUserFBData(MainActivity.this, theUser);
+                            WebService.postUser(theUser.getPostUserJsonString(), new Action1<Boolean>() {
+                                @Override
+                                public void call(Boolean response1) {
+                                    if (response1) {
+                                        Log.i(TAG, "成功上傳");
+                                    } else {
+                                        Log.i(TAG, "上傳失敗");
+                                    }
+                                }
+                            });
 
                             userText.setText(user_name);
                             Glide.with(MainActivity.this)
@@ -465,25 +473,6 @@ public class MainActivity extends AppCompatActivity
             return null;
         }
     }
-
-    private class PostUserTask extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            String result = UserApi.httpPostUser(user_name, real_name, gender, phone, address, fb_uid);
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            if (result.toString().equals("success")) {
-                Log.i(TAG, "成功上傳");
-            } else {
-                Log.i(TAG, "上傳失敗");
-            }
-        }
-    }
-
 
     private Drawable buildCounterDrawable(int count, int backgroundImageId) {
         LayoutInflater inflater = LayoutInflater.from(this);

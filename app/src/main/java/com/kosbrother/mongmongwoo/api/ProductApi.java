@@ -26,15 +26,6 @@ public class ProductApi {
     public static final String TAG = "PRODUCT_API";
     public static final boolean DEBUG = true;
 
-    public static Product updateProductById(int productId, Product theProduct) {
-        String message = getMessageFromServer("GET", null, null, UrlCenter.updateProductById(productId));
-        if (message == null) {
-            return null;
-        } else {
-            return parseItem(message, theProduct);
-        }
-    }
-
     public static ArrayList<ProductSpec> getProductSpects(int productId) {
         ArrayList<ProductSpec> productSpecs = new ArrayList<>();
         String message = getMessageFromServer("GET", null, null, UrlCenter.getProductSpec(productId));
@@ -73,7 +64,7 @@ public class ProductApi {
     }
 
 
-    private static Product parseItem(String message, Product theProduct) {
+    public static Product parseItem(String message, Product theProduct) {
         try {
 
             JSONObject jsonObject = new JSONObject(message);
@@ -164,7 +155,6 @@ public class ProductApi {
 
         }
     }
-
 
     public static String getMessageFromServer(String requestMethod, String apiPath, JSONObject json, String apiUrl) {
         URL url;
