@@ -59,7 +59,7 @@ public class ProductApi {
                 } catch (Exception e) {
 
                 }
-                String pic_url = UrlCenter.HOST + specObject.getString("style_pic");
+                String pic_url = specObject.getString("style_pic");
                 specs.add(new ProductSpec(id, style, amount, pic_url));
             }
 
@@ -93,7 +93,7 @@ public class ProductApi {
 
             for (int i = 0; i < photosArray.length(); i++) {
                 JSONObject photoObject = photosArray.getJSONObject(i);
-                String imageUrl = UrlCenter.HOST + photoObject.getString("image_url");
+                String imageUrl = photoObject.getString("image_url");
                 String intro = photoObject.getString("photo_intro");
                 images.add(new ProductImage(imageUrl, "", "", intro));
             }
@@ -108,7 +108,7 @@ public class ProductApi {
                 } catch (Exception e) {
 
                 }
-                String pic_url = UrlCenter.HOST + specObject.getString("pic");
+                String pic_url = specObject.getString("pic");
                 specs.add(new ProductSpec(id, style, amount, pic_url));
             }
 
@@ -153,7 +153,7 @@ public class ProductApi {
                     id = itemObject.getInt("id");
                     name = itemObject.getString("name");
                     price = itemObject.getInt("price");
-                    pic_url = UrlCenter.HOST + itemObject.getJSONObject("cover").getString("url");
+                    pic_url = itemObject.getJSONObject("cover").getString("url");
                 } catch (Exception e) {
 
                 }
