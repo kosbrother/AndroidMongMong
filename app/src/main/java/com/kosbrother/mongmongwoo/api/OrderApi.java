@@ -30,15 +30,13 @@ import okhttp3.Response;
  */
 public class OrderApi {
 
-    public static final String  TAG   = "ORDER_API";
+    public static final String TAG = "ORDER_API";
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
-    public static final String host = "http://api.kosbrother.com";
     public static final boolean DEBUG = true;
 
-    public static ArrayList<PastOrder> getOrdersByUid(String uid, int page){
+    public static ArrayList<PastOrder> getOrdersByUid(String uid, int page) {
         ArrayList<PastOrder> pastOrders = new ArrayList<>();
-        String url = host + "/api/v2/orders/user_owned_orders/"+ uid+"?page="+Integer.toString(page);
-        String message = getMessageFromServer("GET", null, null, url);
+        String message = getMessageFromServer("GET", null, null, UrlCenter.getOrdersByUid(uid, page));
         if (message == null) {
             return null;
         } else {
@@ -46,9 +44,9 @@ public class OrderApi {
         }
     }
 
-    public static PastOrder getPastOrderByOrderId(int order_id, PastOrder theOrder){
-        String url = host + "/api/v1/orders/"+ Integer.toString(order_id);
-        String message = getMessageFromServer("GET", null, null, url);
+    public static PastOrder getPastOrderByOrderId(int orderId, PastOrder theOrder) {
+        String message = getMessageFromServer(
+                "GET", null, null, UrlCenter.getPastOrderByOrderId(orderId));
         if (message == null) {
             return null;
         } else {
@@ -69,13 +67,13 @@ public class OrderApi {
             int productPrice = 0;
             int totalPrice = 0;
 
-            String storeCode= "";
+            String storeCode = "";
             int store_id = 0;
             String storeName = "";
 
-            try{
+            try {
                 productPrice = jsonObject.getInt("items_price");
-                shipPrice =  jsonObject.getInt("ship_fee");
+                shipPrice = jsonObject.getInt("ship_fee");
                 totalPrice = jsonObject.getInt("total");
                 JSONObject infoObject = jsonObject.getJSONObject("info");
                 shippingName = infoObject.getString("ship_name");
@@ -85,14 +83,14 @@ public class OrderApi {
                 store_id = infoObject.getInt("ship_store_id");
                 storeName = infoObject.getString("ship_store_name");
 
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
-            shippingStore = new Store(store_id,storeCode,storeName,"");
+            shippingStore = new Store(store_id, storeCode, storeName, "");
 
-            try{
+            try {
                 JSONArray itemsArray = jsonObject.getJSONArray("items");
-                for (int i = 0; i < itemsArray.length(); i++){
+                for (int i = 0; i < itemsArray.length(); i++) {
                     JSONObject itemObject = itemsArray.getJSONObject(i);
 
                     String name = "";
@@ -105,13 +103,13 @@ public class OrderApi {
                         style = itemObject.getString("style");
                         quantity = itemObject.getInt("quantity");
                         price = itemObject.getInt("price");
-                    }catch (Exception e){
+                    } catch (Exception e) {
 
                     }
-                    PastOrderProduct pastOrderProduct = new PastOrderProduct(name,style,quantity,price);
+                    PastOrderProduct pastOrderProduct = new PastOrderProduct(name, style, quantity, price);
                     orderProducts.add(pastOrderProduct);
                 }
-            }catch (Exception e){
+            } catch (Exception e) {
 
             }
 
@@ -123,7 +121,7 @@ public class OrderApi {
             theOder.setShipPrice(shipPrice);
 
             return theOder;
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         return null;
@@ -134,10 +132,10 @@ public class OrderApi {
 
         try {
             JSONArray itemsArray = new JSONArray(message);
-            for (int i = 0; i < itemsArray.length(); i++){
+            for (int i = 0; i < itemsArray.length(); i++) {
                 JSONObject itemObject = itemsArray.getJSONObject(i);
 
-                int order_id =0;
+                int order_id = 0;
                 int total_price = 0;
                 String date = "";
                 String status = "";
@@ -147,22 +145,21 @@ public class OrderApi {
                     total_price = itemObject.getInt("total");
                     date = itemObject.getString("created_on");
                     status = itemObject.getString("status");
-                }catch (Exception e){
+                } catch (Exception e) {
 
                 }
-                PastOrder newProduct = new PastOrder(order_id,total_price,date,status);
+                PastOrder newProduct = new PastOrder(order_id, total_price, date, status);
                 pastOrders.add(newProduct);
             }
             return pastOrders;
-        }catch (Exception e){
+        } catch (Exception e) {
 
         }
         return null;
     }
 
-    public static String httpPostOrder(String uid, int items_price, int ship_fee, int total, String ship_name, String ship_phone, String ship_store_code, String ship_store_name, int ship_store_id, ArrayList<Product> products){
+    public static String httpPostOrder(String uid, int items_price, int ship_fee, int total, String ship_name, String ship_phone, String ship_store_code, String ship_store_name, int ship_store_id, ArrayList<Product> products) {
 
-        String url = host + "/api/v1/orders";
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("uid", uid);
@@ -173,10 +170,10 @@ public class OrderApi {
             jsonObject.put("ship_phone", ship_phone);
             jsonObject.put("ship_store_code", ship_store_code);
             jsonObject.put("ship_store_id", Integer.toString(ship_store_id));
-            jsonObject.put("ship_store_name",ship_store_name);
+            jsonObject.put("ship_store_name", ship_store_name);
 
             JSONArray productsArray = new JSONArray();
-            for (int i=0; i< products.size();i++) {
+            for (int i = 0; i < products.size(); i++) {
                 JSONObject productObject = new JSONObject();
                 productObject.put("name", products.get(i).getName());
                 productObject.put("quantity", Integer.toString(products.get(i).getBuy_count()));
@@ -184,9 +181,9 @@ public class OrderApi {
                 productObject.put("style", products.get(i).getSelectedSpec().getStyle());
                 productsArray.put(productObject);
             }
-            jsonObject.put("products",productsArray);
-            return post(url, jsonObject.toString());
-        }catch (Exception e){
+            jsonObject.put("products", productsArray);
+            return post(UrlCenter.postOrder(), jsonObject.toString());
+        } catch (Exception e) {
             Log.i("HTTP error", e.toString());
         }
         return "error";

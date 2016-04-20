@@ -12,7 +12,6 @@ import okhttp3.Response;
 public class GcmApi {
 
     public static final String TAG = "GCM_API";
-    public static final String URL = "http://api.kosbrother.com/api/v1/device_registrations";
 
     public static void postRegistrationId(String gcmId) {
         OkHttpClient client = new OkHttpClient();
@@ -21,7 +20,7 @@ public class GcmApi {
         formBody.add("registration_id", gcmId);
 
         Request request = new Request.Builder()
-                .url(URL)
+                .url(UrlCenter.postRegistrationId())
                 .post(formBody.build())
                 .build();
         try {
