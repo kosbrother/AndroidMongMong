@@ -2,7 +2,7 @@ package com.kosbrother.mongmongwoo.api;
 
 public class UrlCenter {
 
-    public static final String HOST = "http://api.kosbrother.com";
+    private static final String HOST = "http://api.mmwooo.com";
     public static final String API_V1 = "/api/v1";
     public static final String API_V2 = "/api/v2";
 
