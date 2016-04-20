@@ -24,7 +24,7 @@
         android:id="@+id/item_imageview"
         android:layout_width="match_parent"
         android:layout_height="120dp"
-        android:scaleType="centerInside" />
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:layout_width="match_parent"
