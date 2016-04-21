@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-
+    android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -20,182 +21,242 @@
 
     </android.support.design.widget.AppBarLayout>
 
-
-    <LinearLayout
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginTop="10dp"
-        >
-        <TextView
-            android:id="@+id/order_detail_num_text"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="訂單編號：讀取中..."
-            android:textSize="18dp"
-            />
-
-        <TextView
-            android:id="@+id/order_detail_status_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="已收貨"
-            android:textSize="16dp"
-            android:background="@drawable/edittext_selector"
-            android:padding="5dp"
-            />
-
-    </LinearLayout>
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="購物明細"
-            android:textSize="16dp"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="10dp"
-            android:textStyle="bold"
-            />
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/gray_background"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="10dp"
-            ></LinearLayout>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/recycler_buy_goods"
-            android:layout_width="match_parent"
-            android:layout_height="100dp"
-            />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            >
-            <TextView
-                android:id="@+id/order_detail_ship_way"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text=""
-                android:textSize="16dp"
-                />
-
-            <TextView
-                android:id="@+id/fragment3_shipping_price_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="18dp"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/gray_background"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            ></LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            >
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="總金額"
-                android:textSize="16dp"
-                />
-
-            <TextView
-                android:id="@+id/fragment3_total_price_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="18dp"
-                />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="@color/gray_background"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            ></LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:orientation="horizontal"
-            android:gravity="center_vertical"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            >
-            <TextView
-                android:id="@+id/fragment3_shipping_name_text"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="收件人"
-                android:textSize="16dp"
-                />
-
-            <TextView
-                android:id="@+id/fragment3_shipping_phone_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="18dp"
-                />
-        </LinearLayout>
-
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            >
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="送貨地址："
-                android:textSize="16dp"
-                />
+            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/fragment3_shipping_store_name_text"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="16dp"
-                />
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="16dp"
+                android:orientation="horizontal">
 
+                <TextView
+                    android:id="@+id/order_detail_num_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="訂單編號：讀取中..."
+                    android:textColor="@color/black_text"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="訂單狀態："
+                    android:textColor="@color/black_text"
+                    android:textSize="14sp" />
+
+                <TextView
+                    android:id="@+id/order_detail_status_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:clickable="false"
+                    android:gravity="center"
+                    android:textColor="@color/green_text"
+                    android:textSize="14sp"
+                    tools:text="已收貨" />
+
+            </LinearLayout>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                card_view:cardCornerRadius="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="4dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="16dp"
+                        android:text="購物明細"
+                        android:textColor="@color/black_text"
+                        android:textSize="14sp" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@color/gray_background" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/recycler_buy_goods"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:id="@+id/order_detail_ship_way"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:textColor="@color/black_text"
+                            android:textSize="14sp"
+                            tools:text="運送方式：超商取貨" />
+
+                        <TextView
+                            android:id="@+id/fragment3_shipping_price_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black_text"
+                            android:textSize="14sp"
+                            tools:text="60" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@color/gray_background" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="總金額"
+                            android:textColor="@color/black_text"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/fragment3_total_price_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black_text"
+                            android:textSize="14sp"
+                            tools:text="207" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
+
+            <android.support.v7.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                card_view:cardCornerRadius="4dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical"
+                    android:paddingBottom="4dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="16dp"
+                        android:text="商品寄送資訊"
+                        android:textColor="@color/black_text" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@color/gray_background" />
+
+                    <TextView
+                        android:id="@+id/fragment3_shipping_name_text"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:textColor="@color/black_text"
+                        android:textSize="14sp"
+                        tools:text="收件人：李張劉" />
+
+                    <TextView
+                        android:id="@+id/fragment3_shipping_phone_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:textColor="@color/black_text"
+                        android:textSize="14sp"
+                        tools:text="電話：0912345678" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="送貨地址："
+                            android:textColor="@color/black_text"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/fragment3_shipping_store_name_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black_text"
+                            android:textSize="14sp"
+                            tools:text="全家四維店" />
+
+                    </LinearLayout>
+
+                    <ViewStub
+                        android:id="@+id/note_vs"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="16dp"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout="@layout/view_stub_note" />
+                </LinearLayout>
+
+            </android.support.v7.widget.CardView>
         </LinearLayout>
-
-
-
-
+    </ScrollView>
 </LinearLayout>

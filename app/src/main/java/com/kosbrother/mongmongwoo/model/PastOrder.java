@@ -8,6 +8,13 @@ import java.util.ArrayList;
  */
 public class PastOrder implements Serializable {
 
+    ArrayList<PastOrderProduct> pastOrderProducts;
+    String shippingName;
+    String shippingPhone;
+    Store shippingStore;
+    int shipPrice;
+    int productPrice;
+    String note;
 //    "id":18,
 //    "user_id":26,
 //    "total":110,
@@ -15,11 +22,12 @@ public class PastOrder implements Serializable {
 //    "status":"order_placed",
 //    "uid":"1153503537995545"
 
-    public PastOrder(int order_id, int total_price, String date, String status) {
+    public PastOrder(int order_id, int total_price, String date, String status, String note) {
         this.order_id = order_id;
         this.total_price = total_price;
         this.date = date;
         this.status = status;
+        this.note = note;
     }
 
     public int getOrder_id() {
@@ -91,12 +99,11 @@ public class PastOrder implements Serializable {
         return productPrice;
     }
 
-    ArrayList<PastOrderProduct> pastOrderProducts;
-    String shippingName;
-    String shippingPhone;
-    Store shippingStore;
-    int shipPrice;
-    int productPrice;
+    public String getNote() {
+        return note;
+    }
 
-
+    public void setNote(String note) {
+        this.note = note;
+    }
 }
