@@ -22,12 +22,11 @@ public class PastOrder implements Serializable {
 //    "status":"order_placed",
 //    "uid":"1153503537995545"
 
-    public PastOrder(int order_id, int total_price, String date, String status, String note) {
+    public PastOrder(int order_id, int total_price, String date, String status) {
         this.order_id = order_id;
         this.total_price = total_price;
         this.date = date;
         this.status = status;
-        this.note = note;
     }
 
     public int getOrder_id() {
