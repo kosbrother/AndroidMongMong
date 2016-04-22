@@ -8,4 +8,7 @@
     <color name="gray_background">#ff3D3D3D</color>
     <color name="white">#ffFFFFFF</color>
     <color name="light_gray">#C9C9C9</color>
+
+    <color name="green_text">#00a378</color>
+    <color name="black_text">#4a4a4a</color>
 </resources>

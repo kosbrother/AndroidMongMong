@@ -96,10 +96,6 @@ public class PurchaseFragment3 extends Fragment {
             shippingStoreNameText.setText(theOrder.getShippingStore().getName());
             shippingStoreAddressText.setText(theOrder.getShippingStore().getAddress());
 
-            ViewGroup.LayoutParams params= recyclerView.getLayoutParams();
-            params.height= (int) DensityApi.convertDpToPixel(50 * theOrder.getOrderProducts().size(), getActivity());
-            recyclerView.setLayoutParams(params);
-
             ShoppingCarListBuyGoodsAdapter adapter = new ShoppingCarListBuyGoodsAdapter(getActivity(),theOrder.getOrderProducts());
             recyclerView.setAdapter(adapter);
         } else {

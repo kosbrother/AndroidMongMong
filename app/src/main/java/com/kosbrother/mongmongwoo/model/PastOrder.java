@@ -8,6 +8,13 @@ import java.util.ArrayList;
  */
 public class PastOrder implements Serializable {
 
+    ArrayList<PastOrderProduct> pastOrderProducts;
+    String shippingName;
+    String shippingPhone;
+    Store shippingStore;
+    int shipPrice;
+    int productPrice;
+    String note;
 //    "id":18,
 //    "user_id":26,
 //    "total":110,
@@ -91,12 +98,11 @@ public class PastOrder implements Serializable {
         return productPrice;
     }
 
-    ArrayList<PastOrderProduct> pastOrderProducts;
-    String shippingName;
-    String shippingPhone;
-    Store shippingStore;
-    int shipPrice;
-    int productPrice;
+    public String getNote() {
+        return note;
+    }
 
-
+    public void setNote(String note) {
+        this.note = note;
+    }
 }

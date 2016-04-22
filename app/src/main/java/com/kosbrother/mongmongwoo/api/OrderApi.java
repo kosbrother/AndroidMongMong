@@ -66,6 +66,7 @@ public class OrderApi {
             int shipPrice = 0;
             int productPrice = 0;
             int totalPrice = 0;
+            String note = "";
 
             String storeCode = "";
             int store_id = 0;
@@ -75,6 +76,8 @@ public class OrderApi {
                 productPrice = jsonObject.getInt("items_price");
                 shipPrice = jsonObject.getInt("ship_fee");
                 totalPrice = jsonObject.getInt("total");
+                note = jsonObject.getString("note");
+
                 JSONObject infoObject = jsonObject.getJSONObject("info");
                 shippingName = infoObject.getString("ship_name");
                 shippingPhone = infoObject.getString("ship_phone");
@@ -82,9 +85,8 @@ public class OrderApi {
                 storeCode = infoObject.getString("ship_store_code");
                 store_id = infoObject.getInt("ship_store_id");
                 storeName = infoObject.getString("ship_store_name");
-
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
             shippingStore = new Store(store_id, storeCode, storeName, "");
 
@@ -104,13 +106,13 @@ public class OrderApi {
                         quantity = itemObject.getInt("quantity");
                         price = itemObject.getInt("price");
                     } catch (Exception e) {
-
+                        e.printStackTrace();
                     }
                     PastOrderProduct pastOrderProduct = new PastOrderProduct(name, style, quantity, price);
                     orderProducts.add(pastOrderProduct);
                 }
             } catch (Exception e) {
-
+                e.printStackTrace();
             }
 
             theOder.setShippingName(shippingName);
@@ -119,10 +121,10 @@ public class OrderApi {
             theOder.setShippingPhone(shippingPhone);
             theOder.setShippingStore(shippingStore);
             theOder.setShipPrice(shipPrice);
-
+            theOder.setNote(note);
             return theOder;
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return null;
 
@@ -139,21 +141,20 @@ public class OrderApi {
                 int total_price = 0;
                 String date = "";
                 String status = "";
-
                 try {
                     order_id = itemObject.getInt("id");
                     total_price = itemObject.getInt("total");
                     date = itemObject.getString("created_on");
                     status = itemObject.getString("status");
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
                 PastOrder newProduct = new PastOrder(order_id, total_price, date, status);
                 pastOrders.add(newProduct);
             }
             return pastOrders;
         } catch (Exception e) {
-
+            e.printStackTrace();
         }
         return null;
     }
