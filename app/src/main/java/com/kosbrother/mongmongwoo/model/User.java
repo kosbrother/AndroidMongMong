@@ -1,5 +1,8 @@
 package com.kosbrother.mongmongwoo.model;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by kolichung on 3/9/16.
  */
@@ -12,8 +15,9 @@ public class User {
     String address;
     String fb_uid;
     String fb_pic;
+    private final String email;
 
-    public User(String user_name, String real_name, String gender, String phone, String address, String fb_uid, String fb_pic) {
+    public User(String user_name, String real_name, String gender, String phone, String address, String fb_uid, String fb_pic, String email) {
         this.user_name = user_name;
         this.real_name = real_name;
         this.gender = gender;
@@ -21,6 +25,7 @@ public class User {
         this.address = address;
         this.fb_uid = fb_uid;
         this.fb_pic = fb_pic;
+        this.email = email;
     }
 
     public String getUser_name() {
@@ -49,5 +54,25 @@ public class User {
 
     public String getFb_pic() {
         return fb_pic;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getJsonString() {
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("user_name", user_name);
+            jsonObject.put("real_name", real_name);
+            jsonObject.put("gender", gender);
+            jsonObject.put("phone", phone);
+            jsonObject.put("address", address);
+            jsonObject.put("uid", fb_uid);
+            jsonObject.put("email", email);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return jsonObject.toString();
     }
 }

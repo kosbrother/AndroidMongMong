@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
 import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.Tracker;
 import com.kosbrother.mongmongwoo.gcm.GcmPreferences;
@@ -21,6 +22,7 @@ public class AnalyticsApplication extends Application {
     public void onCreate() {
         super.onCreate();
         FacebookSdk.sdkInitialize(this);
+        AppEventsLogger.activateApp(this);
         initGoogleAnalyticsTracker();
         startGetGcmToken();
     }

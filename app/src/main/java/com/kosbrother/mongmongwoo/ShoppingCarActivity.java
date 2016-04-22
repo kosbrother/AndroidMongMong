@@ -1,15 +1,11 @@
 package com.kosbrother.mongmongwoo;
 
-import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -17,19 +13,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.appevents.AppEventsLogger;
-import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.kosbrother.mongmongwoo.api.UserApi;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment1;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment2;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment3;
@@ -37,20 +23,15 @@ import com.kosbrother.mongmongwoo.fragments.PurchaseFragment4;
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Store;
-import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.NonSwipeableViewPager;
 
-import org.json.JSONObject;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 /**
  * Created by kolichung on 3/9/16.
  */
-public class ShoppingCarActivity extends AppCompatActivity {
+public class ShoppingCarActivity extends FbLoginActivity {
 
     String TAG = "ShoppingCarActivity";
 
@@ -66,16 +47,7 @@ public class ShoppingCarActivity extends AppCompatActivity {
 
     LinearLayout breadCrumbsLayout;
 
-    AccessTokenTracker accessTokenTracker;
     LoginButton loginButton;
-    CallbackManager callbackManager;
-
-    String user_name = "";
-    String real_name = "";
-    String gender = "";
-    String phone = "";
-    String address = "";
-    String fb_uid = "";
 
     LinearLayout no_net_layout;
     Tracker mTracker;
@@ -102,76 +74,8 @@ public class ShoppingCarActivity extends AppCompatActivity {
         breadCrumbsLayout = (LinearLayout) findViewById(R.id.bread_crumbs_layout);
         no_net_layout = (LinearLayout) findViewById(R.id.no_net_layout);
 
-        callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.login_button_main);
-        //        loginButton.setReadPermissions("email");
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                // App code
-                Log.i("Facebook", "success login" + " id: " + loginResult.getAccessToken().getUserId());
-                viewPager.setCurrentItem(1);
-
-                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-
-                    @Override
-                    public void onCompleted(JSONObject object, GraphResponse response) {
-                        Log.i("LoginActivity", response.toString());
-                        // Get facebook data from login
-
-                        Bundle bFacebookData = getFacebookData(object);
-                        try {
-                            String picUrl = bFacebookData.getString("profile_pic");
-
-                            user_name = bFacebookData.getString("name");
-                            fb_uid = bFacebookData.getString("idFacebook");
-                            gender = bFacebookData.getString("gender");
-                            new PostUserTask().execute();
-
-                            User theUser = new User(user_name, "", gender, "", "", fb_uid, picUrl);
-                            Settings.saveUserFBData(ShoppingCarActivity.this, theUser);
-                            getOrder().setUid(fb_uid);
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                });
-
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id, name,gender");
-                request.setParameters(parameters);
-                request.executeAsync();
-
-            }
-
-            @Override
-            public void onCancel() {
-                // App code
-                Log.i("Facebook", "cancel login");
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                // App code
-                Log.i("Facebook", "error login");
-            }
-        });
-
-        accessTokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
-                Log.d(TAG, "onCurrentAccessTokenChanged()");
-                if (oldAccessToken == null) {
-                    Log.i(TAG, "Facebook login");
-                } else if (newAccessToken == null) {
-                    Log.i(TAG, "Facebook logout");
-                    Settings.clearAllUserData(ShoppingCarActivity.this);
-                }
-            }
-        };
-
+        setLoginButton(loginButton);
 
         theOrder = new Order();
         if (Settings.getSavedStore(this) != null) {
@@ -297,14 +201,6 @@ public class ShoppingCarActivity extends AppCompatActivity {
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-//        if (menuItem.getItemId() == android.R.id.home) {
-//            finish();
-//        }
-        return super.onOptionsItemSelected(menuItem);
-    }
-
     public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
         final int PAGE_COUNT = 4;
         private String tabTitles[] = new String[]{"確認金額", "下一步", "送出訂單", "完成購物"};
@@ -348,86 +244,24 @@ public class ShoppingCarActivity extends AppCompatActivity {
         }
     }
 
-
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        accessTokenTracker.stopTracking();
+    protected void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
+        viewPager.setCurrentItem(1);
+        getOrder().setUid(fb_uid);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-        Log.i("MainActivity", "activity result");
+    protected void onFbLogout() {
+
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        // Logs 'install' and 'app activate' App Events.
-        AppEventsLogger.activateApp(this);
         if (NetworkUtil.getConnectivityStatus(this) == 0) {
             no_net_layout.setVisibility(View.VISIBLE);
         } else {
             no_net_layout.setVisibility(View.GONE);
-        }
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // Logs 'app deactivate' App Event.
-        AppEventsLogger.deactivateApp(this);
-    }
-
-    private Bundle getFacebookData(JSONObject object) {
-
-        try {
-            Bundle bundle = new Bundle();
-            String id = object.getString("id");
-
-            try {
-                URL profile_pic = new URL("https://graph.facebook.com/" + id + "/picture?width=200&height=200");
-                Log.i("profile_pic", profile_pic + "");
-                bundle.putString("profile_pic", profile_pic.toString());
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-            bundle.putString("idFacebook", id);
-            if (object.has("name"))
-                bundle.putString("name", object.getString("name"));
-//            if (object.has("email"))
-//                bundle.putString("email", object.getString("email"));
-            if (object.has("gender"))
-                bundle.putString("gender", object.getString("gender"));
-
-            return bundle;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private class PostUserTask extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            String result = UserApi.httpPostUser(user_name, real_name, gender, phone, address, fb_uid);
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            if (result.toString().equals("success")) {
-                Log.i(TAG, "成功上傳");
-            } else {
-                Log.i(TAG, "上傳失敗");
-            }
         }
     }
 

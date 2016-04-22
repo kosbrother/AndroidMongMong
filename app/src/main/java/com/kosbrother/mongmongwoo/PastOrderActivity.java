@@ -1,12 +1,8 @@
 package com.kosbrother.mongmongwoo;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -14,28 +10,14 @@ import android.widget.GridView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.appevents.AppEventsLogger;
-import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.kosbrother.mongmongwoo.adpters.PastOrdersGridAdapter;
 import com.kosbrother.mongmongwoo.api.OrderApi;
-import com.kosbrother.mongmongwoo.api.UserApi;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.utils.EndlessScrollListener;
 
-import org.json.JSONObject;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
@@ -43,22 +25,13 @@ import jp.wasabeef.glide.transformations.CropCircleTransformation;
 /**
  * Created by kolichung on 3/28/16.
  */
-public class PastOrderActivity extends AppCompatActivity {
+public class PastOrderActivity extends FbLoginActivity {
 
     User user;
 
     String TAG = "PastOrderActivity";
-    AccessTokenTracker accessTokenTracker;
     LoginButton loginButton;
-    CallbackManager callbackManager;
     Button fb;
-
-    String user_name = "";
-    String real_name = "";
-    String gender = "";
-    String phone = "";
-    String address = "";
-    String fb_uid = "";
 
     GridView mGridView;
     ArrayList<PastOrder> pastOrders = new ArrayList<>();
@@ -92,74 +65,8 @@ public class PastOrderActivity extends AppCompatActivity {
         userNameText.setText(user.getUser_name());
 
         fb = (Button) findViewById(R.id.fb);
-        callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) findViewById(R.id.login_button);
-        //        loginButton.setReadPermissions("email");
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                // App code
-                Log.i("Facebook", "success login" + " id: " + loginResult.getAccessToken().getUserId());
-
-                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-
-                    @Override
-                    public void onCompleted(JSONObject object, GraphResponse response) {
-                        Log.i("LoginActivity", response.toString());
-                        // Get facebook data from login
-
-                        Bundle bFacebookData = getFacebookData(object);
-                        try {
-                            String picUrl = bFacebookData.getString("profile_pic");
-
-                            user_name = bFacebookData.getString("name");
-                            fb_uid = bFacebookData.getString("idFacebook");
-                            gender = bFacebookData.getString("gender");
-                            new PostUserTask().execute();
-
-                            User theUser = new User(user_name, "", gender, "", "", fb_uid, picUrl);
-                            Settings.saveUserFBData(PastOrderActivity.this, theUser);
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-
-                    }
-                });
-
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id, name,gender");
-                request.setParameters(parameters);
-                request.executeAsync();
-
-            }
-
-            @Override
-            public void onCancel() {
-                // App code
-                Log.i("Facebook", "cancel login");
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                // App code
-                Log.i("Facebook", "error login");
-            }
-        });
-
-        accessTokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
-                Log.d(TAG, "onCurrentAccessTokenChanged()");
-                if (oldAccessToken == null) {
-                    Log.i(TAG, "Facebook login");
-                } else if (newAccessToken == null) {
-                    Log.i(TAG, "Facebook logout");
-                    Settings.clearAllUserData(PastOrderActivity.this);
-                    finish();
-                }
-            }
-        };
+        setLoginButton(loginButton);
 
         fb.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -180,11 +87,6 @@ public class PastOrderActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         if (menuItem.getItemId() == android.R.id.home) {
             finish();
@@ -193,89 +95,21 @@ public class PastOrderActivity extends AppCompatActivity {
     }
 
     @Override
-    public void onDestroy() {
-        super.onDestroy();
-        accessTokenTracker.stopTracking();
+    protected void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
+
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-        Log.i("MainActivity", "activity result");
+    protected void onFbLogout() {
+        finish();
     }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // Logs 'install' and 'app activate' App Events.
-        AppEventsLogger.activateApp(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        // Logs 'app deactivate' App Event.
-        AppEventsLogger.deactivateApp(this);
-    }
-
-    private Bundle getFacebookData(JSONObject object) {
-
-        try {
-            Bundle bundle = new Bundle();
-            String id = object.getString("id");
-
-            try {
-                URL profile_pic = new URL("https://graph.facebook.com/" + id + "/picture?width=200&height=200");
-                Log.i("profile_pic", profile_pic + "");
-                bundle.putString("profile_pic", profile_pic.toString());
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-            bundle.putString("idFacebook", id);
-            if (object.has("name"))
-                bundle.putString("name", object.getString("name"));
-//            if (object.has("email"))
-//                bundle.putString("email", object.getString("email"));
-            if (object.has("gender"))
-                bundle.putString("gender", object.getString("gender"));
-
-            return bundle;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private class PostUserTask extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            String result = UserApi.httpPostUser(user_name, real_name, gender, phone, address, fb_uid);
-            return result;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            if (result.toString().equals("success")) {
-                Log.i(TAG, "成功上傳");
-            } else {
-                Log.i(TAG, "上傳失敗");
-            }
-        }
-    }
-
 
     private class NewsTask extends AsyncTask {
 
         @Override
         protected Object doInBackground(Object[] params) {
             ArrayList<PastOrder> feedBackPastOrders = OrderApi.getOrdersByUid(user.getFb_uid(), mPage);
-            if (feedBackPastOrders != null && feedBackPastOrders.size() > 0){
+            if (feedBackPastOrders != null && feedBackPastOrders.size() > 0) {
                 pastOrders.addAll(feedBackPastOrders);
                 mPage = mPage + 1;
                 return true;
@@ -289,7 +123,7 @@ public class PastOrderActivity extends AppCompatActivity {
                 if (pastOrdersAdapter == null) {
                     pastOrdersAdapter = new PastOrdersGridAdapter(PastOrderActivity.this, pastOrders);
                     mGridView.setAdapter(pastOrdersAdapter);
-                }else {
+                } else {
                     pastOrdersAdapter.notifyDataSetChanged();
                 }
             }
