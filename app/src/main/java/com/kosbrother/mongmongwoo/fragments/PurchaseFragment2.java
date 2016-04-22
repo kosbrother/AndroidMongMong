@@ -14,6 +14,7 @@ import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.SelectDeliverStoreActivity;
+import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.model.Store;
 
@@ -26,6 +27,7 @@ public class PurchaseFragment2 extends Fragment {
     Button selectStoreButton;
     EditText shippingNameEditText;
     EditText shippingPhoneEditText;
+    EditText shippingEmailEditText;
 
     public static PurchaseFragment2 newInstance() {
         PurchaseFragment2 fragment = new PurchaseFragment2();
@@ -42,30 +44,34 @@ public class PurchaseFragment2 extends Fragment {
         shippingNameEditText = (EditText) view.findViewById(R.id.shipping_name_edit_text);
         shippingPhoneEditText = (EditText) view.findViewById(R.id.shipping_phone_edit_text);
 
+        view.findViewById(R.id.email_ll).setVisibility(isLogin() ? View.GONE : View.VISIBLE);
+        shippingEmailEditText = (EditText) view.findViewById(R.id.shipping_email_edit_text);
+
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // save to activity order store and shipping name, phone
                 ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-                if ( activity.getOrder().getShippingStore() != null){
-                    if ( !shippingNameEditText.getText().toString().equals("") && !shippingPhoneEditText.getText().toString().equals("")){
-                        // TODO: 2016/4/18 wait api to send email
-                        activity.getOrder().setShippingName(shippingNameEditText.getText().toString());
-                        activity.getOrder().setShippingPhone(shippingPhoneEditText.getText().toString());
-                        activity.setPagerPostition(2);
-
-                        View view = getActivity().getCurrentFocus();
-                        if (view != null) {
-                            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                        }
-
-                    }else {
-                        Toast.makeText(getActivity(),"收件人名稱跟電話接不可空白", Toast.LENGTH_SHORT).show();                    }
-                }else {
-                    Toast.makeText(getActivity(),"請選擇寄件的商店", Toast.LENGTH_SHORT).show();
+                if (activity.getOrder().getShippingStore() == null) {
+                    Toast.makeText(getActivity(), "請選擇寄件的商店", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+                if (isLogin() && nameOrPhoneEmpty()) {
+                    Toast.makeText(getActivity(), "收件人名稱跟電話不可空白", Toast.LENGTH_SHORT).show();
+                } else if (!isLogin() && nameOrPhoneOrEmailEmpty()) {
+                    Toast.makeText(getActivity(), "收件人名稱、電話跟Email不可空白", Toast.LENGTH_SHORT).show();
+                } else {
+                    activity.getOrder().setShippingName(shippingNameEditText.getText().toString());
+                    activity.getOrder().setShippingPhone(shippingPhoneEditText.getText().toString());
+                    activity.getOrder().setShippingEmail(shippingEmailEditText.getText().toString());
+                    activity.setPagerPostition(2);
 
+                    View view = activity.getCurrentFocus();
+                    if (view != null) {
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                    }
+                }
             }
         });
         selectStoreButton.setOnClickListener(new View.OnClickListener() {
@@ -78,7 +84,7 @@ public class PurchaseFragment2 extends Fragment {
 
         ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
         activity.sendShoppoingFragment(2);
-        if ( activity.getOrder().getShippingStore() != null) {
+        if (activity.getOrder().getShippingStore() != null) {
             selectStoreButton.setText(activity.getOrder().getShippingStore().getName());
             shippingNameEditText.setText(activity.getOrder().getShippingName());
             shippingPhoneEditText.setText(activity.getOrder().getShippingPhone());
@@ -90,13 +96,25 @@ public class PurchaseFragment2 extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == getActivity().RESULT_OK){
+        if (resultCode == getActivity().RESULT_OK) {
             Bundle bundle = data.getExtras();
             Store theStore = (Store) bundle.getSerializable("Selected_Store");
-            ShoppingCarActivity mActivity = (ShoppingCarActivity)getActivity();
+            ShoppingCarActivity mActivity = (ShoppingCarActivity) getActivity();
             mActivity.setSelectedStore(theStore);
             selectStoreButton.setText(theStore.getName());
         }
+    }
 
+    private boolean isLogin() {
+        return Settings.checkIsLogIn(getContext());
+    }
+
+    private boolean nameOrPhoneEmpty() {
+        return shippingNameEditText.getText().toString().isEmpty()
+                || shippingPhoneEditText.getText().toString().isEmpty();
+    }
+
+    private boolean nameOrPhoneOrEmailEmpty() {
+        return nameOrPhoneEmpty() || shippingEmailEditText.getText().toString().isEmpty();
     }
 }

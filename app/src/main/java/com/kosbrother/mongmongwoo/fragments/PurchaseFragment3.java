@@ -116,12 +116,16 @@ public class PurchaseFragment3 extends Fragment {
 
         @Override
         protected Object doInBackground(Object[] params) {
-            String message = OrderApi.httpPostOrder(theOrder.getUid(),theOrder.getProductPrice(), theOrder.getShipPrice(), theOrder.getTotalPrice(), theOrder.getShippingName(), theOrder.getShippingPhone(), theOrder.getShippingStore().getStore_code(), theOrder.getShippingStore().getName(), theOrder.getShippingStore().getStore_id(), theOrder.getOrderProducts());
-            if (message.indexOf("Error")!=-1){
-                return false;
-            }else {
-                return true;
-            }
+            String message = OrderApi.httpPostOrder(
+                    theOrder.getUid(),theOrder.getProductPrice(),
+                    theOrder.getShipPrice(), theOrder.getTotalPrice(),
+                    theOrder.getShippingName(), theOrder.getShippingPhone(),
+                    theOrder.getShippingStore().getStore_code(),
+                    theOrder.getShippingStore().getName(),
+                    theOrder.getShippingStore().getStore_id(),
+                    theOrder.getOrderProducts(),
+                    theOrder.getShippingEmail());
+            return !message.contains("Error");
         }
 
         @Override
