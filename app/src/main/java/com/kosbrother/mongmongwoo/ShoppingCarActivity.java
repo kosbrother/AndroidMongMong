@@ -204,6 +204,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
     }
 
     public void startPurchaseFragment4() {
+        ((PurchaseFragment4) getViewPagerAdapter().getItem(3)).setThankYouMessage();
         viewPager.setCurrentItem(3, true);
     }
 
@@ -257,7 +258,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
             mFragmentList.add(PurchaseFragment1.newInstance());
             mFragmentList.add(PurchaseFragment2.newInstance());
             mFragmentList.add(PurchaseFragment3.newInstance());
-            mFragmentList.add(PurchaseFragment4.newInstance(theOrder.getShippingName()));
+            mFragmentList.add(PurchaseFragment4.newInstance());
         }
 
         @Override

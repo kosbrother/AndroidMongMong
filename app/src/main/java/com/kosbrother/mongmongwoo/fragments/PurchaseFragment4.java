@@ -14,8 +14,6 @@ import com.kosbrother.mongmongwoo.ShoppingCarActivity;
 
 public class PurchaseFragment4 extends Fragment implements View.OnClickListener {
 
-    public static final String ARG_SHIPPING_NAME = "ARG_SHIPPING_NAME";
-
     private static final String HINT_MESSAGE_LOGIN = "您可以在「我的訂單」掌握商品的最新動向。";
     private static final String HINT_MESSAGE_NOT_LOGIN = "此次購物明細已寄至您的信箱，";
 
@@ -25,28 +23,13 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
                     + "商品抵達您指定超商時，會有簡訊通知，" + "\n"
                     + "還請您多加留意！萌萌屋全體期待您再次光臨！！";
 
-    public static Fragment newInstance(String shippingName) {
-        PurchaseFragment4 fragment = new PurchaseFragment4();
-
-        Bundle args = new Bundle();
-        args.putString(ARG_SHIPPING_NAME, shippingName);
-        fragment.setArguments(args);
-
-        return fragment;
+    public static Fragment newInstance() {
+        return new PurchaseFragment4();
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (Settings.checkIsLogIn(getContext())) {
-            thankYouMessage = String.format(thankYouMessage,
-                    getArguments().getString(ARG_SHIPPING_NAME),
-                    HINT_MESSAGE_LOGIN);
-        } else {
-            thankYouMessage = String.format(thankYouMessage,
-                    getArguments().getString(ARG_SHIPPING_NAME),
-                    HINT_MESSAGE_NOT_LOGIN);
-        }
         // TODO: 2016/4/18 send event by click is better
         ((ShoppingCarActivity) getActivity()).sendShoppoingFragment(4);
     }
@@ -59,8 +42,6 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        TextView thankYouTextView = (TextView) view.findViewById(R.id.thank_you_tv);
-        thankYouTextView.setText(thankYouMessage);
         view.findViewById(R.id.finish_btn).setOnClickListener(this);
     }
 
@@ -68,4 +49,20 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
     public void onClick(View v) {
         getActivity().finish();
     }
+
+    public void setThankYouMessage() {
+        if (Settings.checkIsLogIn(getContext())) {
+            thankYouMessage = String.format(thankYouMessage,
+                    Settings.getShippingName(getContext()),
+                    HINT_MESSAGE_LOGIN);
+        } else {
+            thankYouMessage = String.format(thankYouMessage,
+                    Settings.getShippingName(getContext()),
+                    HINT_MESSAGE_NOT_LOGIN);
+        }
+        assert getView() != null;
+        TextView thankYouTextView = (TextView) getView().findViewById(R.id.thank_you_tv);
+        thankYouTextView.setText(thankYouMessage);
+    }
+
 }
