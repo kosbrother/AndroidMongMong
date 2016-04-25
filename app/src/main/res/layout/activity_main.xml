@@ -13,10 +13,56 @@
         android:fitsSystemWindows="true"
         tools:openDrawer="start">
 
-        <include
-            layout="@layout/app_bar_main"
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+            <include
+                android:id="@+id/app_bar_main_include"
+                layout="@layout/app_bar_main"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <RelativeLayout
+                android:id="@+id/spotlight_shopping_car_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="#e08F8F8F"
+                android:paddingTop="56dp">
+
+                <ImageView
+                    android:id="@+id/arrow_image"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginTop="5dp"
+                    android:src="@drawable/icon_arrow" />
+
+                <TextView
+                    android:id="@+id/info_text"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/arrow_image"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="5dp"
+                    android:text="商品加入購物車後,可在此查看與結帳"
+                    android:textColor="@color/white"
+                    android:textSize="16dp" />
+
+                <Button
+                    android:id="@+id/confirm_button"
+                    android:layout_width="80dp"
+                    android:layout_height="35dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@id/info_text"
+                    android:layout_marginRight="5dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/button_blue_selector"
+                    android:text="確定"
+                    android:textColor="@color/white" />
+            </RelativeLayout>
+        </RelativeLayout>
 
         <android.support.design.widget.NavigationView
             android:id="@+id/nav_view"
