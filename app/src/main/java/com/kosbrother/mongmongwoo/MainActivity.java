@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -14,9 +14,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -28,49 +26,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.facebook.AccessToken;
-import com.facebook.AccessTokenTracker;
-import com.facebook.CallbackManager;
-import com.facebook.FacebookCallback;
-import com.facebook.FacebookException;
-import com.facebook.GraphRequest;
-import com.facebook.GraphResponse;
-import com.facebook.appevents.AppEventsLogger;
-import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-import com.kosbrother.mongmongwoo.api.UserApi;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
 import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
 import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 
-import org.json.JSONObject;
-
-import java.net.MalformedURLException;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends FbLoginActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     CircularImageView userImage;
     TextView userText;
     //    TextView userSettingText;
     String TAG = "MainActivity";
-    AccessTokenTracker accessTokenTracker;
     LoginButton loginButton;
-    CallbackManager callbackManager;
-
-    String user_name = "";
-    String real_name = "";
-    String gender = "";
-    String phone = "";
-    String address = "";
-    String fb_uid = "";
 
     MenuItem menuItem;
     RelativeLayout spotLightShoppingCarLayout;
@@ -118,86 +95,8 @@ public class MainActivity extends AppCompatActivity
         userImage = (CircularImageView) header.findViewById(R.id.user_imageview);
         userText = (TextView) header.findViewById(R.id.user_name_text);
 
-        // Callback registration
-        callbackManager = CallbackManager.Factory.create();
         loginButton = (LoginButton) header.findViewById(R.id.login_button_main);
-        //        loginButton.setReadPermissions("email");
-        loginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
-            @Override
-            public void onSuccess(LoginResult loginResult) {
-                // App code
-                Log.i("Facebook", "success login" + " id: " + loginResult.getAccessToken().getUserId());
-
-                GraphRequest request = GraphRequest.newMeRequest(loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
-
-                    @Override
-                    public void onCompleted(JSONObject object, GraphResponse response) {
-                        Log.i("LoginActivity", response.toString());
-                        // Get facebook data from login
-                        loginButton.setVisibility(View.GONE);
-
-                        Bundle bFacebookData = getFacebookData(object);
-                        try {
-                            String picUrl = bFacebookData.getString("profile_pic");
-
-                            user_name = bFacebookData.getString("name");
-                            fb_uid = bFacebookData.getString("idFacebook");
-                            gender = bFacebookData.getString("gender");
-                            new PostUserTask().execute();
-
-                            User theUser = new User(user_name, "", gender, "", "", fb_uid, picUrl);
-                            Settings.saveUserFBData(MainActivity.this, theUser);
-
-                            userText.setText(user_name);
-                            Glide.with(MainActivity.this)
-                                    .load(picUrl)
-                                    .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                                    .placeholder(R.drawable.icon_head)
-                                    .crossFade()
-                                    .into(userImage);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                });
-
-                Bundle parameters = new Bundle();
-                parameters.putString("fields", "id, name,gender");
-                request.setParameters(parameters);
-                request.executeAsync();
-
-            }
-
-            @Override
-            public void onCancel() {
-                // App code
-                Log.i("Facebook", "cancel login");
-            }
-
-            @Override
-            public void onError(FacebookException exception) {
-                // App code
-                Log.i("Facebook", "error login");
-            }
-        });
-
-
-        accessTokenTracker = new AccessTokenTracker() {
-            @Override
-            protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
-                Log.d(TAG, "onCurrentAccessTokenChanged()");
-                if (oldAccessToken == null) {
-                    Log.i(TAG, "Facebook login");
-                } else if (newAccessToken == null) {
-                    Log.i(TAG, "Facebook logout");
-                    userImage.setImageResource(R.drawable.icon_head);
-                    userText.setText("");
-                    Settings.clearAllUserData(MainActivity.this);
-                    loginButton.setVisibility(View.VISIBLE);
-                }
-            }
-        };
-
+        setLoginButton(loginButton);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -205,10 +104,38 @@ public class MainActivity extends AppCompatActivity
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
+        setViewPagerAndTabLayout();
 
         csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
+    }
+
+    @Override
+    protected void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
+        loginButton.setVisibility(View.GONE);
+        userText.setText(user_name);
+        Glide.with(this)
+                .load(picUrl)
+                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
+                .placeholder(R.drawable.icon_head)
+                .crossFade()
+                .into(userImage);
+    }
+
+    @Override
+    protected void onFbLogout() {
+        userImage.setImageResource(R.drawable.icon_head);
+        userText.setText("");
+        loginButton.setVisibility(View.VISIBLE);
+    }
+
+    private void setViewPagerAndTabLayout() {
+        SampleFragmentPagerAdapter adapter = new SampleFragmentPagerAdapter(getSupportFragmentManager());
+
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(adapter);
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
     }
 
     @Override
@@ -219,19 +146,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             super.onBackPressed();
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        accessTokenTracker.stopTracking();
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        callbackManager.onActivityResult(requestCode, resultCode, data);
-        Log.i("MainActivity", "activity result");
     }
 
     @Override
@@ -256,8 +170,6 @@ public class MainActivity extends AppCompatActivity
             int count = pref.getShoppingCarItemSize(MainActivity.this);
             menuItem.setIcon(buildCounterDrawable(count, R.drawable.icon_shopping_car_2));
         }
-        // Logs 'install' and 'app activate' App Events.
-        AppEventsLogger.activateApp(this);
 
         if (NetworkUtil.getConnectivityStatus(this) == 0) {
             no_net_layout.setVisibility(View.VISIBLE);
@@ -270,16 +182,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-
-        // Logs 'app deactivate' App Event.
-        AppEventsLogger.deactivateApp(this);
-    }
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         if (menu.findItem(99) == null) {
             menuItem = menu.add(0, 99, 0, "購物車");
         } else {
@@ -324,83 +227,21 @@ public class MainActivity extends AppCompatActivity
                 Toast.makeText(this, "請先使用FB登入", Toast.LENGTH_SHORT).show();
             }
         } else if (id == R.id.nav_category1) {
-            titleText.setText("所有商品");
-            category_id = 10;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-                if (goodsGridFragment != null) {
-                    goodsGridFragment.notifyCategoryChanged(category_id);
-                } else {
-                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
-                }
-            } else {
-                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-            }
+            setPagerIfNetworkConnected(0);
         } else if (id == R.id.nav_category2) {
-            titleText.setText("新品上架");
-            category_id = 11;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-                if (goodsGridFragment != null) {
-                    goodsGridFragment.notifyCategoryChanged(category_id);
-                } else {
-                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
-                }
-            } else {
-                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-            }
+            setPagerIfNetworkConnected(1);
         } else if (id == R.id.nav_category3) {
-            titleText.setText("文具用品");
-            category_id = 12;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-                if (goodsGridFragment != null) {
-                    goodsGridFragment.notifyCategoryChanged(category_id);
-                } else {
-                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
-                }
-            } else {
-                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-            }
+            setPagerIfNetworkConnected(2);
         } else if (id == R.id.nav_category4) {
-            titleText.setText("日韓精選");
-            category_id = 13;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-                if (goodsGridFragment != null) {
-                    goodsGridFragment.notifyCategoryChanged(category_id);
-                } else {
-                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
-                }
-            } else {
-                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-            }
+            setPagerIfNetworkConnected(3);
         } else if (id == R.id.nav_category5) {
-            titleText.setText("生日專區");
-            category_id = 14;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-                if (goodsGridFragment != null) {
-                    goodsGridFragment.notifyCategoryChanged(category_id);
-                } else {
-                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
-                }
-            } else {
-                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-            }
+            setPagerIfNetworkConnected(4);
         } else if (id == R.id.nav_category6) {
-            titleText.setText("生活小物");
-            category_id = 16;
-            if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-                if (goodsGridFragment != null) {
-                    goodsGridFragment.notifyCategoryChanged(category_id);
-                } else {
-                    viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
-                }
-            } else {
-                Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-            }
+            setPagerIfNetworkConnected(5);
         } else if (id == R.id.nav_service) {
-            Intent searchIntent = new Intent(MainActivity.this, ServiceActivity.class);
-            startActivity(searchIntent);
+            startActivity(new Intent(this, ServiceActivity.class));
         } else if (id == R.id.nav_about) {
-            Intent searchIntent = new Intent(MainActivity.this, AboutActivity.class);
-            startActivity(searchIntent);
+            startActivity(new Intent(this, AboutActivity.class));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -417,73 +258,48 @@ public class MainActivity extends AppCompatActivity
                 .build());
     }
 
-    public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
+    private void setPagerIfNetworkConnected(int pagerPosition) {
+        if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
+            viewPager.setCurrentItem(pagerPosition, true);
+        } else {
+            Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
 
         public SampleFragmentPagerAdapter(FragmentManager fm) {
             super(fm);
+            addFragment(GoodsGridFragment.newInstance(10), " 所有商品 ");
+            addFragment(GoodsGridFragment.newInstance(11), " 新品上架 ");
+            addFragment(GoodsGridFragment.newInstance(12), " 文具用品 ");
+            addFragment(GoodsGridFragment.newInstance(13), " 日韓精選 ");
+            addFragment(GoodsGridFragment.newInstance(14), " 生日專區 ");
+            addFragment(GoodsGridFragment.newInstance(16), " 生活小物 ");
         }
 
         @Override
         public int getCount() {
-            return 1;
+            return mFragmentList.size();
         }
 
         @Override
         public Fragment getItem(int position) {
-            goodsGridFragment = GoodsGridFragment.newInstance(category_id);
-            return goodsGridFragment;
-        }
-
-    }
-
-    private Bundle getFacebookData(JSONObject object) {
-
-        try {
-            Bundle bundle = new Bundle();
-            String id = object.getString("id");
-
-            try {
-                URL profile_pic = new URL("https://graph.facebook.com/" + id + "/picture?width=200&height=200");
-                Log.i("profile_pic", profile_pic + "");
-                bundle.putString("profile_pic", profile_pic.toString());
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-            bundle.putString("idFacebook", id);
-            if (object.has("name"))
-                bundle.putString("name", object.getString("name"));
-//            if (object.has("email"))
-//                bundle.putString("email", object.getString("email"));
-            if (object.has("gender"))
-                bundle.putString("gender", object.getString("gender"));
-
-            return bundle;
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    private class PostUserTask extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            String result = UserApi.httpPostUser(user_name, real_name, gender, phone, address, fb_uid);
-            return result;
+            return mFragmentList.get(position);
         }
 
         @Override
-        protected void onPostExecute(Object result) {
-            if (result.toString().equals("success")) {
-                Log.i(TAG, "成功上傳");
-            } else {
-                Log.i(TAG, "上傳失敗");
-            }
+        public CharSequence getPageTitle(int position) {
+            return mFragmentTitleList.get(position);
+        }
+
+        private void addFragment(Fragment fragment, String title) {
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
         }
     }
-
 
     private Drawable buildCounterDrawable(int count, int backgroundImageId) {
         LayoutInflater inflater = LayoutInflater.from(this);

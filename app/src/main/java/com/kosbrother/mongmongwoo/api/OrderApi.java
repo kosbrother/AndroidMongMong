@@ -159,7 +159,7 @@ public class OrderApi {
         return null;
     }
 
-    public static String httpPostOrder(String uid, int items_price, int ship_fee, int total, String ship_name, String ship_phone, String ship_store_code, String ship_store_name, int ship_store_id, ArrayList<Product> products) {
+    public static String httpPostOrder(String uid, int items_price, int ship_fee, int total, String ship_name, String ship_phone, String ship_store_code, String ship_store_name, int ship_store_id, ArrayList<Product> products, String ship_email) {
 
         JSONObject jsonObject = new JSONObject();
         try {
@@ -169,6 +169,7 @@ public class OrderApi {
             jsonObject.put("total", Integer.toString(total));
             jsonObject.put("ship_name", ship_name);
             jsonObject.put("ship_phone", ship_phone);
+            jsonObject.put("ship_email", ship_email);
             jsonObject.put("ship_store_code", ship_store_code);
             jsonObject.put("ship_store_id", Integer.toString(ship_store_id));
             jsonObject.put("ship_store_name", ship_store_name);

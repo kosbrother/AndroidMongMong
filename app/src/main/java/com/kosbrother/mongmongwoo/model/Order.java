@@ -7,20 +7,27 @@ import java.util.ArrayList;
  */
 public class Order {
 
+    String uid;
+    String shippingName;
+    String shippingPhone;
+    String shippingEmail;
+    Store shippingStore;
+    ArrayList<Product> orderProducts;
+    int shipPrice;
+    int productPrice;
+    int totalPrice;
+
     public void setUid(String uid) {
         this.uid = uid;
     }
 
     public String getUid() {
-        if (uid == null){
+        if (uid == null) {
             return "9999"; //匿名購買
-        }else {
+        } else {
             return uid;
         }
     }
-
-    String uid;
-
 
     public Order() {
     }
@@ -38,7 +45,7 @@ public class Order {
     }
 
     public ArrayList<Product> getOrderProducts() {
-        if (orderProducts == null){
+        if (orderProducts == null) {
             orderProducts = new ArrayList<>();
         }
         return orderProducts;
@@ -84,13 +91,12 @@ public class Order {
         this.totalPrice = totalPrice;
     }
 
-    String shippingName;
-    String shippingPhone;
-    Store shippingStore;
-    ArrayList<Product> orderProducts;
-    int shipPrice;
-    int productPrice;
-    int totalPrice;
+    public String getShippingEmail() {
+        return shippingEmail;
+    }
 
+    public void setShippingEmail(String shippingEmail) {
+        this.shippingEmail = shippingEmail;
+    }
 
 }

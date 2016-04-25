@@ -1,42 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="100dp"
-    android:gravity="center_vertical"
     android:background="@color/white"
-    >
+    android:gravity="center_vertical"
+    android:orientation="horizontal">
 
     <ImageView
         android:id="@+id/item_car_imageview"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_margin="10dp"
-        android:scaleType="centerCrop"
-        />
+        android:layout_margin="16dp"
+        android:scaleType="centerCrop" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        >
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/item_car_name"
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:text="Tsum Tsum 螢幕擦"
-            android:textSize="18dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
             android:layout_marginTop="5dp"
-            android:maxLines="2"
             android:gravity="center_vertical"
-            />
+            android:maxLines="2"
+            android:text="Tsum Tsum 螢幕擦"
+            android:textSize="18dp" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="horizontal"
             android:gravity="center_vertical"
-            >
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/item_car_price"
@@ -44,28 +42,28 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:text="$99"
-                android:textSize="18dp"
-                />
+                android:textSize="18dp" />
 
             <Button
                 android:id="@+id/item_car_count_button"
                 android:layout_width="wrap_content"
                 android:layout_height="30dp"
-                android:text="數量 1"
-                android:layout_marginRight="5dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
                 android:background="@drawable/edittext_selector"
-                android:textSize="15dp"
-                />
+                android:text="數量 1"
+                android:textSize="15dp" />
+
             <Button
                 android:id="@+id/item_car_delete_button"
                 android:layout_width="46dp"
                 android:layout_height="25dp"
-                android:text="刪除"
-                android:layout_marginRight="5dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
                 android:background="@drawable/edittext_selector"
-                android:textSize="15dp"
                 android:padding="3dp"
-                />
+                android:text="刪除"
+                android:textSize="15dp" />
 
         </LinearLayout>
 

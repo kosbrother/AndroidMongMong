@@ -20,6 +20,7 @@ public class Settings {
     final static String keyUserPhone = "USER_PHONE";
     final static String keyUserAddress = "USER_ADDRESS";
     final static String keyUserFBPic = "USER_PIC";
+    final static String keyUserFBEmail = "USER_EMAIL";
 
     final static String keyFirstAddShoppingCar = "IS_FIRST_ADD_SHOPPING_CAR";
 
@@ -28,17 +29,18 @@ public class Settings {
     final static String keyStoreName = "KeyStoreName";
     final static String keyStoreAddress = "KeyStoreAddress";
 
-    public static void saveUserFBData(Context context, User user){
+    public static void saveUserFBData(Context context, User user) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(keyUserName, user.getUser_name());
         editor.putString(keyUserFBUid, user.getFb_uid());
         editor.putString(keyUserGender, user.getGender());
         editor.putString(keyUserFBPic, user.getFb_pic());
-        editor.commit();
+        editor.putString(keyUserFBEmail, user.getEmail());
+        editor.apply();
     }
 
-    public static void saveUserStoreData(Context context, Store theStore){
+    public static void saveUserStoreData(Context context, Store theStore) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(keyStoreId, theStore.getStore_id());
@@ -48,21 +50,21 @@ public class Settings {
         editor.commit();
     }
 
-    public static Store getSavedStore(Context context){
+    public static Store getSavedStore(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         int storeId = prefs.getInt(keyStoreId, -1);
-        if (storeId == -1){
+        if (storeId == -1) {
             return null;
-        }else {
+        } else {
             String storeCode = prefs.getString(keyStoreCode, "");
             String storeName = prefs.getString(keyStoreName, "");
             String storeAddress = prefs.getString(keyStoreAddress, "");
-            Store store = new Store(storeId,storeCode,storeName,storeAddress);
+            Store store = new Store(storeId, storeCode, storeName, storeAddress);
             return store;
         }
     }
 
-    public static void saveUserShippingNameAndPhone(Context context, String user_real_name, String user_phone){
+    public static void saveUserShippingNameAndPhone(Context context, String user_real_name, String user_phone) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(keyUserPhone, user_phone);
@@ -70,73 +72,66 @@ public class Settings {
         editor.commit();
     }
 
-    public static String getShippingName(Context context){
+    public static String getShippingName(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String shippingName = prefs.getString(keyUserRealName, "");
         return shippingName;
     }
 
-    public static String getShippingPhone(Context context){
+    public static String getShippingPhone(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String shippingPhone = prefs.getString(keyUserPhone, "");
         return shippingPhone;
     }
 
-    public static void saveUserAddress(Context context, String user_address){
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(keyUserAddress, user_address);
-        editor.commit();
-    }
-
-    public static void clearAllUserData(Context context){
+    public static void clearAllUserData(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(keyUserName, "");
         editor.putString(keyUserFBUid, "");
         editor.putString(keyUserGender, "");
         editor.putString(keyUserFBPic, "");
-        editor.commit();
+        editor.putString(keyUserFBEmail, "");
+        editor.apply();
     }
 
-    public static boolean checkIsLogIn(Context context){
+    public static boolean checkIsLogIn(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String savedUserName = prefs.getString(keyUserName, "");
-        if (savedUserName.equals("")){
+        if (savedUserName.equals("")) {
             return false;
-        }else {
+        } else {
             return true;
         }
     }
 
-    public static boolean checkIsFirstAddShoppingCar(Context context){
+    public static boolean checkIsFirstAddShoppingCar(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         boolean isFirstAdd = prefs.getBoolean(keyFirstAddShoppingCar, true);
-        if (isFirstAdd){
+        if (isFirstAdd) {
             return true;
-        }else {
+        } else {
             return false;
         }
     }
 
-    public static void setKownShoppingCar(Context context){
+    public static void setKownShoppingCar(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        prefs.edit().putBoolean(keyFirstAddShoppingCar,false).commit();
+        prefs.edit().putBoolean(keyFirstAddShoppingCar, false).commit();
     }
 
-    public static User getSavedUser(Context context){
+    public static User getSavedUser(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String userName = prefs.getString(keyUserName, "");
         String realName = prefs.getString(keyUserRealName, "");
         String gender = prefs.getString(keyUserGender, "");
         String phone = prefs.getString(keyUserPhone, "");
         String address = prefs.getString(keyUserAddress, "");
-        String fb_uid = prefs.getString(keyUserFBUid,"");
-        String fb_pic = prefs.getString(keyUserFBPic,"");
-        User theUser = new User(userName,realName,gender,phone,address,fb_uid,fb_pic);
-        return theUser;
+        String fb_uid = prefs.getString(keyUserFBUid, "");
+        String fb_pic = prefs.getString(keyUserFBPic, "");
+        String email = prefs.getString(keyUserFBEmail, "");
+        return new User(userName, realName, gender, phone, address, fb_uid, fb_pic, email);
     }
-
 
 
 }

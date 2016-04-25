@@ -18,7 +18,6 @@ import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.adpters.ShoppingCarListBuyGoodsAdapter;
-import com.kosbrother.mongmongwoo.api.DensityApi;
 import com.kosbrother.mongmongwoo.api.OrderApi;
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.Product;
@@ -67,7 +66,7 @@ public class PurchaseFragment3 extends Fragment {
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(mLayoutManager);
 
-        ShoppingCarListBuyGoodsAdapter adapter = new ShoppingCarListBuyGoodsAdapter(getActivity(),new ArrayList<Product>());
+        ShoppingCarListBuyGoodsAdapter adapter = new ShoppingCarListBuyGoodsAdapter(getActivity(), new ArrayList<Product>());
         recyclerView.setAdapter(adapter);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -96,7 +95,7 @@ public class PurchaseFragment3 extends Fragment {
             shippingStoreNameText.setText(theOrder.getShippingStore().getName());
             shippingStoreAddressText.setText(theOrder.getShippingStore().getAddress());
 
-            ShoppingCarListBuyGoodsAdapter adapter = new ShoppingCarListBuyGoodsAdapter(getActivity(),theOrder.getOrderProducts());
+            ShoppingCarListBuyGoodsAdapter adapter = new ShoppingCarListBuyGoodsAdapter(getActivity(), theOrder.getOrderProducts());
             recyclerView.setAdapter(adapter);
         } else {
             //相当于Fragment的onPause
@@ -109,33 +108,37 @@ public class PurchaseFragment3 extends Fragment {
         protected void onPreExecute() {
             super.onPreExecute();
             progressBar.setVisibility(View.VISIBLE);
-            if (theOrder.getOrderProducts() == null || theOrder.getOrderProducts().size() == 0){
-                Toast.makeText(getActivity(),"購物車商品資料錯誤,請聯絡客服LINE@,感謝您^^", Toast.LENGTH_LONG).show();
+            if (theOrder.getOrderProducts() == null || theOrder.getOrderProducts().size() == 0) {
+                Toast.makeText(getActivity(), "購物車商品資料錯誤,請聯絡客服LINE@,感謝您^^", Toast.LENGTH_LONG).show();
             }
         }
 
         @Override
         protected Object doInBackground(Object[] params) {
-            String message = OrderApi.httpPostOrder(theOrder.getUid(),theOrder.getProductPrice(), theOrder.getShipPrice(), theOrder.getTotalPrice(), theOrder.getShippingName(), theOrder.getShippingPhone(), theOrder.getShippingStore().getStore_code(), theOrder.getShippingStore().getName(), theOrder.getShippingStore().getStore_id(), theOrder.getOrderProducts());
-            if (message.indexOf("Error")!=-1){
-                return false;
-            }else {
-                return true;
-            }
+            String message = OrderApi.httpPostOrder(
+                    theOrder.getUid(), theOrder.getProductPrice(),
+                    theOrder.getShipPrice(), theOrder.getTotalPrice(),
+                    theOrder.getShippingName(), theOrder.getShippingPhone(),
+                    theOrder.getShippingStore().getStore_code(),
+                    theOrder.getShippingStore().getName(),
+                    theOrder.getShippingStore().getStore_id(),
+                    theOrder.getOrderProducts(),
+                    theOrder.getShippingEmail());
+            return !message.contains("Error");
         }
 
         @Override
         protected void onPostExecute(Object result) {
             progressBar.setVisibility(View.GONE);
-            if ((boolean)result == true){
-                Toast.makeText(getActivity(), "訂單成功送出", Toast.LENGTH_SHORT).show();
+            if ((boolean) result == true) {
                 ShoppingCarPreference prefs = new ShoppingCarPreference();
-                prefs.removeAllShoppingItems(getActivity());
-                getActivity().finish();
+                ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+                prefs.removeAllShoppingItems(activity);
+                activity.startPurchaseFragment4();
 
                 Settings.saveUserStoreData(getActivity(), theOrder.getShippingStore());
-                Settings.saveUserShippingNameAndPhone(getActivity(), theOrder.getShippingName(),theOrder.getShippingPhone());
-            }else {
+                Settings.saveUserShippingNameAndPhone(getActivity(), theOrder.getShippingName(), theOrder.getShippingPhone());
+            } else {
                 Toast.makeText(getActivity(), "訂單未成功送出 資料異常", Toast.LENGTH_SHORT).show();
             }
         }
