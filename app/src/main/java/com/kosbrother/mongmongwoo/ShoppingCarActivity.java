@@ -27,6 +27,7 @@ import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.NonSwipeableViewPager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by kolichung on 3/9/16.
@@ -77,14 +78,10 @@ public class ShoppingCarActivity extends FbLoginActivity {
         loginButton = (LoginButton) findViewById(R.id.login_button_main);
         setLoginButton(loginButton);
 
-        theOrder = new Order();
-        if (Settings.getSavedStore(this) != null) {
-            theOrder.setShippingStore(Settings.getSavedStore(this));
-            theOrder.setShippingName(Settings.getShippingName(this));
-            theOrder.setShippingPhone(Settings.getShippingPhone(this));
-        }
+        initOrder();
 
         viewPager = (NonSwipeableViewPager) findViewById(R.id.viewpager);
+        viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(new SampleFragmentPagerAdapter(getSupportFragmentManager()));
         viewPager.setOnTouchListener(new View.OnTouchListener() {
             @Override
@@ -101,7 +98,6 @@ public class ShoppingCarActivity extends FbLoginActivity {
 
             @Override
             public void onPageSelected(int position) {
-
                 switch (position) {
                     case 0:
                         menuItem.setTitle("上一步");
@@ -122,7 +118,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
                         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
-                                viewPager.setCurrentItem(0);
+                                viewPager.setCurrentItem(0, true);
                                 return true;
                             }
                         });
@@ -136,7 +132,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
                         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
-                                viewPager.setCurrentItem(1);
+                                viewPager.setCurrentItem(1, true);
                                 return true;
                             }
                         });
@@ -164,10 +160,6 @@ public class ShoppingCarActivity extends FbLoginActivity {
 
     public void setBreadCurmbsVisibility(int view_param) {
         breadCrumbsLayout.setVisibility(view_param);
-    }
-
-    public void setPagerPostition(int postition) {
-        viewPager.setCurrentItem(postition);
     }
 
     public void setSelectedStore(Store store) {
@@ -201,53 +193,24 @@ public class ShoppingCarActivity extends FbLoginActivity {
         return true;
     }
 
-    public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
-        final int PAGE_COUNT = 4;
-        private String tabTitles[] = new String[]{"確認金額", "下一步", "送出訂單", "完成購物"};
+    public void startPurchaseFragment2() {
+        ((PurchaseFragment1) getViewPagerAdapter().getItem(0)).updateLayoutByLoginStatus();
+        ((PurchaseFragment2) getViewPagerAdapter().getItem(1)).setEmailLayoutByLoginStatus();
+        viewPager.setCurrentItem(1, true);
+    }
 
-        public SampleFragmentPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
+    public void startPurchaseFragment3() {
+        viewPager.setCurrentItem(2, true);
+    }
 
-        @Override
-        public int getCount() {
-            return PAGE_COUNT;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            Fragment newFragment;
-            switch (position) {
-                case 0:
-                    newFragment = PurchaseFragment1.newInstance();
-                    break;
-                case 1:
-                    newFragment = PurchaseFragment2.newInstance();
-                    break;
-                case 2:
-                    newFragment = PurchaseFragment3.newInstance();
-                    break;
-                case 3:
-                    newFragment = PurchaseFragment4.newInstance(theOrder.getShippingName());
-                    break;
-                default:
-                    newFragment = PurchaseFragment1.newInstance();
-                    break;
-            }
-            return newFragment;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            // Generate title based on item position
-            return tabTitles[position];
-        }
+    public void startPurchaseFragment4() {
+        viewPager.setCurrentItem(3, true);
     }
 
     @Override
     protected void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
-        viewPager.setCurrentItem(1);
-        getOrder().setUid(fb_uid);
+        theOrder.setUid(fb_uid);
+        startPurchaseFragment2();
     }
 
     @Override
@@ -268,6 +231,50 @@ public class ShoppingCarActivity extends FbLoginActivity {
     public void sendShoppoingFragment(int fragmentPosition) {
         mTracker.setScreenName("Shopping Fragment " + Integer.toString(fragmentPosition));
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+    }
+
+    private void initOrder() {
+        theOrder = new Order();
+        if (Settings.getSavedStore(this) != null) {
+            theOrder.setShippingStore(Settings.getSavedStore(this));
+            theOrder.setShippingName(Settings.getShippingName(this));
+            theOrder.setShippingPhone(Settings.getShippingPhone(this));
+        }
+        if (Settings.checkIsLogIn(this)) {
+            theOrder.setUid(Settings.getSavedUser(this).getFb_uid());
+        }
+    }
+
+    private SampleFragmentPagerAdapter getViewPagerAdapter() {
+        return (SampleFragmentPagerAdapter) viewPager.getAdapter();
+    }
+
+    public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+
+        public SampleFragmentPagerAdapter(FragmentManager fm) {
+            super(fm);
+            mFragmentList.add(PurchaseFragment1.newInstance());
+            mFragmentList.add(PurchaseFragment2.newInstance());
+            mFragmentList.add(PurchaseFragment3.newInstance());
+            mFragmentList.add(PurchaseFragment4.newInstance(theOrder.getShippingName()));
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            return "";
+        }
+
     }
 
 }

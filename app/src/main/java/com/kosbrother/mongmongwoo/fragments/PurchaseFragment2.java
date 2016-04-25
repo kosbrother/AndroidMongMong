@@ -64,7 +64,7 @@ public class PurchaseFragment2 extends Fragment {
                     activity.getOrder().setShippingName(shippingNameEditText.getText().toString());
                     activity.getOrder().setShippingPhone(shippingPhoneEditText.getText().toString());
                     activity.getOrder().setShippingEmail(shippingEmailEditText.getText().toString());
-                    activity.setPagerPostition(2);
+                    activity.startPurchaseFragment3();
 
                     View view = activity.getCurrentFocus();
                     if (view != null) {
@@ -103,6 +103,10 @@ public class PurchaseFragment2 extends Fragment {
             mActivity.setSelectedStore(theStore);
             selectStoreButton.setText(theStore.getName());
         }
+    }
+
+    public void setEmailLayoutByLoginStatus() {
+        getView().findViewById(R.id.email_ll).setVisibility(isLogin() ? View.GONE : View.VISIBLE);
     }
 
     private boolean isLogin() {
