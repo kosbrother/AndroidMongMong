@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/new_version_tv"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingEnd="40dp"
+    android:paddingRight="40dp"
+    android:gravity="bottom|end"
+    android:orientation="vertical"
+    android:paddingBottom="16dp"
+    android:text="有新版本！！"
+    android:textColor="@android:color/holo_red_light"
+    android:textSize="12sp" />
+

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <item android:title="我的萌萌屋">
@@ -49,27 +50,9 @@
             <item
                 android:id="@+id/nav_about"
                 android:icon="@drawable/drawer_about"
-                android:title="關於萌萌屋" />
+                android:title="關於萌萌屋"
+                app:actionLayout="@layout/new_version_tv" />
         </menu>
     </item>
-
-    <!--<group android:checkableBehavior="single">-->
-        <!--<item-->
-            <!--android:id="@+id/nav_camera"-->
-            <!--android:icon="@drawable/drawer_grid"-->
-            <!--android:title="商品列表" />-->
-        <!--<item-->
-            <!--android:id="@+id/nav_gallery"-->
-            <!--android:icon="@drawable/drawer_search"-->
-            <!--android:title="搜索商品" />-->
-        <!--<item-->
-            <!--android:id="@+id/nav_slideshow"-->
-            <!--android:icon="@drawable/drawer_love"-->
-            <!--android:title="我的收藏" />-->
-        <!--<item-->
-            <!--android:id="@+id/nav_manage"-->
-            <!--android:icon="@drawable/drawer_order"-->
-            <!--android:title="我的訂單" />-->
-    <!--</group>-->
 
 </menu>
