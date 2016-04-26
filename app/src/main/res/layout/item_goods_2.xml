@@ -46,17 +46,32 @@
             android:textStyle="bold"
             tools:text="NT$99" />
 
-
-        <Button
-            android:id="@+id/add_shopping_car_button"
+        <LinearLayout
+            android:id="@+id/add_shopping_car_ll"
             android:layout_width="wrap_content"
             android:layout_height="20dp"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:background="@drawable/button_purchase_car_selector"
-            android:text="加到購物車"
-            android:textColor="@color/white"
-            android:textSize="12sp" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
+                android:text="加到"
+                android:textColor="@color/white"
+                android:textSize="12sp" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:src="@drawable/icon_shopping_car_2" />
+        </LinearLayout>
 
     </LinearLayout>
 

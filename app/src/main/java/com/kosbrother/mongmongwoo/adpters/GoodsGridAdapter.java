@@ -11,6 +11,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -23,6 +24,7 @@ import com.kosbrother.mongmongwoo.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.api.ProductApi;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.ProductSpec;
+import com.kosbrother.mongmongwoo.utils.MaxHeightGridView;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 
 import java.util.ArrayList;
@@ -75,7 +77,7 @@ public class GoodsGridAdapter extends BaseAdapter {
         ImageView itemImage = (ImageView) convertView.findViewById(R.id.item_imageview);
         TextView itemNameText = (TextView) convertView.findViewById(R.id.item_name_text);
         TextView itemPriceText = (TextView) convertView.findViewById(R.id.item_price_text);
-        Button addShoppingCarButton = (Button) convertView.findViewById(R.id.add_shopping_car_button);
+        LinearLayout addShoppingCarButton = (LinearLayout) convertView.findViewById(R.id.add_shopping_car_ll);
 
         final Product theProduct = products.get(position);
 
@@ -91,17 +93,13 @@ public class GoodsGridAdapter extends BaseAdapter {
         addShoppingCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                ShoppingCarPreference pref = new ShoppingCarPreference();
-//                theProduct.setBuy_count(1);
-//                pref.addShoppingItem(mActivity, theProduct);
-//                mActivity.doIncrease();
                 theTaskProductId = theProduct.getId();
                 selectedProductPosition = position;
-                if (NetworkUtil.getConnectivityStatus(mActivity)!=0) {
+                if (NetworkUtil.getConnectivityStatus(mActivity) != 0) {
                     showStyleDialog();
                     new NewsTask().execute();
-                }else {
-                    Toast.makeText(mActivity,"無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(mActivity, "無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -121,11 +119,11 @@ public class GoodsGridAdapter extends BaseAdapter {
     }
 
 
-    public void showStyleDialog(){
+    public void showStyleDialog() {
 
         View view = LayoutInflater.from(mActivity)
                 .inflate(R.layout.dialog_add_shopping_car_item, null, false);
-        styleGrid = (GridView) view.findViewById(R.id.dialog_styles_gridview);
+        styleGrid = (MaxHeightGridView) view.findViewById(R.id.dialog_styles_gridview);
         styleImage = (ImageView) view.findViewById(R.id.dialog_style_image);
         styleName = (TextView) view.findViewById(R.id.dialog_style_name);
 
@@ -137,8 +135,8 @@ public class GoodsGridAdapter extends BaseAdapter {
         minusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (tempCount != 1){
-                    tempCount = tempCount -1;
+                if (tempCount != 1) {
+                    tempCount = tempCount - 1;
                     countText.setText(Integer.toString(tempCount));
                 }
             }
@@ -173,7 +171,7 @@ public class GoodsGridAdapter extends BaseAdapter {
                 mActivity.doIncrease();
                 alertDialog.cancel();
 
-                if (Settings.checkIsFirstAddShoppingCar(mActivity)){
+                if (Settings.checkIsFirstAddShoppingCar(mActivity)) {
                     mActivity.showShoppingCarInstruction();
                     Settings.setKownShoppingCar(mActivity);
                 }
@@ -188,7 +186,7 @@ public class GoodsGridAdapter extends BaseAdapter {
         @Override
         protected Object doInBackground(Object[] params) {
             specs = ProductApi.getProductSpects(theTaskProductId);
-            if (specs!=null && specs.size() != 0){
+            if (specs != null && specs.size() != 0) {
                 return true;
             }
             return null;
@@ -197,7 +195,7 @@ public class GoodsGridAdapter extends BaseAdapter {
         @Override
         protected void onPostExecute(Object result) {
             if (result != null) {
-                styleGridAdapter = new StyleGridAdapter(mActivity,specs, styleImage,styleName);
+                styleGridAdapter = new StyleGridAdapter(mActivity, specs, styleImage, styleName);
                 styleGrid.setAdapter(styleGridAdapter);
 
                 Glide.with(mActivity)
@@ -208,8 +206,8 @@ public class GoodsGridAdapter extends BaseAdapter {
                         .into(styleImage);
                 styleName.setText(specs.get(0).getStyle());
 
-            }else{
-                Toast.makeText(mActivity,"無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(mActivity, "無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
             }
         }
     }

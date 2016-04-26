@@ -131,13 +131,12 @@ public class PurchaseFragment3 extends Fragment {
         protected void onPostExecute(Object result) {
             progressBar.setVisibility(View.GONE);
             if ((boolean) result == true) {
-                ShoppingCarPreference prefs = new ShoppingCarPreference();
-                ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-                prefs.removeAllShoppingItems(activity);
-                activity.startPurchaseFragment4();
-
                 Settings.saveUserStoreData(getActivity(), theOrder.getShippingStore());
                 Settings.saveUserShippingNameAndPhone(getActivity(), theOrder.getShippingName(), theOrder.getShippingPhone());
+
+                ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+                new ShoppingCarPreference().removeAllShoppingItems(activity);
+                activity.startPurchaseFragment4();
             } else {
                 Toast.makeText(getActivity(), "訂單未成功送出 資料異常", Toast.LENGTH_SHORT).show();
             }
