@@ -24,6 +24,7 @@ import com.kosbrother.mongmongwoo.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.api.ProductApi;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.ProductSpec;
+import com.kosbrother.mongmongwoo.utils.MaxHeightGridView;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 
 import java.util.ArrayList;
@@ -92,10 +93,6 @@ public class GoodsGridAdapter extends BaseAdapter {
         addShoppingCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                ShoppingCarPreference pref = new ShoppingCarPreference();
-//                theProduct.setBuy_count(1);
-//                pref.addShoppingItem(mActivity, theProduct);
-//                mActivity.doIncrease();
                 theTaskProductId = theProduct.getId();
                 selectedProductPosition = position;
                 if (NetworkUtil.getConnectivityStatus(mActivity) != 0) {
@@ -126,7 +123,7 @@ public class GoodsGridAdapter extends BaseAdapter {
 
         View view = LayoutInflater.from(mActivity)
                 .inflate(R.layout.dialog_add_shopping_car_item, null, false);
-        styleGrid = (GridView) view.findViewById(R.id.dialog_styles_gridview);
+        styleGrid = (MaxHeightGridView) view.findViewById(R.id.dialog_styles_gridview);
         styleImage = (ImageView) view.findViewById(R.id.dialog_style_image);
         styleName = (TextView) view.findViewById(R.id.dialog_style_name);
 
