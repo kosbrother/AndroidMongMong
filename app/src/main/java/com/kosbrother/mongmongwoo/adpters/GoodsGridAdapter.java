@@ -72,7 +72,7 @@ public class GoodsGridAdapter extends BaseAdapter {
 
         if (convertView == null) {
             // If convertView is null then inflate the appropriate layout file
-            convertView = LayoutInflater.from(mActivity).inflate(R.layout.item_goods_2, null);
+            convertView = LayoutInflater.from(mActivity).inflate(R.layout.item_goods, null);
         }
         ImageView itemImage = (ImageView) convertView.findViewById(R.id.item_imageview);
         TextView itemNameText = (TextView) convertView.findViewById(R.id.item_name_text);
