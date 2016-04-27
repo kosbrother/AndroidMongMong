@@ -3,6 +3,7 @@ package com.kosbrother.mongmongwoo.fragments;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,9 +26,6 @@ import com.kosbrother.mongmongwoo.model.Product;
 
 import java.util.ArrayList;
 
-/**
- * Created by kolichung on 3/9/16.
- */
 public class PurchaseFragment1 extends Fragment {
 
     LinearLayout noItemLayout;
@@ -35,24 +33,29 @@ public class PurchaseFragment1 extends Fragment {
     Button fb_buy_button;
     Button no_name_buy_button;
 
-    ArrayList<Product> shoppingCarProducts;
     ShoppingCarGoodsAdapter adapter;
     RecyclerView newsRecylerView;
     Button deliverButton;
     TextView totalGoodsPriceText;
-    int totalGoodsPrice;
-    int shippingPrice;
     TextView shippingPriceText;
     TextView totalPriceText;
     Button confirmButton;
     TextView no_ship_fee_text;
     TextView ship_text;
 
+    ArrayList<Product> shoppingCarProducts;
+    int totalGoodsPrice;
+    int shippingPrice;
     int shippingType = -1; // 0 means 超商取貨付款, 1 means 宅配
 
     public static PurchaseFragment1 newInstance() {
-        PurchaseFragment1 fragment = new PurchaseFragment1();
-        return fragment;
+        return new PurchaseFragment1();
+    }
+
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        loadShoppingCart();
     }
 
     @Override
@@ -60,7 +63,74 @@ public class PurchaseFragment1 extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_purchase1, container, false);
+        findView(view);
 
+        initVisibleLayout();
+        setRecyclerView();
+        setFbBuyButton();
+        setNoNameBuyButton();
+        setDeliverButton();
+        setConfirmButton();
+
+        updatePricesText();
+        updateLayoutByLoginStatus();
+        return view;
+    }
+
+    public void loadShoppingCart() {
+        ShoppingCarPreference pref = new ShoppingCarPreference();
+        shoppingCarProducts = pref.loadShoppingItems(getActivity());
+    }
+
+    public void updatePricesText() {
+        totalGoodsPrice = 0;
+        for (int i = 0; i < shoppingCarProducts.size(); i++) {
+            totalGoodsPrice = totalGoodsPrice + shoppingCarProducts.get(i).getPrice() * shoppingCarProducts.get(i).getBuy_count();
+        }
+        totalGoodsPriceText.setText("$" + Integer.toString(totalGoodsPrice));
+
+        if (shippingType != -1) {
+            if (totalGoodsPrice >= 490) {
+                shippingPrice = 0;
+                no_ship_fee_text.setVisibility(View.GONE);
+                ship_text.setText("滿490免運");
+            } else {
+                shippingPrice = 60;
+                no_ship_fee_text.setVisibility(View.VISIBLE);
+                ship_text.setText("運費");
+            }
+        }
+        shippingPriceText.setText("$" + Integer.toString(shippingPrice));
+        totalPriceText.setText("$" + Integer.toString(totalGoodsPrice + shippingPrice));
+    }
+
+    public void updateLayoutByLoginStatus() {
+        if (!Settings.checkIsLogIn(getContext())) {
+            noLoginLayout.setVisibility(View.VISIBLE);
+            confirmButton.setVisibility(View.GONE);
+        } else {
+            noLoginLayout.setVisibility(View.GONE);
+            confirmButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void updateRecycleView() {
+        ViewGroup.LayoutParams params = newsRecylerView.getLayoutParams();
+        params.height = (int) DensityApi.convertDpToPixel(100 * shoppingCarProducts.size(), getActivity());
+        newsRecylerView.setLayoutParams(params);
+
+        adapter = new ShoppingCarGoodsAdapter(getActivity(), shoppingCarProducts, this);
+        newsRecylerView.setAdapter(adapter);
+
+        if (shoppingCarProducts.size() == 0) {
+            noItemLayout.setVisibility(View.VISIBLE);
+            ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+            activity.setBreadCurmbsVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void findView(View view) {
+        newsRecylerView = (RecyclerView) view.findViewById(R.id.recycler_buy_goods);
         deliverButton = (Button) view.findViewById(R.id.deliver_button);
         totalGoodsPriceText = (TextView) view.findViewById(R.id.fragment1_goodsTotalPriceText);
         shippingPriceText = (TextView) view.findViewById(R.id.fragment1_shippingPriceText);
@@ -72,29 +142,51 @@ public class PurchaseFragment1 extends Fragment {
         no_name_buy_button = (Button) view.findViewById(R.id.fragment1_no_name_buy_button);
         no_ship_fee_text = (TextView) view.findViewById(R.id.no_ship_fee_text);
         ship_text = (TextView) view.findViewById(R.id.ship_text);
+    }
 
-        shippingPrice = 0;
+    private void initVisibleLayout() {
+        ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+        if (shoppingCarProducts.size() == 0) {
+            noItemLayout.setVisibility(View.VISIBLE);
+            activity.setBreadCurmbsVisibility(View.INVISIBLE);
+        } else {
+            noItemLayout.setVisibility(View.GONE);
+            activity.setBreadCurmbsVisibility(View.VISIBLE);
+            activity.sendShoppoingFragment(1);
+        }
+    }
 
-        newsRecylerView = (RecyclerView) view.findViewById(R.id.recycler_buy_goods);
+    private void setRecyclerView() {
         newsRecylerView.setHasFixedSize(true);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         newsRecylerView.setLayoutManager(mLayoutManager);
+        ViewGroup.LayoutParams params = newsRecylerView.getLayoutParams();
+        params.height = (int) DensityApi.convertDpToPixel(100 * shoppingCarProducts.size(), getActivity());
+        newsRecylerView.setLayoutParams(params);
+        adapter = new ShoppingCarGoodsAdapter(getActivity(), shoppingCarProducts, this);
+        newsRecylerView.setAdapter(adapter);
+    }
 
-        ShoppingCarPreference pref = new ShoppingCarPreference();
-        shoppingCarProducts = pref.loadShoppingItems(getActivity());
+    private void setNoNameBuyButton() {
+        no_name_buy_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startNextStep();
+            }
+        });
+    }
 
-        if (shoppingCarProducts.size() == 0) {
-            noItemLayout.setVisibility(View.VISIBLE);
-            ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-            activity.setBreadCurmbsVisibility(View.INVISIBLE);
-        } else {
-            noItemLayout.setVisibility(View.GONE);
-            ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-            activity.setBreadCurmbsVisibility(View.VISIBLE);
-            activity.sendShoppoingFragment(1);
-        }
+    private void setConfirmButton() {
+        confirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startNextStep();
+            }
+        });
+    }
 
+    private void setFbBuyButton() {
         fb_buy_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -112,23 +204,9 @@ public class PurchaseFragment1 extends Fragment {
                 }
             }
         });
+    }
 
-        no_name_buy_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startNextStep();
-            }
-        });
-
-        ViewGroup.LayoutParams params = newsRecylerView.getLayoutParams();
-        params.height = (int) DensityApi.convertDpToPixel(100 * shoppingCarProducts.size(), getActivity());
-        newsRecylerView.setLayoutParams(params);
-
-        adapter = new ShoppingCarGoodsAdapter(getActivity(), shoppingCarProducts, this);
-        newsRecylerView.setAdapter(adapter);
-
-        setPricesText();
-
+    private void setDeliverButton() {
         final AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
         builderSingle.setTitle("選擇運送方式");
 
@@ -149,7 +227,7 @@ public class PurchaseFragment1 extends Fragment {
                                 shippingType = 0;
                                 break;
                         }
-                        setPricesText();
+                        updatePricesText();
                     }
                 });
 
@@ -159,65 +237,6 @@ public class PurchaseFragment1 extends Fragment {
                 builderSingle.show();
             }
         });
-
-        confirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startNextStep();
-            }
-        });
-
-        updateLayoutByLoginStatus();
-        return view;
-    }
-
-    public void updateLayoutByLoginStatus() {
-        if (!Settings.checkIsLogIn(getContext())) {
-            noLoginLayout.setVisibility(View.VISIBLE);
-            confirmButton.setVisibility(View.GONE);
-        } else {
-            noLoginLayout.setVisibility(View.GONE);
-            confirmButton.setVisibility(View.VISIBLE);
-        }
-    }
-
-    public void setPricesText() {
-        totalGoodsPrice = 0;
-        for (int i = 0; i < shoppingCarProducts.size(); i++) {
-            totalGoodsPrice = totalGoodsPrice + shoppingCarProducts.get(i).getPrice() * shoppingCarProducts.get(i).getBuy_count();
-        }
-        totalGoodsPriceText.setText("$" + Integer.toString(totalGoodsPrice));
-
-        if (shippingType != -1) {
-            if (totalGoodsPrice >= 490) {
-                shippingPrice = 0;
-                no_ship_fee_text.setVisibility(View.GONE);
-                ship_text.setText("滿490免運");
-            } else {
-                no_ship_fee_text.setVisibility(View.VISIBLE);
-                ship_text.setText("運費");
-            }
-        }
-        shippingPriceText.setText("$" + Integer.toString(shippingPrice));
-        totalPriceText.setText("$" + Integer.toString(totalGoodsPrice + shippingPrice));
-    }
-
-    public void updateRecycleView() {
-        ShoppingCarPreference pref = new ShoppingCarPreference();
-        shoppingCarProducts = pref.loadShoppingItems(this.getActivity());
-
-        ViewGroup.LayoutParams params = newsRecylerView.getLayoutParams();
-        params.height = (int) DensityApi.convertDpToPixel(100 * shoppingCarProducts.size(), getActivity());
-        newsRecylerView.setLayoutParams(params);
-
-        adapter = new ShoppingCarGoodsAdapter(getActivity(), shoppingCarProducts, this);
-        newsRecylerView.setAdapter(adapter);
-
-        if (shoppingCarProducts.size() == 0) {
-            noItemLayout.setVisibility(View.VISIBLE);
-            ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-            activity.setBreadCurmbsVisibility(View.INVISIBLE);
-        }
     }
 
     private void startNextStep() {
