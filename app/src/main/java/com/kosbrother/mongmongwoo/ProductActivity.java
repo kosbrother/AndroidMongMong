@@ -7,9 +7,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -30,12 +27,15 @@ import com.androidpagecontrol.PageControl;
 import com.bumptech.glide.Glide;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.kosbrother.mongmongwoo.adpters.ProductImageFragmentPagerAdapter;
 import com.kosbrother.mongmongwoo.adpters.StyleGridAdapter;
 import com.kosbrother.mongmongwoo.api.ProductApi;
-import com.kosbrother.mongmongwoo.fragments.ProductImageFragment;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.model.ProductImage;
 import com.kosbrother.mongmongwoo.model.ProductSpec;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
+
+import java.util.ArrayList;
 
 /**
  * Created by kolichung on 3/17/16.
@@ -52,7 +52,6 @@ public class ProductActivity extends AppCompatActivity {
     TextView infoText;
     private ViewPager viewPager;
     private PageControl pageControl;
-//    SampleFragmentPagerAdapter adapter;
 
     Product theProduct;
     private StyleGridAdapter styleGridAdapter;
@@ -191,30 +190,18 @@ public class ProductActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(menuItem);
     }
 
-    public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
-
-        public SampleFragmentPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public int getCount() {
-            if (theProduct.getImages().size() == 0) {
-                return 1;
-            } else {
-                return theProduct.getImages().size();
+    public ArrayList<String> getImages() {
+        ArrayList<ProductImage> productImages = theProduct.getImages();
+        int size = productImages.size();
+        ArrayList<String> images = new ArrayList<>();
+        if (size == 0) {
+            images.add(theProduct.getPic_url());
+        } else {
+            for (int i = 0; i < size; i++) {
+                images.add(productImages.get(i).getUrl());
             }
         }
-
-        @Override
-        public Fragment getItem(int position) {
-            if (theProduct.getImages().size() == 0) {
-                return ProductImageFragment.newInstance(theProduct.getPic_url());
-            } else {
-                return ProductImageFragment.newInstance(theProduct.getImages().get(position).getUrl());
-            }
-        }
-
+        return images;
     }
 
     private class NewsTask extends AsyncTask {
@@ -232,18 +219,17 @@ public class ProductActivity extends AppCompatActivity {
         protected void onPostExecute(Object result) {
             loadingText.setVisibility(View.GONE);
             if (result != null) {
-                SampleFragmentPagerAdapter adapter = new SampleFragmentPagerAdapter(getSupportFragmentManager());
+                ProductImageFragmentPagerAdapter adapter = new ProductImageFragmentPagerAdapter(
+                        getSupportFragmentManager(),
+                        getImages());
                 viewPager.setAdapter(adapter);
                 pageControl.setViewPager(viewPager);
-//                adapter.notifyDataSetChanged();
-//                pageControl.setViewPager(viewPager);
                 infoText.setText(Html.fromHtml(theProduct.getDescription()));
             } else {
                 Toast.makeText(ProductActivity.this, "無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
             }
         }
     }
-
 
     private GridView styleGrid;
     private ImageView styleImage;

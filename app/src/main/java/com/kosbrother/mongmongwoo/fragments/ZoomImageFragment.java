@@ -1,28 +1,25 @@
 package com.kosbrother.mongmongwoo.fragments;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.kosbrother.mongmongwoo.ZoomImageActivity;
-import com.kosbrother.mongmongwoo.ProductActivity;
 import com.kosbrother.mongmongwoo.R;
+import com.kosbrother.mongmongwoo.utils.TouchImageView;
 
-public class ProductImageFragment extends Fragment implements View.OnClickListener {
-
+public class ZoomImageFragment extends Fragment {
     public static final String ARG_PIC = "THE_PIC_URL";
 
     String pic_url;
 
-    public static ProductImageFragment newInstance(String pic_url) {
+    public static ZoomImageFragment newInstance(String pic_url) {
+
         Bundle args = new Bundle();
         args.putString(ARG_PIC, pic_url);
-        ProductImageFragment fragment = new ProductImageFragment();
+        ZoomImageFragment fragment = new ZoomImageFragment();
         fragment.setArguments(args);
         return fragment;
     }
@@ -36,24 +33,16 @@ public class ProductImageFragment extends Fragment implements View.OnClickListen
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        ImageView view = (ImageView) inflater.inflate(R.layout.fragment_product_image, container, false);
-        view.setOnClickListener(this);
+        TouchImageView imageView = (TouchImageView)
+                inflater.inflate(R.layout.fragment_zoom_in_out_image, container, false);
+
         Glide.with(getActivity())
                 .load(pic_url)
                 .centerCrop()
                 .placeholder(R.drawable.icon_head)
                 .crossFade()
-                .into(view);
-        return view;
-    }
-
-    @Override
-    public void onClick(View v) {
-        ProductActivity activity = (ProductActivity) getActivity();
-        Intent intent = new Intent(activity, ZoomImageActivity.class);
-        intent.putStringArrayListExtra(ZoomImageActivity.STRING_ARRAY_LIST_EXTRA_URL,
-                activity.getImages());
-        startActivity(intent);
+                .into(imageView);
+        return imageView;
     }
 
 }

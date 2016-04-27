@@ -49,7 +49,7 @@
         </service>
         <service
             android:name="com.kosbrother.mongmongwoo.gcm.RegistrationIntentService"
-            android:exported="false"/>
+            android:exported="false" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -120,14 +120,21 @@
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme" />
 
+        <activity
+            android:name=".ZoomImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
         <!-- Used for Google Play Store Campaign Measurement-->
-        <receiver android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
+        <receiver
+            android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"
             android:enabled="true">
             <intent-filter>
                 <action android:name="com.android.vending.INSTALL_REFERRER" />
             </intent-filter>
         </receiver>
-        <service android:name="com.google.android.gms.analytics.CampaignTrackingService"
+        <service
+            android:name="com.google.android.gms.analytics.CampaignTrackingService"
             android:enabled="true"
             android:exported="false" />
 
