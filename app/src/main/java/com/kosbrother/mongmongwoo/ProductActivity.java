@@ -300,7 +300,7 @@ public class ProductActivity extends AppCompatActivity {
         Glide.with(this)
                 .load(theProduct.getSpecs().get(0).getPic_url())
                 .centerCrop()
-                .placeholder(R.drawable.icon_head)
+                .placeholder(R.mipmap.img_pre_load)
                 .crossFade()
                 .into(styleImage);
         styleName.setText(theProduct.getSpecs().get(0).getStyle());

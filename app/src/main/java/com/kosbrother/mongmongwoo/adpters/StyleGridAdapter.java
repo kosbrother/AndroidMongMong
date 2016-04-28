@@ -65,7 +65,7 @@ public class StyleGridAdapter extends BaseAdapter {
                 Glide.with(mActivity)
                         .load(specs.get(position).getPic_url())
                         .centerCrop()
-                        .placeholder(R.drawable.icon_head)
+                        .placeholder(R.mipmap.img_pre_load)
                         .crossFade()
                         .into(imageView);
                 nameTextView.setText(specs.get(position).getStyle());
@@ -74,10 +74,10 @@ public class StyleGridAdapter extends BaseAdapter {
             }
         });
 
-        if (position == selectedPosition){
+        if (position == selectedPosition) {
             storeText.setBackgroundResource(R.drawable.round_select_style);
             storeText.setTextColor(mActivity.getResources().getColor(R.color.white));
-        }else {
+        } else {
             storeText.setBackgroundResource(R.drawable.round_non_select_style);
             storeText.setTextColor(mActivity.getResources().getColor(R.color.gray_background));
         }
@@ -85,7 +85,7 @@ public class StyleGridAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public int getSelectedPosition(){
+    public int getSelectedPosition() {
         return selectedPosition;
     }
 }

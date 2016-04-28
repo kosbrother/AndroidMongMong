@@ -126,7 +126,7 @@ public class MainActivity extends FbLoginActivity
         Glide.with(this)
                 .load(picUrl)
                 .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                .placeholder(R.drawable.icon_head)
+                .placeholder(R.mipmap.img_pre_load)
                 .crossFade()
                 .into(userImage);
     }
@@ -166,7 +166,7 @@ public class MainActivity extends FbLoginActivity
             Glide.with(MainActivity.this)
                     .load(savedUser.getFb_pic())
                     .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                    .placeholder(R.drawable.icon_head)
+                    .placeholder(R.mipmap.img_pre_load)
                     .crossFade()
                     .into(userImage);
             userText.setText(savedUser.getUser_name());
