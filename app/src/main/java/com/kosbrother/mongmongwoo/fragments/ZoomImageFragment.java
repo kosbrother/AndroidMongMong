@@ -38,10 +38,10 @@ public class ZoomImageFragment extends Fragment {
 
         Glide.with(getActivity())
                 .load(pic_url)
-                .centerCrop()
                 .placeholder(R.drawable.icon_head)
-                .crossFade()
+                .fitCenter()
                 .into(imageView);
+
         return imageView;
     }
 
