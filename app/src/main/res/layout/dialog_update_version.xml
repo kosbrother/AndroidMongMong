@@ -60,7 +60,7 @@
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:layout_marginTop="16dp"
-        android:text="歡迎您前往google play下載更新，若有任何問題可直接聯絡客服人員，我們會盡快為您處理！！"
+        android:text="@string/update_hint"
         android:textSize="14sp" />
 
     <Button
