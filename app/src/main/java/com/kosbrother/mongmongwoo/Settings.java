@@ -11,23 +11,28 @@ import com.kosbrother.mongmongwoo.model.User;
  */
 public class Settings {
 
-    public static final String PREFS_NAME = "USER_DATA";
+    private static final String PREFS_NAME = "USER_DATA";
 
-    final static String keyUserName = "USER_NAME";
-    final static String keyUserFBUid = "USER_UID";
-    final static String keyUserGender = "USER_GENDER";
-    final static String keyUserRealName = "USER_REAL_NAME";
-    final static String keyUserPhone = "USER_PHONE";
-    final static String keyUserAddress = "USER_ADDRESS";
-    final static String keyUserFBPic = "USER_PIC";
-    final static String keyUserFBEmail = "USER_EMAIL";
+    private final static String keyUserName = "USER_NAME";
+    private final static String keyUserFBUid = "USER_UID";
+    private final static String keyUserGender = "USER_GENDER";
+    private final static String keyUserRealName = "USER_REAL_NAME";
+    private final static String keyUserPhone = "USER_PHONE";
+    private final static String keyUserAddress = "USER_ADDRESS";
+    private final static String keyUserFBPic = "USER_PIC";
+    private final static String keyUserFBEmail = "USER_EMAIL";
 
-    final static String keyFirstAddShoppingCar = "IS_FIRST_ADD_SHOPPING_CAR";
+    private final static String keyFirstAddShoppingCar = "IS_FIRST_ADD_SHOPPING_CAR";
 
-    final static String keyStoreId = "KeyStoreID";
-    final static String keyStoreCode = "KeyStoreCode";
-    final static String keyStoreName = "KeyStoreName";
-    final static String keyStoreAddress = "KeyStoreAddress";
+    private final static String keyStoreId = "KeyStoreID";
+    private final static String keyStoreCode = "KeyStoreCode";
+    private final static String keyStoreName = "KeyStoreName";
+    private final static String keyStoreAddress = "KeyStoreAddress";
+
+    private static final String PREFS_VERSION = "PREFS_VERSION";
+    private final static String KEY_STRING_VERSION_NAME = "KEY_STRING_VERSION_NAME";
+    private final static String KEY_BOOLEAN_VERSION_UP_TO_DATE = "KEY_BOOLEAN_VERSION_UP_TO_DATE";
+    private static final String KEY_INT_NOT_UPDATE_TIMES = "KEY_INT_NOT_UPDATE_TIMES";
 
     public static void saveUserFBData(Context context, User user) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -47,7 +52,7 @@ public class Settings {
         editor.putString(keyStoreCode, theStore.getStore_code());
         editor.putString(keyStoreName, theStore.getName());
         editor.putString(keyStoreAddress, theStore.getAddress());
-        editor.commit();
+        editor.apply();
     }
 
     public static Store getSavedStore(Context context) {
@@ -59,8 +64,7 @@ public class Settings {
             String storeCode = prefs.getString(keyStoreCode, "");
             String storeName = prefs.getString(keyStoreName, "");
             String storeAddress = prefs.getString(keyStoreAddress, "");
-            Store store = new Store(storeId, storeCode, storeName, storeAddress);
-            return store;
+            return new Store(storeId, storeCode, storeName, storeAddress);
         }
     }
 
@@ -69,19 +73,17 @@ public class Settings {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(keyUserPhone, user_phone);
         editor.putString(keyUserRealName, user_real_name);
-        editor.commit();
+        editor.apply();
     }
 
     public static String getShippingName(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String shippingName = prefs.getString(keyUserRealName, "");
-        return shippingName;
+        return prefs.getString(keyUserRealName, "");
     }
 
     public static String getShippingPhone(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String shippingPhone = prefs.getString(keyUserPhone, "");
-        return shippingPhone;
+        return prefs.getString(keyUserPhone, "");
     }
 
     public static void clearAllUserData(Context context) {
@@ -98,26 +100,17 @@ public class Settings {
     public static boolean checkIsLogIn(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String savedUserName = prefs.getString(keyUserName, "");
-        if (savedUserName.equals("")) {
-            return false;
-        } else {
-            return true;
-        }
+        return !savedUserName.equals("");
     }
 
     public static boolean checkIsFirstAddShoppingCar(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        boolean isFirstAdd = prefs.getBoolean(keyFirstAddShoppingCar, true);
-        if (isFirstAdd) {
-            return true;
-        } else {
-            return false;
-        }
+        return prefs.getBoolean(keyFirstAddShoppingCar, true);
     }
 
     public static void setKownShoppingCar(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        prefs.edit().putBoolean(keyFirstAddShoppingCar, false).commit();
+        prefs.edit().putBoolean(keyFirstAddShoppingCar, false).apply();
     }
 
     public static User getSavedUser(Context context) {
@@ -133,5 +126,40 @@ public class Settings {
         return new User(userName, realName, gender, phone, address, fb_uid, fb_pic, email);
     }
 
+    public static void saveAndroidVersion(Context context, String versionName, boolean upToDate) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(KEY_STRING_VERSION_NAME, versionName);
+        editor.putBoolean(KEY_BOOLEAN_VERSION_UP_TO_DATE, upToDate);
+        editor.apply();
+    }
 
+    public static boolean isUpToDate(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
+        return prefs.getBoolean(KEY_BOOLEAN_VERSION_UP_TO_DATE, false);
+    }
+
+    public static String getVersionName(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
+        return prefs.getString(KEY_STRING_VERSION_NAME, "");
+    }
+
+    public static int getNotUpdateTimes(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
+        return prefs.getInt(KEY_INT_NOT_UPDATE_TIMES, 0);
+    }
+
+    public static void resetNotUpdateTimes(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(KEY_INT_NOT_UPDATE_TIMES, 0);
+        editor.apply();
+    }
+
+    public static void addNotUpdateTimes(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(KEY_INT_NOT_UPDATE_TIMES, prefs.getInt(KEY_INT_NOT_UPDATE_TIMES, 0) + 1);
+        editor.apply();
+    }
 }

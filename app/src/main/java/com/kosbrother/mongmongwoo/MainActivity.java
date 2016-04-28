@@ -1,9 +1,26 @@
 package com.kosbrother.mongmongwoo;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+import com.bumptech.glide.Glide;
+import com.facebook.login.widget.LoginButton;
+import com.github.siyamed.shapeimageview.CircularImageView;
+import com.kosbrother.mongmongwoo.api.UrlCenter;
+import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
+import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
+import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
+import com.kosbrother.mongmongwoo.model.User;
+import com.kosbrother.mongmongwoo.utils.NetworkUtil;
+import com.kosbrother.mongmongwoo.utils.VersionUtil;
+
+import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -19,26 +36,18 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.bumptech.glide.Glide;
-import com.facebook.login.widget.LoginButton;
-import com.github.siyamed.shapeimageview.CircularImageView;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
-import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
-import com.kosbrother.mongmongwoo.model.User;
-import com.kosbrother.mongmongwoo.utils.NetworkUtil;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import rx.functions.Action1;
 
 public class MainActivity extends FbLoginActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -107,6 +116,8 @@ public class MainActivity extends FbLoginActivity
         setViewPagerAndTabLayout();
 
         csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
+
+        checkAndroidVersion();
     }
 
     @Override
@@ -116,7 +127,7 @@ public class MainActivity extends FbLoginActivity
         Glide.with(this)
                 .load(picUrl)
                 .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                .placeholder(R.drawable.icon_head)
+                .placeholder(R.mipmap.img_pre_load)
                 .crossFade()
                 .into(userImage);
     }
@@ -156,7 +167,7 @@ public class MainActivity extends FbLoginActivity
             Glide.with(MainActivity.this)
                     .load(savedUser.getFb_pic())
                     .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                    .placeholder(R.drawable.icon_head)
+                    .placeholder(R.mipmap.img_pre_load)
                     .crossFade()
                     .into(userImage);
             userText.setText(savedUser.getUser_name());
@@ -264,6 +275,62 @@ public class MainActivity extends FbLoginActivity
         } else {
             Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void checkAndroidVersion() {
+        Webservice.getAndroidVersion(new Action1<AndroidVersionEntity>() {
+            @Override
+            public void call(AndroidVersionEntity version) {
+                onGetVersionResult(version);
+            }
+        });
+    }
+
+    private void onGetVersionResult(AndroidVersionEntity version) {
+        if (version == null) {
+            return;
+        }
+        boolean upToDate = VersionUtil.isVersionUpToDate(version.getVersionCode());
+        String version_name = version.getVersionName();
+        Settings.saveAndroidVersion(this, version_name, upToDate);
+
+        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        Menu navigationViewMenu = navigationView.getMenu();
+        View lastVersionActionView = navigationViewMenu.findItem(R.id.nav_about).getActionView();
+
+        if (upToDate) {
+            lastVersionActionView.setVisibility(View.INVISIBLE);
+            Settings.resetNotUpdateTimes(this);
+        } else {
+            lastVersionActionView.setVisibility(View.VISIBLE);
+            if (VersionUtil.remindUpdate(this)) {
+                showUpdateDialog(version_name, version.getUpdateMessage());
+                Settings.resetNotUpdateTimes(this);
+            }
+            Settings.addNotUpdateTimes(this);
+        }
+    }
+
+    private void showUpdateDialog(String version_name, String update_message) {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_update_version, null);
+        ((TextView) dialogView.findViewById(R.id.version_name_tv)).setText(version_name);
+        ((TextView) dialogView.findViewById(R.id.update_msg_tv)).setText(update_message);
+
+        final Dialog dialog = new Dialog(this);
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.setCanceledOnTouchOutside(true);
+        dialog.setContentView(dialogView);
+        dialog.show();
+
+        dialogView.findViewById(R.id.update_btn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Uri uri = Uri.parse(UrlCenter.GOOGLE_PLAY);
+                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+                startActivity(intent);
+                dialog.dismiss();
+            }
+        });
     }
 
     class SampleFragmentPagerAdapter extends FragmentPagerAdapter {

@@ -72,7 +72,7 @@ public class GoodsGridAdapter extends BaseAdapter {
 
         if (convertView == null) {
             // If convertView is null then inflate the appropriate layout file
-            convertView = LayoutInflater.from(mActivity).inflate(R.layout.item_goods_2, null);
+            convertView = LayoutInflater.from(mActivity).inflate(R.layout.item_goods, null);
         }
         ImageView itemImage = (ImageView) convertView.findViewById(R.id.item_imageview);
         TextView itemNameText = (TextView) convertView.findViewById(R.id.item_name_text);
@@ -84,7 +84,7 @@ public class GoodsGridAdapter extends BaseAdapter {
         Glide.with(mActivity)
                 .load(theProduct.getPic_url())
                 .centerCrop()
-                .placeholder(R.drawable.icon_head)
+                .placeholder(R.mipmap.img_pre_load)
                 .crossFade()
                 .into(itemImage);
         itemNameText.setText(theProduct.getName());
@@ -201,7 +201,7 @@ public class GoodsGridAdapter extends BaseAdapter {
                 Glide.with(mActivity)
                         .load(specs.get(0).getPic_url())
                         .centerCrop()
-                        .placeholder(R.drawable.icon_head)
+                        .placeholder(R.mipmap.img_pre_load)
                         .crossFade()
                         .into(styleImage);
                 styleName.setText(specs.get(0).getStyle());
