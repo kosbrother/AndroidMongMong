@@ -1,9 +1,8 @@
 package com.kosbrother.mongmongwoo.model;
 
-/**
- * Created by kolichung on 3/17/16.
- */
-public class ProductImage {
+import java.io.Serializable;
+
+public class ProductImage implements Serializable {
 
     public String getIntro() {
         return intro;
@@ -32,7 +31,6 @@ public class ProductImage {
     String thumb;
     String medium;
     String intro;
-
 
 
 }
