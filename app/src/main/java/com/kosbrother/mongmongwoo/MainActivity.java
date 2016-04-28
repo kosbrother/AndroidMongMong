@@ -35,9 +35,9 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 import com.kosbrother.mongmongwoo.api.UrlCenter;
 import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
 import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
-import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.VersionUtil;
@@ -291,16 +291,22 @@ public class MainActivity extends FbLoginActivity
         }
         boolean upToDate = VersionUtil.checkVersionUpToDate(version.getVersionCode());
         String version_name = version.getVersionName();
-        Settings.saveAndroidVersion(getApplicationContext(), version_name, upToDate);
+        Settings.saveAndroidVersion(this, version_name, upToDate);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         Menu navigationViewMenu = navigationView.getMenu();
         View lastVersionActionView = navigationViewMenu.findItem(R.id.nav_about).getActionView();
+
         if (upToDate) {
             lastVersionActionView.setVisibility(View.INVISIBLE);
+            Settings.resetNotUpdateTimes(this);
         } else {
             lastVersionActionView.setVisibility(View.VISIBLE);
-            showUpdateDialog(version_name, version.getUpdateMessage());
+            if (VersionUtil.remindUpdate(this)) {
+                showUpdateDialog(version_name, version.getUpdateMessage());
+                Settings.resetNotUpdateTimes(this);
+            }
+            Settings.addNotUpdateTimes(this);
         }
     }
 

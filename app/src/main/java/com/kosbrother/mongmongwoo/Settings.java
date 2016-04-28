@@ -32,6 +32,7 @@ public class Settings {
     private static final String PREFS_VERSION = "PREFS_VERSION";
     private final static String KEY_STRING_VERSION_NAME = "KEY_STRING_VERSION_NAME";
     private final static String KEY_BOOLEAN_VERSION_UP_TO_DATE = "KEY_BOOLEAN_VERSION_UP_TO_DATE";
+    private static final String KEY_INT_NOT_UPDATE_TIMES = "KEY_INT_NOT_UPDATE_TIMES";
 
     public static void saveUserFBData(Context context, User user) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -141,5 +142,24 @@ public class Settings {
     public static String getVersionName(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
         return prefs.getString(KEY_STRING_VERSION_NAME, "");
+    }
+
+    public static int getNotUpdateTimes(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
+        return prefs.getInt(KEY_INT_NOT_UPDATE_TIMES, 0);
+    }
+
+    public static void resetNotUpdateTimes(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(KEY_INT_NOT_UPDATE_TIMES, 0);
+        editor.apply();
+    }
+
+    public static void addNotUpdateTimes(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(KEY_INT_NOT_UPDATE_TIMES, prefs.getInt(KEY_INT_NOT_UPDATE_TIMES, 0) + 1);
+        editor.apply();
     }
 }
