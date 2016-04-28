@@ -1,5 +1,20 @@
 package com.kosbrother.mongmongwoo;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+import com.bumptech.glide.Glide;
+import com.facebook.login.widget.LoginButton;
+import com.github.siyamed.shapeimageview.CircularImageView;
+import com.kosbrother.mongmongwoo.api.UrlCenter;
+import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
+import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
+import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
+import com.kosbrother.mongmongwoo.model.User;
+import com.kosbrother.mongmongwoo.utils.NetworkUtil;
+import com.kosbrother.mongmongwoo.utils.VersionUtil;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -27,20 +42,6 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.facebook.login.widget.LoginButton;
-import com.github.siyamed.shapeimageview.CircularImageView;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.kosbrother.mongmongwoo.api.UrlCenter;
-import com.kosbrother.mongmongwoo.api.Webservice;
-import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
-import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
-import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
-import com.kosbrother.mongmongwoo.model.User;
-import com.kosbrother.mongmongwoo.utils.NetworkUtil;
-import com.kosbrother.mongmongwoo.utils.VersionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -289,7 +290,7 @@ public class MainActivity extends FbLoginActivity
         if (version == null) {
             return;
         }
-        boolean upToDate = VersionUtil.checkVersionUpToDate(version.getVersionCode());
+        boolean upToDate = VersionUtil.isVersionUpToDate(version.getVersionCode());
         String version_name = version.getVersionName();
         Settings.saveAndroidVersion(this, version_name, upToDate);
 

@@ -1,14 +1,14 @@
 package com.kosbrother.mongmongwoo.utils;
 
-import android.content.Context;
-
 import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.Settings;
 
+import android.content.Context;
+
 public class VersionUtil {
 
-    public static boolean checkVersionUpToDate(int version_code) {
-        return version_code == BuildConfig.VERSION_CODE;
+    public static boolean isVersionUpToDate(int version_code) {
+        return BuildConfig.VERSION_CODE >= version_code;
     }
 
     public static boolean remindUpdate(Context context) {
