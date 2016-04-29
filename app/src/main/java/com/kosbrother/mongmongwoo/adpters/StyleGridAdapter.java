@@ -65,8 +65,7 @@ public class StyleGridAdapter extends BaseAdapter {
                 Glide.with(mActivity)
                         .load(specs.get(position).getPic_url())
                         .centerCrop()
-                        .placeholder(R.mipmap.img_pre_load)
-                        .crossFade()
+                        .placeholder(R.mipmap.img_pre_load_square)
                         .into(imageView);
                 nameTextView.setText(specs.get(position).getStyle());
                 selectedPosition = position;

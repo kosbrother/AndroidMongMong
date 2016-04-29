@@ -41,8 +41,7 @@ public class ProductImageFragment extends Fragment implements View.OnClickListen
         Glide.with(getActivity())
                 .load(pic_url)
                 .centerCrop()
-                .placeholder(R.mipmap.img_pre_load)
-                .crossFade()
+                .placeholder(R.mipmap.img_pre_load_rectangle)
                 .into(view);
         return view;
     }

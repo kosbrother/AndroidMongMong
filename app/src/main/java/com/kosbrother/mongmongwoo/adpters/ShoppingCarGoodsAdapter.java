@@ -47,8 +47,7 @@ public class ShoppingCarGoodsAdapter extends RecyclerView.Adapter<ShoppingCarGoo
         Glide.with(mActivity)
                 .load(shoppingProducts.get(position).getSelectedSpec().getPic_url())
                 .centerCrop()
-                .placeholder(R.mipmap.img_pre_load)
-                .crossFade()
+                .placeholder(R.mipmap.img_pre_load_rectangle)
                 .into(holder.imageView);
         holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override

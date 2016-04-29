@@ -84,8 +84,7 @@ public class GoodsGridAdapter extends BaseAdapter {
         Glide.with(mActivity)
                 .load(theProduct.getPic_url())
                 .centerCrop()
-                .placeholder(R.mipmap.img_pre_load)
-                .crossFade()
+                .placeholder(R.mipmap.img_pre_load_rectangle)
                 .into(itemImage);
         itemNameText.setText(theProduct.getName());
         itemPriceText.setText("NT$" + Integer.toString(theProduct.getPrice()));
@@ -201,8 +200,7 @@ public class GoodsGridAdapter extends BaseAdapter {
                 Glide.with(mActivity)
                         .load(specs.get(0).getPic_url())
                         .centerCrop()
-                        .placeholder(R.mipmap.img_pre_load)
-                        .crossFade()
+                        .placeholder(R.mipmap.img_pre_load_square)
                         .into(styleImage);
                 styleName.setText(specs.get(0).getStyle());
 
