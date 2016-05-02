@@ -14,6 +14,7 @@ import java.util.ArrayList;
 public class ZoomImageActivity extends AppCompatActivity implements View.OnClickListener {
 
     public static final String STRING_ARRAY_LIST_EXTRA_URL = "STRING_ARRAY_LIST_EXTRA_URL";
+    public static final String INT_EXTRA_INDEX = "INT_EXTRA_INDEX";
 
     @SuppressWarnings("ConstantConditions")
     @Override
@@ -22,10 +23,12 @@ public class ZoomImageActivity extends AppCompatActivity implements View.OnClick
         setContentView(R.layout.activity_zoom_image);
 
         ArrayList<String> urls = getIntent().getStringArrayListExtra(STRING_ARRAY_LIST_EXTRA_URL);
+        int index = getIntent().getIntExtra(INT_EXTRA_INDEX, 0);
 
         ViewPager viewPager = (ViewPager) findViewById(R.id.image_vp);
         viewPager.setAdapter(new ZoomImageFragmentPagerAdapter(
                 getSupportFragmentManager(), urls));
+        viewPager.setCurrentItem(index);
 
         PageControl pageControl = (PageControl) findViewById(R.id.page_control);
         pageControl.setViewPager(viewPager);

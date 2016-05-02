@@ -38,7 +38,7 @@ public class ZoomImageFragment extends Fragment {
 
         Glide.with(getActivity())
                 .load(pic_url)
-                .placeholder(R.drawable.icon_head)
+                .placeholder(R.mipmap.img_pre_load_rectangle)
                 .fitCenter()
                 .into(imageView);
 

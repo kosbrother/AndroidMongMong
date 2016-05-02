@@ -26,6 +26,6 @@ public class ProductImageFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return ProductImageFragment.newInstance(urls.get(position));
+        return ProductImageFragment.newInstance(urls.get(position), position);
     }
 }
