@@ -152,7 +152,6 @@ public class PurchaseFragment1 extends Fragment {
         } else {
             noItemLayout.setVisibility(View.GONE);
             activity.setBreadCurmbsVisibility(View.VISIBLE);
-            activity.sendShoppoingFragment(1);
         }
     }
 

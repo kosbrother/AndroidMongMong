@@ -85,7 +85,6 @@ public class PurchaseFragment3 extends Fragment {
         if (isVisibleToUser) {
             //相当于Fragment的onResume
             ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-            activity.sendShoppoingFragment(3);
             theOrder = activity.getOrder();
 
             shippingPriceText.setText(Integer.toString(theOrder.getShipPrice()));

@@ -83,7 +83,6 @@ public class PurchaseFragment2 extends Fragment {
         });
 
         ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-        activity.sendShoppoingFragment(2);
         if (activity.getOrder().getShippingStore() != null) {
             selectStoreButton.setText(activity.getOrder().getShippingStore().getName());
             shippingNameEditText.setText(activity.getOrder().getShippingName());
