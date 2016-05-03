@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
 
     <android.support.design.widget.AppBarLayout
@@ -22,110 +24,125 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        >
+        android:layout_weight="1">
+
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical"
-            >
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
 
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
                 android:text="依門市地址搜索"
-                android:textSize="18dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginLeft="10dp"
-                />
+                android:textColor="@color/green_text"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:weightSum="3"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="5dp"
-                >
+                android:layout_marginTop="18dp"
+                android:orientation="horizontal">
 
-                <Spinner
-                    android:id="@+id/spinner1"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    >
-                </Spinner>
-
-                <Spinner
-                    android:id="@+id/spinner2"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    >
-                </Spinner>
-
-                <Spinner
-                    android:id="@+id/spinner3"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    >
-                </Spinner>
-
-            </LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/gray_background"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:layout_marginTop="5dp"
-                android:layout_marginBottom="5dp"
-                ></LinearLayout>
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:orientation="vertical"
-                >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="搜索結果"
-                    android:textSize="18dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="縣市："
+                    android:textColor="@color/black_text"
+                    android:textSize="14sp" />
 
-                    />
+                <Spinner
+                    android:id="@+id/country_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
 
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="區域："
+                    android:textColor="@color/black_text"
+                    android:textSize="14sp" />
+
+                <Spinner
+                    android:id="@+id/town_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="路段："
+                    android:textColor="@color/black_text"
+                    android:textSize="14sp" />
+
+                <Spinner
+                    android:id="@+id/road_spinner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_marginTop="24dp"
+                android:background="@color/gray_background" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="請選擇門市"
+                    android:textColor="@color/green_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <ProgressBar
                     android:id="@+id/my_progress_bar"
                     style="@android:style/Widget.ProgressBar.Large"
                     android:layout_width="40dp"
                     android:layout_height="wrap_content"
-                    android:visibility="gone"
-                    />
-
+                    android:visibility="gone" />
 
                 <GridView
                     android:id="@+id/store_grid"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:numColumns="2"
-                    android:gravity="center"
+                    android:layout_marginTop="15dp"
                     android:columnWidth="5dp"
+                    android:gravity="center"
+                    android:horizontalSpacing="8dp"
+                    android:numColumns="2"
                     android:stretchMode="columnWidth"
-                    android:horizontalSpacing="10dp"
-                    android:verticalSpacing="10dp"
-                    android:layout_marginTop="5dp"
-                    >
-                </GridView>
+                    android:verticalSpacing="8dp" />
 
             </LinearLayout>
 
@@ -134,66 +151,82 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginLeft="10dp"
-                android:layout_marginRight="10dp"
-                android:visibility="gone"
-                >
+                android:visibility="visible">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@color/gray_background" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:text="門市資訊"
+                    android:textColor="@color/green_text"
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_background"
-                    android:layout_marginTop="0dp"
-                    android:layout_marginBottom="5dp"
-                    ></LinearLayout>
-
-                <TextView
-                    android:id="@+id/select_store_name"
-                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="全家益昇門市"
-                    android:textSize="18dp"
-                    />
+                    android:layout_marginTop="16dp"
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/select_store_address"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="台中市大里區國光路一段20號"
-                    android:textSize="18dp"
-                    />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="門市名稱："
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/select_store_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        tools:text="7-11台茂漢堡店門市" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_background"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginBottom="5dp"
-                    ></LinearLayout>
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:orientation="horizontal">
 
-                <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="地址："
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/select_store_address"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp"
+                        tools:text="台中市大里區國光路一段20號" />
+                </LinearLayout>
+
+                <fragment
+                    android:id="@+id/map"
+                    android:name="com.google.android.gms.maps.SupportMapFragment"
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
-                    android:id="@+id/map"
-                    android:name="com.google.android.gms.maps.SupportMapFragment" />
+                    android:layout_marginTop="24dp" />
             </LinearLayout>
-
 
         </LinearLayout>
     </ScrollView>
 
     <Button
         android:id="@+id/select_store_button"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:text="選擇此門市"
+        android:layout_margin="16dp"
         android:background="@drawable/button_green_selector"
+        android:text="送出門市資料"
         android:textColor="@color/white"
-        android:layout_marginTop="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginBottom="10dp"
-        />
+        android:visibility="gone" />
 
 </LinearLayout>

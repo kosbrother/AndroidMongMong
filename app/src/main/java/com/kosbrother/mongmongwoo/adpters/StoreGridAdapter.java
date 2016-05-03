@@ -55,25 +55,22 @@ public class StoreGridAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Store theStore = stores.get(position);
-                mActivity.setStoreInfo(theStore);
+                mActivity.updateStoreInfo(theStore);
 
                 selectedStorePosition = position;
                 notifyDataSetChanged();
             }
         });
 
-        if (position == selectedStorePosition){
+        if (position == selectedStorePosition) {
             storeText.setBackgroundResource(R.drawable.button_yellow_selector);
             storeText.setTextColor(mActivity.getResources().getColor(R.color.white));
-        }else {
+        } else {
             storeText.setBackgroundResource(R.drawable.button_yellow_round_selector);
-            storeText.setTextColor(mActivity.getResources().getColor(R.color.gray_background));
+            storeText.setTextColor(mActivity.getResources().getColor(R.color.movie_indicator));
         }
 
         return convertView;
     }
 
-    public void resetSelectedStorePosition(){
-        selectedStorePosition = -1;
-    }
 }
