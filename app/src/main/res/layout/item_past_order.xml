@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -14,31 +15,34 @@
         android:orientation="horizontal">
 
         <TextView
-            android:id="@+id/past_order_date_text"
+            android:id="@+id/past_order_date_tv"
             android:layout_width="90dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:text="2015/12/3"
-            android:textSize="16dp" />
+            android:layout_marginStart="10dp"
+            android:textSize="16dp"
+            tools:text="2015/12/3" />
 
         <TextView
-            android:id="@+id/past_order_total_price_text"
+            android:id="@+id/past_order_total_price_tv"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
             android:layout_weight="1"
-            android:text="總花費:NT$ 2100"
-            android:textSize="16dp" />
+            android:textSize="16dp"
+            tools:text="總花費:NT$ 2100" />
 
         <TextView
-            android:id="@+id/past_order_status_text"
+            android:id="@+id/past_order_status_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="5dp"
+            android:layout_marginEnd="10dp"
             android:layout_marginRight="10dp"
             android:background="@drawable/edittext_selector"
             android:padding="5dp"
-            android:text="已出貨"
-            android:textSize="15dp" />
+            android:textSize="15dp"
+            tools:text="已出貨" />
 
     </LinearLayout>
 
