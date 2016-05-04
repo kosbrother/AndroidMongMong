@@ -152,7 +152,6 @@ public class PurchaseFragment1 extends Fragment {
         } else {
             noItemLayout.setVisibility(View.GONE);
             activity.setBreadCurmbsVisibility(View.VISIBLE);
-            activity.sendShoppoingFragment(1);
         }
     }
 
@@ -213,7 +212,7 @@ public class PurchaseFragment1 extends Fragment {
         final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
                 getActivity(),
                 android.R.layout.select_dialog_singlechoice);
-        arrayAdapter.add("全家,OK,萊爾富超商取貨付款 $60");
+        arrayAdapter.add("7-11超商取貨付款 $60");
 
         builderSingle.setAdapter(
                 arrayAdapter,

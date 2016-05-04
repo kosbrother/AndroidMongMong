@@ -112,6 +112,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
                         breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
+                        sendShoppingFragment(1);
                         break;
                     case 1:
                         menuItem.setTitle("上一步");
@@ -126,6 +127,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
                         breadCrumb2.setBackgroundResource(R.drawable.circle_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
+                        sendShoppingFragment(2);
                         break;
                     case 2:
                         menuItem.setTitle("上一步");
@@ -140,6 +142,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
                         breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_style);
                         breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
+                        sendShoppingFragment(3);
                         break;
                     case 3:
                         menuItem.setVisible(false);
@@ -147,6 +150,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
                         breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb4.setBackgroundResource(R.drawable.circle_style);
+                        sendShoppingFragment(4);
                         break;
                 }
             }
@@ -156,6 +160,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
 
             }
         });
+        sendShoppingFragment(1);
     }
 
     public void setBreadCurmbsVisibility(int view_param) {
@@ -229,7 +234,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
         }
     }
 
-    public void sendShoppoingFragment(int fragmentPosition) {
+    private void sendShoppingFragment(int fragmentPosition) {
         mTracker.setScreenName("Shopping Fragment " + Integer.toString(fragmentPosition));
         mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }

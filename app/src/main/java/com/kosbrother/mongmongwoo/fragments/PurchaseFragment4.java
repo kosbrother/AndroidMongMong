@@ -10,7 +10,6 @@ import android.widget.TextView;
 
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.ShoppingCarActivity;
 
 public class PurchaseFragment4 extends Fragment implements View.OnClickListener {
 
@@ -25,13 +24,6 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
 
     public static Fragment newInstance() {
         return new PurchaseFragment4();
-    }
-
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        // TODO: 2016/4/18 send event by click is better
-        ((ShoppingCarActivity) getActivity()).sendShoppoingFragment(4);
     }
 
     @Override

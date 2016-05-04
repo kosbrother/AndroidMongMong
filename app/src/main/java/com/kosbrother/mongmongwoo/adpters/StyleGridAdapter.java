@@ -1,6 +1,7 @@
 package com.kosbrother.mongmongwoo.adpters;
 
 import android.app.Activity;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,9 +15,6 @@ import com.kosbrother.mongmongwoo.model.ProductSpec;
 
 import java.util.ArrayList;
 
-/**
- * Created by kolichung on 3/23/16.
- */
 public class StyleGridAdapter extends BaseAdapter {
 
     private Activity mActivity;
@@ -75,10 +73,10 @@ public class StyleGridAdapter extends BaseAdapter {
 
         if (position == selectedPosition) {
             storeText.setBackgroundResource(R.drawable.round_select_style);
-            storeText.setTextColor(mActivity.getResources().getColor(R.color.white));
+            storeText.setTextColor(ContextCompat.getColor(mActivity, R.color.white));
         } else {
             storeText.setBackgroundResource(R.drawable.round_non_select_style);
-            storeText.setTextColor(mActivity.getResources().getColor(R.color.gray_background));
+            storeText.setTextColor(ContextCompat.getColor(mActivity, R.color.gray_background));
         }
 
         return convertView;

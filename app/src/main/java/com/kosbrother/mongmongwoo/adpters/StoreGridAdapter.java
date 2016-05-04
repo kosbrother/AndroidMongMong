@@ -1,5 +1,6 @@
 package com.kosbrother.mongmongwoo.adpters;
 
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,9 +13,6 @@ import com.kosbrother.mongmongwoo.model.Store;
 
 import java.util.ArrayList;
 
-/**
- * Created by kolichung on 3/14/16.
- */
 public class StoreGridAdapter extends BaseAdapter {
 
     private SelectDeliverStoreActivity mActivity;
@@ -55,25 +53,22 @@ public class StoreGridAdapter extends BaseAdapter {
             @Override
             public void onClick(View v) {
                 Store theStore = stores.get(position);
-                mActivity.setStoreInfo(theStore);
+                mActivity.updateStoreInfo(theStore);
 
                 selectedStorePosition = position;
                 notifyDataSetChanged();
             }
         });
 
-        if (position == selectedStorePosition){
+        if (position == selectedStorePosition) {
             storeText.setBackgroundResource(R.drawable.button_yellow_selector);
-            storeText.setTextColor(mActivity.getResources().getColor(R.color.white));
-        }else {
+            storeText.setTextColor(ContextCompat.getColor(mActivity, R.color.white));
+        } else {
             storeText.setBackgroundResource(R.drawable.button_yellow_round_selector);
-            storeText.setTextColor(mActivity.getResources().getColor(R.color.gray_background));
+            storeText.setTextColor(ContextCompat.getColor(mActivity, R.color.movie_indicator));
         }
 
         return convertView;
     }
 
-    public void resetSelectedStorePosition(){
-        selectedStorePosition = -1;
-    }
 }
