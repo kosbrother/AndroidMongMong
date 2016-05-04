@@ -66,7 +66,7 @@ public class PurchaseFragment3 extends Fragment {
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(mLayoutManager);
 
-        ShoppingCarListBuyGoodsAdapter adapter = new ShoppingCarListBuyGoodsAdapter(getActivity(), new ArrayList<Product>());
+        ShoppingCarListBuyGoodsAdapter adapter = new ShoppingCarListBuyGoodsAdapter(new ArrayList<Product>());
         recyclerView.setAdapter(adapter);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -94,7 +94,7 @@ public class PurchaseFragment3 extends Fragment {
             shippingStoreNameText.setText(theOrder.getShippingStore().getName());
             shippingStoreAddressText.setText(theOrder.getShippingStore().getAddress());
 
-            ShoppingCarListBuyGoodsAdapter adapter = new ShoppingCarListBuyGoodsAdapter(getActivity(), theOrder.getOrderProducts());
+            ShoppingCarListBuyGoodsAdapter adapter = new ShoppingCarListBuyGoodsAdapter(theOrder.getOrderProducts());
             recyclerView.setAdapter(adapter);
         } else {
             //相当于Fragment的onPause

@@ -96,7 +96,7 @@ public class PastOrderDetailActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(Object result) {
             if (result != null) {
-                PastOrderListAdapter adapter = new PastOrderListAdapter(PastOrderDetailActivity.this, thePastOrder.getPastOrderProducts());
+                PastOrderListAdapter adapter = new PastOrderListAdapter(thePastOrder.getPastOrderProducts());
                 recyclerView.setAdapter(adapter);
 
                 shippingPriceText.setText(Integer.toString(thePastOrder.getShipPrice()));
