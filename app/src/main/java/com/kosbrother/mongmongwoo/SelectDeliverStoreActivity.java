@@ -23,6 +23,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.kosbrother.mongmongwoo.adpters.StoreGridAdapter;
 import com.kosbrother.mongmongwoo.api.DensityApi;
@@ -82,12 +83,18 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         selectStoreButton.setVisibility(View.VISIBLE);
 
         mMap.clear();
-        mMap.addMarker(new MarkerOptions()
-                .title(theStore.getName())
-                .position(theStore.getLatLng())
-                .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_7_11)));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(theStore.getLatLng()));
         mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
+        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+            @Override
+            public void onCameraChange(CameraPosition cameraPosition) {
+                mMap.addMarker(new MarkerOptions()
+                        .title(selectedStore.getName())
+                        .position(cameraPosition.target)
+                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_7_11)));
+                mMap.setOnCameraChangeListener(null);
+            }
+        });
     }
 
     private void setToolBar() {
