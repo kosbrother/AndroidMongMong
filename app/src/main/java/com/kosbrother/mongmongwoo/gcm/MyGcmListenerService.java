@@ -1,5 +1,13 @@
 package com.kosbrother.mongmongwoo.gcm;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+import com.kosbrother.mongmongwoo.AnalyticsApplication;
+import com.kosbrother.mongmongwoo.ProductActivity;
+import com.kosbrother.mongmongwoo.R;
+import com.kosbrother.mongmongwoo.model.Product;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -9,26 +17,19 @@ import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.BigPictureStyle;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.SimpleTarget;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.kosbrother.mongmongwoo.AnalyticsApplication;
-import com.kosbrother.mongmongwoo.ProductActivity;
-import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.model.Product;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MyGcmListenerService extends com.google.android.gms.gcm.GcmListenerService {
 
     private static final String TAG = "MyGcmListenerService";
-    private static final String HOST = "http://api.kosbrother.com";
 
     /**
      * Called when message is received.
@@ -40,27 +41,22 @@ public class MyGcmListenerService extends com.google.android.gms.gcm.GcmListener
     // [START receive_message]
     @Override
     public void onMessageReceived(String from, final Bundle data) {
-        Runnable myRunnable = new Runnable() {
-            @Override
-            public void run() {
-                SimpleTarget target = new SimpleTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(Bitmap bitmap, GlideAnimation glideAnimation) {
-                        // do something with the bitmap
-                        // for demonstration purposes, let's just set it to an ImageView
-                        sendNotification(data, bitmap);
-                    }
-                };
+        try {
+            URL url = new URL(data.getString("content_pic"));
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap bitmap = BitmapFactory.decodeStream(input);
 
-                //noinspection unchecked
-                Glide.with(getApplicationContext())
-                        .load(HOST + data.getString("content_pic"))
-                        .asBitmap()
-                        .into(target);
-            }
-        };
-        Handler mainHandler = new Handler(Looper.getMainLooper());
-        mainHandler.post(myRunnable);
+            sendNotification(data, bitmap);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
     }
     // [END receive_message]
 

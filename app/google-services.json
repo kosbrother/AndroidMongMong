@@ -1,18 +1,14 @@
 {
   "project_info": {
-    "project_id": "mongmongwoo-1277",
     "project_number": "455561524983",
-    "name": "mongmongwoo"
+    "project_id": "mongmongwoo-1277"
   },
   "client": [
     {
       "client_info": {
         "mobilesdk_app_id": "1:455561524983:android:4298457d84fa70b8",
-        "client_id": "android:com.kosbrother.mongmongwoo",
-        "client_type": 1,
         "android_client_info": {
-          "package_name": "com.kosbrother.mongmongwoo",
-          "certificate_hash": []
+          "package_name": "com.kosbrother.mongmongwoo"
         }
       },
       "oauth_client": [
@@ -25,7 +21,11 @@
           }
         }
       ],
-      "api_key": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkbhp4P4AfTX2d2NNbTCm_wN7AhEhx_2M"
+        }
+      ],
       "services": {
         "analytics_service": {
           "status": 2,
@@ -33,16 +33,9 @@
             "tracking_id": "UA-73843935-2"
           }
         },
-        "cloud_messaging_service": {
-          "status": 2,
-          "apns_config": []
-        },
         "appinvite_service": {
           "status": 1,
           "other_platform_oauth_client": []
-        },
-        "google_signin_service": {
-          "status": 1
         },
         "ads_service": {
           "status": 1
@@ -50,6 +43,5 @@
       }
     }
   ],
-  "client_info": [],
-  "ARTIFACT_VERSION": "1"
+  "configuration_version": "1"
 }
