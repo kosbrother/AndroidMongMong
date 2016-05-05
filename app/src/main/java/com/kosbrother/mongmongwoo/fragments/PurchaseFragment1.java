@@ -26,14 +26,13 @@ import com.kosbrother.mongmongwoo.model.Product;
 
 import java.util.ArrayList;
 
-public class PurchaseFragment1 extends Fragment {
+public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapter.ShoppingCartGoodsListener {
 
     LinearLayout noItemLayout;
     LinearLayout noLoginLayout;
     Button fb_buy_button;
     Button no_name_buy_button;
 
-    ShoppingCarGoodsAdapter adapter;
     RecyclerView newsRecylerView;
     Button deliverButton;
     TextView totalGoodsPriceText;
@@ -47,6 +46,8 @@ public class PurchaseFragment1 extends Fragment {
     int totalGoodsPrice;
     int shippingPrice;
     int shippingType = -1; // 0 means 超商取貨付款, 1 means 宅配
+
+    private int tempCount;
 
     public static PurchaseFragment1 newInstance() {
         return new PurchaseFragment1();
@@ -79,7 +80,7 @@ public class PurchaseFragment1 extends Fragment {
 
     public void loadShoppingCart() {
         ShoppingCarPreference pref = new ShoppingCarPreference();
-        shoppingCarProducts = pref.loadShoppingItems(getActivity());
+        shoppingCarProducts = pref.loadShoppingItems(getContext());
     }
 
     public void updatePricesText() {
@@ -119,8 +120,8 @@ public class PurchaseFragment1 extends Fragment {
         params.height = (int) DensityApi.convertDpToPixel(100 * shoppingCarProducts.size(), getActivity());
         newsRecylerView.setLayoutParams(params);
 
-        adapter = new ShoppingCarGoodsAdapter(getActivity(), shoppingCarProducts, this);
-        newsRecylerView.setAdapter(adapter);
+        ((ShoppingCarGoodsAdapter) newsRecylerView.getAdapter())
+                .updateProductList(shoppingCarProducts);
 
         if (shoppingCarProducts.size() == 0) {
             noItemLayout.setVisibility(View.VISIBLE);
@@ -163,7 +164,7 @@ public class PurchaseFragment1 extends Fragment {
         ViewGroup.LayoutParams params = newsRecylerView.getLayoutParams();
         params.height = (int) DensityApi.convertDpToPixel(100 * shoppingCarProducts.size(), getActivity());
         newsRecylerView.setLayoutParams(params);
-        adapter = new ShoppingCarGoodsAdapter(getActivity(), shoppingCarProducts, this);
+        ShoppingCarGoodsAdapter adapter = new ShoppingCarGoodsAdapter(getActivity(), shoppingCarProducts, this);
         newsRecylerView.setAdapter(adapter);
     }
 
@@ -250,5 +251,89 @@ public class PurchaseFragment1 extends Fragment {
         } else {
             Toast.makeText(getActivity(), "請選擇運送方式", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    @Override
+    public void onDeleteButtonClick(int position) {
+        ShoppingCarPreference prefs = new ShoppingCarPreference();
+        prefs.removeShoppingItem(getContext(), position);
+
+        loadShoppingCart();
+        updateRecycleView();
+        updatePricesText();
+    }
+
+    @Override
+    public void onSelectCountButtonClick(int position, int tempCount) {
+        this.tempCount = tempCount;
+        View dialogView = getDialogView();
+        getAlertDialog(position, dialogView).show();
+    }
+
+    private View getDialogView() {
+        View view = LayoutInflater.from(getContext())
+                .inflate(R.layout.dialog_select_item_counts, null, false);
+        final TextView countText = (TextView) view.findViewById(R.id.count_text_view);
+        countText.setText(String.valueOf(tempCount));
+        setMinusButton(view, countText);
+        setPlusButton(view, countText);
+        return view;
+    }
+
+    private void setMinusButton(View view, final TextView countText) {
+        Button minusButton = (Button) view.findViewById(R.id.minus_button);
+        minusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (tempCount != 1) {
+                    tempCount = tempCount - 1;
+                    countText.setText(String.valueOf(tempCount));
+                }
+            }
+        });
+    }
+
+    private void setPlusButton(View view, final TextView countText) {
+        Button plusButton = (Button) view.findViewById(R.id.plus_button);
+        plusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tempCount = tempCount + 1;
+                countText.setText(String.valueOf(tempCount));
+            }
+        });
+    }
+
+    private AlertDialog getAlertDialog(final int product_position, View view) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+
+        alertDialogBuilder.setTitle("選擇商品數量");
+        alertDialogBuilder.setView(view);
+        // set positive button: Yes message
+        alertDialogBuilder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                shoppingCarProducts.get(product_position).setBuy_count(tempCount);
+
+                ShoppingCarPreference pref = new ShoppingCarPreference();
+                for (int i = 0; i < shoppingCarProducts.size(); i++) {
+                    pref.removeShoppingItem(getContext(), shoppingCarProducts.size() - 1 - i);
+                }
+                for (int i = 0; i < shoppingCarProducts.size(); i++) {
+                    pref.addShoppingItem(getContext(), shoppingCarProducts.get(i));
+                }
+                loadShoppingCart();
+                updateRecycleView();
+                updatePricesText();
+            }
+        });
+        // set negative button: No message
+        alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // cancel the alert box and put a Toast to the user
+                dialog.cancel();
+            }
+        });
+
+        return alertDialogBuilder.create();
     }
 }
