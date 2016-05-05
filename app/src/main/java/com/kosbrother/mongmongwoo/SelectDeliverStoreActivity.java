@@ -268,13 +268,20 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Store> result) {
+        protected void onPostExecute(final ArrayList<Store> result) {
             getProgressBar().setVisibility(View.GONE);
             if (result != null) {
-                StoreGridAdapter storeGridAdapter = new StoreGridAdapter(SelectDeliverStoreActivity.this, result);
+                final StoreGridAdapter storeGridAdapter = new StoreGridAdapter(SelectDeliverStoreActivity.this, result);
                 GridView storeGridView = getStoreGridView();
                 storeGridView.setAdapter(storeGridAdapter);
                 setStoreGridViewHeight(result, storeGridView);
+                storeGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        updateStoreInfo(result.get(position));
+                        storeGridAdapter.updateSelectedPosition(position);
+                    }
+                });
                 storeGridView.setVisibility(View.VISIBLE);
             } else {
                 if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this) == 0) {

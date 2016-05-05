@@ -1,5 +1,7 @@
 package com.kosbrother.mongmongwoo.adpters;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,30 +10,29 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.SelectDeliverStoreActivity;
 import com.kosbrother.mongmongwoo.model.Store;
 
 import java.util.ArrayList;
 
 public class StoreGridAdapter extends BaseAdapter {
 
-    private SelectDeliverStoreActivity mActivity;
-    private ArrayList<Store> stores;
+    private final Context context;
+    private final ArrayList<Store> storeList;
     private int selectedStorePosition = -1;
 
-    public StoreGridAdapter(SelectDeliverStoreActivity activity, ArrayList<Store> stores) {
-        mActivity = activity;
-        this.stores = stores;
+    public StoreGridAdapter(Context context, ArrayList<Store> storeList) {
+        this.context = context;
+        this.storeList = storeList;
     }
 
     @Override
     public int getCount() {
-        return stores.size();
+        return storeList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return storeList.get(position);
     }
 
     @Override
@@ -39,36 +40,40 @@ public class StoreGridAdapter extends BaseAdapter {
         return 0;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-
+        ViewHolder viewHolder;
         if (convertView == null) {
-            // If convertView is null then inflate the appropriate layout file
-            convertView = LayoutInflater.from(mActivity).inflate(R.layout.item_store_grid, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_store_grid, null);
+
+            viewHolder = new ViewHolder();
+            viewHolder.storeText = (TextView) convertView.findViewById(R.id.store_text);
+
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        final TextView storeText = (TextView) convertView.findViewById(R.id.store_text);
-        storeText.setText(stores.get(position).getName());
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Store theStore = stores.get(position);
-                mActivity.updateStoreInfo(theStore);
-
-                selectedStorePosition = position;
-                notifyDataSetChanged();
-            }
-        });
+        viewHolder.storeText.setText(storeList.get(position).getName());
 
         if (position == selectedStorePosition) {
-            storeText.setBackgroundResource(R.drawable.button_yellow_selector);
-            storeText.setTextColor(ContextCompat.getColor(mActivity, R.color.white));
+            viewHolder.storeText.setBackgroundResource(R.drawable.button_yellow_selector);
+            viewHolder.storeText.setTextColor(ContextCompat.getColor(context, R.color.white));
         } else {
-            storeText.setBackgroundResource(R.drawable.button_yellow_round_selector);
-            storeText.setTextColor(ContextCompat.getColor(mActivity, R.color.movie_indicator));
+            viewHolder.storeText.setBackgroundResource(R.drawable.button_yellow_round_selector);
+            viewHolder.storeText.setTextColor(ContextCompat.getColor(context, R.color.movie_indicator));
         }
 
         return convertView;
     }
 
+    public void updateSelectedPosition(int position) {
+        selectedStorePosition = position;
+        notifyDataSetChanged();
+    }
+
+    static class ViewHolder {
+        TextView storeText;
+    }
 }
