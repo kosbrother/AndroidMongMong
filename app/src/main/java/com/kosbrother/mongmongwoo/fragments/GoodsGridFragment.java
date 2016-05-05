@@ -240,8 +240,23 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
         protected void onPostExecute(ArrayList<ProductSpec> result) {
             specs = result;
             if (specs != null && specs.size() != 0) {
-                styleGridAdapter = new StyleGridAdapter(getActivity(), specs, styleImage, styleName);
+                styleGridAdapter = new StyleGridAdapter(getActivity(), specs);
                 styleGrid.setAdapter(styleGridAdapter);
+                styleGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        ProductSpec productSpec = specs.get(position);
+
+                        Glide.with(getContext())
+                                .load(productSpec.getPic_url())
+                                .centerCrop()
+                                .placeholder(R.mipmap.img_pre_load_square)
+                                .into(styleImage);
+                        styleName.setText(productSpec.getStyle());
+
+                        styleGridAdapter.updateSelectedPosition(position);
+                    }
+                });
 
                 Glide.with(getContext())
                         .load(specs.get(0).getPic_url())

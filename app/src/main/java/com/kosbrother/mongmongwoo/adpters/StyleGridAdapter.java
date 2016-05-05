@@ -1,15 +1,14 @@
 package com.kosbrother.mongmongwoo.adpters;
 
-import android.app.Activity;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.model.ProductSpec;
 
@@ -17,17 +16,13 @@ import java.util.ArrayList;
 
 public class StyleGridAdapter extends BaseAdapter {
 
-    private Activity mActivity;
-    private ArrayList<ProductSpec> specs;
-    private ImageView imageView;
-    private TextView nameTextView;
+    private final Context context;
+    private final ArrayList<ProductSpec> specs;
     private int selectedPosition;
 
-    public StyleGridAdapter(Activity activity, ArrayList<ProductSpec> specs, ImageView imageView, TextView nameTextView) {
-        mActivity = activity;
+    public StyleGridAdapter(Context context, ArrayList<ProductSpec> specs) {
+        this.context = context;
         this.specs = specs;
-        this.imageView = imageView;
-        this.nameTextView = nameTextView;
         selectedPosition = 0;
     }
 
@@ -38,7 +33,7 @@ public class StyleGridAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return specs.get(position);
     }
 
     @Override
@@ -46,37 +41,29 @@ public class StyleGridAdapter extends BaseAdapter {
         return 0;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-
+        ViewHolder viewHolder;
         if (convertView == null) {
-            // If convertView is null then inflate the appropriate layout file
-            convertView = LayoutInflater.from(mActivity).inflate(R.layout.item_style_grid, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_style_grid, null);
+
+            viewHolder = new ViewHolder();
+            viewHolder.storeText = (TextView) convertView.findViewById(R.id.store_text);
+
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        TextView storeText = (TextView) convertView.findViewById(R.id.store_text);
-        storeText.setText(specs.get(position).getStyle());
-
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Glide.with(mActivity)
-                        .load(specs.get(position).getPic_url())
-                        .centerCrop()
-                        .placeholder(R.mipmap.img_pre_load_square)
-                        .into(imageView);
-                nameTextView.setText(specs.get(position).getStyle());
-                selectedPosition = position;
-                notifyDataSetChanged();
-            }
-        });
+        viewHolder.storeText.setText(specs.get(position).getStyle());
 
         if (position == selectedPosition) {
-            storeText.setBackgroundResource(R.drawable.round_select_style);
-            storeText.setTextColor(ContextCompat.getColor(mActivity, R.color.white));
+            viewHolder.storeText.setBackgroundResource(R.drawable.round_select_style);
+            viewHolder.storeText.setTextColor(ContextCompat.getColor(context, R.color.white));
         } else {
-            storeText.setBackgroundResource(R.drawable.round_non_select_style);
-            storeText.setTextColor(ContextCompat.getColor(mActivity, R.color.gray_background));
+            viewHolder.storeText.setBackgroundResource(R.drawable.round_non_select_style);
+            viewHolder.storeText.setTextColor(ContextCompat.getColor(context, R.color.gray_background));
         }
 
         return convertView;
@@ -84,5 +71,14 @@ public class StyleGridAdapter extends BaseAdapter {
 
     public int getSelectedPosition() {
         return selectedPosition;
+    }
+
+    public void updateSelectedPosition(int position) {
+        selectedPosition = position;
+        notifyDataSetChanged();
+    }
+
+    static class ViewHolder {
+        TextView storeText;
     }
 }
