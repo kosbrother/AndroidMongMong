@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -294,8 +295,23 @@ public class ProductActivity extends AppCompatActivity {
             }
         });
 
-        styleGridAdapter = new StyleGridAdapter(this, theProduct.getSpecs(), styleImage, styleName);
+        styleGridAdapter = new StyleGridAdapter(this, theProduct.getSpecs());
         styleGrid.setAdapter(styleGridAdapter);
+        styleGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ProductSpec productSpec = theProduct.getSpecs().get(position);
+
+                Glide.with(ProductActivity.this)
+                        .load(productSpec.getPic_url())
+                        .centerCrop()
+                        .placeholder(R.mipmap.img_pre_load_square)
+                        .into(styleImage);
+                styleName.setText(productSpec.getStyle());
+
+                styleGridAdapter.updateSelectedPosition(position);
+            }
+        });
 
         Glide.with(this)
                 .load(theProduct.getSpecs().get(0).getPic_url())

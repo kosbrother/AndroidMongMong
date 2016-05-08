@@ -138,8 +138,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="15dp"
                     android:columnWidth="5dp"
+                    android:drawSelectorOnTop="true"
                     android:gravity="center"
                     android:horizontalSpacing="8dp"
+                    android:listSelector="@drawable/grid_view_list_selector_corner3"
                     android:numColumns="2"
                     android:stretchMode="columnWidth"
                     android:verticalSpacing="8dp" />

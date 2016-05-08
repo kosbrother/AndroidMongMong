@@ -1,41 +1,36 @@
 package com.kosbrother.mongmongwoo.adpters;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.os.Bundle;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.TextView;
 
-import com.kosbrother.mongmongwoo.PastOrderDetailActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 
 import java.util.ArrayList;
 
-/**
- * Created by kolichung on 3/31/16.
- */
 public class PastOrdersGridAdapter extends BaseAdapter {
 
-    private Activity mActivity;
-    private ArrayList<PastOrder> pastOrders;
+    private final LayoutInflater layoutInflater;
+    private final ArrayList<PastOrder> pastOrderList;
 
-    public PastOrdersGridAdapter(Activity activity, ArrayList<PastOrder> pastOrders) {
-        mActivity = activity;
-        this.pastOrders = pastOrders;
+    public PastOrdersGridAdapter(Context context, ArrayList<PastOrder> pastOrderList) {
+        layoutInflater = LayoutInflater.from(context);
+        this.pastOrderList = pastOrderList;
     }
 
     @Override
     public int getCount() {
-        return pastOrders.size();
+        return pastOrderList.size();
     }
 
     @Override
     public Object getItem(int position) {
-        return null;
+        return pastOrderList.get(position);
     }
 
     @Override
@@ -43,33 +38,40 @@ public class PastOrdersGridAdapter extends BaseAdapter {
         return 0;
     }
 
+    @SuppressLint("InflateParams")
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
-
+        ViewHolder viewHolder;
         if (convertView == null) {
-            // If convertView is null then inflate the appropriate layout file
-            convertView = LayoutInflater.from(mActivity).inflate(R.layout.item_past_order, null);
+            convertView = layoutInflater.inflate(R.layout.item_past_order, null);
+
+            viewHolder = new ViewHolder();
+            viewHolder.dateTextView = (TextView) convertView.findViewById(R.id.past_order_date_tv);
+            viewHolder.totalPriceTextView = (TextView) convertView.findViewById(R.id.past_order_total_price_tv);
+            viewHolder.statusTextView = (TextView) convertView.findViewById(R.id.past_order_status_tv);
+
+            convertView.setTag(viewHolder);
+        } else {
+            viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        TextView textDate = (TextView) convertView.findViewById(R.id.past_order_date_text);
-        TextView textTotalPrice = (TextView) convertView.findViewById(R.id.past_order_total_price_text);
-        TextView textStatus = (TextView) convertView.findViewById(R.id.past_order_status_text);
+        PastOrder pastOrder = pastOrderList.get(position);
 
-        textDate.setText(pastOrders.get(position).getDate());
-        textTotalPrice.setText("總花費:NT$" + Integer.toString(pastOrders.get(position).getTotal_price()));
-        textStatus.setText(pastOrders.get(position).getStatus());
-        convertView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(mActivity, PastOrderDetailActivity.class);
-                Bundle bundle = new Bundle();
-                bundle.putSerializable("THE_ORDER", pastOrders.get(position));
-                intent.putExtras(bundle);
-                mActivity.startActivity(intent);
-            }
-        });
+        viewHolder.dateTextView.setText(pastOrder.getDate());
+        viewHolder.totalPriceTextView.setText(getPrice(pastOrder));
+        viewHolder.statusTextView.setText(pastOrder.getStatus());
 
         return convertView;
+    }
+
+    private String getPrice(PastOrder pastOrder) {
+        return "總花費:NT$" + pastOrder.getTotal_price();
+    }
+
+    static class ViewHolder {
+        TextView dateTextView;
+        TextView totalPriceTextView;
+        TextView statusTextView;
     }
 
 }

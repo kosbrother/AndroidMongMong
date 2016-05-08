@@ -1,18 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:state_pressed="true">
-        <shape>
-            <solid
-                android:color="#A5D7E8"/>
-            <corners android:radius="3dp" />
-        </shape>
-
+    <item android:state_pressed="true" android:state_window_focused="true">
+        <layer-list>
+            <item>
+                <shape>
+                    <solid android:color="#F22727" />
+                    <corners android:radius="3dp" />
+                </shape>
+            </item>
+            <item>
+                <shape>
+                    <solid android:color="@color/dark_color_control_highlight" />
+                    <corners android:radius="3dp" />
+                </shape>
+            </item>
+        </layer-list>
     </item>
+
     <item>
         <shape>
-            <solid
-                android:color="#F22727"/>
+            <solid android:color="#F22727" />
             <corners android:radius="3dp" />
         </shape>
     </item>

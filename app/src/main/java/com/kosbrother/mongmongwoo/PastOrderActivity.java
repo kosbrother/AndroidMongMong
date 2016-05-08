@@ -1,10 +1,12 @@
 package com.kosbrother.mongmongwoo;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
@@ -122,6 +124,16 @@ public class PastOrderActivity extends FbLoginActivity {
                 if (pastOrdersAdapter == null) {
                     pastOrdersAdapter = new PastOrdersGridAdapter(PastOrderActivity.this, pastOrders);
                     mGridView.setAdapter(pastOrdersAdapter);
+                    mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                            Intent intent = new Intent(PastOrderActivity.this, PastOrderDetailActivity.class);
+                            Bundle bundle = new Bundle();
+                            bundle.putSerializable("THE_ORDER", pastOrders.get(position));
+                            intent.putExtras(bundle);
+                            startActivity(intent);
+                        }
+                    });
                 } else {
                     pastOrdersAdapter.notifyDataSetChanged();
                 }

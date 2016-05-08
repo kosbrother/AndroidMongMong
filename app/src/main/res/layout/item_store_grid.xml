@@ -4,7 +4,6 @@
     android:id="@+id/store_text"
     android:layout_width="match_parent"
     android:layout_height="36dp"
-    android:background="@drawable/button_store_selector"
     android:gravity="center"
     android:maxLines="2"
     android:paddingBottom="8dp"
