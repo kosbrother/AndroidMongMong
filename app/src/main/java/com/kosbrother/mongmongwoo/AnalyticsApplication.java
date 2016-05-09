@@ -24,6 +24,7 @@ public class AnalyticsApplication extends Application {
         FacebookSdk.sdkInitialize(this);
         AppEventsLogger.activateApp(this);
         initGoogleAnalyticsTracker();
+        Settings.init(this);
         startGetGcmToken();
     }
 

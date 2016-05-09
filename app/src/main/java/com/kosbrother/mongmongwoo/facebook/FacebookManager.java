@@ -1,6 +1,5 @@
 package com.kosbrother.mongmongwoo.facebook;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,25 +29,23 @@ public class FacebookManager {
     private static FacebookManager instance;
     private FacebookListener listener;
 
-    private FacebookManager(final Context context) {
+    private FacebookManager() {
         new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
                 if (oldAccessToken == null) {
-                    Log.i(TAG, "login");
-                    handleLoginResult(context, newAccessToken);
+                    handleLoginResult(newAccessToken);
                 } else if (newAccessToken == null) {
-                    Log.i(TAG, "logout");
-                    Settings.clearAllUserData(context);
-                    FacebookManager.this.listener.onFbLogout();
+                    Settings.clearAllUserData();
+                    listener.onFbLogout();
                 }
             }
         };
     }
 
-    public static FacebookManager getInstance(Context context) {
+    public static FacebookManager getInstance() {
         if (instance == null) {
-            instance = new FacebookManager(context);
+            instance = new FacebookManager();
         }
         return instance;
     }
@@ -61,12 +58,12 @@ public class FacebookManager {
         CallbackManager.Factory.create().onActivityResult(requestCode, resultCode, data);
     }
 
-    private void handleLoginResult(final Context context, AccessToken accessToken) {
+    private void handleLoginResult(AccessToken accessToken) {
         GraphRequest request = GraphRequest.newMeRequest(
                 accessToken, new GraphRequest.GraphJSONObjectCallback() {
                     @Override
                     public void onCompleted(JSONObject object, GraphResponse response) {
-                        handleFbRequestResult(context, object);
+                        handleFbRequestResult(object);
                     }
                 });
 
@@ -80,9 +77,9 @@ public class FacebookManager {
         return parameters;
     }
 
-    private void handleFbRequestResult(Context context, JSONObject object) {
+    private void handleFbRequestResult(JSONObject object) {
         User user = getUser(object);
-        Settings.saveUserFBData(context, user);
+        Settings.saveUserFBData(user);
         new PostUserTask(user.getJsonString()).execute();
         listener.onFbRequestCompleted(user.getFb_uid(), user.getUser_name(), user.getFb_pic());
     }

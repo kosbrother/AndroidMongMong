@@ -106,7 +106,7 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
     }
 
     public void updateLayoutByLoginStatus() {
-        if (!Settings.checkIsLogIn(getContext())) {
+        if (!Settings.checkIsLogIn()) {
             noLoginLayout.setVisibility(View.VISIBLE);
             confirmButton.setVisibility(View.GONE);
         } else {

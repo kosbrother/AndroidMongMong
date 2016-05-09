@@ -19,7 +19,7 @@ public abstract class FbLoginActivity extends AppCompatActivity
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        fbManager = FacebookManager.getInstance(getApplicationContext());
+        fbManager = FacebookManager.getInstance();
     }
 
     @Override

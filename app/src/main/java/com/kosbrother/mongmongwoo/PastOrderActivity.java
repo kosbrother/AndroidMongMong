@@ -58,7 +58,7 @@ public class PastOrderActivity extends FbLoginActivity {
 
         userImage = (CircularImageView) findViewById(R.id.user_imageview);
         userNameText = (TextView) findViewById(R.id.user_name_text);
-        user = Settings.getSavedUser(PastOrderActivity.this);
+        user = Settings.getSavedUser();
         Glide.with(PastOrderActivity.this)
                 .load(user.getFb_pic())
                 .bitmapTransform(new CropCircleTransformation(getApplicationContext()))

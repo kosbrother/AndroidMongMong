@@ -165,9 +165,9 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
                 ((MainActivity) getActivity()).doIncrease();
                 alertDialog.cancel();
 
-                if (Settings.checkIsFirstAddShoppingCar(getContext())) {
+                if (Settings.checkIsFirstAddShoppingCar()) {
                     ((MainActivity) getActivity()).showShoppingCarInstruction();
-                    Settings.setKownShoppingCar(getContext());
+                    Settings.setKownShoppingCar();
                 }
 
             }

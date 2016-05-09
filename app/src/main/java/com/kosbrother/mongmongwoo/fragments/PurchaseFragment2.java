@@ -109,7 +109,7 @@ public class PurchaseFragment2 extends Fragment {
     }
 
     private boolean isLogin() {
-        return Settings.checkIsLogIn(getContext());
+        return Settings.checkIsLogIn();
     }
 
     private boolean nameOrPhoneEmpty() {

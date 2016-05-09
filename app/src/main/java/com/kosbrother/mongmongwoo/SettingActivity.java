@@ -48,7 +48,7 @@ public class SettingActivity extends FbLoginActivity {
         shipPhoneEditText = (EditText) findViewById(R.id.setting_ship_phone_edit_text);
         shipAddressEditText = (EditText) findViewById(R.id.setting_ship_address_edit_text);
 
-        user = Settings.getSavedUser(this);
+        user = Settings.getSavedUser();
 
         nickNameEditText.setText(user.getUser_name());
         genderEditText.setText(user.getGender());

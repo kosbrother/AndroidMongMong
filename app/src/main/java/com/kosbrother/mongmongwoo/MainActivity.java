@@ -162,8 +162,8 @@ public class MainActivity extends FbLoginActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (Settings.checkIsLogIn(this)) {
-            User savedUser = Settings.getSavedUser(this);
+        if (Settings.checkIsLogIn()) {
+            User savedUser = Settings.getSavedUser();
             Glide.with(MainActivity.this)
                     .load(savedUser.getFb_pic())
                     .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
@@ -226,7 +226,7 @@ public class MainActivity extends FbLoginActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_orders) {
-            if (Settings.checkIsLogIn(this)) {
+            if (Settings.checkIsLogIn()) {
                 if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
                     Intent intent = new Intent(MainActivity.this, PastOrderActivity.class);
                     startActivity(intent);
@@ -291,7 +291,7 @@ public class MainActivity extends FbLoginActivity
         }
         boolean upToDate = VersionUtil.isVersionUpToDate(version.getVersionCode());
         String version_name = version.getVersionName();
-        Settings.saveAndroidVersion(this, version_name, upToDate);
+        Settings.saveAndroidVersion(version_name, upToDate);
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         Menu navigationViewMenu = navigationView.getMenu();
@@ -299,14 +299,14 @@ public class MainActivity extends FbLoginActivity
 
         if (upToDate) {
             lastVersionActionView.setVisibility(View.INVISIBLE);
-            Settings.resetNotUpdateTimes(this);
+            Settings.resetNotUpdateTimes();
         } else {
             lastVersionActionView.setVisibility(View.VISIBLE);
-            if (VersionUtil.remindUpdate(this)) {
+            if (VersionUtil.remindUpdate()) {
                 showUpdateDialog(version_name, version.getUpdateMessage());
-                Settings.resetNotUpdateTimes(this);
+                Settings.resetNotUpdateTimes();
             }
-            Settings.addNotUpdateTimes(this);
+            Settings.addNotUpdateTimes();
         }
     }
 

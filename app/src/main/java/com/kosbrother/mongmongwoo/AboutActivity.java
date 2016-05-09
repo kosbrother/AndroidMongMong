@@ -37,13 +37,13 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
 
     private void setVersionName() {
         TextView versionNameTv = (TextView) findViewById(R.id.version_name_tv);
-        versionNameTv.setText(Settings.getVersionName(this));
+        versionNameTv.setText(Settings.getVersionName());
     }
 
     private void setViewByVersionUpToDate() {
         View updateBtn = findViewById(R.id.update_btn);
         View upToDateTv = findViewById(R.id.up_to_date_tv);
-        if (Settings.isUpToDate(this)) {
+        if (Settings.isUpToDate()) {
             upToDateTv.setVisibility(View.VISIBLE);
             updateBtn.setVisibility(View.GONE);
         } else {
