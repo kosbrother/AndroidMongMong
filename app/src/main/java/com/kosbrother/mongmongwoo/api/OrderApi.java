@@ -44,28 +44,30 @@ public class OrderApi {
         }
     }
 
-    public static PastOrder getPastOrderByOrderId(int orderId, PastOrder theOrder) {
+    public static PastOrder getPastOrderByOrderId(int orderId) {
         String message = getMessageFromServer(
                 "GET", null, null, UrlCenter.getPastOrderByOrderId(orderId));
         if (message == null) {
             return null;
         } else {
-            return parseTheOrder(message, theOrder);
+            PastOrder pastOrder = new PastOrder(orderId, 0, "", "");
+            return parseTheOrder(message, pastOrder);
         }
     }
 
     private static PastOrder parseTheOrder(String message, PastOrder theOder) {
-
         try {
             JSONObject jsonObject = new JSONObject(message);
 
-            String shippingName = "";
-            String shippingPhone = "";
+            String status = "";
+            String date = "";
+            String shipName = "";
+            String shipPhone = "";
             Store shippingStore;
             ArrayList<PastOrderProduct> orderProducts = new ArrayList<>();
-            int shipPrice = 0;
-            int productPrice = 0;
-            int totalPrice = 0;
+            int shipFee = 0;
+            int itemPrice = 0;
+            int total = 0;
             String note = "";
 
             String storeCode = "";
@@ -73,14 +75,16 @@ public class OrderApi {
             String storeName = "";
 
             try {
-                productPrice = jsonObject.getInt("items_price");
-                shipPrice = jsonObject.getInt("ship_fee");
-                totalPrice = jsonObject.getInt("total");
+                status = jsonObject.getString("status");
+                date = jsonObject.getString("created_on");
+                itemPrice = jsonObject.getInt("items_price");
+                shipFee = jsonObject.getInt("ship_fee");
+                total = jsonObject.getInt("total");
                 note = jsonObject.getString("note");
 
                 JSONObject infoObject = jsonObject.getJSONObject("info");
-                shippingName = infoObject.getString("ship_name");
-                shippingPhone = infoObject.getString("ship_phone");
+                shipName = infoObject.getString("ship_name");
+                shipPhone = infoObject.getString("ship_phone");
 
                 storeCode = infoObject.getString("ship_store_code");
                 store_id = infoObject.getInt("ship_store_id");
@@ -115,13 +119,18 @@ public class OrderApi {
                 e.printStackTrace();
             }
 
-            theOder.setShippingName(shippingName);
-            theOder.setPastOrderProducts(orderProducts);
-            theOder.setProductPrice(productPrice);
-            theOder.setShippingPhone(shippingPhone);
-            theOder.setShippingStore(shippingStore);
-            theOder.setShipPrice(shipPrice);
+            theOder.setStatus(status);
+            theOder.setDate(date);
+            theOder.setItemPrice(itemPrice);
+            theOder.setShipFee(shipFee);
+            theOder.setTotalPrice(total);
             theOder.setNote(note);
+
+            theOder.setShipName(shipName);
+            theOder.setShipPhone(shipPhone);
+            theOder.setShippingStore(shippingStore);
+
+            theOder.setPastOrderProducts(orderProducts);
             return theOder;
         } catch (Exception e) {
             e.printStackTrace();

@@ -60,12 +60,11 @@ public class PastOrdersGridAdapter extends BaseAdapter {
         viewHolder.dateTextView.setText(pastOrder.getDate());
         viewHolder.totalPriceTextView.setText(getPrice(pastOrder));
         viewHolder.statusTextView.setText(pastOrder.getStatus());
-
         return convertView;
     }
 
     private String getPrice(PastOrder pastOrder) {
-        return "總花費:NT$" + pastOrder.getTotal_price();
+        return "總花費:NT$" + pastOrder.getTotal();
     }
 
     static class ViewHolder {
