@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.facebook.login.widget.LoginButton;
+import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.model.User;
 
 /**
@@ -69,11 +70,11 @@ public class SettingActivity extends FbLoginActivity {
     }
 
     @Override
-    protected void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
+    public void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
     }
 
     @Override
-    protected void onFbLogout() {
+    public void onFbLogout() {
         finish();
     }
 

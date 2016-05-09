@@ -9,6 +9,7 @@ import com.github.siyamed.shapeimageview.CircularImageView;
 import com.kosbrother.mongmongwoo.api.UrlCenter;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
+import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
 import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
 import com.kosbrother.mongmongwoo.model.User;
@@ -121,7 +122,7 @@ public class MainActivity extends FbLoginActivity
     }
 
     @Override
-    protected void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
+    public void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
         loginButton.setVisibility(View.GONE);
         userText.setText(user_name);
         Glide.with(this)
@@ -132,7 +133,7 @@ public class MainActivity extends FbLoginActivity
     }
 
     @Override
-    protected void onFbLogout() {
+    public void onFbLogout() {
         userImage.setImageResource(R.drawable.icon_head);
         userText.setText("");
         loginButton.setVisibility(View.VISIBLE);
