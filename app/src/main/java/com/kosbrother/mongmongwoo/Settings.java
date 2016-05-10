@@ -84,6 +84,11 @@ public class Settings {
         return prefs.getString(keyUserRealName, "");
     }
 
+    public static String getEmail() {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(keyUserFBEmail, "");
+    }
+
     public static String getShippingPhone() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(keyUserPhone, "");

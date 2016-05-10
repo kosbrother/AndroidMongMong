@@ -16,11 +16,9 @@ import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.SelectDeliverStoreActivity;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.ShoppingCarActivity;
+import com.kosbrother.mongmongwoo.facebook.FacebookUtil;
 import com.kosbrother.mongmongwoo.model.Store;
 
-/**
- * Created by kolichung on 3/9/16.
- */
 public class PurchaseFragment2 extends Fragment {
 
     Button nextButton;
@@ -30,8 +28,7 @@ public class PurchaseFragment2 extends Fragment {
     EditText shippingEmailEditText;
 
     public static PurchaseFragment2 newInstance() {
-        PurchaseFragment2 fragment = new PurchaseFragment2();
-        return fragment;
+        return new PurchaseFragment2();
     }
 
     @Override
@@ -43,8 +40,6 @@ public class PurchaseFragment2 extends Fragment {
         selectStoreButton = (Button) view.findViewById(R.id.select_store_button);
         shippingNameEditText = (EditText) view.findViewById(R.id.shipping_name_edit_text);
         shippingPhoneEditText = (EditText) view.findViewById(R.id.shipping_phone_edit_text);
-
-        view.findViewById(R.id.email_ll).setVisibility(isLogin() ? View.GONE : View.VISIBLE);
         shippingEmailEditText = (EditText) view.findViewById(R.id.shipping_email_edit_text);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
@@ -56,9 +51,9 @@ public class PurchaseFragment2 extends Fragment {
                     Toast.makeText(getActivity(), "請選擇寄件的商店", Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (isLogin() && nameOrPhoneEmpty()) {
+                if (isLoginWithValidEmail() && nameOrPhoneEmpty()) {
                     Toast.makeText(getActivity(), "收件人名稱跟電話不可空白", Toast.LENGTH_SHORT).show();
-                } else if (!isLogin() && nameOrPhoneOrEmailEmpty()) {
+                } else if (!isLoginWithValidEmail() && nameOrPhoneOrEmailEmpty()) {
                     Toast.makeText(getActivity(), "收件人名稱、電話跟Email不可空白", Toast.LENGTH_SHORT).show();
                 } else {
                     activity.getOrder().setShippingName(shippingNameEditText.getText().toString());
@@ -105,11 +100,12 @@ public class PurchaseFragment2 extends Fragment {
     }
 
     public void setEmailLayoutByLoginStatus() {
-        getView().findViewById(R.id.email_ll).setVisibility(isLogin() ? View.GONE : View.VISIBLE);
+        getView().findViewById(R.id.email_ll).setVisibility(isLoginWithValidEmail() ? View.GONE : View.VISIBLE);
     }
 
-    private boolean isLogin() {
-        return Settings.checkIsLogIn();
+    private boolean isLoginWithValidEmail() {
+        String email = Settings.getEmail();
+        return Settings.checkIsLogIn() && (!email.isEmpty() && !email.contains(FacebookUtil.FAKE_EMAIL_APPEND));
     }
 
     private boolean nameOrPhoneEmpty() {
