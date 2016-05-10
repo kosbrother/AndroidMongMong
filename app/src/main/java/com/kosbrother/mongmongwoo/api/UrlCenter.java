@@ -11,8 +11,10 @@ public class UrlCenter {
     public static final String API_V1 = "/api/v1";
     public static final String API_V2 = "/api/v2";
 
-    public static final String GOOGLE_PLAY =
+    public static final String GOOGLE_PLAY_UPDATE =
             "https://play.google.com/store/apps/details?id=com.kosbrother.mongmongwoo&hl=zh_TW";
+    public static final String GOOGLE_PLAY_SHARE =
+            "https://play.google.com/store/apps/details?id=com.kosbrother.mongmongwoo&referrer=utm_source%3D%2508in_app_navigation";
 
     static String postUser() {
         return HOST + API_V1 + "/users";
