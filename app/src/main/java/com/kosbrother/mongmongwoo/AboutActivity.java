@@ -55,7 +55,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        Uri uri = Uri.parse(UrlCenter.GOOGLE_PLAY);
+        Uri uri = Uri.parse(UrlCenter.GOOGLE_PLAY_UPDATE);
         Intent intent = new Intent(Intent.ACTION_VIEW, uri);
         startActivity(intent);
     }

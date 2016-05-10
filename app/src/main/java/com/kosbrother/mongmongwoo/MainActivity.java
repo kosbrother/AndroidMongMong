@@ -214,11 +214,6 @@ public class MainActivity extends FbLoginActivity
 
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        return super.onOptionsItemSelected(item);
-    }
-
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -236,22 +231,17 @@ public class MainActivity extends FbLoginActivity
             } else {
                 Toast.makeText(this, "請先使用FB登入", Toast.LENGTH_SHORT).show();
             }
-        } else if (id == R.id.nav_category1) {
-            setPagerIfNetworkConnected(0);
-        } else if (id == R.id.nav_category2) {
-            setPagerIfNetworkConnected(1);
-        } else if (id == R.id.nav_category3) {
-            setPagerIfNetworkConnected(2);
-        } else if (id == R.id.nav_category4) {
-            setPagerIfNetworkConnected(3);
-        } else if (id == R.id.nav_category5) {
-            setPagerIfNetworkConnected(4);
-        } else if (id == R.id.nav_category6) {
-            setPagerIfNetworkConnected(5);
         } else if (id == R.id.nav_service) {
             startActivity(new Intent(this, ServiceActivity.class));
         } else if (id == R.id.nav_about) {
             startActivity(new Intent(this, AboutActivity.class));
+        } else if (id == R.id.nav_share) {
+            Intent i = new Intent(Intent.ACTION_SEND);
+            i.setType("text/plain");
+            String sAux = "萌萌屋 - 走在青年流行前線\n\n";
+            sAux = sAux + UrlCenter.GOOGLE_PLAY_SHARE + "\n";
+            i.putExtra(Intent.EXTRA_TEXT, sAux);
+            startActivity(Intent.createChooser(i, "分享萌萌屋"));
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -266,14 +256,6 @@ public class MainActivity extends FbLoginActivity
                 .setAction("CLICK")
                 .setLabel("FAB")
                 .build());
-    }
-
-    private void setPagerIfNetworkConnected(int pagerPosition) {
-        if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-            viewPager.setCurrentItem(pagerPosition, true);
-        } else {
-            Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-        }
     }
 
     private void checkAndroidVersion() {
@@ -324,7 +306,7 @@ public class MainActivity extends FbLoginActivity
         dialogView.findViewById(R.id.update_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse(UrlCenter.GOOGLE_PLAY);
+                Uri uri = Uri.parse(UrlCenter.GOOGLE_PLAY_UPDATE);
                 Intent intent = new Intent(Intent.ACTION_VIEW, uri);
                 startActivity(intent);
                 dialog.dismiss();
