@@ -14,17 +14,11 @@ import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.UserApi;
 import com.kosbrother.mongmongwoo.model.User;
 
-import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.net.MalformedURLException;
-import java.net.URL;
 
 public class FacebookManager {
 
     public static final String TAG = "FacebookManager";
-    public static final String PIC_URL_FORMAT =
-            "https://graph.facebook.com/%s/picture?width=200&height=200";
 
     private static FacebookManager instance;
     private FacebookListener listener;
@@ -78,33 +72,10 @@ public class FacebookManager {
     }
 
     private void handleFbRequestResult(JSONObject object) {
-        User user = getUser(object);
+        User user = FacebookUtil.getUser(object);
         Settings.saveUserFBData(user);
         new PostUserTask(user.getJsonString()).execute();
         listener.onFbRequestCompleted(user.getFb_uid(), user.getUser_name(), user.getFb_pic());
-    }
-
-    private User getUser(JSONObject object) {
-        String id = "";
-        String user_name = "";
-        String gender = "";
-        String picUrl = "";
-        try {
-            id = object.getString("id");
-            user_name = object.getString("name");
-            gender = object.getString("gender");
-            picUrl = new URL(String.format(PIC_URL_FORMAT, id)).toString();
-        } catch (JSONException | MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        String email = id + "@mmwooo.fake.com";
-        try {
-            email = object.getString("email");
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return new User(user_name, "", gender, "", "", id, picUrl, email);
     }
 
     private class PostUserTask extends AsyncTask<String, Void, Boolean> {
