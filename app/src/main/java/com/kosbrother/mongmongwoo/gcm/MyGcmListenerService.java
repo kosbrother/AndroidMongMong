@@ -1,5 +1,14 @@
 package com.kosbrother.mongmongwoo.gcm;
 
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+
+import com.kosbrother.mongmongwoo.AnalyticsApplication;
+import com.kosbrother.mongmongwoo.PastOrderDetailActivity;
+import com.kosbrother.mongmongwoo.ProductActivity;
+import com.kosbrother.mongmongwoo.R;
+import com.kosbrother.mongmongwoo.model.Product;
+
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -10,14 +19,6 @@ import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.BigPictureStyle;
-
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.kosbrother.mongmongwoo.AnalyticsApplication;
-import com.kosbrother.mongmongwoo.PastOrderDetailActivity;
-import com.kosbrother.mongmongwoo.ProductActivity;
-import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.model.Product;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -52,6 +53,8 @@ public class MyGcmListenerService extends com.google.android.gms.gcm.GcmListener
                 .setSmallIcon(R.mipmap.ic_mhouse)
                 .setContentTitle(data.getString("content_title"))
                 .setContentText(data.getString("content_text"))
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(data.getString("content_text")))
                 .setContentIntent(getPastOrderPendingIntent(data))
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setAutoCancel(true);
