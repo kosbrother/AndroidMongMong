@@ -130,8 +130,8 @@ public class PurchaseFragment3 extends Fragment {
         protected void onPostExecute(Object result) {
             progressBar.setVisibility(View.GONE);
             if ((boolean) result == true) {
-                Settings.saveUserStoreData(getActivity(), theOrder.getShippingStore());
-                Settings.saveUserShippingNameAndPhone(getActivity(), theOrder.getShippingName(), theOrder.getShippingPhone());
+                Settings.saveUserStoreData(theOrder.getShippingStore());
+                Settings.saveUserShippingNameAndPhone(theOrder.getShippingName(), theOrder.getShippingPhone());
 
                 ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
                 new ShoppingCarPreference().removeAllShoppingItems(activity);

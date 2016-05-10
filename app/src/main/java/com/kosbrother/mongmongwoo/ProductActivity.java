@@ -288,9 +288,9 @@ public class ProductActivity extends AppCompatActivity {
                 doIncrease();
                 alertDialog.cancel();
 
-                if (Settings.checkIsFirstAddShoppingCar(ProductActivity.this)) {
+                if (Settings.checkIsFirstAddShoppingCar()) {
                     showShoppingCarInstruction();
-                    Settings.setKownShoppingCar(ProductActivity.this);
+                    Settings.setKownShoppingCar();
                 }
             }
         });

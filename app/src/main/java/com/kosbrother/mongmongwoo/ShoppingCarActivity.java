@@ -16,6 +16,7 @@ import android.widget.TextView;
 import com.facebook.login.widget.LoginButton;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment1;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment2;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment3;
@@ -214,13 +215,13 @@ public class ShoppingCarActivity extends FbLoginActivity {
     }
 
     @Override
-    protected void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
+    public void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
         theOrder.setUid(fb_uid);
         startPurchaseFragment2();
     }
 
     @Override
-    protected void onFbLogout() {
+    public void onFbLogout() {
 
     }
 
@@ -241,13 +242,13 @@ public class ShoppingCarActivity extends FbLoginActivity {
 
     private void initOrder() {
         theOrder = new Order();
-        if (Settings.getSavedStore(this) != null) {
-            theOrder.setShippingStore(Settings.getSavedStore(this));
-            theOrder.setShippingName(Settings.getShippingName(this));
-            theOrder.setShippingPhone(Settings.getShippingPhone(this));
+        if (Settings.getSavedStore() != null) {
+            theOrder.setShippingStore(Settings.getSavedStore());
+            theOrder.setShippingName(Settings.getShippingName());
+            theOrder.setShippingPhone(Settings.getShippingPhone());
         }
-        if (Settings.checkIsLogIn(this)) {
-            theOrder.setUid(Settings.getSavedUser(this).getFb_uid());
+        if (Settings.checkIsLogIn()) {
+            theOrder.setUid(Settings.getSavedUser().getFb_uid());
         }
     }
 

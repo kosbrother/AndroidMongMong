@@ -16,6 +16,7 @@ import com.facebook.login.widget.LoginButton;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.kosbrother.mongmongwoo.adpters.PastOrdersGridAdapter;
 import com.kosbrother.mongmongwoo.api.OrderApi;
+import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.utils.EndlessScrollListener;
@@ -57,7 +58,7 @@ public class PastOrderActivity extends FbLoginActivity {
 
         userImage = (CircularImageView) findViewById(R.id.user_imageview);
         userNameText = (TextView) findViewById(R.id.user_name_text);
-        user = Settings.getSavedUser(PastOrderActivity.this);
+        user = Settings.getSavedUser();
         Glide.with(PastOrderActivity.this)
                 .load(user.getFb_pic())
                 .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
@@ -96,12 +97,12 @@ public class PastOrderActivity extends FbLoginActivity {
     }
 
     @Override
-    protected void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
+    public void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
 
     }
 
     @Override
-    protected void onFbLogout() {
+    public void onFbLogout() {
         finish();
     }
 

@@ -43,13 +43,13 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
     }
 
     public void setThankYouMessage() {
-        if (Settings.checkIsLogIn(getContext())) {
+        if (Settings.checkIsLogIn()) {
             thankYouMessage = String.format(thankYouMessage,
-                    Settings.getShippingName(getContext()),
+                    Settings.getShippingName(),
                     HINT_MESSAGE_LOGIN);
         } else {
             thankYouMessage = String.format(thankYouMessage,
-                    Settings.getShippingName(getContext()),
+                    Settings.getShippingName(),
                     HINT_MESSAGE_NOT_LOGIN);
         }
         assert getView() != null;

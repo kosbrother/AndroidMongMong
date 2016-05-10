@@ -6,9 +6,6 @@ import android.content.SharedPreferences;
 import com.kosbrother.mongmongwoo.model.Store;
 import com.kosbrother.mongmongwoo.model.User;
 
-/**
- * Created by kolichung on 3/15/16.
- */
 public class Settings {
 
     private static final String PREFS_NAME = "USER_DATA";
@@ -34,7 +31,13 @@ public class Settings {
     private final static String KEY_BOOLEAN_VERSION_UP_TO_DATE = "KEY_BOOLEAN_VERSION_UP_TO_DATE";
     private static final String KEY_INT_NOT_UPDATE_TIMES = "KEY_INT_NOT_UPDATE_TIMES";
 
-    public static void saveUserFBData(Context context, User user) {
+    private static Context context;
+
+    public static void init(Context context) {
+        Settings.context = context;
+    }
+
+    public static void saveUserFBData(User user) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(keyUserName, user.getUser_name());
@@ -45,7 +48,7 @@ public class Settings {
         editor.apply();
     }
 
-    public static void saveUserStoreData(Context context, Store theStore) {
+    public static void saveUserStoreData(Store theStore) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(keyStoreId, theStore.getStore_id());
@@ -55,7 +58,7 @@ public class Settings {
         editor.apply();
     }
 
-    public static Store getSavedStore(Context context) {
+    public static Store getSavedStore() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         int storeId = prefs.getInt(keyStoreId, -1);
         if (storeId == -1) {
@@ -68,7 +71,7 @@ public class Settings {
         }
     }
 
-    public static void saveUserShippingNameAndPhone(Context context, String user_real_name, String user_phone) {
+    public static void saveUserShippingNameAndPhone(String user_real_name, String user_phone) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(keyUserPhone, user_phone);
@@ -76,17 +79,22 @@ public class Settings {
         editor.apply();
     }
 
-    public static String getShippingName(Context context) {
+    public static String getShippingName() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(keyUserRealName, "");
     }
 
-    public static String getShippingPhone(Context context) {
+    public static String getEmail() {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(keyUserFBEmail, "");
+    }
+
+    public static String getShippingPhone() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(keyUserPhone, "");
     }
 
-    public static void clearAllUserData(Context context) {
+    public static void clearAllUserData() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(keyUserName, "");
@@ -97,23 +105,23 @@ public class Settings {
         editor.apply();
     }
 
-    public static boolean checkIsLogIn(Context context) {
+    public static boolean checkIsLogIn() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String savedUserName = prefs.getString(keyUserName, "");
         return !savedUserName.equals("");
     }
 
-    public static boolean checkIsFirstAddShoppingCar(Context context) {
+    public static boolean checkIsFirstAddShoppingCar() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean(keyFirstAddShoppingCar, true);
     }
 
-    public static void setKownShoppingCar(Context context) {
+    public static void setKownShoppingCar() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         prefs.edit().putBoolean(keyFirstAddShoppingCar, false).apply();
     }
 
-    public static User getSavedUser(Context context) {
+    public static User getSavedUser() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String userName = prefs.getString(keyUserName, "");
         String realName = prefs.getString(keyUserRealName, "");
@@ -126,7 +134,7 @@ public class Settings {
         return new User(userName, realName, gender, phone, address, fb_uid, fb_pic, email);
     }
 
-    public static void saveAndroidVersion(Context context, String versionName, boolean upToDate) {
+    public static void saveAndroidVersion(String versionName, boolean upToDate) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(KEY_STRING_VERSION_NAME, versionName);
@@ -134,29 +142,29 @@ public class Settings {
         editor.apply();
     }
 
-    public static boolean isUpToDate(Context context) {
+    public static boolean isUpToDate() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
         return prefs.getBoolean(KEY_BOOLEAN_VERSION_UP_TO_DATE, false);
     }
 
-    public static String getVersionName(Context context) {
+    public static String getVersionName() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
         return prefs.getString(KEY_STRING_VERSION_NAME, "");
     }
 
-    public static int getNotUpdateTimes(Context context) {
+    public static int getNotUpdateTimes() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
         return prefs.getInt(KEY_INT_NOT_UPDATE_TIMES, 0);
     }
 
-    public static void resetNotUpdateTimes(Context context) {
+    public static void resetNotUpdateTimes() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(KEY_INT_NOT_UPDATE_TIMES, 0);
         editor.apply();
     }
 
-    public static void addNotUpdateTimes(Context context) {
+    public static void addNotUpdateTimes() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_VERSION, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(KEY_INT_NOT_UPDATE_TIMES, prefs.getInt(KEY_INT_NOT_UPDATE_TIMES, 0) + 1);
