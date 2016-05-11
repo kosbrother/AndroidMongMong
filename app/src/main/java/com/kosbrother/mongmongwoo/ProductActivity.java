@@ -176,7 +176,7 @@ public class ProductActivity extends AppCompatActivity {
 
         switch (id) {
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 break;
             case R.id.action_search:
                 Intent searchIntent = new Intent(ProductActivity.this, SearchActivity.class);
@@ -189,6 +189,13 @@ public class ProductActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        finish();
     }
 
     public ArrayList<String> getImages() {

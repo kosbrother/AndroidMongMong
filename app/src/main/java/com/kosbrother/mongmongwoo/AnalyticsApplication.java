@@ -44,7 +44,9 @@ public class AnalyticsApplication extends Application {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean sentToken = sharedPreferences
                 .getBoolean(GcmPreferences.SENT_TOKEN_TO_SERVER, false);
-        if (!sentToken) {
+        String token = sharedPreferences
+                .getString(GcmPreferences.TOKEN, "");
+        if (!sentToken || token.isEmpty()) {
             // Start IntentService to register this application with GCM.
             startService(new Intent(this, RegistrationIntentService.class));
         }

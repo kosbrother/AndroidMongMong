@@ -9,11 +9,11 @@ import java.util.ArrayList;
 public class PastOrder implements Serializable {
 
     ArrayList<PastOrderProduct> pastOrderProducts;
-    String shippingName;
-    String shippingPhone;
+    String shipName;
+    String shipPhone;
     Store shippingStore;
-    int shipPrice;
-    int productPrice;
+    int shipFee;
+    int itemPrice;
     String note;
 //    "id":18,
 //    "user_id":26,
@@ -22,9 +22,9 @@ public class PastOrder implements Serializable {
 //    "status":"order_placed",
 //    "uid":"1153503537995545"
 
-    public PastOrder(int order_id, int total_price, String date, String status) {
+    public PastOrder(int order_id, int total, String date, String status) {
         this.order_id = order_id;
-        this.total_price = total_price;
+        this.total = total;
         this.date = date;
         this.status = status;
     }
@@ -33,8 +33,8 @@ public class PastOrder implements Serializable {
         return order_id;
     }
 
-    public int getTotal_price() {
-        return total_price;
+    public int getTotal() {
+        return total;
     }
 
     public String getDate() {
@@ -46,56 +46,71 @@ public class PastOrder implements Serializable {
     }
 
     int order_id;
-    int total_price;
+
+    public void setTotalPrice(int total_price) {
+        this.total = total_price;
+    }
+
+    int total;
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
     String date;
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     String status;
 
     public void setPastOrderProducts(ArrayList<PastOrderProduct> pastOrderProducts) {
         this.pastOrderProducts = pastOrderProducts;
     }
 
-    public void setShippingName(String shippingName) {
-        this.shippingName = shippingName;
+    public void setShipName(String shipName) {
+        this.shipName = shipName;
     }
 
-    public void setShippingPhone(String shippingPhone) {
-        this.shippingPhone = shippingPhone;
+    public void setShipPhone(String shipPhone) {
+        this.shipPhone = shipPhone;
     }
 
     public void setShippingStore(Store shippingStore) {
         this.shippingStore = shippingStore;
     }
 
-    public void setShipPrice(int shipPrice) {
-        this.shipPrice = shipPrice;
+    public void setShipFee(int shipFee) {
+        this.shipFee = shipFee;
     }
 
-    public void setProductPrice(int productPrice) {
-        this.productPrice = productPrice;
+    public void setItemPrice(int itemPrice) {
+        this.itemPrice = itemPrice;
     }
 
     public ArrayList<PastOrderProduct> getPastOrderProducts() {
         return pastOrderProducts;
     }
 
-    public String getShippingName() {
-        return shippingName;
+    public String getShipName() {
+        return shipName;
     }
 
-    public String getShippingPhone() {
-        return shippingPhone;
+    public String getShipPhone() {
+        return shipPhone;
     }
 
     public Store getShippingStore() {
         return shippingStore;
     }
 
-    public int getShipPrice() {
-        return shipPrice;
+    public int getShipFee() {
+        return shipFee;
     }
 
-    public int getProductPrice() {
-        return productPrice;
+    public int getItemPrice() {
+        return itemPrice;
     }
 
     public String getNote() {

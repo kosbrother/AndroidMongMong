@@ -129,9 +129,8 @@ public class PastOrderActivity extends FbLoginActivity {
                         @Override
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             Intent intent = new Intent(PastOrderActivity.this, PastOrderDetailActivity.class);
-                            Bundle bundle = new Bundle();
-                            bundle.putSerializable("THE_ORDER", pastOrders.get(position));
-                            intent.putExtras(bundle);
+                            intent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID,
+                                    pastOrders.get(position).getOrder_id());
                             startActivity(intent);
                         }
                     });

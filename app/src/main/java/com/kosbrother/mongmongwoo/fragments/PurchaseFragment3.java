@@ -1,7 +1,9 @@
 package com.kosbrother.mongmongwoo.fragments;
 
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,6 +21,7 @@ import com.kosbrother.mongmongwoo.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.adpters.ShoppingCarListBuyGoodsAdapter;
 import com.kosbrother.mongmongwoo.api.OrderApi;
+import com.kosbrother.mongmongwoo.gcm.GcmPreferences;
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.Product;
 
@@ -114,6 +117,7 @@ public class PurchaseFragment3 extends Fragment {
 
         @Override
         protected Object doInBackground(Object[] params) {
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
             String message = OrderApi.httpPostOrder(
                     theOrder.getUid(), theOrder.getProductPrice(),
                     theOrder.getShipPrice(), theOrder.getTotalPrice(),
@@ -122,7 +126,8 @@ public class PurchaseFragment3 extends Fragment {
                     theOrder.getShippingStore().getName(),
                     theOrder.getShippingStore().getStore_id(),
                     theOrder.getOrderProducts(),
-                    theOrder.getShippingEmail());
+                    theOrder.getShippingEmail(),
+                    sharedPreferences.getString(GcmPreferences.TOKEN, ""));
             return !message.contains("Error");
         }
 
