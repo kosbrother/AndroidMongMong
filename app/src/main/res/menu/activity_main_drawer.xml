@@ -9,6 +9,10 @@
                 android:id="@+id/nav_orders"
                 android:icon="@drawable/drawer_order"
                 android:title="我的訂單" />
+            <item
+                android:id="@+id/nav_collect"
+                android:icon="@mipmap/ic_favorite_pink_24dp"
+                android:title="@string/my_collect_activity_title" />
         </menu>
     </item>
 
