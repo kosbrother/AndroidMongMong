@@ -38,12 +38,10 @@ import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 
 import java.util.ArrayList;
 
-/**
- * Created by kolichung on 3/17/16.
- */
 public class ProductActivity extends AppCompatActivity {
 
     public static final String BOOLEAN_EXTRA_FROM_NOTIFICATION = "BOOLEAN_EXTRA_FROM_NOTIFICATION";
+    public static final String EXTRA_SERIALIZABLE_PRODUCT = "EXTRA_SERIALIZABLE_PRODUCT";
 
     TextView nameText;
     TextView priceText;
@@ -73,12 +71,9 @@ public class ProductActivity extends AppCompatActivity {
         mTracker = application.getDefaultTracker();
 
         Intent theIntent = getIntent();
-        Bundle bundle = theIntent.getExtras();
-        theProduct = (Product) bundle.getSerializable("Selected_Product");
-
-        mTracker.setScreenName("Product Name " + theProduct.getName());
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        theProduct = (Product) theIntent.getSerializableExtra(EXTRA_SERIALIZABLE_PRODUCT);
         boolean fromNotification = theIntent.getBooleanExtra(BOOLEAN_EXTRA_FROM_NOTIFICATION, false);
+
         if (fromNotification) {
             mTracker.send(new HitBuilders.EventBuilder()
                     .setCategory("PRODUCT")
@@ -86,6 +81,9 @@ public class ProductActivity extends AppCompatActivity {
                     .setLabel(theProduct.getName())
                     .build());
         }
+
+        mTracker.setScreenName("Product Name " + theProduct.getName());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.icon_back_white);

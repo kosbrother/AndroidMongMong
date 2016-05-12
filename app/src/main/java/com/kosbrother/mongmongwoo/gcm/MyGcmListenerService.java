@@ -125,9 +125,7 @@ public class MyGcmListenerService extends com.google.android.gms.gcm.GcmListener
 
     private PendingIntent getProductPendingIntent(Bundle data) {
         Intent intent = new Intent(this, ProductActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putSerializable("Selected_Product", getProduct(data));
-        intent.putExtras(bundle);
+        intent.putExtra(ProductActivity.EXTRA_SERIALIZABLE_PRODUCT, getProduct(data));
         intent.putExtra(ProductActivity.BOOLEAN_EXTRA_FROM_NOTIFICATION, true);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return PendingIntent.getActivity(this, 0 /* Request code */, intent,
