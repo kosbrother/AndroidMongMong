@@ -14,25 +14,23 @@ import java.util.List;
 public class MyCollectManager {
 
     private static final String PREF_MY_COLLECT = "PREF_MY_COLLECT";
+    private static final String PREF_STRING_COLLECT_LIST = "PREF_STRING_COLLECT_LIST";
 
     public static List<Product> getCollectedList(Context context) {
         SharedPreferences settings = context.getSharedPreferences(
                 PREF_MY_COLLECT, Context.MODE_PRIVATE);
-        List<Product> favorites = null;
-        if (settings.contains(PREF_MY_COLLECT)) {
-            String myCollectedJsonString = settings.getString(PREF_MY_COLLECT, "");
+        List<Product> productList = new ArrayList<>();
+        if (settings.contains(PREF_STRING_COLLECT_LIST)) {
+            String myCollectedJsonString = settings.getString(PREF_STRING_COLLECT_LIST, "");
             Type listType = new TypeToken<List<Product>>() {
             }.getType();
-            favorites = new Gson().fromJson(myCollectedJsonString, listType);
+            productList = new Gson().fromJson(myCollectedJsonString, listType);
         }
-        return favorites;
+        return productList;
     }
 
     public static void addProductToCollectedList(Context context, Product theProduct) {
         List<Product> collectedProductList = getCollectedList(context);
-        if (collectedProductList == null) {
-            collectedProductList = new ArrayList<>();
-        }
         collectedProductList.add(theProduct);
         storeCollectList(context, collectedProductList);
     }
@@ -50,19 +48,19 @@ public class MyCollectManager {
     }
 
     public static List<Product> removeProductFromCollectedList(Context context, int position) {
-        List<Product> collectedProductList = getCollectedList(context);
-        collectedProductList.remove(position);
-        storeCollectList(context, collectedProductList);
-        return collectedProductList;
+        List<Product> collectedList = getCollectedList(context);
+        collectedList.remove(position);
+        storeCollectList(context, collectedList);
+        return collectedList;
     }
 
-    private static void storeCollectList(Context context, List favorites) {
-        String jsonFavorites = new Gson().toJson(favorites);
+    private static void storeCollectList(Context context, List collectList) {
+        String collectListString = new Gson().toJson(collectList);
 
         SharedPreferences settings = context.getSharedPreferences(
                 PREF_MY_COLLECT, Context.MODE_PRIVATE);
         SharedPreferences.Editor edit = settings.edit();
-        edit.putString(PREF_MY_COLLECT, jsonFavorites);
+        edit.putString(PREF_STRING_COLLECT_LIST, collectListString);
         edit.apply();
     }
 }
