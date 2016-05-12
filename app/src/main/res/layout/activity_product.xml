@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -24,22 +26,20 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:orientation="vertical"
-        android:visibility="gone"
-        >
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/icon_problem"
-            />
+            android:src="@drawable/icon_problem" />
+
         <TextView
             android:layout_width="180dp"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
             android:text="無網路連接,請檢查網路連線,並重啟APP~"
             android:textSize="17dp"
-            android:layout_marginTop="10dp"
-            android:textStyle="bold"
-            />
+            android:textStyle="bold" />
 
     </LinearLayout>
 
@@ -54,47 +54,41 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                >
+                android:orientation="vertical">
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    android:weightSum="3"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    >
+                    android:weightSum="3">
 
                     <TextView
                         android:id="@+id/product_name_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="手繪哩雞義大利麵 超好吃的喔 快來嘗嘗"
-                        android:textSize="18dp"
                         android:layout_marginLeft="10dp"
+                        android:layout_weight="2"
                         android:maxLines="2"
-                        />
+                        android:text="手繪哩雞義大利麵 超好吃的喔 快來嘗嘗"
+                        android:textSize="18dp" />
 
                     <LinearLayout
                         android:layout_width="1dp"
                         android:layout_height="match_parent"
-                        android:background="@color/gray_background"
-                        android:layout_marginTop="10dp"
                         android:layout_marginBottom="10dp"
-                        >
-                    </LinearLayout>
+                        android:layout_marginTop="10dp"
+                        android:background="@color/gray_background"></LinearLayout>
 
                     <TextView
                         android:id="@+id/product_price_text"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:text="NT$ 1880"
                         android:layout_weight="1"
-                        android:textSize="18dp"
                         android:gravity="center"
+                        android:text="NT$ 1880"
                         android:textColor="@color/colorPrimary"
-                        />
+                        android:textSize="18dp" />
                 </LinearLayout>
 
 
@@ -107,11 +101,10 @@
                         android:id="@+id/loading_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="讀取中 . . ."
                         android:layout_centerInParent="true"
+                        android:text="讀取中 . . ."
                         android:textSize="16dp"
-                        android:textStyle="bold"
-                        />
+                        android:textStyle="bold" />
 
                     <android.support.v4.view.ViewPager
                         android:id="@+id/image_pager"
@@ -124,45 +117,49 @@
                         android:layout_width="match_parent"
                         android:layout_height="15dp"
                         android:layout_alignParentBottom="true"
-                        android:layout_marginBottom="10dp"
-                        />
+                        android:layout_marginBottom="10dp" />
+
+                    <ImageView
+                        android:id="@+id/collect_iv"
+                        android:layout_width="36dp"
+                        android:layout_height="36dp"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_margin="16dp"
+                        tools:src="@mipmap/ic_favorite_pink_border" />
                 </RelativeLayout>
 
                 <Button
                     android:id="@+id/product_add_car_button"
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:text="放入購物車"
                     android:layout_marginLeft="15dp"
                     android:layout_marginRight="15dp"
-                    android:background="@drawable/button_purchase_car_selector"
-                    android:textColor="@color/white"
                     android:layout_marginTop="10dp"
-                    />
+                    android:background="@drawable/button_purchase_car_selector"
+                    android:text="放入購物車"
+                    android:textColor="@color/white" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/gray_background"
-                    android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
-                    >
-                </LinearLayout>
+                    android:layout_marginTop="10dp"
+                    android:background="@color/gray_background"></LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20dp"
-                        android:text="關於商品"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        />
+                        android:text="關於商品"
+                        android:textSize="20dp" />
 
                     <TextView
                         android:id="@+id/product_information_text"
@@ -171,33 +168,28 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="10dp"
-                        android:text="這裡是商品介紹的內文"
-                        />
+                        android:text="這裡是商品介紹的內文" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/gray_background"
+                    android:layout_marginBottom="10dp"
                     android:layout_marginTop="0dp"
-                    android:layout_marginBottom="10dp"
-                    >
-                </LinearLayout>
+                    android:background="@color/gray_background"></LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    >
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20dp"
-                        android:text="付款/取貨方式"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        />
+                        android:text="付款/取貨方式"
+                        android:textSize="20dp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -205,34 +197,29 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="10dp"
-                        android:text="全家/萊爾富/OK 超商取貨付款 $60"
-                        />
+                        android:text="全家/萊爾富/OK 超商取貨付款 $60" />
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
-                    android:background="@color/gray_background"
-                    android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
-                    >
-                </LinearLayout>
+                    android:layout_marginTop="10dp"
+                    android:background="@color/gray_background"></LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
                     android:layout_marginBottom="15dp"
-                    >
+                    android:orientation="vertical">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textSize="20dp"
-                        android:text="其他資訊"
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
-                        />
+                        android:text="其他資訊"
+                        android:textSize="20dp" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -240,8 +227,7 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="10dp"
-                        android:text="*購買方式：將商品加入購物車，再至購物車結帳。"
-                        />
+                        android:text="*購買方式：將商品加入購物車，再至購物車結帳。" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -249,8 +235,7 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="5dp"
-                        android:text="*安心退貨：商品到貨日起，7天內可退貨。"
-                        />
+                        android:text="*安心退貨：商品到貨日起，7天內可退貨。" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -258,8 +243,7 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="5dp"
-                        android:text="*10天到貨：商品購買後，10個工作天內會送到指定寄送地址。"
-                        />
+                        android:text="*10天到貨：商品購買後，10個工作天內會送到指定寄送地址。" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -267,8 +251,7 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="5dp"
-                        android:text="*商品運送：本商品為超商取貨付款，外島地區可能無法運送。"
-                        />
+                        android:text="*商品運送：本商品為超商取貨付款，外島地區可能無法運送。" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -276,8 +259,7 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="5dp"
-                        android:text="*售後服務：若商品使用上有任何問題，客服人員會耐心為您解答，請透過客服中心與我們聯絡。"
-                        />
+                        android:text="*售後服務：若商品使用上有任何問題，客服人員會耐心為您解答，請透過客服中心與我們聯絡。" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -285,8 +267,7 @@
                         android:layout_marginLeft="10dp"
                         android:layout_marginRight="10dp"
                         android:layout_marginTop="5dp"
-                        android:text="*客服LINE ID： @kya5456n"
-                        />
+                        android:text="*客服LINE ID： @kya5456n" />
 
                 </LinearLayout>
             </LinearLayout>
@@ -297,40 +278,39 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="#e08F8F8F"
-            android:visibility="gone"
-            >
+            android:visibility="gone">
+
             <ImageView
                 android:id="@+id/arrow_image"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_alignParentRight="true"
-                android:src="@drawable/icon_arrow"
                 android:layout_marginTop="5dp"
-                />
+                android:src="@drawable/icon_arrow" />
+
             <TextView
                 android:id="@+id/info_text"
-                android:layout_below="@id/arrow_image"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:text="商品加入購物車後,可在此查看與結帳"
-                android:textSize="16dp"
-                android:textColor="@color/white"
                 android:layout_alignParentRight="true"
-                android:layout_marginTop="5dp"
+                android:layout_below="@id/arrow_image"
                 android:layout_marginRight="5dp"
-                />
+                android:layout_marginTop="5dp"
+                android:text="商品加入購物車後,可在此查看與結帳"
+                android:textColor="@color/white"
+                android:textSize="16dp" />
+
             <Button
                 android:id="@+id/confirm_button"
-                android:layout_below="@id/info_text"
                 android:layout_width="80dp"
                 android:layout_height="35dp"
                 android:layout_alignParentRight="true"
-                android:text="確定"
-                android:background="@drawable/button_blue_selector"
-                android:textColor="@color/white"
-                android:layout_marginTop="10dp"
+                android:layout_below="@id/info_text"
                 android:layout_marginRight="5dp"
-                />
+                android:layout_marginTop="10dp"
+                android:background="@drawable/button_blue_selector"
+                android:text="確定"
+                android:textColor="@color/white" />
         </RelativeLayout>
 
     </FrameLayout>
