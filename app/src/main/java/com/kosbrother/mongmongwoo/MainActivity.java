@@ -1,21 +1,5 @@
 package com.kosbrother.mongmongwoo;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
-import com.bumptech.glide.Glide;
-import com.facebook.login.widget.LoginButton;
-import com.github.siyamed.shapeimageview.CircularImageView;
-import com.kosbrother.mongmongwoo.api.UrlCenter;
-import com.kosbrother.mongmongwoo.api.Webservice;
-import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
-import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
-import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
-import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
-import com.kosbrother.mongmongwoo.model.User;
-import com.kosbrother.mongmongwoo.utils.NetworkUtil;
-import com.kosbrother.mongmongwoo.utils.VersionUtil;
-
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -43,6 +27,22 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bumptech.glide.Glide;
+import com.facebook.login.widget.LoginButton;
+import com.github.siyamed.shapeimageview.CircularImageView;
+import com.google.android.gms.analytics.HitBuilders;
+import com.google.android.gms.analytics.Tracker;
+import com.kosbrother.mongmongwoo.api.UrlCenter;
+import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
+import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
+import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
+import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
+import com.kosbrother.mongmongwoo.model.User;
+import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
+import com.kosbrother.mongmongwoo.utils.NetworkUtil;
+import com.kosbrother.mongmongwoo.utils.VersionUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -233,6 +233,8 @@ public class MainActivity extends FbLoginActivity
             }
         } else if (id == R.id.nav_service) {
             startActivity(new Intent(this, ServiceActivity.class));
+        } else if (id == R.id.nav_collect) {
+            startActivity(new Intent(this, MyCollectActivity.class));
         } else if (id == R.id.nav_about) {
             startActivity(new Intent(this, AboutActivity.class));
         } else if (id == R.id.nav_share) {

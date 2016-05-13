@@ -34,16 +34,17 @@ import com.kosbrother.mongmongwoo.api.ProductApi;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.ProductImage;
 import com.kosbrother.mongmongwoo.model.ProductSpec;
+import com.kosbrother.mongmongwoo.mycollect.MyCollectManager;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Created by kolichung on 3/17/16.
- */
 public class ProductActivity extends AppCompatActivity {
 
     public static final String BOOLEAN_EXTRA_FROM_NOTIFICATION = "BOOLEAN_EXTRA_FROM_NOTIFICATION";
+    public static final String EXTRA_SERIALIZABLE_PRODUCT = "EXTRA_SERIALIZABLE_PRODUCT";
+    public static final String EXTRA_BOOLEAN_FROM_MY_COLLECT = "EXTRA_BOOLEAN_FROM_MY_COLLECT";
 
     TextView nameText;
     TextView priceText;
@@ -63,6 +64,7 @@ public class ProductActivity extends AppCompatActivity {
 
     LinearLayout no_net_layout;
     Tracker mTracker;
+    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,12 +75,9 @@ public class ProductActivity extends AppCompatActivity {
         mTracker = application.getDefaultTracker();
 
         Intent theIntent = getIntent();
-        Bundle bundle = theIntent.getExtras();
-        theProduct = (Product) bundle.getSerializable("Selected_Product");
-
-        mTracker.setScreenName("Product Name " + theProduct.getName());
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        theProduct = (Product) theIntent.getSerializableExtra(EXTRA_SERIALIZABLE_PRODUCT);
         boolean fromNotification = theIntent.getBooleanExtra(BOOLEAN_EXTRA_FROM_NOTIFICATION, false);
+
         if (fromNotification) {
             mTracker.send(new HitBuilders.EventBuilder()
                     .setCategory("PRODUCT")
@@ -86,6 +85,9 @@ public class ProductActivity extends AppCompatActivity {
                     .setLabel(theProduct.getName())
                     .build());
         }
+
+        mTracker.setScreenName("Product Name " + theProduct.getName());
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.icon_back_white);
@@ -126,6 +128,7 @@ public class ProductActivity extends AppCompatActivity {
                 }
             }
         });
+        setCollectImageView();
 
         new NewsTask().execute();
     }
@@ -193,9 +196,13 @@ public class ProductActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent intent = new Intent(this, MainActivity.class);
-        startActivity(intent);
-        finish();
+        if (getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_MY_COLLECT, false)) {
+            super.onBackPressed();
+        } else {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+            finish();
+        }
     }
 
     public ArrayList<String> getImages() {
@@ -333,7 +340,6 @@ public class ProductActivity extends AppCompatActivity {
         invalidateOptionsMenu();
     }
 
-
     private Drawable buildCounterDrawable(int count, int backgroundImageId) {
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.counter_menuitem_layout, null);
@@ -362,6 +368,60 @@ public class ProductActivity extends AppCompatActivity {
 
     public void showShoppingCarInstruction() {
         spotLightShoppingCarLayout.setVisibility(View.VISIBLE);
+    }
+
+    private void setCollectImageView() {
+        List<Product> collectList = MyCollectManager.getCollectedList(this);
+        boolean collected = checkCollected(collectList);
+
+        ImageView collectImageView = (ImageView) findViewById(R.id.collect_iv);
+        collectImageView.setTag(collected);
+        setCollectImageViewRes(collectImageView);
+        collectImageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCollectImageViewClick((ImageView) v);
+            }
+        });
+    }
+
+    private boolean checkCollected(List<Product> collectList) {
+        for (Product p : collectList) {
+            if (p.getId() == theProduct.getId()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void onCollectImageViewClick(ImageView v) {
+        boolean collected = (boolean) v.getTag();
+
+        if (collected) {
+            collected = false;
+            MyCollectManager.removeProductFromCollectedList(this, theProduct);
+            showAToast("取消收藏");
+        } else {
+            collected = true;
+            MyCollectManager.addProductToCollectedList(this, theProduct);
+            showAToast("成功收藏");
+        }
+
+        v.setTag(collected);
+        setCollectImageViewRes(v);
+    }
+
+    private void setCollectImageViewRes(ImageView collectImageView) {
+        collectImageView.setImageResource((boolean) collectImageView.getTag() ?
+                R.mipmap.ic_favorite_pink_border : R.mipmap.ic_favorite_white_border);
+    }
+
+    private void showAToast(String message) {
+        if (toast != null) {
+            toast.cancel();
+        }
+        toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
+        toast.show();
     }
 
 }

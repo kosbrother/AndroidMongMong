@@ -122,6 +122,12 @@
             android:theme="@style/CustomTheme" />
 
         <activity
+            android:name=".mycollect.MyCollectActivity"
+            android:screenOrientation="portrait"
+            android:label="@string/my_collect_activity_title"
+            android:theme="@style/CustomTheme" />
+
+        <activity
             android:name=".ZoomImageActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
