@@ -34,6 +34,7 @@ import com.kosbrother.mongmongwoo.api.ProductApi;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.ProductImage;
 import com.kosbrother.mongmongwoo.model.ProductSpec;
+import com.kosbrother.mongmongwoo.mycollect.MyCollectManager;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 
 import java.util.ArrayList;

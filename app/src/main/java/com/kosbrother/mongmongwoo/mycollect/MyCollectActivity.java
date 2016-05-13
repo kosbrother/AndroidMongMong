@@ -1,4 +1,4 @@
-package com.kosbrother.mongmongwoo;
+package com.kosbrother.mongmongwoo.mycollect;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +10,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.kosbrother.mongmongwoo.ProductActivity;
+import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.MyCollectAdapter;
 import com.kosbrother.mongmongwoo.model.Product;
 

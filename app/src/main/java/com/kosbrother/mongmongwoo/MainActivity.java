@@ -40,6 +40,7 @@ import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
 import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
 import com.kosbrother.mongmongwoo.model.User;
+import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.VersionUtil;
 
