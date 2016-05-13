@@ -61,7 +61,7 @@ public class MyCollectAdapter extends RecyclerView.Adapter<MyCollectAdapter.View
 
         void onCollectItemClick(int position);
 
-        void onRemoveItemClick(int adapterPosition);
+        void onCancelCollectClick(int adapterPosition);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -84,7 +84,7 @@ public class MyCollectAdapter extends RecyclerView.Adapter<MyCollectAdapter.View
             collectImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onRemoveItemClick(getAdapterPosition());
+                    listener.onCancelCollectClick(getAdapterPosition());
                 }
             });
             productNameTextView = (TextView) itemView.findViewById(R.id.product_name_tv);

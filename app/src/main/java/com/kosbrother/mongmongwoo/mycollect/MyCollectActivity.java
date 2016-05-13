@@ -1,8 +1,10 @@
 package com.kosbrother.mongmongwoo.mycollect;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -57,10 +59,26 @@ public class MyCollectActivity extends AppCompatActivity implements MyCollectAda
     }
 
     @Override
-    public void onRemoveItemClick(int position) {
-        List<Product> productList = MyCollectManager.removeProductFromCollectedList(this, position);
-
-        setContentView(productList);
+    public void onCancelCollectClick(final int position) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("取消收藏");
+        alertDialogBuilder.setMessage("是否確定要取消收藏");
+        alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alertDialogBuilder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                List<Product> productList = MyCollectManager.removeProductFromCollectedList(
+                        getApplicationContext(), position);
+                setContentView(productList);
+                dialog.dismiss();
+            }
+        });
+        alertDialogBuilder.show();
     }
 
     private void setToolbar() {
