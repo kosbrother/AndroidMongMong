@@ -26,6 +26,8 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:background="@drawable/bg_circle_selector_24dp"
+        android:padding="8dp"
         android:src="@mipmap/ic_favorite_pink_24dp" />
 
     <TextView

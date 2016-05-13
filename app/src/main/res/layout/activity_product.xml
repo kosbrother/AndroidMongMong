@@ -127,6 +127,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_alignParentTop="true"
                         android:layout_margin="16dp"
+                        android:background="@drawable/bg_circle_selector_36dp"
                         tools:src="@mipmap/ic_favorite_pink_border" />
                 </RelativeLayout>
 
