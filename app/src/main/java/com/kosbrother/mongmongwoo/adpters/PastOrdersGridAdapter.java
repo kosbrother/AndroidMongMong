@@ -29,7 +29,7 @@ public class PastOrdersGridAdapter extends BaseAdapter {
     }
 
     @Override
-    public Object getItem(int position) {
+    public PastOrder getItem(int position) {
         return pastOrderList.get(position);
     }
 
@@ -61,6 +61,11 @@ public class PastOrdersGridAdapter extends BaseAdapter {
         viewHolder.totalPriceTextView.setText(getPrice(pastOrder));
         viewHolder.statusTextView.setText(pastOrder.getStatus());
         return convertView;
+    }
+
+    public void updateOrders(ArrayList<PastOrder> orders) {
+        pastOrderList.clear();
+        pastOrderList.addAll(orders);
     }
 
     private String getPrice(PastOrder pastOrder) {

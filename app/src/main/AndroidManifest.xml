@@ -122,9 +122,21 @@
             android:theme="@style/CustomTheme" />
 
         <activity
-            android:name=".mycollect.MyCollectActivity"
+            android:name=".pastorders.QueryPastOrdersActivity"
+            android:label="訂單查詢"
             android:screenOrientation="portrait"
+            android:theme="@style/CustomTheme" />
+
+        <activity
+            android:name=".pastorders.QueryPastOrdersResultActivity"
+            android:label="訂單查詢"
+            android:screenOrientation="portrait"
+            android:theme="@style/CustomTheme" />
+
+        <activity
+            android:name=".mycollect.MyCollectActivity"
             android:label="@string/my_collect_activity_title"
+            android:screenOrientation="portrait"
             android:theme="@style/CustomTheme" />
 
         <activity

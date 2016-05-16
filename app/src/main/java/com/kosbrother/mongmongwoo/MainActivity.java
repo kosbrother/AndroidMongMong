@@ -1,5 +1,6 @@
 package com.kosbrother.mongmongwoo;
 
+import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -42,6 +43,7 @@ import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
 import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
+import com.kosbrother.mongmongwoo.pastorders.QueryPastOrdersActivity;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.VersionUtil;
 
@@ -130,7 +132,7 @@ public class MainActivity extends FbLoginActivity
         ShoppingCarPreference pref = new ShoppingCarPreference();
         int count = pref.getShoppingCarItemSize(this);
 
-        menuItem.setIcon(buildCounterDrawable(count, R.drawable.icon_shopping_car_2));
+        menuItem.setIcon(buildCounterDrawable(count));
         menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -159,7 +161,7 @@ public class MainActivity extends FbLoginActivity
                     Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
                 }
             } else {
-                Toast.makeText(this, "請先使用FB登入", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(this, QueryPastOrdersActivity.class));
             }
         } else if (id == R.id.nav_service) {
             startActivity(new Intent(this, ServiceActivity.class));
@@ -181,6 +183,7 @@ public class MainActivity extends FbLoginActivity
         return true;
     }
 
+    @SuppressWarnings("UnusedParameters")
     public void onCustomerServiceFabClick(View view) {
         csBottomSheetDialogFragment.show(getSupportFragmentManager(), "");
         mTracker.send(new HitBuilders.EventBuilder()
@@ -332,6 +335,7 @@ public class MainActivity extends FbLoginActivity
         return (NavigationView) findViewById(R.id.nav_view);
     }
 
+    @SuppressLint("InflateParams")
     private void showUpdateDialog(String version_name, String update_message) {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_update_version, null);
         ((TextView) dialogView.findViewById(R.id.version_name_tv)).setText(version_name);
@@ -354,17 +358,18 @@ public class MainActivity extends FbLoginActivity
         });
     }
 
-    private Drawable buildCounterDrawable(int count, int backgroundImageId) {
+    @SuppressLint("InflateParams")
+    private Drawable buildCounterDrawable(int count) {
         LayoutInflater inflater = LayoutInflater.from(this);
         View view = inflater.inflate(R.layout.counter_menuitem_layout, null);
-//        view.setBackgroundResource(backgroundImageId);
 
         if (count == 0) {
             View counterTextPanel = view.findViewById(R.id.counterPanel);
             counterTextPanel.setVisibility(View.GONE);
         } else {
             TextView textView = (TextView) view.findViewById(R.id.count);
-            textView.setText("" + count);
+            String countString = "" + count;
+            textView.setText(countString);
         }
 
         view.measure(
