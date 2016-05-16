@@ -53,24 +53,15 @@ import rx.functions.Action1;
 public class MainActivity extends FbLoginActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    CircularImageView userImage;
-    TextView userText;
-    //    TextView userSettingText;
     String TAG = "MainActivity";
-    LoginButton loginButton;
 
-    MenuItem menuItem;
-    RelativeLayout spotLightShoppingCarLayout;
-    Button spotLightConfirmButton;
-
-    TextView titleText;
-    int category_id = 10; //10所有商品
-
-    GoodsGridFragment goodsGridFragment;
-    LinearLayout no_net_layout;
+    private CircularImageView userImage;
+    private TextView userText;
+    private LoginButton loginButton;
+    private RelativeLayout spotLightShoppingCarLayout;
 
     private Tracker mTracker;
-    ViewPager viewPager;
+    private ViewPager viewPager;
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
 
     @Override
@@ -80,73 +71,25 @@ public class MainActivity extends FbLoginActivity
 
         AnalyticsApplication application = (AnalyticsApplication) getApplication();
         mTracker = application.getDefaultTracker();
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setTitle("");
-        titleText = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        titleText.setText("萌萌屋");
-        no_net_layout = (LinearLayout) findViewById(R.id.no_net_layout);
-
-        spotLightShoppingCarLayout = (RelativeLayout) findViewById(R.id.spotlight_shopping_car_layout);
-        spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
-        spotLightConfirmButton = (Button) findViewById(R.id.confirm_button);
-        spotLightConfirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
-            }
-        });
-
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-        View header = navigationView.getHeaderView(0);
-
-        userImage = (CircularImageView) header.findViewById(R.id.user_imageview);
-        userText = (TextView) header.findViewById(R.id.user_name_text);
-
-        loginButton = (LoginButton) header.findViewById(R.id.login_button_main);
-        setLoginButton(loginButton);
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        setViewPagerAndTabLayout();
-
         csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
 
+        setToolbarAndDrawer();
+        setSpotLightShoppingCarLayout();
+        setSpotLightConfirmButton();
+        setNavigationView();
+        setViewPagerAndTabLayout();
+        setLoginButton(loginButton);
         checkAndroidVersion();
     }
 
     @Override
     public void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
-        loginButton.setVisibility(View.GONE);
-        userText.setText(user_name);
-        Glide.with(this)
-                .load(picUrl)
-                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                .placeholder(R.drawable.icon_head)
-                .into(userImage);
+        setUserLoinView(user_name, picUrl);
     }
 
     @Override
     public void onFbLogout() {
-        userImage.setImageResource(R.drawable.icon_head);
-        userText.setText("");
-        loginButton.setVisibility(View.VISIBLE);
-    }
-
-    private void setViewPagerAndTabLayout() {
-        SampleFragmentPagerAdapter adapter = new SampleFragmentPagerAdapter(getSupportFragmentManager());
-
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(adapter);
-
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+        setUserLogoutView();
     }
 
     @Override
@@ -162,44 +105,30 @@ public class MainActivity extends FbLoginActivity
     @Override
     protected void onResume() {
         super.onResume();
-        if (Settings.checkIsLogIn()) {
-            User savedUser = Settings.getSavedUser();
-            Glide.with(MainActivity.this)
-                    .load(savedUser.getFb_pic())
-                    .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                    .placeholder(R.drawable.icon_head)
-                    .into(userImage);
-            userText.setText(savedUser.getUser_name());
-            loginButton.setVisibility(View.GONE);
-        } else {
-            loginButton.setVisibility(View.VISIBLE);
-        }
+        setNoNetLayout();
 
-        if (menuItem != null) {
-            ShoppingCarPreference pref = new ShoppingCarPreference();
-            int count = pref.getShoppingCarItemSize(MainActivity.this);
-            menuItem.setIcon(buildCounterDrawable(count, R.drawable.icon_shopping_car_2));
-        }
+        User user = Settings.getSavedUser();
+        String userName = user.getUser_name();
 
-        if (NetworkUtil.getConnectivityStatus(this) == 0) {
-            no_net_layout.setVisibility(View.VISIBLE);
+        if (userName != null && !userName.isEmpty()) {
+            setUserLoinView(userName, user.getFb_pic());
         } else {
-            no_net_layout.setVisibility(View.GONE);
-            if (goodsGridFragment != null && goodsGridFragment.getProductsSize() == 0) {
-                goodsGridFragment.notifyCategoryChanged(category_id);
-            }
+            setUserLogoutView();
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem menuItem;
         if (menu.findItem(99) == null) {
             menuItem = menu.add(0, 99, 0, "購物車");
         } else {
             menuItem = menu.findItem(99);
         }
+
         ShoppingCarPreference pref = new ShoppingCarPreference();
-        int count = pref.getShoppingCarItemSize(MainActivity.this);
+        int count = pref.getShoppingCarItemSize(this);
+
         menuItem.setIcon(buildCounterDrawable(count, R.drawable.icon_shopping_car_2));
         menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
@@ -260,6 +189,14 @@ public class MainActivity extends FbLoginActivity
                 .build());
     }
 
+    public void doIncrease() {
+        invalidateOptionsMenu();
+    }
+
+    public void showShoppingCarInstruction() {
+        spotLightShoppingCarLayout.setVisibility(View.VISIBLE);
+    }
+
     private void checkAndroidVersion() {
         Webservice.getAndroidVersion(new Action1<AndroidVersionEntity>() {
             @Override
@@ -277,7 +214,7 @@ public class MainActivity extends FbLoginActivity
         String version_name = version.getVersionName();
         Settings.saveAndroidVersion(version_name, upToDate);
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = getNavigationView();
         Menu navigationViewMenu = navigationView.getMenu();
         View lastVersionActionView = navigationViewMenu.findItem(R.id.nav_about).getActionView();
 
@@ -292,6 +229,106 @@ public class MainActivity extends FbLoginActivity
             }
             Settings.addNotUpdateTimes();
         }
+    }
+
+    private void setToolbarAndDrawer() {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setTitle("");
+        TextView titleText = (TextView) toolbar.findViewById(R.id.toolbar_title);
+        titleText.setText("萌萌屋");
+
+        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.addDrawerListener(toggle);
+        toggle.syncState();
+    }
+
+    private void setSpotLightShoppingCarLayout() {
+        spotLightShoppingCarLayout = (RelativeLayout) findViewById(R.id.spotlight_shopping_car_layout);
+        spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
+    }
+
+    private void setSpotLightConfirmButton() {
+        Button spotLightConfirmButton = (Button) findViewById(R.id.confirm_button);
+        spotLightConfirmButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    private void setNavigationView() {
+        NavigationView navigationView = getNavigationView();
+        navigationView.setNavigationItemSelectedListener(this);
+        View header = navigationView.getHeaderView(0);
+        userImage = (CircularImageView) header.findViewById(R.id.user_imageview);
+        userText = (TextView) header.findViewById(R.id.user_name_text);
+        loginButton = (LoginButton) header.findViewById(R.id.login_button_main);
+    }
+
+    private void setViewPagerAndTabLayout() {
+        SampleFragmentPagerAdapter adapter = new SampleFragmentPagerAdapter(getSupportFragmentManager());
+
+        viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(adapter);
+        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+            }
+
+            @Override
+            public void onPageSelected(int position) {
+                SampleFragmentPagerAdapter adapter = (SampleFragmentPagerAdapter) viewPager.getAdapter();
+                Fragment fragment = adapter.getItem(position);
+                int category = fragment.getArguments().getInt(GoodsGridFragment.ARG_CATEGORY);
+                sendFragmentCategoryName(category);
+            }
+
+            @Override
+            public void onPageScrollStateChanged(int state) {
+            }
+        });
+
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout.setupWithViewPager(viewPager);
+    }
+
+    private void setNoNetLayout() {
+        LinearLayout no_net_layout = (LinearLayout) findViewById(R.id.no_net_layout);
+        if (NetworkUtil.getConnectivityStatus(this) == 0) {
+            no_net_layout.setVisibility(View.VISIBLE);
+        } else {
+            no_net_layout.setVisibility(View.GONE);
+        }
+    }
+
+    private void setUserLoinView(String user_name, String picUrl) {
+        loginButton.setVisibility(View.GONE);
+        userText.setText(user_name);
+        Glide.with(this)
+                .load(picUrl)
+                .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
+                .placeholder(R.drawable.icon_head)
+                .into(userImage);
+
+        MenuItem ordersMenuItem = getNavigationView().getMenu().findItem(R.id.nav_orders);
+        ordersMenuItem.setTitle("我的訂單");
+    }
+
+    private void setUserLogoutView() {
+        userImage.setImageResource(R.drawable.icon_head);
+        userText.setText("");
+        loginButton.setVisibility(View.VISIBLE);
+
+        MenuItem ordersMenuItem = getNavigationView().getMenu().findItem(R.id.nav_orders);
+        ordersMenuItem.setTitle("查詢訂單");
+    }
+
+    private NavigationView getNavigationView() {
+        return (NavigationView) findViewById(R.id.nav_view);
     }
 
     private void showUpdateDialog(String version_name, String update_message) {
@@ -314,6 +351,60 @@ public class MainActivity extends FbLoginActivity
                 dialog.dismiss();
             }
         });
+    }
+
+    private Drawable buildCounterDrawable(int count, int backgroundImageId) {
+        LayoutInflater inflater = LayoutInflater.from(this);
+        View view = inflater.inflate(R.layout.counter_menuitem_layout, null);
+//        view.setBackgroundResource(backgroundImageId);
+
+        if (count == 0) {
+            View counterTextPanel = view.findViewById(R.id.counterPanel);
+            counterTextPanel.setVisibility(View.GONE);
+        } else {
+            TextView textView = (TextView) view.findViewById(R.id.count);
+            textView.setText("" + count);
+        }
+
+        view.measure(
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
+                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
+        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
+
+        view.setDrawingCacheEnabled(true);
+        view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
+        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
+        view.setDrawingCacheEnabled(false);
+
+        return new BitmapDrawable(getResources(), bitmap);
+    }
+
+    private void sendFragmentCategoryName(int category_id) {
+        String name;
+        switch (category_id) {
+            case 10:
+                name = "所有商品";
+                break;
+            case 11:
+                name = "新品上架";
+                break;
+            case 12:
+                name = "文具用品";
+                break;
+            case 13:
+                name = "日韓精選";
+                break;
+            case 14:
+                name = "生日專區";
+                break;
+            case 16:
+                name = "生活小物";
+                break;
+            default:
+                name = "所有商品";
+        }
+        mTracker.setScreenName("Fragment~" + name);
+        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
@@ -349,68 +440,6 @@ public class MainActivity extends FbLoginActivity
             mFragmentList.add(fragment);
             mFragmentTitleList.add(title);
         }
-    }
-
-    private Drawable buildCounterDrawable(int count, int backgroundImageId) {
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View view = inflater.inflate(R.layout.counter_menuitem_layout, null);
-//        view.setBackgroundResource(backgroundImageId);
-
-        if (count == 0) {
-            View counterTextPanel = view.findViewById(R.id.counterPanel);
-            counterTextPanel.setVisibility(View.GONE);
-        } else {
-            TextView textView = (TextView) view.findViewById(R.id.count);
-            textView.setText("" + count);
-        }
-
-        view.measure(
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-
-        view.setDrawingCacheEnabled(true);
-        view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
-        view.setDrawingCacheEnabled(false);
-
-        return new BitmapDrawable(getResources(), bitmap);
-    }
-
-    public void doIncrease() {
-        invalidateOptionsMenu();
-    }
-
-    public void showShoppingCarInstruction() {
-        spotLightShoppingCarLayout.setVisibility(View.VISIBLE);
-    }
-
-    public void sendFragmentCategoryName(int category_id) {
-        String name;
-        switch (category_id) {
-            case 10:
-                name = "所有商品";
-                break;
-            case 11:
-                name = "新品上架";
-                break;
-            case 12:
-                name = "文具用品";
-                break;
-            case 13:
-                name = "日韓精選";
-                break;
-            case 14:
-                name = "生日專區";
-                break;
-            case 16:
-                name = "生活小物";
-                break;
-            default:
-                name = "所有商品";
-        }
-        mTracker.setScreenName("Fragment~" + name);
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
 }

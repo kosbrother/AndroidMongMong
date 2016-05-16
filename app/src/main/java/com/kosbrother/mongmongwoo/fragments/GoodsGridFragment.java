@@ -203,22 +203,6 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
         }
     }
 
-    public void notifyCategoryChanged(int category_id) {
-
-        this.category_id = category_id;
-        products.clear();
-        layoutProgress.setVisibility(View.VISIBLE);
-        page = 1;
-        new NewsTask().execute();
-
-        try {
-            MainActivity activity = (MainActivity) getActivity();
-            activity.sendFragmentCategoryName(category_id);
-        } catch (Exception e) {
-
-        }
-    }
-
     public int getProductsSize() {
         if (products != null) {
             return products.size();
