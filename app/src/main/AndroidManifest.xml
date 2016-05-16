@@ -112,12 +112,12 @@
             android:theme="@style/CustomTheme" />
 
         <activity
-            android:name="com.kosbrother.mongmongwoo.PastOrderActivity"
+            android:name=".pastorders.PastOrderActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme" />
 
         <activity
-            android:name="com.kosbrother.mongmongwoo.PastOrderDetailActivity"
+            android:name=".pastorders.PastOrderDetailActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme" />
 

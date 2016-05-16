@@ -1,4 +1,4 @@
-package com.kosbrother.mongmongwoo;
+package com.kosbrother.mongmongwoo.pastorders;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.ViewStub;
 import android.widget.TextView;
 
+import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.PastOrderListAdapter;
 import com.kosbrother.mongmongwoo.api.OrderApi;
 import com.kosbrother.mongmongwoo.model.PastOrder;
