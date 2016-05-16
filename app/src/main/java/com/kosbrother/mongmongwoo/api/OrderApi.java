@@ -25,9 +25,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-/**
- * Created by kolichung on 3/15/16.
- */
 public class OrderApi {
 
     public static final String TAG = "ORDER_API";
@@ -52,6 +49,17 @@ public class OrderApi {
         } else {
             PastOrder pastOrder = new PastOrder(orderId, 0, "", "");
             return parseTheOrder(message, pastOrder);
+        }
+    }
+
+    public static ArrayList<PastOrder> getOrdersByEmailAndPhone(String email, String phone) {
+        String message = getMessageFromServer(
+                "GET", null, null, UrlCenter.getOrdersByEmailAndPhone(email, phone));
+        if (message == null) {
+            return null;
+        } else {
+            ArrayList<PastOrder> pastOrders = new ArrayList<>();
+            return parsePastOrders(message, pastOrders);
         }
     }
 
