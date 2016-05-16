@@ -21,12 +21,12 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorAccent">#737373</item>
         <item name="apcStyles">@style/AppPageControlStyle</item>
+        <item name="actionMenuTextAppearance">@style/MenuTextStyle</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
-
 
     <style name="AppPageControlStyle">
         <!-- To change indicator size -->
@@ -40,6 +40,11 @@
         <item name="apc_colorCurrentPressed">#a7ffeb</item>
         <item name="apc_colorNormalDefault">#009688</item>
         <item name="apc_colorNormalPressed">#4db6ac</item>
+    </style>
+
+    <style name="MenuTextStyle">
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:textSize">19sp</item>
     </style>
 
 </resources>

@@ -69,7 +69,7 @@ public class PastOrdersGridAdapter extends BaseAdapter {
     }
 
     private String getPrice(PastOrder pastOrder) {
-        return "總花費:NT$" + pastOrder.getTotal();
+        return "總花費：NT$ " + pastOrder.getTotal();
     }
 
     static class ViewHolder {
