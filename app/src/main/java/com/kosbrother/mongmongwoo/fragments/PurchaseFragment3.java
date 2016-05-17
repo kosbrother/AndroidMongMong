@@ -22,14 +22,14 @@ import com.kosbrother.mongmongwoo.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.adpters.ShoppingCarListBuyGoodsAdapter;
 import com.kosbrother.mongmongwoo.api.OrderApi;
 import com.kosbrother.mongmongwoo.gcm.GcmPreferences;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3ClickEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.Product;
 
 import java.util.ArrayList;
 
-/**
- * Created by kolichung on 3/9/16.
- */
 public class PurchaseFragment3 extends Fragment {
 
     RecyclerView recyclerView;
@@ -45,8 +45,7 @@ public class PurchaseFragment3 extends Fragment {
     ProgressBar progressBar;
 
     public static PurchaseFragment3 newInstance() {
-        PurchaseFragment3 fragment = new PurchaseFragment3();
-        return fragment;
+        return new PurchaseFragment3();
     }
 
     @Override
@@ -75,6 +74,7 @@ public class PurchaseFragment3 extends Fragment {
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                GAManager.sendEvent(new CheckoutStep3ClickEvent(GALabel.SEND_ORDER));
                 new NewsTask().execute();
             }
         });

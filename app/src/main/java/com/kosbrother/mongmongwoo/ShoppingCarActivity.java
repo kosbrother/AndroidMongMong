@@ -14,13 +14,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.facebook.login.widget.LoginButton;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment1;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment2;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment3;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment4;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1EnterEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep2ClickEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep2EnterEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3ClickEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3EnterEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep4EnterEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Store;
@@ -30,9 +36,6 @@ import com.kosbrother.mongmongwoo.utils.NonSwipeableViewPager;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by kolichung on 3/9/16.
- */
 public class ShoppingCarActivity extends FbLoginActivity {
 
     String TAG = "ShoppingCarActivity";
@@ -52,7 +55,6 @@ public class ShoppingCarActivity extends FbLoginActivity {
     LoginButton loginButton;
 
     LinearLayout no_net_layout;
-    Tracker mTracker;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,9 +67,6 @@ public class ShoppingCarActivity extends FbLoginActivity {
         toolbar.setTitleTextColor(0xFFFFFFFF);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("結帳");
-
-        AnalyticsApplication application = (AnalyticsApplication) getApplication();
-        mTracker = application.getDefaultTracker();
 
         breadCrumb1 = (TextView) findViewById(R.id.bread_crumbs_1_text);
         breadCrumb2 = (TextView) findViewById(R.id.bread_crumbs_2_text);
@@ -113,13 +112,14 @@ public class ShoppingCarActivity extends FbLoginActivity {
                         breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
-                        sendShoppingFragment(1);
+                        GAManager.sendEvent(new CheckoutStep1EnterEvent());
                         break;
                     case 1:
                         menuItem.setTitle("上一步");
                         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
+                                GAManager.sendEvent(new CheckoutStep2ClickEvent(GALabel.PREVIOUS_STEP));
                                 viewPager.setCurrentItem(0, true);
                                 return true;
                             }
@@ -128,13 +128,14 @@ public class ShoppingCarActivity extends FbLoginActivity {
                         breadCrumb2.setBackgroundResource(R.drawable.circle_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
-                        sendShoppingFragment(2);
+                        GAManager.sendEvent(new CheckoutStep2EnterEvent());
                         break;
                     case 2:
                         menuItem.setTitle("上一步");
                         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
+                                GAManager.sendEvent(new CheckoutStep3ClickEvent(GALabel.PREVIOUS_STEP));
                                 viewPager.setCurrentItem(1, true);
                                 return true;
                             }
@@ -143,7 +144,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
                         breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_style);
                         breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
-                        sendShoppingFragment(3);
+                        GAManager.sendEvent(new CheckoutStep3EnterEvent());
                         break;
                     case 3:
                         menuItem.setVisible(false);
@@ -151,7 +152,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
                         breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb4.setBackgroundResource(R.drawable.circle_style);
-                        sendShoppingFragment(4);
+                        GAManager.sendEvent(new CheckoutStep4EnterEvent());
                         break;
                 }
             }
@@ -161,7 +162,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
 
             }
         });
-        sendShoppingFragment(1);
+        GAManager.sendEvent(new CheckoutStep1EnterEvent());
     }
 
     public void setBreadCurmbsVisibility(int view_param) {
@@ -233,11 +234,6 @@ public class ShoppingCarActivity extends FbLoginActivity {
         } else {
             no_net_layout.setVisibility(View.GONE);
         }
-    }
-
-    private void sendShoppingFragment(int fragmentPosition) {
-        mTracker.setScreenName("Shopping Fragment " + Integer.toString(fragmentPosition));
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     private void initOrder() {

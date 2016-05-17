@@ -22,6 +22,9 @@ import com.kosbrother.mongmongwoo.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.adpters.ShoppingCarGoodsAdapter;
 import com.kosbrother.mongmongwoo.api.DensityApi;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1ClickEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Product;
 
 import java.util.ArrayList;
@@ -172,6 +175,7 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
         no_name_buy_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.ANONYMOUS_PURCHASE));
                 startNextStep();
             }
         });
@@ -181,6 +185,7 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.CONFIRM_FACEBOOK_LOGIN));
                 startNextStep();
             }
         });
@@ -199,6 +204,8 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
                     activity.getOrder().setProductPrice(totalGoodsPrice);
                     activity.getOrder().setTotalPrice(shippingPrice + totalGoodsPrice);
                     activity.performClickFbButton();
+
+                    GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.FACEBOOK_LOGIN));
                 } else {
                     Toast.makeText(getActivity(), "請選擇運送方式", Toast.LENGTH_SHORT).show();
                 }
@@ -255,6 +262,7 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
 
     @Override
     public void onDeleteButtonClick(int position) {
+        GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.PRODUCT_DELETE));
         ShoppingCarPreference prefs = new ShoppingCarPreference();
         prefs.removeShoppingItem(getContext(), position);
 
@@ -265,6 +273,7 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
 
     @Override
     public void onSelectCountButtonClick(int position, int tempCount) {
+        GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.NUMBER_CHANGE));
         this.tempCount = tempCount;
         View dialogView = getDialogView();
         getAlertDialog(position, dialogView).show();

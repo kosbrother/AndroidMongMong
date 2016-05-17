@@ -7,37 +7,20 @@ import android.preference.PreferenceManager;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.Tracker;
 import com.kosbrother.mongmongwoo.gcm.GcmPreferences;
 import com.kosbrother.mongmongwoo.gcm.RegistrationIntentService;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 
-/**
- * Created by kolichung on 3/31/16.
- */
 public class AnalyticsApplication extends Application {
-    private Tracker mTracker;
 
     @Override
     public void onCreate() {
         super.onCreate();
         FacebookSdk.sdkInitialize(this);
         AppEventsLogger.activateApp(this);
-        initGoogleAnalyticsTracker();
+        GAManager.init(this);
         Settings.init(this);
         startGetGcmToken();
-    }
-
-    private void initGoogleAnalyticsTracker() {
-        GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-        // To enable debug logging use: adb shell setprop log.tag.GAv4 DEBUG
-        if (BuildConfig.DEBUG) {
-            analytics.setDryRun(true);
-        }
-        mTracker = analytics.newTracker("UA-73843935-2");
-        mTracker.setSessionTimeout(300);
-        mTracker.enableExceptionReporting(true);
-        mTracker.enableAutoActivityTracking(true);
     }
 
     private void startGetGcmToken() {
@@ -52,12 +35,4 @@ public class AnalyticsApplication extends Application {
         }
     }
 
-    /**
-     * Gets the default {@link Tracker} for this {@link Application}.
-     *
-     * @return tracker
-     */
-    synchronized public Tracker getDefaultTracker() {
-        return mTracker;
-    }
 }
