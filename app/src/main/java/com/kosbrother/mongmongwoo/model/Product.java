@@ -83,4 +83,8 @@ public class Product implements Serializable {
     public int getBuy_count() {
         return buy_count;
     }
+
+    public boolean isOnShelf() {
+        return status.contains("on_shelf");
+    }
 }

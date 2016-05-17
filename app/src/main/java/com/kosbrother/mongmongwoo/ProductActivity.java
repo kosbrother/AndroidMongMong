@@ -223,7 +223,7 @@ public class ProductActivity extends AppCompatActivity {
                 viewPager.setAdapter(adapter);
                 pageControl.setViewPager(viewPager);
                 infoText.setText(Html.fromHtml(theProduct.getDescription()));
-                if (theProduct.getStatus().contains("off")) {
+                if (!theProduct.isOnShelf()) {
                     addCarButton.setText("商品已下架, 如有需要請聯絡客服");
                     addCarButton.setEnabled(false);
                 }
