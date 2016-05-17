@@ -47,7 +47,7 @@ public class ShoppingCarGoodsAdapter extends RecyclerView.Adapter<ShoppingCarGoo
         holder.priceTextView.setText(priceString);
 
         Glide.with(context)
-                .load(product.getSelectedSpec().getPic_url())
+                .load(product.getSelectedSpec().getPic())
                 .centerCrop()
                 .placeholder(R.mipmap.img_pre_load_square)
                 .into(holder.goodsImageView);

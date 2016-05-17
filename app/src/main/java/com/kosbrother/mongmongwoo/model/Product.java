@@ -1,48 +1,39 @@
 package com.kosbrother.mongmongwoo.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Created by kolichung on 3/4/16.
- */
-public class Product implements Serializable{
+public class Product implements Serializable {
 
-    int id;
-    String name;
-    int price;
-    String pic_url;
-    int buy_count;
+    @SerializedName("id")
+    private int id;
+    @SerializedName("name")
+    private String name;
+    @SerializedName("price")
+    private int price;
+    @SerializedName("cover")
+    private String cover;
+    @SerializedName("description")
+    private String description;
+    @SerializedName("status")
+    private String status;
 
-    ArrayList<ProductImage> images;
-    ArrayList<ProductSpec> specs;
-    String description;
+    @SerializedName("photos")
+    private List<Photo> images;
+    @SerializedName("specs")
+    private List<Spec> specs;
 
-    public void setSelectedSpec(ProductSpec selectedSpec) {
-        this.selectedSpec = selectedSpec;
-    }
+    private int buy_count;
+    private Spec selectedSpec;
 
-    public ProductSpec getSelectedSpec() {
-        return selectedSpec;
-    }
-
-    ProductSpec selectedSpec;
-
-    public Product(int id, String name, int price, String pic_url) {
+    public Product(int id, String name, int price, String cover) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.pic_url = pic_url;
+        this.cover = cover;
         this.buy_count = 0;
-    }
-
-
-    public void setBuy_count(int buy_count) {
-        this.buy_count = buy_count;
-    }
-
-    public int getBuy_count() {
-        return buy_count;
     }
 
     public int getId() {
@@ -57,29 +48,15 @@ public class Product implements Serializable{
         return price;
     }
 
-    public String getPic_url() {
-        return pic_url;
+    public String getCover() {
+        return cover;
     }
 
-    public void setImages(ArrayList<ProductImage> images) {
-        this.images = images;
-    }
-
-    public void setSpecs(ArrayList<ProductSpec> specs) {
-        this.specs = specs;
-    }
-
-    public ArrayList<ProductImage> getImages() {
-        if (images == null){
-            images = new ArrayList<>();
-        }
+    public List<Photo> getImages() {
         return images;
     }
 
-    public ArrayList<ProductSpec> getSpecs() {
-        if (specs == null){
-            specs = new ArrayList<>();
-        }
+    public List<Spec> getSpecs() {
         return specs;
     }
 
@@ -87,7 +64,27 @@ public class Product implements Serializable{
         return description;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public String getStatus() {
+        return status;
+    }
+
+    public void setSelectedSpec(Spec selectedSpec) {
+        this.selectedSpec = selectedSpec;
+    }
+
+    public Spec getSelectedSpec() {
+        return selectedSpec;
+    }
+
+    public void setBuy_count(int buy_count) {
+        this.buy_count = buy_count;
+    }
+
+    public int getBuy_count() {
+        return buy_count;
+    }
+
+    public boolean isOnShelf() {
+        return status.contains("on_shelf");
     }
 }

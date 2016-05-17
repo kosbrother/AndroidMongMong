@@ -31,9 +31,9 @@ import com.google.android.gms.analytics.Tracker;
 import com.kosbrother.mongmongwoo.adpters.ProductImageFragmentPagerAdapter;
 import com.kosbrother.mongmongwoo.adpters.StyleGridAdapter;
 import com.kosbrother.mongmongwoo.api.ProductApi;
+import com.kosbrother.mongmongwoo.model.Photo;
 import com.kosbrother.mongmongwoo.model.Product;
-import com.kosbrother.mongmongwoo.model.ProductImage;
-import com.kosbrother.mongmongwoo.model.ProductSpec;
+import com.kosbrother.mongmongwoo.model.Spec;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectManager;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 
@@ -42,29 +42,28 @@ import java.util.List;
 
 public class ProductActivity extends AppCompatActivity {
 
-    public static final String BOOLEAN_EXTRA_FROM_NOTIFICATION = "BOOLEAN_EXTRA_FROM_NOTIFICATION";
-    public static final String EXTRA_SERIALIZABLE_PRODUCT = "EXTRA_SERIALIZABLE_PRODUCT";
+    public static final String EXTRA_INT_PRODUCT_ID = "EXTRA_INT_PRODUCT_ID";
+    public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
     public static final String EXTRA_BOOLEAN_FROM_MY_COLLECT = "EXTRA_BOOLEAN_FROM_MY_COLLECT";
 
-    TextView nameText;
-    TextView priceText;
-    TextView loadingText;
+    private TextView loadingText;
 
-    Button addCarButton;
-    TextView infoText;
+    private Button addCarButton;
+    private TextView infoText;
     private ViewPager viewPager;
     private PageControl pageControl;
 
-    Product theProduct;
+    private Product theProduct;
     private StyleGridAdapter styleGridAdapter;
-    MenuItem menuItem;
+    private MenuItem menuItem;
 
-    RelativeLayout spotLightShoppingCarLayout;
-    Button spotLightConfirmButton;
+    private RelativeLayout spotLightShoppingCarLayout;
+    private Button spotLightConfirmButton;
 
-    LinearLayout no_net_layout;
-    Tracker mTracker;
+    private LinearLayout no_net_layout;
+    private Tracker mTracker;
     private Toast toast;
+    private int productId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,19 +74,7 @@ public class ProductActivity extends AppCompatActivity {
         mTracker = application.getDefaultTracker();
 
         Intent theIntent = getIntent();
-        theProduct = (Product) theIntent.getSerializableExtra(EXTRA_SERIALIZABLE_PRODUCT);
-        boolean fromNotification = theIntent.getBooleanExtra(BOOLEAN_EXTRA_FROM_NOTIFICATION, false);
-
-        if (fromNotification) {
-            mTracker.send(new HitBuilders.EventBuilder()
-                    .setCategory("PRODUCT")
-                    .setAction("CLICK_NOTIFICATION")
-                    .setLabel(theProduct.getName())
-                    .build());
-        }
-
-        mTracker.setScreenName("Product Name " + theProduct.getName());
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        productId = theIntent.getIntExtra(EXTRA_INT_PRODUCT_ID, 0);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.icon_back_white);
@@ -111,13 +98,10 @@ public class ProductActivity extends AppCompatActivity {
         pageControl = (PageControl) findViewById(R.id.page_control);
 
         loadingText = (TextView) findViewById(R.id.loading_text);
-        nameText = (TextView) findViewById(R.id.product_name_text);
-        priceText = (TextView) findViewById(R.id.product_price_text);
+
         addCarButton = (Button) findViewById(R.id.product_add_car_button);
         infoText = (TextView) findViewById(R.id.product_information_text);
 
-        nameText.setText(theProduct.getName());
-        priceText.setText("NT$ " + Integer.toString(theProduct.getPrice()));
         addCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,14 +190,14 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     public ArrayList<String> getImages() {
-        ArrayList<ProductImage> productImages = theProduct.getImages();
-        int size = productImages.size();
+        List<Photo> photos = theProduct.getImages();
+        int size = photos.size();
         ArrayList<String> images = new ArrayList<>();
         if (size == 0) {
-            images.add(theProduct.getPic_url());
+            images.add(theProduct.getCover());
         } else {
             for (int i = 0; i < size; i++) {
-                images.add(productImages.get(i).getUrl());
+                images.add(photos.get(i).getImageUrl());
             }
         }
         return images;
@@ -223,7 +207,7 @@ public class ProductActivity extends AppCompatActivity {
 
         @Override
         protected Object doInBackground(Object[] params) {
-            theProduct = ProductApi.updateProductById(theProduct.getId(), theProduct);
+            theProduct = ProductApi.getProductById(productId);
             if (theProduct != null) {
                 return true;
             }
@@ -232,7 +216,6 @@ public class ProductActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Object result) {
-            loadingText.setVisibility(View.GONE);
             if (result != null) {
                 ProductImageFragmentPagerAdapter adapter = new ProductImageFragmentPagerAdapter(
                         getSupportFragmentManager(),
@@ -240,9 +223,35 @@ public class ProductActivity extends AppCompatActivity {
                 viewPager.setAdapter(adapter);
                 pageControl.setViewPager(viewPager);
                 infoText.setText(Html.fromHtml(theProduct.getDescription()));
+                if (!theProduct.isOnShelf()) {
+                    addCarButton.setText("商品已下架, 如有需要請聯絡客服");
+                    addCarButton.setEnabled(false);
+                }
+
+                String productNameString = theProduct.getName();
+
+                boolean fromNotification = getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
+                if (fromNotification) {
+                    mTracker.send(new HitBuilders.EventBuilder()
+                            .setCategory("PRODUCT")
+                            .setAction("CLICK_NOTIFICATION")
+                            .setLabel(productNameString)
+                            .build());
+                }
+
+                mTracker.setScreenName("Product Name " + productNameString);
+                mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
+                TextView nameText = (TextView) findViewById(R.id.product_name_text);
+                nameText.setText(productNameString);
+
+                TextView priceText = (TextView) findViewById(R.id.product_price_text);
+                String priceString = "NT$ " + theProduct.getPrice();
+                priceText.setText(priceString);
             } else {
                 Toast.makeText(ProductActivity.this, "無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
             }
+            loadingText.setVisibility(View.GONE);
         }
     }
 
@@ -294,7 +303,7 @@ public class ProductActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int selectedStylePosition = styleGridAdapter.getSelectedPosition();
-                ProductSpec theSelectedSpec = theProduct.getSpecs().get(selectedStylePosition);
+                Spec theSelectedSpec = theProduct.getSpecs().get(selectedStylePosition);
                 theProduct.setSelectedSpec(theSelectedSpec);
                 ShoppingCarPreference pref = new ShoppingCarPreference();
                 theProduct.setBuy_count(tempCount);
@@ -314,21 +323,21 @@ public class ProductActivity extends AppCompatActivity {
         styleGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ProductSpec productSpec = theProduct.getSpecs().get(position);
+                Spec spec = theProduct.getSpecs().get(position);
 
                 Glide.with(ProductActivity.this)
-                        .load(productSpec.getPic_url())
+                        .load(spec.getPic())
                         .centerCrop()
                         .placeholder(R.mipmap.img_pre_load_square)
                         .into(styleImage);
-                styleName.setText(productSpec.getStyle());
+                styleName.setText(spec.getStyle());
 
                 styleGridAdapter.updateSelectedPosition(position);
             }
         });
 
         Glide.with(this)
-                .load(theProduct.getSpecs().get(0).getPic_url())
+                .load(theProduct.getSpecs().get(0).getPic())
                 .centerCrop()
                 .placeholder(R.mipmap.img_pre_load_square)
                 .into(styleImage);
@@ -387,7 +396,7 @@ public class ProductActivity extends AppCompatActivity {
 
     private boolean checkCollected(List<Product> collectList) {
         for (Product p : collectList) {
-            if (p.getId() == theProduct.getId()) {
+            if (p.getId() == productId) {
                 return true;
             }
         }

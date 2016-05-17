@@ -65,7 +65,7 @@ public class GoodsGridAdapter extends BaseAdapter {
         final Product theProduct = productList.get(position);
 
         Glide.with(context)
-                .load(theProduct.getPic_url())
+                .load(theProduct.getCover())
                 .centerCrop()
                 .placeholder(R.mipmap.img_pre_load_rectangle)
                 .into(viewHolder.itemImage);
