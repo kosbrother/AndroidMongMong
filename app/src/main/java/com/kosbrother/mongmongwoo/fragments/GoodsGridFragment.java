@@ -78,7 +78,7 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getContext(), ProductActivity.class);
-                intent.putExtra(ProductActivity.EXTRA_SERIALIZABLE_PRODUCT, products.get(position));
+                intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, products.get(position).getId());
                 getContext().startActivity(intent);
             }
         });

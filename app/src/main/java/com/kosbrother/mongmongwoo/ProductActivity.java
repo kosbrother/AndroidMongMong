@@ -42,29 +42,28 @@ import java.util.List;
 
 public class ProductActivity extends AppCompatActivity {
 
-    public static final String BOOLEAN_EXTRA_FROM_NOTIFICATION = "BOOLEAN_EXTRA_FROM_NOTIFICATION";
-    public static final String EXTRA_SERIALIZABLE_PRODUCT = "EXTRA_SERIALIZABLE_PRODUCT";
+    public static final String EXTRA_INT_PRODUCT_ID = "EXTRA_INT_PRODUCT_ID";
+    public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
     public static final String EXTRA_BOOLEAN_FROM_MY_COLLECT = "EXTRA_BOOLEAN_FROM_MY_COLLECT";
 
-    TextView nameText;
-    TextView priceText;
-    TextView loadingText;
+    private TextView loadingText;
 
-    Button addCarButton;
-    TextView infoText;
+    private Button addCarButton;
+    private TextView infoText;
     private ViewPager viewPager;
     private PageControl pageControl;
 
-    Product theProduct;
+    private Product theProduct;
     private StyleGridAdapter styleGridAdapter;
-    MenuItem menuItem;
+    private MenuItem menuItem;
 
-    RelativeLayout spotLightShoppingCarLayout;
-    Button spotLightConfirmButton;
+    private RelativeLayout spotLightShoppingCarLayout;
+    private Button spotLightConfirmButton;
 
-    LinearLayout no_net_layout;
-    Tracker mTracker;
+    private LinearLayout no_net_layout;
+    private Tracker mTracker;
     private Toast toast;
+    private int productId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,19 +74,7 @@ public class ProductActivity extends AppCompatActivity {
         mTracker = application.getDefaultTracker();
 
         Intent theIntent = getIntent();
-        theProduct = (Product) theIntent.getSerializableExtra(EXTRA_SERIALIZABLE_PRODUCT);
-        boolean fromNotification = theIntent.getBooleanExtra(BOOLEAN_EXTRA_FROM_NOTIFICATION, false);
-
-        if (fromNotification) {
-            mTracker.send(new HitBuilders.EventBuilder()
-                    .setCategory("PRODUCT")
-                    .setAction("CLICK_NOTIFICATION")
-                    .setLabel(theProduct.getName())
-                    .build());
-        }
-
-        mTracker.setScreenName("Product Name " + theProduct.getName());
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+        productId = theIntent.getIntExtra(EXTRA_INT_PRODUCT_ID, 0);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.icon_back_white);
@@ -111,13 +98,10 @@ public class ProductActivity extends AppCompatActivity {
         pageControl = (PageControl) findViewById(R.id.page_control);
 
         loadingText = (TextView) findViewById(R.id.loading_text);
-        nameText = (TextView) findViewById(R.id.product_name_text);
-        priceText = (TextView) findViewById(R.id.product_price_text);
+
         addCarButton = (Button) findViewById(R.id.product_add_car_button);
         infoText = (TextView) findViewById(R.id.product_information_text);
 
-        nameText.setText(theProduct.getName());
-        priceText.setText("NT$ " + Integer.toString(theProduct.getPrice()));
         addCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -223,7 +207,7 @@ public class ProductActivity extends AppCompatActivity {
 
         @Override
         protected Object doInBackground(Object[] params) {
-            theProduct = ProductApi.getProductById(theProduct.getId());
+            theProduct = ProductApi.getProductById(productId);
             if (theProduct != null) {
                 return true;
             }
@@ -243,6 +227,27 @@ public class ProductActivity extends AppCompatActivity {
                     addCarButton.setText("商品已下架, 如有需要請聯絡客服");
                     addCarButton.setEnabled(false);
                 }
+
+                String productNameString = theProduct.getName();
+
+                boolean fromNotification = getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
+                if (fromNotification) {
+                    mTracker.send(new HitBuilders.EventBuilder()
+                            .setCategory("PRODUCT")
+                            .setAction("CLICK_NOTIFICATION")
+                            .setLabel(productNameString)
+                            .build());
+                }
+
+                mTracker.setScreenName("Product Name " + productNameString);
+                mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+
+                TextView nameText = (TextView) findViewById(R.id.product_name_text);
+                nameText.setText(productNameString);
+
+                TextView priceText = (TextView) findViewById(R.id.product_price_text);
+                String priceString = "NT$ " + theProduct.getPrice();
+                priceText.setText(priceString);
             } else {
                 Toast.makeText(ProductActivity.this, "無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
             }
@@ -391,7 +396,7 @@ public class ProductActivity extends AppCompatActivity {
 
     private boolean checkCollected(List<Product> collectList) {
         for (Product p : collectList) {
-            if (p.getId() == theProduct.getId()) {
+            if (p.getId() == productId) {
                 return true;
             }
         }

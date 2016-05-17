@@ -53,7 +53,7 @@ public class MyCollectActivity extends AppCompatActivity implements MyCollectAda
         List<Product> productList = MyCollectManager.getCollectedList(this);
 
         Intent intent = new Intent(this, ProductActivity.class);
-        intent.putExtra(ProductActivity.EXTRA_SERIALIZABLE_PRODUCT, productList.get(position));
+        intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, productList.get(position).getId());
         intent.putExtra(ProductActivity.EXTRA_BOOLEAN_FROM_MY_COLLECT, true);
         startActivity(intent);
     }
