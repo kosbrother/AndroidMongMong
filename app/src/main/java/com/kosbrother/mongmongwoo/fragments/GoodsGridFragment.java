@@ -26,7 +26,7 @@ import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
 import com.kosbrother.mongmongwoo.adpters.StyleGridAdapter;
 import com.kosbrother.mongmongwoo.api.ProductApi;
 import com.kosbrother.mongmongwoo.model.Product;
-import com.kosbrother.mongmongwoo.model.ProductSpec;
+import com.kosbrother.mongmongwoo.model.Spec;
 import com.kosbrother.mongmongwoo.utils.EndlessScrollListener;
 import com.kosbrother.mongmongwoo.utils.MaxHeightGridView;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
@@ -47,7 +47,7 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
 
     private int tempCount;
     private StyleGridAdapter styleGridAdapter;
-    private ArrayList<ProductSpec> specs;
+    private ArrayList<Spec> specs;
 
     private MaxHeightGridView styleGrid;
     private ImageView styleImage;
@@ -154,7 +154,7 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
             @Override
             public void onClick(View v) {
                 int selectedStylePosition = styleGridAdapter.getSelectedPosition();
-                ProductSpec theSelectedSpec = specs.get(selectedStylePosition);
+                Spec theSelectedSpec = specs.get(selectedStylePosition);
                 Product theProduct = products.get(position);
                 theProduct.setSelectedSpec(theSelectedSpec);
                 ShoppingCarPreference pref = new ShoppingCarPreference();
@@ -211,15 +211,15 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
         }
     }
 
-    private class GetProductSpectsTask extends AsyncTask<Integer, Void, ArrayList<ProductSpec>> {
+    private class GetProductSpectsTask extends AsyncTask<Integer, Void, ArrayList<Spec>> {
 
         @Override
-        protected ArrayList<ProductSpec> doInBackground(Integer... params) {
+        protected ArrayList<Spec> doInBackground(Integer... params) {
             return ProductApi.getProductSpects(params[0]);
         }
 
         @Override
-        protected void onPostExecute(ArrayList<ProductSpec> result) {
+        protected void onPostExecute(ArrayList<Spec> result) {
             specs = result;
             if (specs != null && specs.size() != 0) {
                 styleGridAdapter = new StyleGridAdapter(getActivity(), specs);
@@ -227,21 +227,21 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
                 styleGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                     @Override
                     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        ProductSpec productSpec = specs.get(position);
+                        Spec spec = GoodsGridFragment.this.specs.get(position);
 
                         Glide.with(getContext())
-                                .load(productSpec.getPic_url())
+                                .load(spec.getPic())
                                 .centerCrop()
                                 .placeholder(R.mipmap.img_pre_load_square)
                                 .into(styleImage);
-                        styleName.setText(productSpec.getStyle());
+                        styleName.setText(spec.getStyle());
 
                         styleGridAdapter.updateSelectedPosition(position);
                     }
                 });
 
                 Glide.with(getContext())
-                        .load(specs.get(0).getPic_url())
+                        .load(specs.get(0).getPic())
                         .centerCrop()
                         .placeholder(R.mipmap.img_pre_load_square)
                         .into(styleImage);

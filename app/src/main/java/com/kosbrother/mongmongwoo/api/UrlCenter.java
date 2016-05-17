@@ -41,10 +41,9 @@ public class UrlCenter {
                 + "/stores";
     }
 
-    static String updateProductById(int productId) {
+    static String getProductById(int productId) {
         return HOST + API_V1
-                + "/items/" + productId
-                + ".json";
+                + "/items/" + productId;
     }
 
     static String getProductSpec(int productId) {

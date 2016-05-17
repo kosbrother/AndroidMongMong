@@ -10,17 +10,17 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.model.ProductSpec;
+import com.kosbrother.mongmongwoo.model.Spec;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class StyleGridAdapter extends BaseAdapter {
 
     private final Context context;
-    private final ArrayList<ProductSpec> specs;
+    private final List<Spec> specs;
     private int selectedPosition;
 
-    public StyleGridAdapter(Context context, ArrayList<ProductSpec> specs) {
+    public StyleGridAdapter(Context context, List<Spec> specs) {
         this.context = context;
         this.specs = specs;
         selectedPosition = 0;

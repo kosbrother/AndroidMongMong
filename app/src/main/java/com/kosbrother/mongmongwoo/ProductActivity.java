@@ -32,8 +32,8 @@ import com.kosbrother.mongmongwoo.adpters.ProductImageFragmentPagerAdapter;
 import com.kosbrother.mongmongwoo.adpters.StyleGridAdapter;
 import com.kosbrother.mongmongwoo.api.ProductApi;
 import com.kosbrother.mongmongwoo.model.Product;
-import com.kosbrother.mongmongwoo.model.ProductImage;
-import com.kosbrother.mongmongwoo.model.ProductSpec;
+import com.kosbrother.mongmongwoo.model.Photo;
+import com.kosbrother.mongmongwoo.model.Spec;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectManager;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 
@@ -206,14 +206,14 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     public ArrayList<String> getImages() {
-        ArrayList<ProductImage> productImages = theProduct.getImages();
-        int size = productImages.size();
+        List<Photo> photos = theProduct.getImages();
+        int size = photos.size();
         ArrayList<String> images = new ArrayList<>();
         if (size == 0) {
-            images.add(theProduct.getPic_url());
+            images.add(theProduct.getCover());
         } else {
             for (int i = 0; i < size; i++) {
-                images.add(productImages.get(i).getUrl());
+                images.add(photos.get(i).getImageUrl());
             }
         }
         return images;
@@ -223,7 +223,7 @@ public class ProductActivity extends AppCompatActivity {
 
         @Override
         protected Object doInBackground(Object[] params) {
-            theProduct = ProductApi.updateProductById(theProduct.getId(), theProduct);
+            theProduct = ProductApi.getProductById(theProduct.getId());
             if (theProduct != null) {
                 return true;
             }
@@ -294,7 +294,7 @@ public class ProductActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 int selectedStylePosition = styleGridAdapter.getSelectedPosition();
-                ProductSpec theSelectedSpec = theProduct.getSpecs().get(selectedStylePosition);
+                Spec theSelectedSpec = theProduct.getSpecs().get(selectedStylePosition);
                 theProduct.setSelectedSpec(theSelectedSpec);
                 ShoppingCarPreference pref = new ShoppingCarPreference();
                 theProduct.setBuy_count(tempCount);
@@ -314,21 +314,21 @@ public class ProductActivity extends AppCompatActivity {
         styleGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                ProductSpec productSpec = theProduct.getSpecs().get(position);
+                Spec spec = theProduct.getSpecs().get(position);
 
                 Glide.with(ProductActivity.this)
-                        .load(productSpec.getPic_url())
+                        .load(spec.getPic())
                         .centerCrop()
                         .placeholder(R.mipmap.img_pre_load_square)
                         .into(styleImage);
-                styleName.setText(productSpec.getStyle());
+                styleName.setText(spec.getStyle());
 
                 styleGridAdapter.updateSelectedPosition(position);
             }
         });
 
         Glide.with(this)
-                .load(theProduct.getSpecs().get(0).getPic_url())
+                .load(theProduct.getSpecs().get(0).getPic())
                 .centerCrop()
                 .placeholder(R.mipmap.img_pre_load_square)
                 .into(styleImage);

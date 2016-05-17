@@ -2,9 +2,9 @@ package com.kosbrother.mongmongwoo.api;
 
 import android.util.Log;
 
+import com.google.gson.Gson;
 import com.kosbrother.mongmongwoo.model.Product;
-import com.kosbrother.mongmongwoo.model.ProductImage;
-import com.kosbrother.mongmongwoo.model.ProductSpec;
+import com.kosbrother.mongmongwoo.model.Spec;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -18,113 +18,30 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 
-/**
- * Created by kolichung on 3/4/16.
- */
 public class ProductApi {
 
     public static final String TAG = "PRODUCT_API";
     public static final boolean DEBUG = true;
 
-    public static Product updateProductById(int productId, Product theProduct) {
-        String message = getMessageFromServer("GET", null, null, UrlCenter.updateProductById(productId));
+    public static Product getProductById(int productId) {
+        String message = getMessageFromServer("GET", null, null, UrlCenter.getProductById(productId));
         if (message == null) {
             return null;
         } else {
-            return parseItem(message, theProduct);
+            Gson gson = new Gson();
+            return gson.fromJson(message, Product.class);
         }
     }
 
-    public static ArrayList<ProductSpec> getProductSpects(int productId) {
-        ArrayList<ProductSpec> productSpecs = new ArrayList<>();
+    public static ArrayList<Spec> getProductSpects(int productId) {
+        ArrayList<Spec> specses = new ArrayList<>();
         String message = getMessageFromServer("GET", null, null, UrlCenter.getProductSpec(productId));
         if (message == null) {
             return null;
         } else {
-            return parseProductSytles(message, productSpecs);
+            return parseProductSytles(message, specses);
         }
     }
-
-    private static ArrayList<ProductSpec> parseProductSytles(String message, ArrayList<ProductSpec> specs) {
-
-        try {
-            JSONArray specArray = new JSONArray(message);
-            for (int i = 0; i < specArray.length(); i++) {
-                JSONObject specObject = specArray.getJSONObject(i);
-                int id = specObject.getInt("id");
-                String style = specObject.getString("style");
-                int amount = 0;
-                try {
-                    amount = specObject.getInt("style_amount");
-                } catch (Exception e) {
-
-                }
-                String pic_url = specObject.getString("style_pic");
-                specs.add(new ProductSpec(id, style, amount, pic_url));
-            }
-
-            return specs;
-
-        } catch (Exception e) {
-            Log.i(TAG, e.toString());
-        }
-
-        return null;
-    }
-
-
-    private static Product parseItem(String message, Product theProduct) {
-        try {
-
-            JSONObject jsonObject = new JSONObject(message);
-
-            JSONArray photosArray = jsonObject.getJSONArray("photos");
-            JSONArray specArray = jsonObject.getJSONArray("specs");
-
-            String description = "";
-            ArrayList<ProductImage> images = new ArrayList<>();
-            ArrayList<ProductSpec> specs = new ArrayList<>();
-
-            try {
-                description = jsonObject.getString("description");
-            } catch (Exception e) {
-
-            }
-
-            for (int i = 0; i < photosArray.length(); i++) {
-                JSONObject photoObject = photosArray.getJSONObject(i);
-                String imageUrl = photoObject.getString("image_url");
-                String intro = photoObject.getString("photo_intro");
-                images.add(new ProductImage(imageUrl, "", "", intro));
-            }
-
-            for (int i = 0; i < specArray.length(); i++) {
-                JSONObject specObject = specArray.getJSONObject(i);
-                int id = specObject.getInt("id");
-                String style = specObject.getString("style");
-                int amount = 0;
-                try {
-                    amount = specObject.getInt("amount");
-                } catch (Exception e) {
-
-                }
-                String pic_url = specObject.getString("pic");
-                specs.add(new ProductSpec(id, style, amount, pic_url));
-            }
-
-
-            theProduct.setDescription(description);
-            theProduct.setImages(images);
-            theProduct.setSpecs(specs);
-
-            return theProduct;
-
-        } catch (Exception e) {
-            Log.i(TAG, e.toString());
-        }
-        return null;
-    }
-
 
     public static ArrayList<Product> getCategoryProducts(int categoryId, int page) {
         ArrayList<Product> products = new ArrayList<>();
@@ -138,6 +55,34 @@ public class ProductApi {
         return products;
     }
 
+    private static ArrayList<Spec> parseProductSytles(String message, ArrayList<Spec> specs) {
+
+        try {
+            JSONArray specArray = new JSONArray(message);
+            for (int i = 0; i < specArray.length(); i++) {
+                // TODO: 2016/5/17 spec json key is different from product api can not use gson parse
+                JSONObject specObject = specArray.getJSONObject(i);
+                int id = specObject.getInt("id");
+                String style = specObject.getString("style");
+                int amount = 0;
+                try {
+                    amount = specObject.getInt("style_amount");
+                } catch (Exception e) {
+
+                }
+                String pic_url = specObject.getString("style_pic");
+                specs.add(new Spec(id, style, amount, pic_url));
+            }
+
+            return specs;
+
+        } catch (Exception e) {
+            Log.i(TAG, e.toString());
+        }
+
+        return null;
+    }
+
     private static void parseItems(ArrayList<Product> products, String message) {
         try {
             JSONArray itemsArray = new JSONArray(message);
@@ -147,17 +92,17 @@ public class ProductApi {
                 int id = 0;
                 String name = "";
                 int price = 0;
-                String pic_url = "";
+                String cover = "";
 
                 try {
                     id = itemObject.getInt("id");
                     name = itemObject.getString("name");
                     price = itemObject.getInt("price");
-                    pic_url = itemObject.getJSONObject("cover").getString("url");
+                    cover = itemObject.getJSONObject("cover").getString("url");
                 } catch (Exception e) {
-
+                    e.printStackTrace();
                 }
-                Product newProduct = new Product(id, name, price, pic_url);
+                Product newProduct = new Product(id, name, price, cover);
                 products.add(newProduct);
             }
         } catch (Exception e) {
