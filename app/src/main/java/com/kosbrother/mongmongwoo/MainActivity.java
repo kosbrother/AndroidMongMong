@@ -32,14 +32,17 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.facebook.login.widget.LoginButton;
 import com.github.siyamed.shapeimageview.CircularImageView;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.kosbrother.mongmongwoo.api.UrlCenter;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
 import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.navigationdrawer.NavigationDrawerClickEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.navigationdrawer.NavigationDrawerOpenEvent;
 import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
@@ -63,7 +66,6 @@ public class MainActivity extends FbLoginActivity
     private LoginButton loginButton;
     private RelativeLayout spotLightShoppingCarLayout;
 
-    private Tracker mTracker;
     private ViewPager viewPager;
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
 
@@ -72,8 +74,6 @@ public class MainActivity extends FbLoginActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        AnalyticsApplication application = (AnalyticsApplication) getApplication();
-        mTracker = application.getDefaultTracker();
         csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
 
         setToolbarAndDrawer();
@@ -137,6 +137,8 @@ public class MainActivity extends FbLoginActivity
         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
+                GAManager.sendEvent(new CartClickEvent());
+
                 Intent shoppingCarIntent = new Intent(MainActivity.this, ShoppingCarActivity.class);
                 startActivity(shoppingCarIntent);
                 return true;
@@ -149,9 +151,9 @@ public class MainActivity extends FbLoginActivity
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        GAManager.sendEvent(new NavigationDrawerClickEvent(item.getTitle().toString()));
 
+        int id = item.getItemId();
         if (id == R.id.nav_orders) {
             if (Settings.checkIsLogIn()) {
                 if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
@@ -186,11 +188,7 @@ public class MainActivity extends FbLoginActivity
     @SuppressWarnings("UnusedParameters")
     public void onCustomerServiceFabClick(View view) {
         csBottomSheetDialogFragment.show(getSupportFragmentManager(), "");
-        mTracker.send(new HitBuilders.EventBuilder()
-                .setCategory("CUSTOMER_SERVICE")
-                .setAction("CLICK")
-                .setLabel("FAB")
-                .build());
+        GAManager.sendEvent(new CustomerServiceClickEvent("FAB"));
     }
 
     public void doIncrease() {
@@ -243,6 +241,27 @@ public class MainActivity extends FbLoginActivity
         titleText.setText("萌萌屋");
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
+            @Override
+            public void onDrawerSlide(View drawerView, float slideOffset) {
+
+            }
+
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                GAManager.sendEvent(new NavigationDrawerOpenEvent());
+            }
+
+            @Override
+            public void onDrawerClosed(View drawerView) {
+
+            }
+
+            @Override
+            public void onDrawerStateChanged(int newState) {
+
+            }
+        });
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -286,9 +305,7 @@ public class MainActivity extends FbLoginActivity
             @Override
             public void onPageSelected(int position) {
                 SampleFragmentPagerAdapter adapter = (SampleFragmentPagerAdapter) viewPager.getAdapter();
-                Fragment fragment = adapter.getItem(position);
-                int category = fragment.getArguments().getInt(GoodsGridFragment.ARG_CATEGORY);
-                sendFragmentCategoryName(category);
+                GAManager.sendScreen("Fragment~" + adapter.getPageTitle(position).toString());
             }
 
             @Override
@@ -383,34 +400,6 @@ public class MainActivity extends FbLoginActivity
         view.setDrawingCacheEnabled(false);
 
         return new BitmapDrawable(getResources(), bitmap);
-    }
-
-    private void sendFragmentCategoryName(int category_id) {
-        String name;
-        switch (category_id) {
-            case 10:
-                name = "所有商品";
-                break;
-            case 11:
-                name = "新品上架";
-                break;
-            case 12:
-                name = "文具用品";
-                break;
-            case 13:
-                name = "日韓精選";
-                break;
-            case 14:
-                name = "生日專區";
-                break;
-            case 16:
-                name = "生活小物";
-                break;
-            default:
-                name = "所有商品";
-        }
-        mTracker.setScreenName("Fragment~" + name);
-        mTracker.send(new HitBuilders.ScreenViewBuilder().build());
     }
 
     class SampleFragmentPagerAdapter extends FragmentPagerAdapter {

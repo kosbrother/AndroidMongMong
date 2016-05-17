@@ -26,11 +26,15 @@ import android.widget.Toast;
 
 import com.androidpagecontrol.PageControl;
 import com.bumptech.glide.Glide;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 import com.kosbrother.mongmongwoo.adpters.ProductImageFragmentPagerAdapter;
 import com.kosbrother.mongmongwoo.adpters.StyleGridAdapter;
 import com.kosbrother.mongmongwoo.api.ProductApi;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPromoOpenedEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductAddToCartEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductAddToCollectionEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductSelectDialogConfirmEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductViewEvent;
 import com.kosbrother.mongmongwoo.model.Photo;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Spec;
@@ -61,7 +65,6 @@ public class ProductActivity extends AppCompatActivity {
     private Button spotLightConfirmButton;
 
     private LinearLayout no_net_layout;
-    private Tracker mTracker;
     private Toast toast;
     private int productId;
 
@@ -69,9 +72,6 @@ public class ProductActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
-
-        AnalyticsApplication application = (AnalyticsApplication) getApplication();
-        mTracker = application.getDefaultTracker();
 
         Intent theIntent = getIntent();
         productId = theIntent.getIntExtra(EXTRA_INT_PRODUCT_ID, 0);
@@ -105,6 +105,7 @@ public class ProductActivity extends AppCompatActivity {
         addCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                GAManager.sendEvent(new ProductAddToCartEvent(theProduct.getName()));
                 if (theProduct.getSpecs().size() > 0) {
                     showStyleDialog();
                 } else {
@@ -230,17 +231,12 @@ public class ProductActivity extends AppCompatActivity {
 
                 String productNameString = theProduct.getName();
 
+                GAManager.sendEvent(new ProductViewEvent(productNameString));
+
                 boolean fromNotification = getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
                 if (fromNotification) {
-                    mTracker.send(new HitBuilders.EventBuilder()
-                            .setCategory("PRODUCT")
-                            .setAction("CLICK_NOTIFICATION")
-                            .setLabel(productNameString)
-                            .build());
+                    GAManager.sendEvent(new NotificationPromoOpenedEvent(productNameString));
                 }
-
-                mTracker.setScreenName("Product Name " + productNameString);
-                mTracker.send(new HitBuilders.ScreenViewBuilder().build());
 
                 TextView nameText = (TextView) findViewById(R.id.product_name_text);
                 nameText.setText(productNameString);
@@ -302,6 +298,8 @@ public class ProductActivity extends AppCompatActivity {
         style_confirm_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                GAManager.sendEvent(new ProductSelectDialogConfirmEvent(theProduct.getName()));
+
                 int selectedStylePosition = styleGridAdapter.getSelectedPosition();
                 Spec theSelectedSpec = theProduct.getSpecs().get(selectedStylePosition);
                 theProduct.setSelectedSpec(theSelectedSpec);
@@ -414,6 +412,8 @@ public class ProductActivity extends AppCompatActivity {
             collected = true;
             MyCollectManager.addProductToCollectedList(this, theProduct);
             showAToast("成功收藏");
+
+            GAManager.sendEvent(new ProductAddToCollectionEvent(theProduct.getName()));
         }
 
         v.setTag(collected);

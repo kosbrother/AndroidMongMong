@@ -25,6 +25,9 @@ import com.kosbrother.mongmongwoo.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
 import com.kosbrother.mongmongwoo.adpters.StyleGridAdapter;
 import com.kosbrother.mongmongwoo.api.ProductApi;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.indexgridcart.IndexGridCartAddToCartEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductSelectDialogConfirmEvent;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Spec;
 import com.kosbrother.mongmongwoo.utils.EndlessScrollListener;
@@ -77,8 +80,9 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Product product = products.get(position);
                 Intent intent = new Intent(getContext(), ProductActivity.class);
-                intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, products.get(position).getId());
+                intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
                 getContext().startActivity(intent);
             }
         });
@@ -103,6 +107,7 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
 
     @Override
     public void onAddShoppingCartButtonClick(int productId, int position) {
+        GAManager.sendEvent(new IndexGridCartAddToCartEvent(products.get(position).getName()));
         if (NetworkUtil.getConnectivityStatus(getContext()) != 0) {
             showStyleDialog(position);
             new GetProductSpectsTask().execute(productId);
@@ -153,9 +158,11 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
         style_confirm_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Product theProduct = products.get(position);
+                GAManager.sendEvent(new ProductSelectDialogConfirmEvent(theProduct.getName()));
+
                 int selectedStylePosition = styleGridAdapter.getSelectedPosition();
                 Spec theSelectedSpec = specs.get(selectedStylePosition);
-                Product theProduct = products.get(position);
                 theProduct.setSelectedSpec(theSelectedSpec);
                 ShoppingCarPreference pref = new ShoppingCarPreference();
                 theProduct.setBuy_count(tempCount);

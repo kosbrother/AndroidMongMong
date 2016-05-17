@@ -1,5 +1,6 @@
 package com.kosbrother.mongmongwoo.pastorders;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -13,11 +14,14 @@ import android.widget.TextView;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.PastOrderListAdapter;
 import com.kosbrother.mongmongwoo.api.OrderApi;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPickUpOpenedEvent;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 
 public class PastOrderDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_INT_ORDER_ID = "EXTRA_INT_ORDER_ID";
+    public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
 
     private RecyclerView recyclerView;
     private TextView shippingPriceText;
@@ -39,8 +43,15 @@ public class PastOrderDetailActivity extends AppCompatActivity {
         findViews();
         setRecyclerView();
 
-        int orderId = getIntent().getIntExtra(EXTRA_INT_ORDER_ID, 0);
+        Intent intent = getIntent();
+
+        int orderId = intent.getIntExtra(EXTRA_INT_ORDER_ID, 0);
         new getPastOrderByOrderIdTask().execute(orderId);
+
+        boolean fromNotification = intent.getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
+        if (fromNotification) {
+            GAManager.sendEvent(new NotificationPickUpOpenedEvent("" + orderId));
+        }
     }
 
     @Override

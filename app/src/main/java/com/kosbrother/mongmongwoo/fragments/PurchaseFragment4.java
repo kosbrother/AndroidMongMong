@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep4ClickEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 
 public class PurchaseFragment4 extends Fragment implements View.OnClickListener {
 
@@ -39,6 +42,7 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
 
     @Override
     public void onClick(View v) {
+        GAManager.sendEvent(new CheckoutStep4ClickEvent(GALabel.FINISH_PURCHASE));
         getActivity().finish();
     }
 

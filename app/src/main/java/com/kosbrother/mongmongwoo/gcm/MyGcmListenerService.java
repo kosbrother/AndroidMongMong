@@ -1,14 +1,5 @@
 package com.kosbrother.mongmongwoo.gcm;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-
-import com.kosbrother.mongmongwoo.AnalyticsApplication;
-import com.kosbrother.mongmongwoo.pastorders.PastOrderDetailActivity;
-import com.kosbrother.mongmongwoo.ProductActivity;
-import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.model.Product;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
@@ -19,6 +10,14 @@ import android.media.RingtoneManager;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.BigPictureStyle;
+
+import com.kosbrother.mongmongwoo.ProductActivity;
+import com.kosbrother.mongmongwoo.R;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPickUpSendEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPromoSendEvent;
+import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.pastorders.PastOrderDetailActivity;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,44 +47,43 @@ public class MyGcmListenerService extends com.google.android.gms.gcm.GcmListener
     // [END receive_message]
 
     private void onReceivedOrder(Bundle data) {
+        String contentText = data.getString("content_text");
+
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon9))
                 .setSmallIcon(R.mipmap.ic_mhouse)
                 .setContentTitle(data.getString("content_title"))
-                .setContentText(data.getString("content_text"))
+                .setContentText(contentText)
                 .setStyle(new NotificationCompat.BigTextStyle()
-                        .bigText(data.getString("content_text")))
+                        .bigText(contentText))
                 .setContentIntent(getPastOrderPendingIntent(data))
                 .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
                 .setAutoCancel(true);
 
         sendNotification(notificationBuilder);
+        GAManager.sendEvent(new NotificationPickUpSendEvent(data.getString("order_id")));
     }
 
     private void onReceivedProduct(Bundle data) {
         Bitmap productBitmap = getProductBitmap(data);
         if (productBitmap != null) {
-            sendProductNotification(data, productBitmap);
+            String contentTitle = data.getString("content_title");
+            String contentText = data.getString("content_text");
 
-            Tracker mTracker = ((AnalyticsApplication) (getApplication())).getDefaultTracker();
-            mTracker.setScreenName("Notification" + data.getString("content_title"));
-            mTracker.send(new HitBuilders.ScreenViewBuilder().build());
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon9))
+                    .setSmallIcon(R.mipmap.ic_mhouse)
+                    .setContentTitle(contentTitle)
+                    .setContentText(contentText)
+                    .setAutoCancel(true)
+                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                    .setContentIntent(getProductPendingIntent(data))
+                    .setPriority(NotificationCompat.PRIORITY_MAX)
+                    .setStyle(getBigPictureStyle(contentText, productBitmap));
+
+            sendNotification(notificationBuilder);
+            GAManager.sendEvent(new NotificationPromoSendEvent(contentTitle));
         }
-    }
-
-    private void sendProductNotification(Bundle data, Bitmap bitmap) {
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon9))
-                .setSmallIcon(R.mipmap.ic_mhouse)
-                .setContentTitle(data.getString("content_title"))
-                .setContentText(data.getString("content_text"))
-                .setAutoCancel(true)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setContentIntent(getProductPendingIntent(data))
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setStyle(getBigPictureStyle(data.getString("content_text"), bitmap));
-
-        sendNotification(notificationBuilder);
     }
 
     private Bitmap getProductBitmap(Bundle data) {
@@ -115,6 +113,8 @@ public class MyGcmListenerService extends com.google.android.gms.gcm.GcmListener
         Intent pastOrderIntent = new Intent(this, PastOrderDetailActivity.class);
         pastOrderIntent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID,
                 Integer.valueOf(data.getString("order_id")));
+        pastOrderIntent.putExtra(PastOrderDetailActivity.EXTRA_BOOLEAN_FROM_NOTIFICATION,
+                true);
         return PendingIntent.getActivity(
                 this,
                 0,

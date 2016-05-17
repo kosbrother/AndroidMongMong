@@ -8,19 +8,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
-import com.kosbrother.mongmongwoo.AnalyticsApplication;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.CustomerServiceAdapter;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 
 public class CsBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
     @Override
     public void setupDialog(Dialog dialog, int style) {
         super.setupDialog(dialog, style);
-        final Tracker tracker = ((AnalyticsApplication) getActivity().getApplicationContext())
-                .getDefaultTracker();
 
         View contentView = View.inflate(getContext(), R.layout.bottom_sheet_customer_service, null);
         dialog.setContentView(contentView);
@@ -32,22 +29,14 @@ public class CsBottomSheetDialogFragment extends BottomSheetDialogFragment {
                 new CustomerServiceAdapter.OnCustomerServiceItemClickListener() {
                     @Override
                     public void onLineCustomerServiceClick(String text) {
+                        GAManager.sendEvent(new CustomerServiceClickEvent(text));
                         actionToUrl("http://line.me/ti/p/%40kya5456n");
-                        tracker.send(new HitBuilders.EventBuilder()
-                                .setCategory("CUSTOMER_SERVICE")
-                                .setAction("CLICK")
-                                .setLabel(text)
-                                .build());
                     }
 
                     @Override
                     public void onFacebookCustomerServiceClick(String text) {
+                        GAManager.sendEvent(new CustomerServiceClickEvent(text));
                         actionToUrl("https://www.facebook.com/kingofgametw/");
-                        tracker.send(new HitBuilders.EventBuilder()
-                                .setCategory("CUSTOMER_SERVICE")
-                                .setAction("CLICK")
-                                .setLabel(text)
-                                .build());
                     }
                 }));
     }
