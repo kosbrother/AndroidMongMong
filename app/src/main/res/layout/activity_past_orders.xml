@@ -63,27 +63,27 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="20dp"
-        android:layout_marginBottom="5dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginTop="5dp"
+        android:layout_margin="16dp"
         android:text="我的訂單"
         android:textColor="@color/gray_background"
-        android:textSize="17dp"
+        android:textSize="16sp"
         android:textStyle="bold" />
-
 
     <GridView
         android:id="@+id/fragment_gridview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
+        android:clipChildren="false"
         android:columnWidth="8dp"
         android:drawSelectorOnTop="true"
         android:gravity="center"
         android:horizontalSpacing="8dp"
         android:listSelector="@android:color/transparent"
         android:numColumns="1"
-        android:padding="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:scrollbars="none"
         android:stretchMode="columnWidth"
         android:verticalSpacing="8dp" />
 

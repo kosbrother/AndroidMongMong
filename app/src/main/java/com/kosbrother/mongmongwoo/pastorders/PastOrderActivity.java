@@ -1,9 +1,10 @@
-package com.kosbrother.mongmongwoo;
+package com.kosbrother.mongmongwoo.pastorders;
 
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,6 +15,8 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.facebook.login.widget.LoginButton;
 import com.github.siyamed.shapeimageview.CircularImageView;
+import com.kosbrother.mongmongwoo.R;
+import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.adpters.PastOrdersGridAdapter;
 import com.kosbrother.mongmongwoo.api.OrderApi;
 import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
@@ -25,9 +28,6 @@ import java.util.ArrayList;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
-/**
- * Created by kolichung on 3/28/16.
- */
 public class PastOrderActivity extends FbLoginActivity {
 
     User user;
@@ -89,9 +89,19 @@ public class PastOrderActivity extends FbLoginActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_query_orders, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == android.R.id.home) {
+        int itemId = menuItem.getItemId();
+        if (itemId == android.R.id.home) {
             finish();
+        } else if (itemId == R.id.query_item) {
+            Intent intent = new Intent(this, QueryPastOrdersActivity.class);
+            startActivity(intent);
         }
         return super.onOptionsItemSelected(menuItem);
     }

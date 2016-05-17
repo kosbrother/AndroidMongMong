@@ -4,7 +4,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import com.kosbrother.mongmongwoo.AnalyticsApplication;
-import com.kosbrother.mongmongwoo.PastOrderDetailActivity;
+import com.kosbrother.mongmongwoo.pastorders.PastOrderDetailActivity;
 import com.kosbrother.mongmongwoo.ProductActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.model.Product;

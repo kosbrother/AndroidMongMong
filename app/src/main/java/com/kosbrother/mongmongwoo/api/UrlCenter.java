@@ -81,4 +81,11 @@ public class UrlCenter {
     static String getAndroidVersion() {
         return HOST + API + "/android_version";
     }
+
+    static String getOrdersByEmailAndPhone(String email, String phone) {
+        return HOST + API_V1
+                + "/orders/by_email_phone/"
+                + "?email=" + email
+                + "&phone=" + phone;
+    }
 }
