@@ -5,9 +5,6 @@ import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Created by kolichung on 3/4/16.
- */
 public class Product implements Serializable {
 
     @SerializedName("id")
@@ -65,6 +62,10 @@ public class Product implements Serializable {
 
     public String getDescription() {
         return description;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public void setSelectedSpec(Spec selectedSpec) {

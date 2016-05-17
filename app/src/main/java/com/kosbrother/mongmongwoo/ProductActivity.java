@@ -31,8 +31,8 @@ import com.google.android.gms.analytics.Tracker;
 import com.kosbrother.mongmongwoo.adpters.ProductImageFragmentPagerAdapter;
 import com.kosbrother.mongmongwoo.adpters.StyleGridAdapter;
 import com.kosbrother.mongmongwoo.api.ProductApi;
-import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Photo;
+import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Spec;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectManager;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
@@ -232,7 +232,6 @@ public class ProductActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(Object result) {
-            loadingText.setVisibility(View.GONE);
             if (result != null) {
                 ProductImageFragmentPagerAdapter adapter = new ProductImageFragmentPagerAdapter(
                         getSupportFragmentManager(),
@@ -240,9 +239,14 @@ public class ProductActivity extends AppCompatActivity {
                 viewPager.setAdapter(adapter);
                 pageControl.setViewPager(viewPager);
                 infoText.setText(Html.fromHtml(theProduct.getDescription()));
+                if (theProduct.getStatus().contains("off")) {
+                    addCarButton.setText("商品已下架, 如有需要請聯絡客服");
+                    addCarButton.setEnabled(false);
+                }
             } else {
                 Toast.makeText(ProductActivity.this, "無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
             }
+            loadingText.setVisibility(View.GONE);
         }
     }
 
