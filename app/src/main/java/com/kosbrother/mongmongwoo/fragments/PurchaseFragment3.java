@@ -118,16 +118,8 @@ public class PurchaseFragment3 extends Fragment {
         @Override
         protected Object doInBackground(Object[] params) {
             SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-            String message = OrderApi.httpPostOrder(
-                    theOrder.getUid(), theOrder.getProductPrice(),
-                    theOrder.getShipPrice(), theOrder.getTotalPrice(),
-                    theOrder.getShippingName(), theOrder.getShippingPhone(),
-                    theOrder.getShippingStore().getStoreCode(),
-                    theOrder.getShippingStore().getName(),
-                    theOrder.getShippingStore().getId(),
-                    theOrder.getOrderProducts(),
-                    theOrder.getShippingEmail(),
-                    sharedPreferences.getString(GcmPreferences.TOKEN, ""));
+            theOrder.setRegistrationId(sharedPreferences.getString(GcmPreferences.TOKEN, ""));
+            String message = OrderApi.httpPostOrder(theOrder);
             return !message.contains("Error");
         }
 

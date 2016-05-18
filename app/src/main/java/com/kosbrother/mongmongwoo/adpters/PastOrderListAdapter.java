@@ -10,12 +10,13 @@ import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.model.PastOrderProduct;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PastOrderListAdapter extends RecyclerView.Adapter<PastOrderListAdapter.ViewHolder> {
 
-    private final ArrayList<PastOrderProduct> productList;
+    private final List<PastOrderProduct> productList;
 
-    public PastOrderListAdapter(ArrayList<PastOrderProduct> productList) {
+    public PastOrderListAdapter(List<PastOrderProduct> productList) {
         this.productList = productList;
     }
 

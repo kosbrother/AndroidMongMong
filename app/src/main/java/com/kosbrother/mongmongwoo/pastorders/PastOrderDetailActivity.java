@@ -94,7 +94,7 @@ public class PastOrderDetailActivity extends AppCompatActivity {
 
     private void onGetPostOrderResult(PastOrder pastOrder) {
         if (pastOrder != null) {
-            PastOrderListAdapter adapter = new PastOrderListAdapter(pastOrder.getPastOrderProducts());
+            PastOrderListAdapter adapter = new PastOrderListAdapter(pastOrder.getItems());
             recyclerView.setAdapter(adapter);
 
             String shipFeeString = Integer.toString(pastOrder.getShipFee());
@@ -109,10 +109,10 @@ public class PastOrderDetailActivity extends AppCompatActivity {
             String phoneString = "電話：" + pastOrder.getShipPhone();
             shippingPhoneText.setText(phoneString);
 
-            String orderIdString = "訂單編號：" + pastOrder.getOrder_id();
+            String orderIdString = "訂單編號：" + pastOrder.getId();
             order_id_text.setText(orderIdString);
 
-            shippingStoreNameText.setText(pastOrder.getShippingStore().getName());
+            shippingStoreNameText.setText(pastOrder.getShipStoreName());
             order_status_text.setText(pastOrder.getStatus());
             order_ship_way.setText("運送方式：超商取貨");
 

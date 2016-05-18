@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import rx.Observable;
 import rx.Subscriber;
@@ -39,10 +39,10 @@ public class Webservice {
     }
 
     public static void getOrdersByEmailAndPhone(
-            final String email, final String phone, Action1<? super ArrayList<PastOrder>> onNextAction) {
-        Observable.create(new Observable.OnSubscribe<ArrayList<PastOrder>>() {
+            final String email, final String phone, Action1<? super List<PastOrder>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<List<PastOrder>>() {
             @Override
-            public void call(Subscriber<? super ArrayList<PastOrder>> subscriber) {
+            public void call(Subscriber<? super List<PastOrder>> subscriber) {
                 subscriber.onNext(OrderApi.getOrdersByEmailAndPhone(email, phone));
                 subscriber.onCompleted();
             }

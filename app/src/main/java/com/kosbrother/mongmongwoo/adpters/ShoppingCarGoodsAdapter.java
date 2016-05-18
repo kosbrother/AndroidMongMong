@@ -13,16 +13,16 @@ import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.model.Product;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ShoppingCarGoodsAdapter extends RecyclerView.Adapter<ShoppingCarGoodsAdapter.ViewHolder> {
 
     private final Context context;
-    private final ArrayList<Product> productList;
+    private final List<Product> productList;
     private final ShoppingCartGoodsListener listener;
 
     public ShoppingCarGoodsAdapter(Context context,
-                                   ArrayList<Product> productList,
+                                   List<Product> productList,
                                    ShoppingCartGoodsListener listener) {
         this.context = context;
         this.productList = productList;
@@ -64,7 +64,7 @@ public class ShoppingCarGoodsAdapter extends RecyclerView.Adapter<ShoppingCarGoo
         return productList.size();
     }
 
-    public void updateProductList(ArrayList<Product> productList) {
+    public void updateProductList(List<Product> productList) {
         this.productList.clear();
         this.productList.addAll(productList);
         notifyDataSetChanged();
