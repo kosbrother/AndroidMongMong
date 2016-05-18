@@ -51,8 +51,8 @@ public class Settings {
     public static void saveUserStoreData(Store theStore) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(keyStoreId, theStore.getStore_id());
-        editor.putString(keyStoreCode, theStore.getStore_code());
+        editor.putInt(keyStoreId, theStore.getId());
+        editor.putString(keyStoreCode, theStore.getStoreCode());
         editor.putString(keyStoreName, theStore.getName());
         editor.putString(keyStoreAddress, theStore.getAddress());
         editor.apply();

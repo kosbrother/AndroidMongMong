@@ -9,13 +9,13 @@ import android.widget.TextView;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.model.Product;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ShoppingCarListBuyGoodsAdapter extends RecyclerView.Adapter<ShoppingCarListBuyGoodsAdapter.ViewHolder> {
 
-    private ArrayList<Product> productList;
+    private List<Product> productList;
 
-    public ShoppingCarListBuyGoodsAdapter(ArrayList<Product> productList) {
+    public ShoppingCarListBuyGoodsAdapter(List<Product> productList) {
         this.productList = productList;
     }
 

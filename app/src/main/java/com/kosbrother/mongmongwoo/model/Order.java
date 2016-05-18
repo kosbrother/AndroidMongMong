@@ -1,35 +1,40 @@
 package com.kosbrother.mongmongwoo.model;
 
-import java.util.ArrayList;
+import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by kolichung on 3/14/16.
- */
+import java.util.ArrayList;
+import java.util.List;
+
 public class Order {
 
+    @SerializedName("uid")
     String uid;
-    String shippingName;
-    String shippingPhone;
-    String shippingEmail;
-    Store shippingStore;
-    ArrayList<Product> orderProducts;
-    int shipPrice;
+    @SerializedName("items_price")
     int productPrice;
+    @SerializedName("ship_fee")
+    int shipPrice;
+    @SerializedName("total")
     int totalPrice;
+    @SerializedName("ship_name")
+    String shippingName;
+    @SerializedName("ship_phone")
+    String shippingPhone;
+    @SerializedName("ship_email")
+    String shippingEmail;
+    @SerializedName("products")
+    List<Product> orderProducts;
+    @SerializedName("registration_id")
+    private String registrationId;
+    @SerializedName("ship_store_code")
+    private String shipStoreCode;
+    @SerializedName("ship_store_id")
+    private int shipStoreId;
+    @SerializedName("ship_store_name")
+    private String shipStoreName;
+    private Store shippingStore;
 
     public void setUid(String uid) {
         this.uid = uid;
-    }
-
-    public String getUid() {
-        if (uid == null) {
-            return "9999"; //匿名購買
-        } else {
-            return uid;
-        }
-    }
-
-    public Order() {
     }
 
     public String getShippingName() {
@@ -44,7 +49,7 @@ public class Order {
         return shippingStore;
     }
 
-    public ArrayList<Product> getOrderProducts() {
+    public List<Product> getOrderProducts() {
         if (orderProducts == null) {
             orderProducts = new ArrayList<>();
         }
@@ -53,10 +58,6 @@ public class Order {
 
     public int getShipPrice() {
         return shipPrice;
-    }
-
-    public int getProductPrice() {
-        return productPrice;
     }
 
     public int getTotalPrice() {
@@ -73,9 +74,12 @@ public class Order {
 
     public void setShippingStore(Store shippingStore) {
         this.shippingStore = shippingStore;
+        shipStoreName = shippingStore.getName();
+        shipStoreCode = shippingStore.getStoreCode();
+        shipStoreId = shippingStore.getId();
     }
 
-    public void setOrderProducts(ArrayList<Product> orderProducts) {
+    public void setOrderProducts(List<Product> orderProducts) {
         this.orderProducts = orderProducts;
     }
 
@@ -91,12 +95,11 @@ public class Order {
         this.totalPrice = totalPrice;
     }
 
-    public String getShippingEmail() {
-        return shippingEmail;
-    }
-
     public void setShippingEmail(String shippingEmail) {
         this.shippingEmail = shippingEmail;
     }
 
+    public void setRegistrationId(String registrationId) {
+        this.registrationId = registrationId;
+    }
 }

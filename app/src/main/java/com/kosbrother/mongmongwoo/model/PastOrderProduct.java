@@ -1,16 +1,17 @@
 package com.kosbrother.mongmongwoo.model;
 
-/**
- * Created by kolichung on 3/23/16.
- */
+import com.google.gson.annotations.SerializedName;
+
 public class PastOrderProduct {
 
-    public PastOrderProduct(String name, String style, int quantity, int price) {
-        this.name = name;
-        this.style = style;
-        this.quantity = quantity;
-        this.price = price;
-    }
+    @SerializedName("name")
+    private String name;
+    @SerializedName("style")
+    private String style;
+    @SerializedName("quantity")
+    private int quantity;
+    @SerializedName("price")
+    private int price;
 
     public String getName() {
         return name;
@@ -27,12 +28,5 @@ public class PastOrderProduct {
     public int getPrice() {
         return price;
     }
-
-    String name;
-    String style;
-    int quantity;
-    int price;
-
-
 
 }

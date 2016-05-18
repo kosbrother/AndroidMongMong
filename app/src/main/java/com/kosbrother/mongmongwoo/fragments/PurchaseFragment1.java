@@ -27,7 +27,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1Cl
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Product;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapter.ShoppingCartGoodsListener {
 
@@ -45,7 +45,7 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
     TextView no_ship_fee_text;
     TextView ship_text;
 
-    ArrayList<Product> shoppingCarProducts;
+    List<Product> shoppingCarProducts;
     int totalGoodsPrice;
     int shippingPrice;
     int shippingType = -1; // 0 means 超商取貨付款, 1 means 宅配

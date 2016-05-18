@@ -25,8 +25,12 @@ public class Product implements Serializable {
     @SerializedName("specs")
     private List<Spec> specs;
 
+    @SerializedName("quantity")
     private int buy_count;
+
     private Spec selectedSpec;
+    @SerializedName("style")
+    private String style;
 
     public Product(int id, String name, int price, String cover) {
         this.id = id;
@@ -70,6 +74,7 @@ public class Product implements Serializable {
 
     public void setSelectedSpec(Spec selectedSpec) {
         this.selectedSpec = selectedSpec;
+        style = selectedSpec.getStyle();
     }
 
     public Spec getSelectedSpec() {

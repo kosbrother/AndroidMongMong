@@ -11,14 +11,14 @@ import android.widget.TextView;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class PastOrdersGridAdapter extends BaseAdapter {
 
     private final LayoutInflater layoutInflater;
-    private final ArrayList<PastOrder> pastOrderList;
+    private final List<PastOrder> pastOrderList;
 
-    public PastOrdersGridAdapter(Context context, ArrayList<PastOrder> pastOrderList) {
+    public PastOrdersGridAdapter(Context context, List<PastOrder> pastOrderList) {
         layoutInflater = LayoutInflater.from(context);
         this.pastOrderList = pastOrderList;
     }
@@ -57,13 +57,13 @@ public class PastOrdersGridAdapter extends BaseAdapter {
 
         PastOrder pastOrder = pastOrderList.get(position);
 
-        viewHolder.dateTextView.setText(pastOrder.getDate());
+        viewHolder.dateTextView.setText(pastOrder.getCreatedOn());
         viewHolder.totalPriceTextView.setText(getPrice(pastOrder));
         viewHolder.statusTextView.setText(pastOrder.getStatus());
         return convertView;
     }
 
-    public void updateOrders(ArrayList<PastOrder> orders) {
+    public void updateOrders(List<PastOrder> orders) {
         pastOrderList.clear();
         pastOrderList.addAll(orders);
     }
