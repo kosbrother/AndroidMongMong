@@ -1,43 +1,42 @@
 package com.kosbrother.mongmongwoo.model;
 
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 
-/**
- * Created by kolichung on 3/14/16.
- */
-public class Store  implements Serializable {
+public class Store implements Serializable {
 
-    int store_id;
-    String store_code;
-    String name;
-    String address;
-    double lat;
-    double lng;
+    @SerializedName("id")
+    private int id;
+    @SerializedName("store_code")
+    private String storeCode;
+    @SerializedName("name")
+    private String name;
+    @SerializedName("address")
+    private String address;
+    @SerializedName("lat")
+    private double lat;
+    @SerializedName("lng")
+    private double lng;
 
-    public Store(int store_id, String store_code, String name, String address) {
-        this.store_id = store_id;
-        this.store_code = store_code;
+    public Store(int id, String storeCode, String name, String address) {
+        this.id = id;
+        this.storeCode = storeCode;
         this.name = name;
         this.address = address;
     }
 
-    public void setLatLng(double lat, double lng){
-        this.lat = lat;
-        this.lng = lng;
+    public LatLng getLatLng() {
+        return new LatLng(lat, lng);
     }
 
-    public LatLng getLatLng(){
-        return new LatLng(lat,lng);
+    public int getId() {
+        return id;
     }
 
-    public int getStore_id() {
-        return store_id;
-    }
-
-    public String getStore_code() {
-        return store_code;
+    public String getStoreCode() {
+        return storeCode;
     }
 
     public String getName() {

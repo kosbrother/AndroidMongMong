@@ -12,15 +12,15 @@ import android.widget.TextView;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.model.Store;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class StoreGridAdapter extends BaseAdapter {
 
     private final Context context;
-    private final ArrayList<Store> storeList;
+    private final List<Store> storeList;
     private int selectedStorePosition = -1;
 
-    public StoreGridAdapter(Context context, ArrayList<Store> storeList) {
+    public StoreGridAdapter(Context context, List<Store> storeList) {
         this.context = context;
         this.storeList = storeList;
     }

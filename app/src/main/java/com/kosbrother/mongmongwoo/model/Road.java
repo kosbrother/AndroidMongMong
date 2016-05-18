@@ -1,20 +1,16 @@
 package com.kosbrother.mongmongwoo.model;
 
-/**
- * Created by kolichung on 3/14/16.
- */
+import com.google.gson.annotations.SerializedName;
+
 public class Road {
 
-    int road_id;
+    @SerializedName("id")
+    int id;
+    @SerializedName("name")
     String name;
 
-    public Road(int road_id, String name) {
-        this.road_id = road_id;
-        this.name = name;
-    }
-
-    public int getRoad_id() {
-        return road_id;
+    public int getId() {
+        return id;
     }
 
     public String getName() {
