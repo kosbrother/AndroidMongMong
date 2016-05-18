@@ -1,6 +1,5 @@
 package com.kosbrother.mongmongwoo;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -15,9 +14,7 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -25,21 +22,18 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androidpagecontrol.PageControl;
-import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.adpters.ProductImageFragmentPagerAdapter;
-import com.kosbrother.mongmongwoo.adpters.StyleGridAdapter;
 import com.kosbrother.mongmongwoo.api.ProductApi;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPromoOpenedEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductAddToCartEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductAddToCollectionEvent;
-import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductSelectDialogConfirmEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductViewEvent;
 import com.kosbrother.mongmongwoo.model.Photo;
 import com.kosbrother.mongmongwoo.model.Product;
-import com.kosbrother.mongmongwoo.model.Spec;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectManager;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
+import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,7 +52,6 @@ public class ProductActivity extends AppCompatActivity {
     private PageControl pageControl;
 
     private Product theProduct;
-    private StyleGridAdapter styleGridAdapter;
     private MenuItem menuItem;
 
     private RelativeLayout spotLightShoppingCarLayout;
@@ -67,6 +60,7 @@ public class ProductActivity extends AppCompatActivity {
     private LinearLayout no_net_layout;
     private Toast toast;
     private int productId;
+    private ProductStyleDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -251,96 +245,21 @@ public class ProductActivity extends AppCompatActivity {
         }
     }
 
-    private GridView styleGrid;
-    private ImageView styleImage;
-    private TextView styleName;
-    private int tempCount;
-
     public void showStyleDialog() {
-
-        View view = LayoutInflater.from(ProductActivity.this)
-                .inflate(R.layout.dialog_add_shopping_car_item, null, false);
-        styleGrid = (GridView) view.findViewById(R.id.dialog_styles_gridview);
-        styleImage = (ImageView) view.findViewById(R.id.dialog_style_image);
-        styleName = (TextView) view.findViewById(R.id.dialog_style_name);
-
-        Button style_confirm_button = (Button) view.findViewById(R.id.dialog_style_confirm_button);
-
-        Button minusButton = (Button) view.findViewById(R.id.minus_button);
-        Button plusButton = (Button) view.findViewById(R.id.plus_button);
-        final TextView countText = (TextView) view.findViewById(R.id.count_text_view);
-        minusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (tempCount != 1) {
-                    tempCount = tempCount - 1;
-                    countText.setText(Integer.toString(tempCount));
-                }
-            }
-        });
-        plusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tempCount = tempCount + 1;
-                countText.setText(Integer.toString(tempCount));
-            }
-        });
-        tempCount = 1;
-        countText.setText(Integer.toString(tempCount));
-
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(ProductActivity.this);
-        alertDialogBuilder.setView(view);
-
-        final AlertDialog alertDialog = alertDialogBuilder.create();
-        // show alert
-        alertDialog.show();
-
-        style_confirm_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GAManager.sendEvent(new ProductSelectDialogConfirmEvent(theProduct.getName()));
-
-                int selectedStylePosition = styleGridAdapter.getSelectedPosition();
-                Spec theSelectedSpec = theProduct.getSpecs().get(selectedStylePosition);
-                theProduct.setSelectedSpec(theSelectedSpec);
-                ShoppingCarPreference pref = new ShoppingCarPreference();
-                theProduct.setBuy_count(tempCount);
-                pref.addShoppingItem(ProductActivity.this, theProduct);
-                doIncrease();
-                alertDialog.cancel();
-
-                if (Settings.checkIsFirstAddShoppingCar()) {
+        if (dialog == null) {
+            dialog = new ProductStyleDialog(this, theProduct, new ProductStyleDialog.ProductStyleDialogListener() {
+                @Override
+                public void onFirstAddShoppingCart() {
                     showShoppingCarInstruction();
-                    Settings.setKownShoppingCar();
                 }
-            }
-        });
 
-        styleGridAdapter = new StyleGridAdapter(this, theProduct.getSpecs());
-        styleGrid.setAdapter(styleGridAdapter);
-        styleGrid.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Spec spec = theProduct.getSpecs().get(position);
-
-                Glide.with(ProductActivity.this)
-                        .load(spec.getPic())
-                        .centerCrop()
-                        .placeholder(R.mipmap.img_pre_load_square)
-                        .into(styleImage);
-                styleName.setText(spec.getStyle());
-
-                styleGridAdapter.updateSelectedPosition(position);
-            }
-        });
-
-        Glide.with(this)
-                .load(theProduct.getSpecs().get(0).getPic())
-                .centerCrop()
-                .placeholder(R.mipmap.img_pre_load_square)
-                .into(styleImage);
-        styleName.setText(theProduct.getSpecs().get(0).getStyle());
-
+                @Override
+                public void onConfirmButtonClick() {
+                    doIncrease();
+                }
+            });
+        }
+        dialog.showWithInitState();
     }
 
     public void doIncrease() {
