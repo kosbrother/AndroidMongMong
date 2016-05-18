@@ -66,28 +66,26 @@ public class MyGcmListenerService extends com.google.android.gms.gcm.GcmListener
 
     private void onReceivedProduct(Bundle data) {
         Bitmap productBitmap = getProductBitmap(data);
-        if (productBitmap != null) {
-            String contentTitle = data.getString("content_title");
-            String contentText = data.getString("content_text");
+        String contentTitle = data.getString("content_title");
+        String contentText = data.getString("content_text");
 
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                    .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon9))
-                    .setSmallIcon(R.mipmap.ic_mhouse)
-                    .setContentTitle(contentTitle)
-                    .setContentText(contentText)
-                    .setAutoCancel(true)
-                    .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                    .setContentIntent(getProductPendingIntent(data))
-                    .setPriority(NotificationCompat.PRIORITY_MAX)
-                    .setStyle(getBigPictureStyle(contentText, productBitmap));
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon9))
+                .setSmallIcon(R.mipmap.ic_mhouse)
+                .setContentTitle(contentTitle)
+                .setContentText(contentText)
+                .setAutoCancel(true)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setContentIntent(getProductPendingIntent(data))
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setStyle(getBigPictureStyle(contentText, productBitmap));
 
-            sendNotification(notificationBuilder);
-            GAManager.sendEvent(new NotificationPromoSendEvent(contentTitle));
-        }
+        sendNotification(notificationBuilder);
+        GAManager.sendEvent(new NotificationPromoSendEvent(contentTitle));
     }
 
     private Bitmap getProductBitmap(Bundle data) {
-        Bitmap bitmap = null;
+        Bitmap bitmap;
         try {
             URL url = new URL(data.getString("content_pic"));
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -97,6 +95,9 @@ public class MyGcmListenerService extends com.google.android.gms.gcm.GcmListener
             bitmap = BitmapFactory.decodeStream(input);
         } catch (IOException e) {
             e.printStackTrace();
+            bitmap = BitmapFactory.decodeResource(
+                    getApplication().getResources(),
+                    R.mipmap.img_pre_load_rectangle);
         }
         return bitmap;
     }
