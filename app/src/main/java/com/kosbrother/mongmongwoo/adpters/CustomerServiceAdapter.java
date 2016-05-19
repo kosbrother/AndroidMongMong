@@ -59,9 +59,9 @@ public class CustomerServiceAdapter extends RecyclerView.Adapter<CustomerService
         @Override
         public void onClick(View v) {
             if (getLayoutPosition() == 0) {
-                mListener.onLineCustomerServiceClick(textView.getText().toString());
+                mListener.onLineCustomerServiceClick();
             } else {
-                mListener.onFacebookCustomerServiceClick(textView.getText().toString());
+                mListener.onFacebookCustomerServiceClick();
             }
         }
     }
@@ -96,8 +96,8 @@ public class CustomerServiceAdapter extends RecyclerView.Adapter<CustomerService
     }
 
     public interface OnCustomerServiceItemClickListener {
-        void onLineCustomerServiceClick(String text);
+        void onLineCustomerServiceClick();
 
-        void onFacebookCustomerServiceClick(String text);
+        void onFacebookCustomerServiceClick();
     }
 }
