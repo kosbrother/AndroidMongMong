@@ -66,6 +66,7 @@ public class MainActivity extends FbLoginActivity
 
     private ViewPager viewPager;
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
+    private MenuItem shoppingCartMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -116,24 +117,21 @@ public class MainActivity extends FbLoginActivity
         } else {
             setUserLogoutView();
         }
+        if (shoppingCartMenuItem != null) {
+            setShoppingCartMenuItemIconWithItemCount();
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem menuItem;
-        if (menu.findItem(99) == null) {
-            menuItem = menu.add(0, 99, 0, "購物車");
+        MenuItem menuItem = menu.findItem(99);
+        if (menuItem == null) {
+            shoppingCartMenuItem = menu.add(0, 99, 0, "購物車");
         } else {
-            menuItem = menu.findItem(99);
+            shoppingCartMenuItem = menuItem;
         }
-
-        ShoppingCarPreference pref = new ShoppingCarPreference();
-        int count = pref.getShoppingCarItemSize(this);
-
-        Drawable shoppingCartIcon = ShoppingCartIconUtil.getIcon(this, count);
-        menuItem.setIcon(shoppingCartIcon);
-        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+        shoppingCartMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        shoppingCartMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
             public boolean onMenuItemClick(MenuItem item) {
                 GAManager.sendEvent(new CartClickEvent());
@@ -143,8 +141,8 @@ public class MainActivity extends FbLoginActivity
                 return true;
             }
         });
+        setShoppingCartMenuItemIconWithItemCount();
         return true;
-
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -372,6 +370,13 @@ public class MainActivity extends FbLoginActivity
                 dialog.dismiss();
             }
         });
+    }
+
+    private void setShoppingCartMenuItemIconWithItemCount() {
+        ShoppingCarPreference pref = new ShoppingCarPreference();
+        int count = pref.getShoppingCarItemSize(this);
+        Drawable shoppingCartIcon = ShoppingCartIconUtil.getIcon(this, count);
+        shoppingCartMenuItem.setIcon(shoppingCartIcon);
     }
 
     class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
