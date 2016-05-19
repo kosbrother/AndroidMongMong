@@ -29,6 +29,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductViewEvent
 import com.kosbrother.mongmongwoo.model.Photo;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectManager;
+import com.kosbrother.mongmongwoo.utils.CustomerServiceUtil;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
 import com.kosbrother.mongmongwoo.utils.ShoppingCartIconUtil;
@@ -142,6 +143,14 @@ public class ProductActivity extends AppCompatActivity {
             }
         }
         return images;
+    }
+
+    public void onLineClick(View view) {
+        CustomerServiceUtil.startToLineService(this);
+    }
+
+    public void onFbClick(View view) {
+        CustomerServiceUtil.startToFbService(this);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -258,8 +267,6 @@ public class ProductActivity extends AppCompatActivity {
         } else {
             showAToast("無法取得資料,請檢查網路連線");
         }
-        TextView loadingText = (TextView) findViewById(R.id.loading_text);
-        loadingText.setVisibility(View.GONE);
     }
 
     private void sendPromoOpenedEventIfFromNotification() {
