@@ -3,8 +3,6 @@ package com.kosbrother.mongmongwoo;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
@@ -18,7 +16,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -48,6 +45,7 @@ import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
 import com.kosbrother.mongmongwoo.pastorders.QueryPastOrdersActivity;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
+import com.kosbrother.mongmongwoo.utils.ShoppingCartIconUtil;
 import com.kosbrother.mongmongwoo.utils.VersionUtil;
 
 import java.util.ArrayList;
@@ -132,7 +130,8 @@ public class MainActivity extends FbLoginActivity
         ShoppingCarPreference pref = new ShoppingCarPreference();
         int count = pref.getShoppingCarItemSize(this);
 
-        menuItem.setIcon(buildCounterDrawable(count));
+        Drawable shoppingCartIcon = ShoppingCartIconUtil.getIcon(this, count);
+        menuItem.setIcon(shoppingCartIcon);
         menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
             @Override
@@ -373,33 +372,6 @@ public class MainActivity extends FbLoginActivity
                 dialog.dismiss();
             }
         });
-    }
-
-    @SuppressLint("InflateParams")
-    private Drawable buildCounterDrawable(int count) {
-        LayoutInflater inflater = LayoutInflater.from(this);
-        View view = inflater.inflate(R.layout.counter_menuitem_layout, null);
-
-        if (count == 0) {
-            View counterTextPanel = view.findViewById(R.id.counterPanel);
-            counterTextPanel.setVisibility(View.GONE);
-        } else {
-            TextView textView = (TextView) view.findViewById(R.id.count);
-            String countString = "" + count;
-            textView.setText(countString);
-        }
-
-        view.measure(
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED),
-                View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED));
-        view.layout(0, 0, view.getMeasuredWidth(), view.getMeasuredHeight());
-
-        view.setDrawingCacheEnabled(true);
-        view.setDrawingCacheQuality(View.DRAWING_CACHE_QUALITY_HIGH);
-        Bitmap bitmap = Bitmap.createBitmap(view.getDrawingCache());
-        view.setDrawingCacheEnabled(false);
-
-        return new BitmapDrawable(getResources(), bitmap);
     }
 
     class SampleFragmentPagerAdapter extends FragmentPagerAdapter {

@@ -107,6 +107,7 @@
 
         <activity
             android:name="com.kosbrother.mongmongwoo.ProductActivity"
+            android:label="商品資訊"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme" />
 
