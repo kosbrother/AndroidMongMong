@@ -184,12 +184,7 @@ public class ProductActivity extends AppCompatActivity {
         addCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GAManager.sendEvent(new ProductAddToCartEvent(theProduct.getName()));
-                if (theProduct.getSpecs().size() > 0) {
-                    showStyleDialog();
-                } else {
-                    Toast.makeText(ProductActivity.this, "樣式讀取中,請稍受再加購物車", Toast.LENGTH_SHORT).show();
-                }
+                showAToast("樣式讀取中,請稍後再加購物車");
             }
         });
     }
@@ -263,7 +258,7 @@ public class ProductActivity extends AppCompatActivity {
             sendPromoOpenedEventIfFromNotification();
             setProductView();
             setViewPagerAndPageControl();
-            disableAddCartButtonIfOffShelf();
+            setAddCartButton();
         } else {
             showAToast("無法取得資料,請檢查網路連線");
         }
@@ -302,10 +297,23 @@ public class ProductActivity extends AppCompatActivity {
         pageControl.setViewPager(viewPager);
     }
 
-    private void disableAddCartButtonIfOffShelf() {
-        if (!theProduct.isOnShelf()) {
+    private void setAddCartButton() {
+        if (theProduct.isOnShelf()) {
+            addCarButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    GAManager.sendEvent(new ProductAddToCartEvent(theProduct.getName()));
+                    showStyleDialog();
+                }
+            });
+        } else {
             addCarButton.setText("商品已下架, 如有需要請聯絡客服");
-            addCarButton.setEnabled(false);
+            addCarButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    showAToast("商品已下架, 如有需要請聯絡客服");
+                }
+            });
         }
     }
 

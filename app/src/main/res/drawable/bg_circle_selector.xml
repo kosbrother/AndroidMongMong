@@ -3,19 +3,13 @@
 
     <item android:state_pressed="true">
         <shape android:shape="oval">
-
             <solid android:color="@color/dark_color_control_highlight" />
-
-            <size android:width="36dp" android:height="36dp" />
         </shape>
     </item>
 
     <item>
         <shape android:shape="oval">
-
             <solid android:color="@android:color/transparent" />
-
-            <size android:width="36dp" android:height="36dp" />
         </shape>
     </item>
 </selector>
