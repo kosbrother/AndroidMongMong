@@ -62,7 +62,8 @@
                 android:layout_margin="8dp"
                 android:background="@drawable/button_purchase_car_selector"
                 android:text="放入購物車"
-                android:textColor="@color/white" />
+                android:textColor="@color/white"
+                android:textSize="14sp" />
         </FrameLayout>
 
         <ScrollView
@@ -101,7 +102,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_alignParentTop="true"
                         android:layout_margin="16dp"
-                        android:background="@drawable/bg_circle_selector_36dp"
+                        android:background="@drawable/bg_circle_selector"
                         tools:src="@mipmap/ic_favorite_pink_border" />
                 </RelativeLayout>
 
@@ -124,9 +125,9 @@
                         android:layout_marginRight="16dp"
                         android:layout_weight="1"
                         android:maxLines="2"
-                        android:textColor="@android:color/black"
-                        android:textSize="16sp"
-                        tools:text="北歐生活幾何物語304不鏽鋼水杯" />
+                        android:textColor="@color/black_text"
+                        android:textSize="21sp"
+                        tools:text="節目卡片迷你小賀卡" />
 
                     <TextView
                         android:id="@+id/product_price_text"
@@ -134,7 +135,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:textColor="@android:color/holo_red_light"
-                        android:textSize="16sp"
+                        android:textSize="18sp"
                         tools:text="NT$ 149" />
                 </LinearLayout>
 
@@ -151,7 +152,7 @@
                         android:layout_height="wrap_content"
                         android:text="關於商品"
                         android:textColor="@color/green_text"
-                        android:textSize="16sp" />
+                        android:textSize="17sp" />
 
                     <View
                         android:layout_width="match_parent"
@@ -165,7 +166,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:textColor="@color/black_text"
-                        android:textSize="12sp"
+                        android:textSize="14sp"
                         tools:text="這裡是商品介紹的內文" />
                 </LinearLayout>
 
@@ -181,7 +182,7 @@
                         android:layout_height="wrap_content"
                         android:text="付款取貨方式"
                         android:textColor="@color/green_text"
-                        android:textSize="16sp" />
+                        android:textSize="17sp" />
 
                     <View
                         android:layout_width="match_parent"
@@ -195,7 +196,7 @@
                         android:layout_marginTop="8dp"
                         android:text="7-11超商付款取貨"
                         android:textColor="@color/black_text"
-                        android:textSize="12sp" />
+                        android:textSize="14sp" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -211,7 +212,7 @@
                         android:layout_height="wrap_content"
                         android:text="其他資訊"
                         android:textColor="@color/green_text"
-                        android:textSize="16sp" />
+                        android:textSize="17sp" />
 
                     <View
                         android:layout_width="match_parent"
@@ -232,17 +233,17 @@
                     android:drawableStart="@mipmap/ic_star"
                     android:text="購買方式："
                     android:textColor="@android:color/black"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="38dp"
-                    android:layout_marginStart="38dp"
+                    android:layout_marginLeft="35dp"
+                    android:layout_marginStart="35dp"
                     android:layout_marginTop="4dp"
                     android:text="將商品加入購物車，再至購物車結帳。"
                     android:textColor="@color/black_text"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -255,17 +256,17 @@
                     android:drawableStart="@mipmap/ic_star"
                     android:text="安心退貨："
                     android:textColor="@android:color/black"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="38dp"
-                    android:layout_marginStart="38dp"
+                    android:layout_marginLeft="35dp"
+                    android:layout_marginStart="35dp"
                     android:layout_marginTop="4dp"
                     android:text="商品到貨日起，7天內可退貨。"
                     android:textColor="@color/black_text"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -278,17 +279,17 @@
                     android:drawableStart="@mipmap/ic_star"
                     android:text="10天到貨："
                     android:textColor="@android:color/black"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="38dp"
-                    android:layout_marginStart="38dp"
+                    android:layout_marginLeft="35dp"
+                    android:layout_marginStart="35dp"
                     android:layout_marginTop="4dp"
                     android:text="商品購買後，10個工作天內會送到指定寄送地址。"
                     android:textColor="@color/black_text"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -301,17 +302,17 @@
                     android:drawableStart="@mipmap/ic_star"
                     android:text="商品運送："
                     android:textColor="@android:color/black"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="38dp"
-                    android:layout_marginStart="38dp"
+                    android:layout_marginLeft="35dp"
+                    android:layout_marginStart="35dp"
                     android:layout_marginTop="4dp"
                     android:text="本商品為超商取貨付款，外島地區可能無法運送。"
                     android:textColor="@color/black_text"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -324,19 +325,19 @@
                     android:drawableStart="@mipmap/ic_star"
                     android:text="售後服務："
                     android:textColor="@android:color/black"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="30dp"
-                    android:layout_marginLeft="38dp"
+                    android:layout_marginLeft="35dp"
                     android:layout_marginRight="30dp"
-                    android:layout_marginStart="38dp"
+                    android:layout_marginStart="35dp"
                     android:layout_marginTop="4dp"
                     android:text="若商品使用上有任何問題，客服人員會耐心為您解答，請透過客服中心與我們聯絡。"
                     android:textColor="@color/black_text"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <TextView
                     android:layout_width="match_parent"
@@ -349,15 +350,15 @@
                     android:drawableStart="@mipmap/ic_star"
                     android:text="聯絡客服："
                     android:textColor="@android:color/black"
-                    android:textSize="12sp" />
+                    android:textSize="14sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="60dp"
-                    android:layout_marginLeft="38dp"
-                    android:layout_marginRight="38dp"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginLeft="35dp"
+                    android:layout_marginRight="35dp"
+                    android:layout_marginTop="4dp"
                     android:orientation="horizontal">
 
                     <ImageView

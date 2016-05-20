@@ -16,7 +16,7 @@
     <color name="dark_color_control_highlight">#40000000</color>
     <color name="default_background">#FFF9F9F9</color>
 
-    <color name="product_title_gray_bg">#f6f6f6</color>
+    <color name="product_title_gray_bg">#f1f1f1</color>
     <color name="product_add_to_cart_bg">#e9e9e9</color>
     <color name="product_bg">#fdfdfe</color>
 </resources>
