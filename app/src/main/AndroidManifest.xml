@@ -57,6 +57,10 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="@string/google_maps_key" />
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="45dedb112a0726be1b7bb4914d4d1a965117cae3"
+            />
 
         <activity
             android:name="com.kosbrother.mongmongwoo.MainActivity"
