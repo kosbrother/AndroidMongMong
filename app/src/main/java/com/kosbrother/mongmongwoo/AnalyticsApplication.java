@@ -5,11 +5,14 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 
+import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.kosbrother.mongmongwoo.gcm.GcmPreferences;
 import com.kosbrother.mongmongwoo.gcm.RegistrationIntentService;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+
+import io.fabric.sdk.android.Fabric;
 
 public class AnalyticsApplication extends Application {
 
@@ -20,7 +23,14 @@ public class AnalyticsApplication extends Application {
         AppEventsLogger.activateApp(this);
         GAManager.init(this);
         Settings.init(this);
+        setCrashlyticsIfRelease();
         startGetGcmToken();
+    }
+
+    private void setCrashlyticsIfRelease() {
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics());
+        }
     }
 
     private void startGetGcmToken() {
