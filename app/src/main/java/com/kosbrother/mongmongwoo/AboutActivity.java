@@ -37,7 +37,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
 
     private void setVersionName() {
         TextView versionNameTv = (TextView) findViewById(R.id.version_name_tv);
-        versionNameTv.setText(Settings.getVersionName());
+        versionNameTv.setText(BuildConfig.VERSION_NAME);
     }
 
     private void setViewByVersionUpToDate() {
