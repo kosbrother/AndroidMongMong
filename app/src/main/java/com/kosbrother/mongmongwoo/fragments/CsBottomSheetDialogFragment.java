@@ -1,8 +1,6 @@
 package com.kosbrother.mongmongwoo.fragments;
 
 import android.app.Dialog;
-import android.content.Intent;
-import android.net.Uri;
 import android.support.design.widget.BottomSheetDialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,6 +10,7 @@ import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.CustomerServiceAdapter;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
+import com.kosbrother.mongmongwoo.utils.CustomerServiceUtil;
 
 public class CsBottomSheetDialogFragment extends BottomSheetDialogFragment {
 
@@ -28,22 +27,14 @@ public class CsBottomSheetDialogFragment extends BottomSheetDialogFragment {
         mRecyclerView.setAdapter(new CustomerServiceAdapter(
                 new CustomerServiceAdapter.OnCustomerServiceItemClickListener() {
                     @Override
-                    public void onLineCustomerServiceClick(String text) {
-                        GAManager.sendEvent(new CustomerServiceClickEvent(text));
-                        actionToUrl("http://line.me/ti/p/%40kya5456n");
+                    public void onLineCustomerServiceClick() {
+                        CustomerServiceUtil.startToLineService(getContext());
                     }
 
                     @Override
-                    public void onFacebookCustomerServiceClick(String text) {
-                        GAManager.sendEvent(new CustomerServiceClickEvent(text));
-                        actionToUrl("https://www.facebook.com/kingofgametw/");
+                    public void onFacebookCustomerServiceClick() {
+                        CustomerServiceUtil.startToFbService(getContext());
                     }
                 }));
-    }
-
-    private void actionToUrl(String url) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(Uri.parse(url));
-        startActivity(intent);
     }
 }

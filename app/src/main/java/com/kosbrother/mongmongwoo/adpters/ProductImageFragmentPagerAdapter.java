@@ -6,15 +6,15 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 import com.kosbrother.mongmongwoo.fragments.ProductImageFragment;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class ProductImageFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    private final ArrayList<String> urls;
+    private final List<String> urls;
 
     public ProductImageFragmentPagerAdapter(
             FragmentManager fm,
-            ArrayList<String> urls) {
+            List<String> urls) {
         super(fm);
         this.urls = urls;
     }

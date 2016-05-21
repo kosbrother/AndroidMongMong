@@ -1,7 +1,5 @@
 package com.kosbrother.mongmongwoo;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -9,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
+
+import com.kosbrother.mongmongwoo.utils.CustomerServiceUtil;
 
 /**
  * Created by kolichung on 3/10/16.
@@ -33,10 +33,7 @@ public class ServiceActivity extends AppCompatActivity {
         addLineButtonLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "http://line.me/ti/p/%40kya5456n";
-                Intent intentGood = new Intent(Intent.ACTION_VIEW);
-                intentGood.setData(Uri.parse(url));
-                startActivity(intentGood);
+                CustomerServiceUtil.startToLineService(ServiceActivity.this);
             }
         });
     }
