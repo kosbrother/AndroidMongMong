@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.kosbrother.mongmongwoo.R;
@@ -47,6 +48,7 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
 
     int shippingPrice = 60;
     private int tempCount;
+    private ScrollView scrollView;
 
     public static PurchaseFragment1 newInstance() {
         return new PurchaseFragment1();
@@ -66,7 +68,7 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
         findView(view);
 
         initVisibleLayout();
-        setRecyclerView();
+        setRecyclerViewAndScrollToTop();
         setFbBuyButton();
         setNoNameBuyButton();
         setConfirmButton();
@@ -128,6 +130,7 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
     }
 
     private void findView(View view) {
+        scrollView = (ScrollView) view.findViewById(R.id.purchase1_sv);
         newsRecylerView = (RecyclerView) view.findViewById(R.id.recycler_buy_goods);
         totalGoodsPriceText = (TextView) view.findViewById(R.id.fragment1_goodsTotalPriceText);
         shippingPriceText = (TextView) view.findViewById(R.id.fragment1_shippingPriceText);
@@ -152,9 +155,10 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
         }
     }
 
-    private void setRecyclerView() {
+    private void setRecyclerViewAndScrollToTop() {
         newsRecylerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         newsRecylerView.setAdapter(new ShoppingCarGoodsAdapter(getActivity(), shoppingCarProducts, this));
+        scrollView.smoothScrollTo(0, 0);
     }
 
     private void setNoNameBuyButton() {
