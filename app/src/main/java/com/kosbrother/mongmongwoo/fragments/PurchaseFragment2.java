@@ -58,7 +58,7 @@ public class PurchaseFragment2 extends Fragment {
                 } else {
                     activity.getOrder().setShippingName(shippingNameEditText.getText().toString());
                     activity.getOrder().setShippingPhone(shippingPhoneEditText.getText().toString());
-                    activity.getOrder().setShippingEmail(shippingEmailEditText.getText().toString());
+                    activity.getOrder().setShippingEmail(getUserInputEmailOrFbEmail());
                     activity.startPurchaseFragment3();
 
                     View view = activity.getCurrentFocus();
@@ -115,5 +115,14 @@ public class PurchaseFragment2 extends Fragment {
 
     private boolean nameOrPhoneOrEmailEmpty() {
         return nameOrPhoneEmpty() || shippingEmailEditText.getText().toString().isEmpty();
+    }
+
+    private String getUserInputEmailOrFbEmail() {
+        String userInputEmail = shippingEmailEditText.getText().toString();
+        if (userInputEmail.isEmpty()) {
+            return Settings.getEmail();
+        } else {
+            return userInputEmail;
+        }
     }
 }
