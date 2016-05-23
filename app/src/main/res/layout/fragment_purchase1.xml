@@ -5,31 +5,6 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/shopping_car_no_item_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/gray_background"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/icon_shopping_car" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="10dp"
-            android:text="目前購物車沒有商品"
-            android:textColor="@color/white"
-            android:textSize="18dp" />
-
-    </LinearLayout>
-
-    <LinearLayout
         android:id="@+id/purchase1_bottom_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -295,5 +270,30 @@
         </LinearLayout>
 
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/shopping_car_no_item_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/gray_background"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/icon_shopping_car" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="10dp"
+            android:text="目前購物車沒有商品"
+            android:textColor="@color/white"
+            android:textSize="18dp" />
+
+    </LinearLayout>
 
 </RelativeLayout>
