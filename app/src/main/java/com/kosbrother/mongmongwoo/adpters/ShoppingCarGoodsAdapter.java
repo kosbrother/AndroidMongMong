@@ -40,20 +40,23 @@ public class ShoppingCarGoodsAdapter extends RecyclerView.Adapter<ShoppingCarGoo
     public void onBindViewHolder(ViewHolder holder, int position) {
         Product product = productList.get(position);
 
-        String nameString = product.getName() + " - " + product.getSelectedSpec().getStyle();
-        holder.goodsNameTextView.setText(nameString);
-
-        String priceString = "$" + product.getPrice();
-        holder.priceTextView.setText(priceString);
-
         Glide.with(context)
                 .load(product.getSelectedSpec().getPic())
                 .centerCrop()
                 .placeholder(R.mipmap.img_pre_load_square)
                 .into(holder.goodsImageView);
 
-        String countText = "數量 " + product.getBuy_count();
+        String nameString = product.getName();
+        holder.goodsNameTextView.setText(nameString);
+
+        String priceString = "NT$ " + product.getPrice();
+        holder.priceTextView.setText(priceString);
+
+        String countText = "數量：" + product.getBuy_count();
         holder.selectCountButton.setText(countText);
+
+        String subTotalText = "小計：NT$ " + (product.getBuy_count() * product.getPrice());
+        holder.subTotalTextView.setText(subTotalText);
 
         holder.setDeleteListener(listener);
         holder.setSelectCountListener(listener, product.getBuy_count());
@@ -74,23 +77,25 @@ public class ShoppingCarGoodsAdapter extends RecyclerView.Adapter<ShoppingCarGoo
         public final TextView goodsNameTextView;
         public final TextView priceTextView;
         public final ImageView goodsImageView;
-        public final Button deleteButton;
+        public final ImageView deleteImageView;
         public final Button selectCountButton;
+        public final TextView subTotalTextView;
 
         public ViewHolder(View v) {
             super(v);
             goodsNameTextView = (TextView) v.findViewById(R.id.item_car_name);
             priceTextView = (TextView) v.findViewById(R.id.item_car_price);
-            goodsImageView = (ImageView) v.findViewById(R.id.item_car_imageview);
-            deleteButton = (Button) v.findViewById(R.id.item_car_delete_button);
+            goodsImageView = (ImageView) v.findViewById(R.id.item_car_ig);
+            deleteImageView = (ImageView) v.findViewById(R.id.item_car_delete_iv);
             selectCountButton = (Button) v.findViewById(R.id.item_car_count_button);
+            subTotalTextView = (TextView) v.findViewById(R.id.subtotal_tv);
         }
 
         public void setDeleteListener(final ShoppingCartGoodsListener listener) {
-            deleteButton.setOnClickListener(new View.OnClickListener() {
+            deleteImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onDeleteButtonClick(getAdapterPosition());
+                    listener.onDeleteImageViewClick(getAdapterPosition());
                 }
             });
         }
@@ -107,7 +112,7 @@ public class ShoppingCarGoodsAdapter extends RecyclerView.Adapter<ShoppingCarGoo
 
     public interface ShoppingCartGoodsListener {
 
-        void onDeleteButtonClick(int position);
+        void onDeleteImageViewClick(int position);
 
         void onSelectCountButtonClick(int position, int tempCount);
     }

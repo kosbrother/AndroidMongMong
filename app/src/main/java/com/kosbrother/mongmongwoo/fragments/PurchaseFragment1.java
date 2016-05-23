@@ -10,18 +10,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.adpters.ShoppingCarGoodsAdapter;
-import com.kosbrother.mongmongwoo.api.DensityApi;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
@@ -37,19 +34,17 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
     Button no_name_buy_button;
 
     RecyclerView newsRecylerView;
-    Button deliverButton;
     TextView totalGoodsPriceText;
     TextView shippingPriceText;
     TextView totalPriceText;
     Button confirmButton;
-    TextView no_ship_fee_text;
-    TextView ship_text;
+    private TextView freeShippingPriceRemainTextView;
+    private TextView checkoutPriceBottomTextView;
 
     ArrayList<Product> shoppingCarProducts;
     int totalGoodsPrice;
-    int shippingPrice;
-    int shippingType = -1; // 0 means 超商取貨付款, 1 means 宅配
 
+    int shippingPrice = 60;
     private int tempCount;
 
     public static PurchaseFragment1 newInstance() {
@@ -73,7 +68,6 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
         setRecyclerView();
         setFbBuyButton();
         setNoNameBuyButton();
-        setDeliverButton();
         setConfirmButton();
 
         updatePricesText();
@@ -89,23 +83,29 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
     public void updatePricesText() {
         totalGoodsPrice = 0;
         for (int i = 0; i < shoppingCarProducts.size(); i++) {
-            totalGoodsPrice = totalGoodsPrice + shoppingCarProducts.get(i).getPrice() * shoppingCarProducts.get(i).getBuy_count();
+            totalGoodsPrice = totalGoodsPrice +
+                    shoppingCarProducts.get(i).getPrice() * shoppingCarProducts.get(i).getBuy_count();
         }
-        totalGoodsPriceText.setText("$" + Integer.toString(totalGoodsPrice));
+        String totalGoodsPriceString = "$" + totalGoodsPrice;
+        totalGoodsPriceText.setText(totalGoodsPriceString);
 
-        if (shippingType != -1) {
-            if (totalGoodsPrice >= 490) {
-                shippingPrice = 0;
-                no_ship_fee_text.setVisibility(View.GONE);
-                ship_text.setText("滿490免運");
-            } else {
-                shippingPrice = 60;
-                no_ship_fee_text.setVisibility(View.VISIBLE);
-                ship_text.setText("運費");
-            }
+        String shippingPriceString;
+        String freeShippingPriceRemainString;
+        if (totalGoodsPrice >= 490) {
+            shippingPrice = 0;
+            shippingPriceString = "免運費";
+            freeShippingPriceRemainString = "NT$ " + 0;
+        } else {
+            shippingPrice = 60;
+            shippingPriceString = "$" + shippingPrice;
+            freeShippingPriceRemainString = "NT$ " + (490 - totalGoodsPrice);
         }
-        shippingPriceText.setText("$" + Integer.toString(shippingPrice));
-        totalPriceText.setText("$" + Integer.toString(totalGoodsPrice + shippingPrice));
+        freeShippingPriceRemainTextView.setText(freeShippingPriceRemainString);
+        shippingPriceText.setText(shippingPriceString);
+
+        String totalPrice = "$" + (totalGoodsPrice + shippingPrice);
+        totalPriceText.setText(totalPrice);
+        checkoutPriceBottomTextView.setText(totalPrice);
     }
 
     public void updateLayoutByLoginStatus() {
@@ -119,10 +119,6 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
     }
 
     public void updateRecycleView() {
-        ViewGroup.LayoutParams params = newsRecylerView.getLayoutParams();
-        params.height = (int) DensityApi.convertDpToPixel(100 * shoppingCarProducts.size(), getActivity());
-        newsRecylerView.setLayoutParams(params);
-
         ((ShoppingCarGoodsAdapter) newsRecylerView.getAdapter())
                 .updateProductList(shoppingCarProducts);
 
@@ -135,7 +131,6 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
 
     private void findView(View view) {
         newsRecylerView = (RecyclerView) view.findViewById(R.id.recycler_buy_goods);
-        deliverButton = (Button) view.findViewById(R.id.deliver_button);
         totalGoodsPriceText = (TextView) view.findViewById(R.id.fragment1_goodsTotalPriceText);
         shippingPriceText = (TextView) view.findViewById(R.id.fragment1_shippingPriceText);
         totalPriceText = (TextView) view.findViewById(R.id.fragment1_totalPriceText);
@@ -144,8 +139,8 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
         noLoginLayout = (LinearLayout) view.findViewById(R.id.layout_buy_button);
         fb_buy_button = (Button) view.findViewById(R.id.fragment1_fb_buy_button);
         no_name_buy_button = (Button) view.findViewById(R.id.fragment1_no_name_buy_button);
-        no_ship_fee_text = (TextView) view.findViewById(R.id.no_ship_fee_text);
-        ship_text = (TextView) view.findViewById(R.id.ship_text);
+        freeShippingPriceRemainTextView = (TextView) view.findViewById(R.id.free_shipping_price_remain_tv);
+        checkoutPriceBottomTextView = (TextView) view.findViewById(R.id.checkout_price_bottom_tv);
     }
 
     private void initVisibleLayout() {
@@ -160,15 +155,8 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
     }
 
     private void setRecyclerView() {
-        newsRecylerView.setHasFixedSize(true);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        newsRecylerView.setLayoutManager(mLayoutManager);
-        ViewGroup.LayoutParams params = newsRecylerView.getLayoutParams();
-        params.height = (int) DensityApi.convertDpToPixel(100 * shoppingCarProducts.size(), getActivity());
-        newsRecylerView.setLayoutParams(params);
-        ShoppingCarGoodsAdapter adapter = new ShoppingCarGoodsAdapter(getActivity(), shoppingCarProducts, this);
-        newsRecylerView.setAdapter(adapter);
+        newsRecylerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        newsRecylerView.setAdapter(new ShoppingCarGoodsAdapter(getActivity(), shoppingCarProducts, this));
     }
 
     private void setNoNameBuyButton() {
@@ -195,73 +183,30 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
         fb_buy_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // call shopping car login and turn page
-                if (shippingType != -1) {
-                    // save to activity order
-                    ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-                    activity.saveOrderProducts(shoppingCarProducts);
-                    activity.getOrder().setShipPrice(shippingPrice);
-                    activity.getOrder().setProductPrice(totalGoodsPrice);
-                    activity.getOrder().setTotalPrice(shippingPrice + totalGoodsPrice);
-                    activity.performClickFbButton();
+                GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.FACEBOOK_LOGIN));
 
-                    GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.FACEBOOK_LOGIN));
-                } else {
-                    Toast.makeText(getActivity(), "請選擇運送方式", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void setDeliverButton() {
-        final AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
-        builderSingle.setTitle("選擇運送方式");
-
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-                getActivity(),
-                android.R.layout.select_dialog_singlechoice);
-        arrayAdapter.add("7-11超商取貨付款 $60");
-
-        builderSingle.setAdapter(
-                arrayAdapter,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deliverButton.setText(arrayAdapter.getItem(which));
-                        switch (which) {
-                            case 0:
-                                shippingPrice = 60;
-                                shippingType = 0;
-                                break;
-                        }
-                        updatePricesText();
-                    }
-                });
-
-        deliverButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                builderSingle.show();
+                ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+                saveOrders(activity);
+                activity.performClickFbButton();
             }
         });
     }
 
     private void startNextStep() {
-        if (shippingType != -1) {
-            // save to activity order
-            ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-            activity.saveOrderProducts(shoppingCarProducts);
-            activity.getOrder().setShipPrice(shippingPrice);
-            activity.getOrder().setProductPrice(totalGoodsPrice);
-            activity.getOrder().setTotalPrice(shippingPrice + totalGoodsPrice);
-            activity.startPurchaseFragment2();
-        } else {
-            Toast.makeText(getActivity(), "請選擇運送方式", Toast.LENGTH_SHORT).show();
-        }
+        ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+        saveOrders(activity);
+        activity.startPurchaseFragment2();
+    }
+
+    private void saveOrders(ShoppingCarActivity activity) {
+        activity.saveOrderProducts(shoppingCarProducts);
+        activity.getOrder().setShipPrice(shippingPrice);
+        activity.getOrder().setProductPrice(totalGoodsPrice);
+        activity.getOrder().setTotalPrice(shippingPrice + totalGoodsPrice);
     }
 
     @Override
-    public void onDeleteButtonClick(int position) {
+    public void onDeleteImageViewClick(int position) {
         GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.PRODUCT_DELETE));
         ShoppingCarPreference prefs = new ShoppingCarPreference();
         prefs.removeShoppingItem(getContext(), position);
