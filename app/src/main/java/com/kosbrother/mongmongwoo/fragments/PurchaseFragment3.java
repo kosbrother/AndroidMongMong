@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,7 +20,7 @@ import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.ShoppingCarPreference;
-import com.kosbrother.mongmongwoo.adpters.ShoppingCarListBuyGoodsAdapter;
+import com.kosbrother.mongmongwoo.adpters.CheckoutReviewGoodsAdapter;
 import com.kosbrother.mongmongwoo.api.OrderApi;
 import com.kosbrother.mongmongwoo.gcm.GcmPreferences;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
@@ -27,11 +28,13 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3Cl
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
 import java.util.ArrayList;
 
 public class PurchaseFragment3 extends Fragment {
 
+    private ScrollView scrollView;
     RecyclerView recyclerView;
     TextView shippingPriceText;
     TextView totalPriceText;
@@ -39,6 +42,8 @@ public class PurchaseFragment3 extends Fragment {
     TextView shippingPhoneText;
     TextView shippingStoreNameText;
     TextView shippingStoreAddressText;
+    private TextView totalGoodsPriceTextView;
+    private TextView emailTextView;
     Button sendButton;
 
     Order theOrder;
@@ -53,22 +58,24 @@ public class PurchaseFragment3 extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_purchase3, container, false);
+        scrollView = (ScrollView) view.findViewById(R.id.purchase3_sv);
         shippingPriceText = (TextView) view.findViewById(R.id.fragment3_shipping_price_text);
         totalPriceText = (TextView) view.findViewById(R.id.fragment3_total_price_text);
         shippingNameText = (TextView) view.findViewById(R.id.fragment3_shipping_name_text);
         shippingPhoneText = (TextView) view.findViewById(R.id.fragment3_shipping_phone_text);
         shippingStoreNameText = (TextView) view.findViewById(R.id.fragment3_shipping_store_name_text);
         shippingStoreAddressText = (TextView) view.findViewById(R.id.fragment3_shipping_store_address_text);
+        totalGoodsPriceTextView = (TextView) view.findViewById(R.id.fragment3_total_goods_price_text);
+        emailTextView = (TextView) view.findViewById(R.id.fragment3_email_text);
         sendButton = (Button) view.findViewById(R.id.fragment3_send_button);
         progressBar = (ProgressBar) view.findViewById(R.id.my_progress_bar);
 
         recyclerView = (RecyclerView) view.findViewById(R.id.recycler_buy_goods);
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        ShoppingCarListBuyGoodsAdapter adapter = new ShoppingCarListBuyGoodsAdapter(new ArrayList<Product>());
+        CheckoutReviewGoodsAdapter adapter = new CheckoutReviewGoodsAdapter(
+                getContext(), new ArrayList<Product>());
         recyclerView.setAdapter(adapter);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
@@ -90,15 +97,30 @@ public class PurchaseFragment3 extends Fragment {
             ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
             theOrder = activity.getOrder();
 
-            shippingPriceText.setText(Integer.toString(theOrder.getShipPrice()));
-            totalPriceText.setText(Integer.toString(theOrder.getTotalPrice()));
-            shippingNameText.setText("收件人：" + theOrder.getShippingName());
+            int totalGoodsPrice = CalculateUtil.calculateTotalGoodsPrice(theOrder.getOrderProducts());
+            String totalGoodsPriceString = "" + totalGoodsPrice;
+            totalGoodsPriceTextView.setText(totalGoodsPriceString);
+
+            int shipPrice = theOrder.getShipPrice();
+            if (shipPrice == 0) {
+                shippingPriceText.setText("免運費");
+            } else {
+                String shippingPriceString = "" + shipPrice;
+                shippingPriceText.setText(shippingPriceString);
+            }
+
+            String totalPriceString = "NT$ " + theOrder.getTotalPrice();
+            totalPriceText.setText(totalPriceString);
+
+            shippingNameText.setText(theOrder.getShippingName());
             shippingPhoneText.setText(theOrder.getShippingPhone());
             shippingStoreNameText.setText(theOrder.getShippingStore().getName());
             shippingStoreAddressText.setText(theOrder.getShippingStore().getAddress());
+            emailTextView.setText(theOrder.getShippingEmail());
 
-            ShoppingCarListBuyGoodsAdapter adapter = new ShoppingCarListBuyGoodsAdapter(theOrder.getOrderProducts());
-            recyclerView.setAdapter(adapter);
+            CheckoutReviewGoodsAdapter adapter = (CheckoutReviewGoodsAdapter) recyclerView.getAdapter();
+            adapter.updateProducts(theOrder.getOrderProducts());
+            scrollView.smoothScrollTo(0, 0);
         } else {
             //相当于Fragment的onPause
         }

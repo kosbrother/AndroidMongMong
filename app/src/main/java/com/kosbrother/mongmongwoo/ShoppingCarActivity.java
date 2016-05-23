@@ -182,7 +182,6 @@ public class ShoppingCarActivity extends FbLoginActivity {
     }
 
     public void saveOrderProducts(ArrayList<Product> products) {
-        theOrder.getOrderProducts().clear();
         theOrder.setOrderProducts(products);
     }
 
