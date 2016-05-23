@@ -3,22 +3,21 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_background">
+    android:background="@color/white"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="20dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:background="@color/white"
         android:paddingBottom="20dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="38dp"
+            android:layout_marginTop="40dp"
             android:text="@string/congratulation"
             android:textColor="@color/green_text"
             android:textSize="16sp" />
@@ -35,9 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="260dp"
+            android:layout_marginTop="250dp"
             android:gravity="center_horizontal"
             android:textSize="14sp"
             tools:text="親愛的%s，非常感謝您在萌萌屋消費！\n此次購物明細已寄至您的信箱，
@@ -48,11 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_below="@id/thank_you_tv"
-            android:layout_marginEnd="20dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/button_green_selector"
             android:text="@string/finish"
             android:textColor="@color/white"
