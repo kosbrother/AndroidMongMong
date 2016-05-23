@@ -23,6 +23,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
 import java.util.ArrayList;
 
@@ -81,11 +82,8 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
     }
 
     public void updatePricesText() {
-        totalGoodsPrice = 0;
-        for (int i = 0; i < shoppingCarProducts.size(); i++) {
-            totalGoodsPrice = totalGoodsPrice +
-                    shoppingCarProducts.get(i).getPrice() * shoppingCarProducts.get(i).getBuy_count();
-        }
+        totalGoodsPrice = CalculateUtil.calculateTotalGoodsPrice(shoppingCarProducts);
+
         String totalGoodsPriceString = "$" + totalGoodsPrice;
         totalGoodsPriceText.setText(totalGoodsPriceString);
 
