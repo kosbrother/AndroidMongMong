@@ -208,14 +208,31 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
     }
 
     @Override
-    public void onDeleteImageViewClick(int position) {
-        GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.PRODUCT_DELETE));
-        ShoppingCarPreference prefs = new ShoppingCarPreference();
-        prefs.removeShoppingItem(getContext(), position);
+    public void onDeleteImageViewClick(final int position) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder.setTitle("刪除商品");
+        alertDialogBuilder.setMessage("是否確定要刪除商品");
+        alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alertDialogBuilder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.PRODUCT_DELETE));
 
-        loadShoppingCart();
-        updateRecycleView();
-        updatePricesText();
+                ShoppingCarPreference prefs = new ShoppingCarPreference();
+                prefs.removeShoppingItem(getContext(), position);
+
+                loadShoppingCart();
+                updateRecycleView();
+                updatePricesText();
+                dialog.dismiss();
+            }
+        });
+        alertDialogBuilder.show();
     }
 
     @Override
