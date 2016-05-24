@@ -24,7 +24,6 @@
     </FrameLayout>
 
     <ScrollView
-        android:id="@+id/purchase3_sv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_above="@id/purchase3_bottom_fl"
@@ -47,11 +46,11 @@
                 android:textColor="@color/green_text"
                 android:textSize="16sp" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_buy_goods"
+            <LinearLayout
+                android:id="@+id/goods_container_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp" />
+                android:orientation="vertical" />
 
             <View
                 android:layout_width="match_parent"
