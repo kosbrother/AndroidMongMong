@@ -9,14 +9,6 @@
     android:paddingBottom="8dp">
 
     <ImageView
-        android:id="@+id/item_car_delete_iv"
-        android:layout_width="18dp"
-        android:layout_height="18dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginRight="10dp"
-        android:src="@mipmap/ic_delete" />
-
-    <ImageView
         android:id="@+id/item_car_ig"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -27,6 +19,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:gravity="center_vertical"
         android:orientation="vertical">
 
         <TextView
@@ -41,32 +34,19 @@
             android:textColor="@color/black_text"
             android:textSize="14sp" />
 
-        <TextView
-            android:id="@+id/item_car_price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/black_text"
-            android:textSize="14sp"
-            tools:text="$99" />
-
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/item_car_count_button"
+            <TextView
+                android:id="@+id/item_price_and_quantity_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
-                android:background="@drawable/edittext_selector"
-                android:paddingEnd="8dp"
-                android:paddingLeft="8dp"
-                android:paddingRight="8dp"
-                android:paddingStart="8dp"
-                android:textColor="@color/green_text"
-                android:textSize="12sp"
-                tools:text="數量 1" />
+                android:textColor="@color/black_text"
+                android:textSize="14sp"
+                tools:text="NT$ 199 X 1" />
 
             <TextView
                 android:id="@+id/subtotal_tv"

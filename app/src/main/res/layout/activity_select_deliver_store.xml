@@ -6,7 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -36,11 +35,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:text="依門市地址搜索"
                 android:textColor="@color/green_text"
-                android:textSize="16sp"
-                android:textStyle="bold" />
+                android:textSize="16sp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -108,13 +106,13 @@
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginTop="24dp"
-                android:background="@color/gray_background" />
+                android:layout_marginTop="16dp"
+                android:background="@color/bg_divider" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="16dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -122,8 +120,7 @@
                     android:layout_height="wrap_content"
                     android:text="請選擇門市"
                     android:textColor="@color/green_text"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textSize="16sp" />
 
                 <ProgressBar
                     android:id="@+id/my_progress_bar"
@@ -159,16 +156,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:layout_marginTop="24dp"
-                    android:background="@color/gray_background" />
+                    android:background="@color/bg_divider" />
 
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="24dp"
+                    android:layout_marginTop="16dp"
                     android:text="門市資訊"
                     android:textColor="@color/green_text"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textSize="16sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -193,7 +189,7 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
+                    android:layout_marginTop="8dp"
                     android:orientation="horizontal">
 
                     <TextView
@@ -215,7 +211,7 @@
                     android:name="com.google.android.gms.maps.SupportMapFragment"
                     android:layout_width="match_parent"
                     android:layout_height="250dp"
-                    android:layout_marginTop="24dp" />
+                    android:layout_marginTop="16dp" />
             </LinearLayout>
 
         </LinearLayout>
@@ -224,11 +220,15 @@
     <Button
         android:id="@+id/select_store_button"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
-        android:layout_margin="16dp"
+        android:layout_height="40dp"
+        android:layout_marginBottom="24dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/button_green_selector"
         android:text="送出門市資料"
         android:textColor="@color/white"
+        android:textSize="14sp"
         android:visibility="gone" />
 
 </LinearLayout>

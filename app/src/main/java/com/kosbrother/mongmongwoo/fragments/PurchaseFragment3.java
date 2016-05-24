@@ -5,21 +5,21 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.ShoppingCarPreference;
-import com.kosbrother.mongmongwoo.adpters.ShoppingCarListBuyGoodsAdapter;
 import com.kosbrother.mongmongwoo.api.OrderApi;
 import com.kosbrother.mongmongwoo.gcm.GcmPreferences;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
@@ -27,19 +27,22 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3Cl
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
 import java.util.ArrayList;
 
 public class PurchaseFragment3 extends Fragment {
 
-    RecyclerView recyclerView;
     TextView shippingPriceText;
     TextView totalPriceText;
     TextView shippingNameText;
     TextView shippingPhoneText;
     TextView shippingStoreNameText;
     TextView shippingStoreAddressText;
+    private TextView totalGoodsPriceTextView;
+    private TextView emailTextView;
     Button sendButton;
+    private LinearLayout goodsContainerLinearLayout;
 
     Order theOrder;
     ProgressBar progressBar;
@@ -51,7 +54,6 @@ public class PurchaseFragment3 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_purchase3, container, false);
         shippingPriceText = (TextView) view.findViewById(R.id.fragment3_shipping_price_text);
         totalPriceText = (TextView) view.findViewById(R.id.fragment3_total_price_text);
@@ -59,17 +61,11 @@ public class PurchaseFragment3 extends Fragment {
         shippingPhoneText = (TextView) view.findViewById(R.id.fragment3_shipping_phone_text);
         shippingStoreNameText = (TextView) view.findViewById(R.id.fragment3_shipping_store_name_text);
         shippingStoreAddressText = (TextView) view.findViewById(R.id.fragment3_shipping_store_address_text);
+        totalGoodsPriceTextView = (TextView) view.findViewById(R.id.fragment3_total_goods_price_text);
+        emailTextView = (TextView) view.findViewById(R.id.fragment3_email_text);
         sendButton = (Button) view.findViewById(R.id.fragment3_send_button);
         progressBar = (ProgressBar) view.findViewById(R.id.my_progress_bar);
-
-        recyclerView = (RecyclerView) view.findViewById(R.id.recycler_buy_goods);
-        recyclerView.setHasFixedSize(true);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(mLayoutManager);
-
-        ShoppingCarListBuyGoodsAdapter adapter = new ShoppingCarListBuyGoodsAdapter(new ArrayList<Product>());
-        recyclerView.setAdapter(adapter);
+        goodsContainerLinearLayout = (LinearLayout) view.findViewById(R.id.goods_container_ll);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -90,17 +86,58 @@ public class PurchaseFragment3 extends Fragment {
             ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
             theOrder = activity.getOrder();
 
-            shippingPriceText.setText(Integer.toString(theOrder.getShipPrice()));
-            totalPriceText.setText(Integer.toString(theOrder.getTotalPrice()));
-            shippingNameText.setText("收件人：" + theOrder.getShippingName());
+            int totalGoodsPrice = CalculateUtil.calculateTotalGoodsPrice(theOrder.getOrderProducts());
+            String totalGoodsPriceString = "" + totalGoodsPrice;
+            totalGoodsPriceTextView.setText(totalGoodsPriceString);
+
+            int shipPrice = theOrder.getShipPrice();
+            if (shipPrice == 0) {
+                shippingPriceText.setText("免運費");
+            } else {
+                String shippingPriceString = "" + shipPrice;
+                shippingPriceText.setText(shippingPriceString);
+            }
+
+            String totalPriceString = "NT$ " + theOrder.getTotalPrice();
+            totalPriceText.setText(totalPriceString);
+
+            shippingNameText.setText(theOrder.getShippingName());
             shippingPhoneText.setText(theOrder.getShippingPhone());
             shippingStoreNameText.setText(theOrder.getShippingStore().getName());
             shippingStoreAddressText.setText(theOrder.getShippingStore().getAddress());
+            emailTextView.setText(theOrder.getShippingEmail());
 
-            ShoppingCarListBuyGoodsAdapter adapter = new ShoppingCarListBuyGoodsAdapter(theOrder.getOrderProducts());
-            recyclerView.setAdapter(adapter);
+            addGoodsItemView(theOrder.getOrderProducts());
         } else {
             //相当于Fragment的onPause
+        }
+    }
+
+    private void addGoodsItemView(ArrayList<Product> orderProducts) {
+        goodsContainerLinearLayout.removeAllViews();
+
+        for (Product product : orderProducts) {
+            View itemView = LayoutInflater.from(getContext()).inflate(R.layout.item_checkout_review_goods, null);
+            TextView goodsNameTextView = (TextView) itemView.findViewById(R.id.item_car_name);
+            ImageView goodsImageView = (ImageView) itemView.findViewById(R.id.item_car_ig);
+            TextView priceAndQuantityTextView = (TextView) itemView.findViewById(R.id.item_price_and_quantity_tv);
+            TextView subTotalTextView = (TextView) itemView.findViewById(R.id.subtotal_tv);
+            goodsContainerLinearLayout.addView(itemView);
+
+            Glide.with(getContext())
+                    .load(product.getSelectedSpec().getPic())
+                    .centerCrop()
+                    .placeholder(R.mipmap.img_pre_load_square)
+                    .into(goodsImageView);
+
+            String nameString = product.getName();
+            goodsNameTextView.setText(nameString);
+
+            String countText = "NT$ " + product.getPrice() + " X " + product.getBuy_count();
+            priceAndQuantityTextView.setText(countText);
+
+            String subTotalText = "小計：NT$ " + (product.getBuy_count() * product.getPrice());
+            subTotalTextView.setText(subTotalText);
         }
     }
 

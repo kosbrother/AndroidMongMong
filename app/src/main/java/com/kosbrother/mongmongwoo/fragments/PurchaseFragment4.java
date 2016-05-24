@@ -3,6 +3,11 @@ package com.kosbrother.mongmongwoo.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.ForegroundColorSpan;
+import android.text.style.StyleSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,18 +52,32 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
     }
 
     public void setThankYouMessage() {
+        String shippingName = Settings.getShippingName();
         if (Settings.checkIsLogIn()) {
             thankYouMessage = String.format(thankYouMessage,
-                    Settings.getShippingName(),
+                    shippingName,
                     HINT_MESSAGE_LOGIN);
         } else {
             thankYouMessage = String.format(thankYouMessage,
-                    Settings.getShippingName(),
+                    shippingName,
                     HINT_MESSAGE_NOT_LOGIN);
         }
+        Spannable messageSpannable = new SpannableString(thankYouMessage);
+        StyleSpan boldSpan = new StyleSpan(android.graphics.Typeface.BOLD);
+        ForegroundColorSpan colorSpan = new ForegroundColorSpan(
+                ContextCompat.getColor(getContext(), R.color.green_text));
+
+        int spanStartIndex = thankYouMessage.indexOf(shippingName);
+        messageSpannable.setSpan(colorSpan,
+                spanStartIndex, spanStartIndex + shippingName.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        messageSpannable.setSpan(boldSpan,
+                spanStartIndex, spanStartIndex + shippingName.length(),
+                Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+
         assert getView() != null;
         TextView thankYouTextView = (TextView) getView().findViewById(R.id.thank_you_tv);
-        thankYouTextView.setText(thankYouMessage);
+        thankYouTextView.setText(messageSpannable);
     }
 
 }

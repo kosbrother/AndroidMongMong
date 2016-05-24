@@ -5,51 +5,46 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.ShoppingCarPreference;
-import com.kosbrother.mongmongwoo.adpters.ShoppingCarGoodsAdapter;
-import com.kosbrother.mongmongwoo.api.DensityApi;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
 import java.util.ArrayList;
 
-public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapter.ShoppingCartGoodsListener {
+public class PurchaseFragment1 extends Fragment {
 
     LinearLayout noItemLayout;
     LinearLayout noLoginLayout;
     Button fb_buy_button;
     Button no_name_buy_button;
 
-    RecyclerView newsRecylerView;
-    Button deliverButton;
     TextView totalGoodsPriceText;
     TextView shippingPriceText;
     TextView totalPriceText;
     Button confirmButton;
-    TextView no_ship_fee_text;
-    TextView ship_text;
+    private TextView freeShippingPriceRemainTextView;
+    private TextView checkoutPriceBottomTextView;
+    private LinearLayout goodsContainerLinearLayout;
 
     ArrayList<Product> shoppingCarProducts;
     int totalGoodsPrice;
-    int shippingPrice;
-    int shippingType = -1; // 0 means 超商取貨付款, 1 means 宅配
 
+    int shippingPrice = 60;
     private int tempCount;
 
     public static PurchaseFragment1 newInstance() {
@@ -69,11 +64,13 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
         View view = inflater.inflate(R.layout.fragment_purchase1, container, false);
         findView(view);
 
-        initVisibleLayout();
-        setRecyclerView();
+        boolean noItem = showNoItemLayoutIfNoItem();
+        if (noItem) {
+            return view;
+        }
+        addGoodsViewToLinearLayout();
         setFbBuyButton();
         setNoNameBuyButton();
-        setDeliverButton();
         setConfirmButton();
 
         updatePricesText();
@@ -87,25 +84,28 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
     }
 
     public void updatePricesText() {
-        totalGoodsPrice = 0;
-        for (int i = 0; i < shoppingCarProducts.size(); i++) {
-            totalGoodsPrice = totalGoodsPrice + shoppingCarProducts.get(i).getPrice() * shoppingCarProducts.get(i).getBuy_count();
-        }
-        totalGoodsPriceText.setText("$" + Integer.toString(totalGoodsPrice));
+        totalGoodsPrice = CalculateUtil.calculateTotalGoodsPrice(shoppingCarProducts);
 
-        if (shippingType != -1) {
-            if (totalGoodsPrice >= 490) {
-                shippingPrice = 0;
-                no_ship_fee_text.setVisibility(View.GONE);
-                ship_text.setText("滿490免運");
-            } else {
-                shippingPrice = 60;
-                no_ship_fee_text.setVisibility(View.VISIBLE);
-                ship_text.setText("運費");
-            }
+        String totalGoodsPriceString = "$" + totalGoodsPrice;
+        totalGoodsPriceText.setText(totalGoodsPriceString);
+
+        String shippingPriceString;
+        String freeShippingPriceRemainString;
+        if (totalGoodsPrice >= 490) {
+            shippingPrice = 0;
+            shippingPriceString = "免運費";
+            freeShippingPriceRemainString = "NT$ " + 0;
+        } else {
+            shippingPrice = 60;
+            shippingPriceString = "$" + shippingPrice;
+            freeShippingPriceRemainString = "NT$ " + (490 - totalGoodsPrice);
         }
-        shippingPriceText.setText("$" + Integer.toString(shippingPrice));
-        totalPriceText.setText("$" + Integer.toString(totalGoodsPrice + shippingPrice));
+        freeShippingPriceRemainTextView.setText(freeShippingPriceRemainString);
+        shippingPriceText.setText(shippingPriceString);
+
+        String totalPrice = "$" + (totalGoodsPrice + shippingPrice);
+        totalPriceText.setText(totalPrice);
+        checkoutPriceBottomTextView.setText(totalPrice);
     }
 
     public void updateLayoutByLoginStatus() {
@@ -118,13 +118,9 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
         }
     }
 
-    public void updateRecycleView() {
-        ViewGroup.LayoutParams params = newsRecylerView.getLayoutParams();
-        params.height = (int) DensityApi.convertDpToPixel(100 * shoppingCarProducts.size(), getActivity());
-        newsRecylerView.setLayoutParams(params);
-
-        ((ShoppingCarGoodsAdapter) newsRecylerView.getAdapter())
-                .updateProductList(shoppingCarProducts);
+    public void updateGoodsLinearLayout() {
+        goodsContainerLinearLayout.removeAllViews();
+        addGoodsViewToLinearLayout();
 
         if (shoppingCarProducts.size() == 0) {
             noItemLayout.setVisibility(View.VISIBLE);
@@ -134,8 +130,6 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
     }
 
     private void findView(View view) {
-        newsRecylerView = (RecyclerView) view.findViewById(R.id.recycler_buy_goods);
-        deliverButton = (Button) view.findViewById(R.id.deliver_button);
         totalGoodsPriceText = (TextView) view.findViewById(R.id.fragment1_goodsTotalPriceText);
         shippingPriceText = (TextView) view.findViewById(R.id.fragment1_shippingPriceText);
         totalPriceText = (TextView) view.findViewById(R.id.fragment1_totalPriceText);
@@ -144,31 +138,70 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
         noLoginLayout = (LinearLayout) view.findViewById(R.id.layout_buy_button);
         fb_buy_button = (Button) view.findViewById(R.id.fragment1_fb_buy_button);
         no_name_buy_button = (Button) view.findViewById(R.id.fragment1_no_name_buy_button);
-        no_ship_fee_text = (TextView) view.findViewById(R.id.no_ship_fee_text);
-        ship_text = (TextView) view.findViewById(R.id.ship_text);
+        freeShippingPriceRemainTextView = (TextView) view.findViewById(R.id.free_shipping_price_remain_tv);
+        checkoutPriceBottomTextView = (TextView) view.findViewById(R.id.checkout_price_bottom_tv);
+        goodsContainerLinearLayout = (LinearLayout) view.findViewById(R.id.goods_container_ll);
     }
 
-    private void initVisibleLayout() {
+    private boolean showNoItemLayoutIfNoItem() {
         ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
         if (shoppingCarProducts.size() == 0) {
             noItemLayout.setVisibility(View.VISIBLE);
             activity.setBreadCurmbsVisibility(View.INVISIBLE);
+            return true;
         } else {
             noItemLayout.setVisibility(View.GONE);
             activity.setBreadCurmbsVisibility(View.VISIBLE);
+            return false;
         }
     }
 
-    private void setRecyclerView() {
-        newsRecylerView.setHasFixedSize(true);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(getActivity());
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        newsRecylerView.setLayoutManager(mLayoutManager);
-        ViewGroup.LayoutParams params = newsRecylerView.getLayoutParams();
-        params.height = (int) DensityApi.convertDpToPixel(100 * shoppingCarProducts.size(), getActivity());
-        newsRecylerView.setLayoutParams(params);
-        ShoppingCarGoodsAdapter adapter = new ShoppingCarGoodsAdapter(getActivity(), shoppingCarProducts, this);
-        newsRecylerView.setAdapter(adapter);
+    private void addGoodsViewToLinearLayout() {
+        for (int i = 0; i < shoppingCarProducts.size(); i++) {
+            final Product product = shoppingCarProducts.get(i);
+            View itemView = LayoutInflater.from(getContext()).inflate(R.layout.item_buy_goods, null);
+            goodsContainerLinearLayout.addView(itemView);
+
+            TextView goodsNameTextView = (TextView) itemView.findViewById(R.id.item_car_name);
+            TextView priceTextView = (TextView) itemView.findViewById(R.id.item_car_price);
+            ImageView goodsImageView = (ImageView) itemView.findViewById(R.id.item_car_ig);
+            ImageView deleteImageView = (ImageView) itemView.findViewById(R.id.item_car_delete_iv);
+            Button selectCountButton = (Button) itemView.findViewById(R.id.item_car_count_button);
+            TextView subTotalTextView = (TextView) itemView.findViewById(R.id.subtotal_tv);
+            Glide.with(getContext())
+                    .load(product.getSelectedSpec().getPic())
+                    .centerCrop()
+                    .placeholder(R.mipmap.img_pre_load_square)
+                    .into(goodsImageView);
+
+            String nameString = product.getName();
+            goodsNameTextView.setText(nameString);
+
+            String priceString = "NT$ " + product.getPrice();
+            priceTextView.setText(priceString);
+
+            String countText = "數量：" + product.getBuy_count();
+            selectCountButton.setText(countText);
+
+            String subTotalText = "小計：NT$ " + (product.getBuy_count() * product.getPrice());
+            subTotalTextView.setText(subTotalText);
+
+            deleteImageView.setTag(i);
+            deleteImageView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onDeleteImageViewClick((int) v.getTag());
+                }
+            });
+
+            selectCountButton.setTag(i);
+            selectCountButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onSelectCountButtonClick((int) v.getTag(), product.getBuy_count());
+                }
+            });
+        }
     }
 
     private void setNoNameBuyButton() {
@@ -195,83 +228,55 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
         fb_buy_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // call shopping car login and turn page
-                if (shippingType != -1) {
-                    // save to activity order
-                    ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-                    activity.saveOrderProducts(shoppingCarProducts);
-                    activity.getOrder().setShipPrice(shippingPrice);
-                    activity.getOrder().setProductPrice(totalGoodsPrice);
-                    activity.getOrder().setTotalPrice(shippingPrice + totalGoodsPrice);
-                    activity.performClickFbButton();
+                GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.FACEBOOK_LOGIN));
 
-                    GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.FACEBOOK_LOGIN));
-                } else {
-                    Toast.makeText(getActivity(), "請選擇運送方式", Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-    }
-
-    private void setDeliverButton() {
-        final AlertDialog.Builder builderSingle = new AlertDialog.Builder(getActivity());
-        builderSingle.setTitle("選擇運送方式");
-
-        final ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-                getActivity(),
-                android.R.layout.select_dialog_singlechoice);
-        arrayAdapter.add("7-11超商取貨付款 $60");
-
-        builderSingle.setAdapter(
-                arrayAdapter,
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        deliverButton.setText(arrayAdapter.getItem(which));
-                        switch (which) {
-                            case 0:
-                                shippingPrice = 60;
-                                shippingType = 0;
-                                break;
-                        }
-                        updatePricesText();
-                    }
-                });
-
-        deliverButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                builderSingle.show();
+                ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+                saveOrders(activity);
+                activity.performClickFbButton();
             }
         });
     }
 
     private void startNextStep() {
-        if (shippingType != -1) {
-            // save to activity order
-            ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-            activity.saveOrderProducts(shoppingCarProducts);
-            activity.getOrder().setShipPrice(shippingPrice);
-            activity.getOrder().setProductPrice(totalGoodsPrice);
-            activity.getOrder().setTotalPrice(shippingPrice + totalGoodsPrice);
-            activity.startPurchaseFragment2();
-        } else {
-            Toast.makeText(getActivity(), "請選擇運送方式", Toast.LENGTH_SHORT).show();
-        }
+        ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+        saveOrders(activity);
+        activity.startPurchaseFragment2();
     }
 
-    @Override
-    public void onDeleteButtonClick(int position) {
-        GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.PRODUCT_DELETE));
-        ShoppingCarPreference prefs = new ShoppingCarPreference();
-        prefs.removeShoppingItem(getContext(), position);
-
-        loadShoppingCart();
-        updateRecycleView();
-        updatePricesText();
+    private void saveOrders(ShoppingCarActivity activity) {
+        activity.saveOrderProducts(shoppingCarProducts);
+        activity.getOrder().setShipPrice(shippingPrice);
+        activity.getOrder().setProductPrice(totalGoodsPrice);
+        activity.getOrder().setTotalPrice(shippingPrice + totalGoodsPrice);
     }
 
-    @Override
+    public void onDeleteImageViewClick(final int position) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder.setTitle("刪除商品");
+        alertDialogBuilder.setMessage("是否確定要刪除商品");
+        alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+        alertDialogBuilder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.PRODUCT_DELETE));
+
+                ShoppingCarPreference prefs = new ShoppingCarPreference();
+                prefs.removeShoppingItem(getContext(), position);
+
+                loadShoppingCart();
+                updateGoodsLinearLayout();
+                updatePricesText();
+                dialog.dismiss();
+            }
+        });
+        alertDialogBuilder.show();
+    }
+
     public void onSelectCountButtonClick(int position, int tempCount) {
         GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.NUMBER_CHANGE));
         this.tempCount = tempCount;
@@ -318,7 +323,6 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
 
         alertDialogBuilder.setTitle("選擇商品數量");
         alertDialogBuilder.setView(view);
-        // set positive button: Yes message
         alertDialogBuilder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 shoppingCarProducts.get(product_position).setBuy_count(tempCount);
@@ -331,14 +335,12 @@ public class PurchaseFragment1 extends Fragment implements ShoppingCarGoodsAdapt
                     pref.addShoppingItem(getContext(), shoppingCarProducts.get(i));
                 }
                 loadShoppingCart();
-                updateRecycleView();
+                updateGoodsLinearLayout();
                 updatePricesText();
             }
         });
-        // set negative button: No message
         alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                // cancel the alert box and put a Toast to the user
                 dialog.cancel();
             }
         });

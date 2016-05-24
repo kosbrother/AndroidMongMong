@@ -2,73 +2,63 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/gray_background"
+    android:background="@color/white"
     android:orientation="vertical">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="20dp">
+        android:scrollbarStyle="outsideOverlay">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:background="@color/white"
             android:descendantFocusability="beforeDescendants"
             android:focusableInTouchMode="true"
             android:orientation="vertical"
-            android:paddingBottom="24dp">
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:text="購物明細：超商取貨付款"
+                android:layout_marginBottom="16dp"
+                android:text="7-11門市取貨資訊"
+                android:textColor="@color/green_text"
                 android:textSize="16sp" />
 
             <Button
                 android:id="@+id/select_store_button"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
                 android:background="@drawable/button_green_selector"
-                android:text="選擇超商門市"
+                android:text="選擇門市"
                 android:textColor="@color/white"
                 android:textSize="14sp" />
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@color/gray_background" />
+                android:layout_marginBottom="16dp"
+                android:background="@color/bg_divider" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
                 android:text="收件人資訊"
-                android:textSize="18dp"
-                android:textStyle="bold" />
+                android:textColor="@color/green_text"
+                android:textSize="16sp" />
 
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -77,8 +67,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
-                    android:text="姓名"
-                    android:textSize="16sp" />
+                    android:text="姓        名"
+                    android:textColor="@color/black_text"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/shipping_name_edit_text"
@@ -86,8 +77,13 @@
                     android:layout_height="32dp"
                     android:background="@drawable/edittext_selector"
                     android:hint="取件人證件姓名"
+                    android:imeOptions="actionNext"
+                    android:inputType="text"
+                    android:maxLines="1"
+                    android:nextFocusDown="@+id/shipping_phone_edit_text"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
+                    android:textColor="@color/black_text"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -96,9 +92,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -107,8 +103,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
-                    android:text="電話"
-                    android:textSize="16sp" />
+                    android:text="電        話"
+                    android:textColor="@color/black_text"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/shipping_phone_edit_text"
@@ -116,9 +113,13 @@
                     android:layout_height="32dp"
                     android:background="@drawable/edittext_selector"
                     android:hint="取件人手機電話"
+                    android:imeOptions="actionNext"
                     android:inputType="phone"
+                    android:maxLines="1"
+                    android:nextFocusDown="@+id/shipping_email_edit_text"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
+                    android:textColor="@color/black_text"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -127,9 +128,8 @@
                 android:id="@+id/email_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
@@ -139,7 +139,8 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
                     android:text="電子信箱"
-                    android:textSize="16sp" />
+                    android:textColor="@color/black_text"
+                    android:textSize="14sp" />
 
                 <EditText
                     android:id="@+id/shipping_email_edit_text"
@@ -147,9 +148,12 @@
                     android:layout_height="32dp"
                     android:background="@drawable/edittext_selector"
                     android:hint="購物明細寄送信箱"
+                    android:imeOptions="actionDone"
                     android:inputType="textEmailAddress"
+                    android:maxLines="1"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
+                    android:textColor="@color/black_text"
                     android:textSize="14sp" />
 
             </LinearLayout>
@@ -157,19 +161,17 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginBottom="6dp"
                 android:layout_marginTop="8dp"
-                android:text="* 名稱跟電話必須正確才能取貨"
-                android:textSize="12sp" />
+                android:text="* 姓名和電話必須正確才能取貨"
+                android:textColor="@color/black_text"
+                android:textSize="9sp" />
 
             <Button
                 android:id="@+id/fragment2_next_button"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginBottom="24dp"
                 android:background="@drawable/button_green_selector"
                 android:text="下一步"
                 android:textColor="@color/white"
