@@ -100,7 +100,6 @@ public class ShoppingCarActivity extends FbLoginActivity {
             public void onPageSelected(int position) {
                 switch (position) {
                     case 0:
-                        menuItem.setTitle("上一步");
                         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
@@ -115,12 +114,10 @@ public class ShoppingCarActivity extends FbLoginActivity {
                         GAManager.sendEvent(new CheckoutStep1EnterEvent());
                         break;
                     case 1:
-                        menuItem.setTitle("上一步");
                         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
-                                GAManager.sendEvent(new CheckoutStep2ClickEvent(GALabel.PREVIOUS_STEP));
-                                viewPager.setCurrentItem(0, true);
+                                onStep2PressPreviousStep();
                                 return true;
                             }
                         });
@@ -131,12 +128,10 @@ public class ShoppingCarActivity extends FbLoginActivity {
                         GAManager.sendEvent(new CheckoutStep2EnterEvent());
                         break;
                     case 2:
-                        menuItem.setTitle("上一步");
                         menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                             @Override
                             public boolean onMenuItemClick(MenuItem item) {
-                                GAManager.sendEvent(new CheckoutStep3ClickEvent(GALabel.PREVIOUS_STEP));
-                                viewPager.setCurrentItem(1, true);
+                                onStep3PressPreviousStep();
                                 return true;
                             }
                         });
@@ -199,6 +194,21 @@ public class ShoppingCarActivity extends FbLoginActivity {
         return true;
     }
 
+    @Override
+    public void onBackPressed() {
+        switch (viewPager.getCurrentItem()) {
+            case 1:
+                onStep2PressPreviousStep();
+                break;
+            case 2:
+                onStep3PressPreviousStep();
+                break;
+            default:
+                super.onBackPressed();
+                break;
+        }
+    }
+
     public void startPurchaseFragment2() {
         ((PurchaseFragment1) getViewPagerAdapter().getItem(0)).updateLayoutByLoginStatus();
         ((PurchaseFragment2) getViewPagerAdapter().getItem(1)).setEmailLayoutByLoginStatus();
@@ -249,6 +259,16 @@ public class ShoppingCarActivity extends FbLoginActivity {
 
     private SampleFragmentPagerAdapter getViewPagerAdapter() {
         return (SampleFragmentPagerAdapter) viewPager.getAdapter();
+    }
+
+    private void onStep2PressPreviousStep() {
+        GAManager.sendEvent(new CheckoutStep2ClickEvent(GALabel.PREVIOUS_STEP));
+        viewPager.setCurrentItem(0, true);
+    }
+
+    private void onStep3PressPreviousStep() {
+        GAManager.sendEvent(new CheckoutStep3ClickEvent(GALabel.PREVIOUS_STEP));
+        viewPager.setCurrentItem(1, true);
     }
 
     public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
