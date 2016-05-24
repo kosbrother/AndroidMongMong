@@ -19,14 +19,13 @@ public class MyCollectManager {
     public static List<Product> getCollectedList(Context context) {
         SharedPreferences settings = context.getSharedPreferences(
                 PREF_MY_COLLECT, Context.MODE_PRIVATE);
-        List<Product> productList = new ArrayList<>();
-        if (settings.contains(PREF_STRING_COLLECT_LIST)) {
-            String myCollectedJsonString = settings.getString(PREF_STRING_COLLECT_LIST, "");
-            Type listType = new TypeToken<List<Product>>() {
-            }.getType();
-            productList = new Gson().fromJson(myCollectedJsonString, listType);
+        String myCollectedJsonString = settings.getString(PREF_STRING_COLLECT_LIST, "");
+        if (myCollectedJsonString.isEmpty()) {
+            return new ArrayList<>();
         }
-        return productList;
+        Type listType = new TypeToken<List<Product>>() {
+        }.getType();
+        return new Gson().fromJson(myCollectedJsonString, listType);
     }
 
     public static void addProductToCollectedList(Context context, Product theProduct) {
