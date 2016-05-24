@@ -211,15 +211,9 @@ public class ProductActivity extends AppCompatActivity {
         List<Product> collectList = MyCollectManager.getCollectedList(this);
         boolean collected = checkCollected(collectList);
 
-        ImageView collectImageView = (ImageView) findViewById(R.id.collect_iv);
+        ImageView collectImageView = getCollectImageView();
         collectImageView.setTag(collected);
         setCollectImageViewRes(collectImageView);
-        collectImageView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onCollectImageViewClick((ImageView) v);
-            }
-        });
     }
 
     private boolean checkCollected(List<Product> collectList) {
@@ -259,6 +253,7 @@ public class ProductActivity extends AppCompatActivity {
             setProductView();
             setViewPagerAndPageControl();
             setAddCartButton();
+            setCollectImageListener();
         } else {
             showAToast("無法取得資料,請檢查網路連線");
         }
@@ -317,6 +312,15 @@ public class ProductActivity extends AppCompatActivity {
         }
     }
 
+    private void setCollectImageListener() {
+        getCollectImageView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onCollectImageViewClick((ImageView) v);
+            }
+        });
+    }
+
     private void setCollectImageViewRes(ImageView collectImageView) {
         collectImageView.setImageResource((boolean) collectImageView.getTag() ?
                 R.mipmap.ic_favorite_pink_border : R.mipmap.ic_favorite_white_border);
@@ -331,6 +335,10 @@ public class ProductActivity extends AppCompatActivity {
 
     private int getProductId() {
         return getIntent().getIntExtra(EXTRA_INT_PRODUCT_ID, 0);
+    }
+
+    private ImageView getCollectImageView() {
+        return (ImageView) findViewById(R.id.collect_iv);
     }
 
     private void showAToast(String message) {
