@@ -6,8 +6,7 @@
     android:background="@color/white"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingBottom="4dp"
-    android:paddingTop="4dp">
+    android:paddingBottom="8dp">
 
     <ImageView
         android:id="@+id/item_car_delete_iv"

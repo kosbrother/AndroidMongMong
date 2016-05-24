@@ -141,7 +141,6 @@
     </LinearLayout>
 
     <ScrollView
-        android:id="@+id/purchase1_sv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/purchase1_bottom_ll"
@@ -165,11 +164,11 @@
                 android:textColor="@color/green_text"
                 android:textSize="16sp" />
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/recycler_buy_goods"
+            <LinearLayout
+                android:id="@+id/goods_container_ll"
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp" />
+                android:layout_height="wrap_content"/>
 
             <View
                 android:layout_width="match_parent"
