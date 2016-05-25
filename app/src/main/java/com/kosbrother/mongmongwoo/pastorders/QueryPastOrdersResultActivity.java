@@ -13,6 +13,9 @@ import android.widget.GridView;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.PastOrdersGridAdapter;
 import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 
 import java.util.ArrayList;
@@ -24,12 +27,13 @@ public class QueryPastOrdersResultActivity extends AppCompatActivity {
     public static final String EXTRA_STRING_EMAIL = "EXTRA_STRING_EMAIL";
     public static final String EXTRA_STRING_PHONE = "EXTRA_STRING_PHONE";
 
+    private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_query_past_orders_result);
+        setContentView(R.layout.loading);
         setToolbar();
-        initGridView();
         requestOrders();
     }
 
@@ -50,25 +54,6 @@ public class QueryPastOrdersResultActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
-    private void initGridView() {
-        final GridView ordersGridView = getOrdersGridView();
-        ordersGridView.setAdapter(new PastOrdersGridAdapter(this, new ArrayList<PastOrder>()));
-        ordersGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onOrderItemClick(position);
-            }
-        });
-    }
-
-    private void onOrderItemClick(int position) {
-        PastOrdersGridAdapter adapter = (PastOrdersGridAdapter) getOrdersGridView().getAdapter();
-
-        Intent intent = new Intent(QueryPastOrdersResultActivity.this, PastOrderDetailActivity.class);
-        intent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID, adapter.getItem(position).getOrder_id());
-        startActivity(intent);
-    }
-
     private void requestOrders() {
         Intent intent = getIntent();
         String email = intent.getStringExtra(EXTRA_STRING_EMAIL);
@@ -82,17 +67,42 @@ public class QueryPastOrdersResultActivity extends AppCompatActivity {
     }
 
     private void onGetOrdersResult(ArrayList<PastOrder> pastOrders) {
-        if (pastOrders == null) {
+        if (pastOrders == null || pastOrders.size() == 0) {
+            setContentView(R.layout.activity_query_past_orders_result_empty);
+            setToolbar();
+            initCsBottomSheet();
             return;
         }
-
-        GridView ordersGridView = getOrdersGridView();
-        PastOrdersGridAdapter adapter = (PastOrdersGridAdapter) ordersGridView.getAdapter();
-        adapter.updateOrders(pastOrders);
-        adapter.notifyDataSetChanged();
+        setContentView(R.layout.activity_query_past_orders_result);
+        setToolbar();
+        initCsBottomSheet();
+        setGridView(pastOrders);
     }
 
-    private GridView getOrdersGridView() {
-        return (GridView) findViewById(R.id.orders_gv);
+    private void initCsBottomSheet() {
+        csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
+    }
+
+    private void setGridView(final ArrayList<PastOrder> pastOrders) {
+        GridView ordersGridView = (GridView) findViewById(R.id.orders_gv);
+        assert ordersGridView != null;
+        ordersGridView.setAdapter(new PastOrdersGridAdapter(this, pastOrders));
+        ordersGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                onOrderItemClick(pastOrders.get(position).getOrder_id());
+            }
+        });
+    }
+
+    private void onOrderItemClick(int orderId) {
+        Intent intent = new Intent(this, PastOrderDetailActivity.class);
+        intent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID, orderId);
+        startActivity(intent);
+    }
+
+    public void onCustomerServiceFabClick(View view) {
+        csBottomSheetDialogFragment.show(getSupportFragmentManager(), "");
+        GAManager.sendEvent(new CustomerServiceClickEvent("FAB"));
     }
 }

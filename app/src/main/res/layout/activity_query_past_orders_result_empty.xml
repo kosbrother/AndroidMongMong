@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical">
+    tools:context=".pastorders.QueryPastOrdersResultActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -22,35 +22,34 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="@string/order_info"
-            android:textColor="@color/black_text"
+            android:layout_marginBottom="20dp"
+            android:layout_marginTop="40dp"
+            android:text="查無資料！"
+            android:textColor="@color/green_text"
             android:textSize="16sp" />
 
-        <GridView
-            android:id="@+id/orders_gv"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:columnWidth="8dp"
-            android:drawSelectorOnTop="true"
-            android:gravity="center"
-            android:horizontalSpacing="8dp"
-            android:listSelector="@drawable/grid_view_list_selector_corner3"
-            android:numColumns="1"
-            android:paddingBottom="88dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:scrollbars="none"
-            android:stretchMode="columnWidth"
-            android:verticalSpacing="8dp" />
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:src="@mipmap/img_search_empty" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="30dp"
+            android:gravity="center_horizontal"
+            android:text="請確認email及電話是否正確，\n或洽詢客服！"
+            android:textColor="@color/black_text"
+            android:textSize="14sp" />
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
@@ -62,4 +61,5 @@
         android:src="@mipmap/ic_customer_service"
         app:backgroundTint="#49B48B"
         app:pressedTranslationZ="12dp" />
+
 </android.support.design.widget.CoordinatorLayout>
