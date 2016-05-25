@@ -55,6 +55,9 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
     private MaxHeightGridView styleGrid;
     private ImageView styleImage;
     private TextView styleName;
+    private Button style_confirm_button;
+
+    private AlertDialog alertDialog;
 
 
     public static GoodsGridFragment newInstance(int category_id) {
@@ -74,7 +77,6 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_grid, container, false);
         mGridView = (GridView) view.findViewById(R.id.fragment_gridview);
         mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -91,7 +93,7 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
         mGridView.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                new NewsTask().execute();
+                new GetCategoryProductsTask().execute();
             }
         });
 
@@ -100,7 +102,7 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
             mGridView.setAdapter(goodsGridAdapter);
         } else {
             layoutProgress.setVisibility(View.VISIBLE);
-            new NewsTask().execute();
+            new GetCategoryProductsTask().execute();
         }
         return view;
     }
@@ -110,78 +112,53 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
         GAManager.sendEvent(new IndexGridCartAddToCartEvent(products.get(position).getName()));
         if (NetworkUtil.getConnectivityStatus(getContext()) != 0) {
             showStyleDialog(position);
-            new GetProductSpectsTask().execute(productId);
+            new GetProductSpecsTask().execute(productId);
         } else {
             Toast.makeText(getContext(), "無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
         }
     }
 
     public void showStyleDialog(final int position) {
+        if (alertDialog == null) {
+            View view = LayoutInflater.from(getContext())
+                    .inflate(R.layout.dialog_add_shopping_car_item, null, false);
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+            alertDialogBuilder.setView(view);
+            alertDialog = alertDialogBuilder.create();
 
-        View view = LayoutInflater.from(getContext())
-                .inflate(R.layout.dialog_add_shopping_car_item, null, false);
-        styleGrid = (MaxHeightGridView) view.findViewById(R.id.dialog_styles_gridview);
-        styleImage = (ImageView) view.findViewById(R.id.dialog_style_image);
-        styleName = (TextView) view.findViewById(R.id.dialog_style_name);
+            styleGrid = (MaxHeightGridView) view.findViewById(R.id.dialog_styles_gridview);
+            styleImage = (ImageView) view.findViewById(R.id.dialog_style_image);
+            styleName = (TextView) view.findViewById(R.id.dialog_style_name);
 
-        Button style_confirm_button = (Button) view.findViewById(R.id.dialog_style_confirm_button);
-
-        Button minusButton = (Button) view.findViewById(R.id.minus_button);
-        Button plusButton = (Button) view.findViewById(R.id.plus_button);
-        final TextView countText = (TextView) view.findViewById(R.id.count_text_view);
-        minusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (tempCount != 1) {
-                    tempCount = tempCount - 1;
+            Button minusButton = (Button) view.findViewById(R.id.minus_button);
+            Button plusButton = (Button) view.findViewById(R.id.plus_button);
+            final TextView countText = (TextView) view.findViewById(R.id.count_text_view);
+            minusButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (tempCount != 1) {
+                        tempCount = tempCount - 1;
+                        countText.setText(String.valueOf(tempCount));
+                    }
+                }
+            });
+            plusButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    tempCount = tempCount + 1;
                     countText.setText(String.valueOf(tempCount));
                 }
-            }
-        });
-        plusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                tempCount = tempCount + 1;
-                countText.setText(String.valueOf(tempCount));
-            }
-        });
-        tempCount = 1;
-        countText.setText(String.valueOf(tempCount));
+            });
+            tempCount = 1;
+            countText.setText(String.valueOf(tempCount));
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-        alertDialogBuilder.setView(view);
-
-        final AlertDialog alertDialog = alertDialogBuilder.create();
-        // show alert
+            style_confirm_button = (Button) view.findViewById(R.id.dialog_style_confirm_button);
+            style_confirm_button.setTag(position);
+        }
         alertDialog.show();
-
-        style_confirm_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Product theProduct = products.get(position);
-                GAManager.sendEvent(new ProductSelectDialogConfirmEvent(theProduct.getName()));
-
-                int selectedStylePosition = styleGridAdapter.getSelectedPosition();
-                Spec theSelectedSpec = specs.get(selectedStylePosition);
-                theProduct.setSelectedSpec(theSelectedSpec);
-                ShoppingCarPreference pref = new ShoppingCarPreference();
-                theProduct.setBuy_count(tempCount);
-                pref.addShoppingItem(getContext(), theProduct);
-                ((MainActivity) getActivity()).doIncrease();
-                alertDialog.cancel();
-
-                if (Settings.checkIsFirstAddShoppingCar()) {
-                    ((MainActivity) getActivity()).showShoppingCarInstruction();
-                    Settings.setKownShoppingCar();
-                }
-
-            }
-        });
-
     }
 
-    private class NewsTask extends AsyncTask {
-
+    private class GetCategoryProductsTask extends AsyncTask {
 
         @Override
         protected Object doInBackground(Object[] params) {
@@ -210,15 +187,7 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
         }
     }
 
-    public int getProductsSize() {
-        if (products != null) {
-            return products.size();
-        } else {
-            return 0;
-        }
-    }
-
-    private class GetProductSpectsTask extends AsyncTask<Integer, Void, ArrayList<Spec>> {
+    private class GetProductSpecsTask extends AsyncTask<Integer, Void, ArrayList<Spec>> {
 
         @Override
         protected ArrayList<Spec> doInBackground(Integer... params) {
@@ -254,6 +223,28 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
                         .into(styleImage);
                 styleName.setText(specs.get(0).getStyle());
 
+                style_confirm_button.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Product theProduct = products.get((int) v.getTag());
+                        GAManager.sendEvent(new ProductSelectDialogConfirmEvent(theProduct.getName()));
+
+                        int selectedStylePosition = styleGridAdapter.getSelectedPosition();
+                        Spec theSelectedSpec = specs.get(selectedStylePosition);
+                        theProduct.setSelectedSpec(theSelectedSpec);
+                        ShoppingCarPreference pref = new ShoppingCarPreference();
+                        theProduct.setBuy_count(tempCount);
+                        pref.addShoppingItem(getContext(), theProduct);
+                        ((MainActivity) getActivity()).doIncrease();
+                        alertDialog.cancel();
+
+                        if (Settings.checkIsFirstAddShoppingCar()) {
+                            ((MainActivity) getActivity()).showShoppingCarInstruction();
+                            Settings.setKownShoppingCar();
+                        }
+
+                    }
+                });
             } else {
                 Toast.makeText(getContext(), "無法取得資料,請檢查網路連線", Toast.LENGTH_SHORT).show();
             }
