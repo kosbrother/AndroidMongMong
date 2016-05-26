@@ -200,6 +200,7 @@ public class ProductActivity extends AppCompatActivity {
                 @Override
                 public void onConfirmButtonClick() {
                     invalidateOptionsMenu();
+                    showAToast("成功加入購物車");
                 }
             });
         }
