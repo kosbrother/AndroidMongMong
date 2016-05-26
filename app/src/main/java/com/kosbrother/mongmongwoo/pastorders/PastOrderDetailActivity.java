@@ -8,20 +8,28 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewStub;
 import android.widget.TextView;
 
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.PastOrderListAdapter;
 import com.kosbrother.mongmongwoo.api.OrderApi;
+import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPickUpOpenedEvent;
 import com.kosbrother.mongmongwoo.model.PastOrder;
+import com.kosbrother.mongmongwoo.model.PastOrderProduct;
+
+import java.util.ArrayList;
 
 public class PastOrderDetailActivity extends AppCompatActivity {
 
     public static final String EXTRA_INT_ORDER_ID = "EXTRA_INT_ORDER_ID";
     public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
+
+    private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
 
     private RecyclerView recyclerView;
     private TextView shippingPriceText;
@@ -38,10 +46,8 @@ public class PastOrderDetailActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_order_detail);
+        setContentView(R.layout.loading);
         setToolbar();
-        findViews();
-        setRecyclerView();
 
         Intent intent = getIntent();
 
@@ -62,6 +68,17 @@ public class PastOrderDetailActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(menuItem);
     }
 
+    private void onGetPostOrderResult(PastOrder pastOrder) {
+        setContentView(R.layout.activity_order_detail);
+        setToolbar();
+        initCsBottomSheet();
+        if (pastOrder != null) {
+            findViews();
+            setRecyclerView(pastOrder.getPastOrderProducts());
+            setPastOrderData(pastOrder);
+        }
+    }
+
     @SuppressWarnings("ConstantConditions")
     private void setToolbar() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -70,6 +87,10 @@ public class PastOrderDetailActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setTitle("訂單明細");
+    }
+
+    private void initCsBottomSheet() {
+        csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
     }
 
     private void findViews() {
@@ -85,44 +106,46 @@ public class PastOrderDetailActivity extends AppCompatActivity {
         noteViewStub = (ViewStub) findViewById(R.id.note_vs);
     }
 
-    private void setRecyclerView() {
+    private void setRecyclerView(ArrayList<PastOrderProduct> pastOrderProducts) {
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(PastOrderDetailActivity.this);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(mLayoutManager);
+        PastOrderListAdapter adapter = new PastOrderListAdapter(pastOrderProducts);
+        recyclerView.setAdapter(adapter);
     }
 
-    private void onGetPostOrderResult(PastOrder pastOrder) {
-        if (pastOrder != null) {
-            PastOrderListAdapter adapter = new PastOrderListAdapter(pastOrder.getPastOrderProducts());
-            recyclerView.setAdapter(adapter);
+    private void setPastOrderData(PastOrder pastOrder) {
+        String shipFeeString = Integer.toString(pastOrder.getShipFee());
+        shippingPriceText.setText(shipFeeString);
 
-            String shipFeeString = Integer.toString(pastOrder.getShipFee());
-            shippingPriceText.setText(shipFeeString);
+        String totalPriceString = Integer.toString(pastOrder.getTotal());
+        totalPriceText.setText(totalPriceString);
 
-            String totalPriceString = Integer.toString(pastOrder.getTotal());
-            totalPriceText.setText(totalPriceString);
+        String shipNameString = "收件人：" + pastOrder.getShipName();
+        shippingNameText.setText(shipNameString);
 
-            String shipNameString = "收件人：" + pastOrder.getShipName();
-            shippingNameText.setText(shipNameString);
+        String phoneString = "電話：" + pastOrder.getShipPhone();
+        shippingPhoneText.setText(phoneString);
 
-            String phoneString = "電話：" + pastOrder.getShipPhone();
-            shippingPhoneText.setText(phoneString);
+        String orderIdString = "訂單編號：" + pastOrder.getOrder_id();
+        order_id_text.setText(orderIdString);
 
-            String orderIdString = "訂單編號：" + pastOrder.getOrder_id();
-            order_id_text.setText(orderIdString);
+        shippingStoreNameText.setText(pastOrder.getShippingStore().getName());
+        order_status_text.setText(pastOrder.getStatus());
+        order_ship_way.setText("運送方式：超商取貨");
 
-            shippingStoreNameText.setText(pastOrder.getShippingStore().getName());
-            order_status_text.setText(pastOrder.getStatus());
-            order_ship_way.setText("運送方式：超商取貨");
-
-            String note = pastOrder.getNote();
-            if (note != null && !note.isEmpty()) {
-                TextView noteTextView = (TextView) noteViewStub.inflate();
-                String noteString = "備註：" + note;
-                noteTextView.setText(noteString);
-            }
+        String note = pastOrder.getNote();
+        if (note != null && !note.isEmpty()) {
+            TextView noteTextView = (TextView) noteViewStub.inflate();
+            String noteString = "備註：" + note;
+            noteTextView.setText(noteString);
         }
+    }
+
+    public void onCustomerServiceFabClick(View view) {
+        csBottomSheetDialogFragment.show(getSupportFragmentManager(), "");
+        GAManager.sendEvent(new CustomerServiceClickEvent("FAB"));
     }
 
     private class getPastOrderByOrderIdTask extends AsyncTask<Integer, Void, PastOrder> {
