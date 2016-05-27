@@ -2,14 +2,14 @@ package com.kosbrother.mongmongwoo.fragments;
 
 import android.app.Dialog;
 import android.support.design.widget.BottomSheetDialogFragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.CustomerServiceAdapter;
-import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
-import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 import com.kosbrother.mongmongwoo.utils.CustomerServiceUtil;
 
 public class CsBottomSheetDialogFragment extends BottomSheetDialogFragment {
@@ -36,5 +36,15 @@ public class CsBottomSheetDialogFragment extends BottomSheetDialogFragment {
                         CustomerServiceUtil.startToFbService(getContext());
                     }
                 }));
+    }
+
+    @Override
+    public void show(FragmentManager manager, String tag) {
+        if (!isAdded()) {
+            super.show(manager, tag);
+        }else {
+            FragmentTransaction ft = manager.beginTransaction();
+            ft.commit();
+        }
     }
 }

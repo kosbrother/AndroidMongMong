@@ -228,6 +228,11 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     private void onCollectImageViewClick(ImageView v) {
+        // prevent add null product
+        if (theProduct == null) {
+            return;
+        }
+
         boolean collected = (boolean) v.getTag();
 
         if (collected) {

@@ -41,7 +41,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
     String TAG = "ShoppingCarActivity";
 
     NonSwipeableViewPager viewPager;
-    MenuItem menuItem;
+    private static MenuItem menuItem;
     Order theOrder;
 
     //    LinearLayout loginLayout;
