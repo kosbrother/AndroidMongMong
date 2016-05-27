@@ -2,6 +2,7 @@ package com.kosbrother.mongmongwoo.mycollect;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.support.annotation.VisibleForTesting;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -9,6 +10,7 @@ import com.kosbrother.mongmongwoo.model.Product;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class MyCollectManager {
@@ -25,7 +27,10 @@ public class MyCollectManager {
         }
         Type listType = new TypeToken<List<Product>>() {
         }.getType();
-        return new Gson().fromJson(myCollectedJsonString, listType);
+        List<Product> productList = new Gson().fromJson(myCollectedJsonString, listType);
+        // To fix null product bug
+        removeAllNullFromListThenSave(context, productList);
+        return productList;
     }
 
     public static void addProductToCollectedList(Context context, Product theProduct) {
@@ -62,4 +67,20 @@ public class MyCollectManager {
         edit.putString(PREF_STRING_COLLECT_LIST, collectListString);
         edit.apply();
     }
+
+    private static void removeAllNullFromListThenSave(Context context, List<Product> productList) {
+        removeAllNullFromList(productList);
+        storeCollectList(context, productList);
+    }
+
+    @VisibleForTesting
+    static void removeAllNullFromList(List<Product> productList) {
+        for (Iterator it = productList.iterator(); it.hasNext(); ) {
+            Product product = (Product) it.next();
+            if (product == null) {
+                it.remove();
+            }
+        }
+    }
+
 }
