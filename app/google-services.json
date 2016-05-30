@@ -1,7 +1,9 @@
 {
   "project_info": {
     "project_number": "455561524983",
-    "project_id": "mongmongwoo-1277"
+    "firebase_url": "https://mongmongwoo-1277.firebaseio.com",
+    "project_id": "mongmongwoo-1277",
+    "storage_bucket": "mongmongwoo-1277.appspot.com"
   },
   "client": [
     {
@@ -19,6 +21,14 @@
             "package_name": "com.kosbrother.mongmongwoo",
             "certificate_hash": "26ABC059D0F8EA578847790C014C98C83F7430CD"
           }
+        },
+        {
+          "client_id": "455561524983-6smnlhkrj98r7joetvng62meoku93vpq.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "455561524983-6i8go1lg6ccbe80ugdf60s7svo3bl9g7.apps.googleusercontent.com",
+          "client_type": 3
         }
       ],
       "api_key": [
@@ -34,11 +44,16 @@
           }
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "455561524983-6smnlhkrj98r7joetvng62meoku93vpq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
-          "status": 1
+          "status": 2
         }
       }
     }
