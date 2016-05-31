@@ -7,12 +7,6 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-
-    <permission
-        android:name="com.kosbrother.mongmongwoo.permission.C2D_MESSAGE"
-        android:protectionLevel="signature" />
-    <uses-permission android:name="com.kosbrother.mongmongwoo.permission.C2D_MESSAGE" />
 
     <application
         android:name="com.kosbrother.mongmongwoo.AnalyticsApplication"
@@ -21,35 +15,17 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <receiver
-            android:name="com.google.android.gms.gcm.GcmReceiver"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
-                <!-- support pre-4.4 KitKat devices -->
-                <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-                <category android:name="com.kosbrother.mongmongwoo" />
-            </intent-filter>
-        </receiver>
 
-        <service
-            android:name="com.kosbrother.mongmongwoo.gcm.MyGcmListenerService"
-            android:exported="false">
+        <service android:name=".fcm.MyFcmListenerService">
             <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE" />
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
-        <service
-            android:name="com.kosbrother.mongmongwoo.gcm.MyInstanceIDListenerService"
-            android:exported="false">
+        <service android:name=".fcm.MyInstanceIDListenerService">
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID" />
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service
-            android:name="com.kosbrother.mongmongwoo.gcm.RegistrationIntentService"
-            android:exported="false" />
 
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
@@ -59,8 +35,7 @@
             android:value="@string/google_maps_key" />
         <meta-data
             android:name="io.fabric.ApiKey"
-            android:value="45dedb112a0726be1b7bb4914d4d1a965117cae3"
-            />
+            android:value="45dedb112a0726be1b7bb4914d4d1a965117cae3" />
 
         <activity
             android:name="com.kosbrother.mongmongwoo.MainActivity"
