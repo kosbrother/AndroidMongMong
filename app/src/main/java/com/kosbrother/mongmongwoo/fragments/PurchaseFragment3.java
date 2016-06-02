@@ -21,7 +21,7 @@ import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.api.OrderApi;
-import com.kosbrother.mongmongwoo.gcm.GcmPreferences;
+import com.kosbrother.mongmongwoo.fcm.FcmPreferences;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
@@ -164,7 +164,7 @@ public class PurchaseFragment3 extends Fragment {
                     theOrder.getShippingStore().getStore_id(),
                     theOrder.getOrderProducts(),
                     theOrder.getShippingEmail(),
-                    sharedPreferences.getString(GcmPreferences.TOKEN, ""));
+                    sharedPreferences.getString(FcmPreferences.TOKEN, ""));
             return !message.contains("Error");
         }
 
