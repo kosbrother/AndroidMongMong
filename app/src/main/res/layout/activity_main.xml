@@ -34,6 +34,7 @@
                     android:id="@+id/arrow_image"
                     android:layout_width="60dp"
                     android:layout_height="60dp"
+                    android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_marginTop="5dp"
                     android:src="@drawable/icon_arrow" />
@@ -42,8 +43,10 @@
                     android:id="@+id/info_text"
                     android:layout_width="100dp"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_below="@id/arrow_image"
+                    android:layout_marginEnd="5dp"
                     android:layout_marginRight="5dp"
                     android:layout_marginTop="5dp"
                     android:text="商品加入購物車後,可在此查看與結帳"
@@ -54,8 +57,10 @@
                     android:id="@+id/confirm_button"
                     android:layout_width="80dp"
                     android:layout_height="35dp"
+                    android:layout_alignParentEnd="true"
                     android:layout_alignParentRight="true"
                     android:layout_below="@id/info_text"
+                    android:layout_marginEnd="5dp"
                     android:layout_marginRight="5dp"
                     android:layout_marginTop="10dp"
                     android:background="@drawable/button_blue_selector"
@@ -82,7 +87,7 @@
         android:layout_margin="16dp"
         android:onClick="onCustomerServiceFabClick"
         android:src="@mipmap/ic_customer_service"
-        app:backgroundTint="#49B48B"
+        app:backgroundTint="@color/fab_blue"
         app:pressedTranslationZ="12dp" />
 
 </android.support.design.widget.CoordinatorLayout>
