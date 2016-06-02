@@ -56,9 +56,9 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
     private ImageView styleImage;
     private TextView styleName;
     private Button style_confirm_button;
+    private TextView countText;
 
     private AlertDialog alertDialog;
-
 
     public static GoodsGridFragment newInstance(int category_id) {
         Bundle args = new Bundle();
@@ -132,7 +132,7 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
 
             Button minusButton = (Button) view.findViewById(R.id.minus_button);
             Button plusButton = (Button) view.findViewById(R.id.plus_button);
-            final TextView countText = (TextView) view.findViewById(R.id.count_text_view);
+            countText = (TextView) view.findViewById(R.id.count_text_view);
             minusButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -155,6 +155,9 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
             style_confirm_button = (Button) view.findViewById(R.id.dialog_style_confirm_button);
             style_confirm_button.setTag(position);
         }
+        tempCount = 1;
+        countText.setText(String.valueOf(tempCount));
+        style_confirm_button.setTag(position);
         alertDialog.show();
     }
 
