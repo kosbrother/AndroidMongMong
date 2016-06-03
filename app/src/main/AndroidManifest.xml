@@ -38,16 +38,21 @@
             android:value="45dedb112a0726be1b7bb4914d4d1a965117cae3" />
 
         <activity
-            android:name="com.kosbrother.mongmongwoo.MainActivity"
-            android:label="@string/app_name"
-            android:launchMode="singleTask"
+            android:name=".launch.LaunchActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme.NoActionBar">
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name="com.kosbrother.mongmongwoo.MainActivity"
+            android:label="@string/app_name"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.NoActionBar" />
 
         <activity
             android:name="com.facebook.FacebookActivity"
