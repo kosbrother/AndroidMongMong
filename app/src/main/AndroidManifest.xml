@@ -129,6 +129,22 @@
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
+        <activity
+            android:name=".appindex.IndexActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Translucent">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="www.mmwooo.com"
+                    android:scheme="mmwooo" />
+            </intent-filter>
+        </activity>
+
         <!-- Used for Google Play Store Campaign Measurement-->
         <receiver
             android:name="com.google.android.gms.analytics.CampaignTrackingReceiver"

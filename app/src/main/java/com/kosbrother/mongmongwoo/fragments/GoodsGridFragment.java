@@ -38,13 +38,16 @@ import java.util.ArrayList;
 
 public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.GoodsGridAdapterListener {
 
+    private static final String ARG_CATEGORY_ID = "CATEGORY_ID";
+    private static final String ARG_CATEGORY_NAME = "ARG_CATEGORY_NAME";
+
     private GridView mGridView;
     private GoodsGridAdapter goodsGridAdapter;
     private RelativeLayout layoutProgress;
 
     private ArrayList<Product> products = new ArrayList<>();
-    private int category_id;
-    public static final String ARG_CATEGORY = "CATEGORY_ID";
+    private int categoryId;
+    private String categoryName;
 
     private int page = 1;
 
@@ -60,9 +63,10 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
 
     private AlertDialog alertDialog;
 
-    public static GoodsGridFragment newInstance(int category_id) {
+    public static GoodsGridFragment newInstance(int categoryId, String categoryName) {
         Bundle args = new Bundle();
-        args.putInt(ARG_CATEGORY, category_id);
+        args.putInt(ARG_CATEGORY_ID, categoryId);
+        args.putString(ARG_CATEGORY_NAME, categoryName);
         GoodsGridFragment fragment = new GoodsGridFragment();
         fragment.setArguments(args);
         return fragment;
@@ -71,7 +75,10 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        category_id = getArguments().getInt(ARG_CATEGORY);
+        if (getArguments() != null) {
+            categoryId = getArguments().getInt(ARG_CATEGORY_ID);
+            categoryName = getArguments().getString(ARG_CATEGORY_NAME);
+        }
     }
 
     @Override
@@ -85,6 +92,7 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
                 Product product = products.get(position);
                 Intent intent = new Intent(getContext(), ProductActivity.class);
                 intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
+                intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, categoryName);
                 getContext().startActivity(intent);
             }
         });
@@ -129,10 +137,11 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
             styleGrid = (MaxHeightGridView) view.findViewById(R.id.dialog_styles_gridview);
             styleImage = (ImageView) view.findViewById(R.id.dialog_style_image);
             styleName = (TextView) view.findViewById(R.id.dialog_style_name);
+            style_confirm_button = (Button) view.findViewById(R.id.dialog_style_confirm_button);
+            countText = (TextView) view.findViewById(R.id.count_text_view);
 
             Button minusButton = (Button) view.findViewById(R.id.minus_button);
             Button plusButton = (Button) view.findViewById(R.id.plus_button);
-            countText = (TextView) view.findViewById(R.id.count_text_view);
             minusButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -149,12 +158,8 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
                     countText.setText(String.valueOf(tempCount));
                 }
             });
-            tempCount = 1;
-            countText.setText(String.valueOf(tempCount));
-
-            style_confirm_button = (Button) view.findViewById(R.id.dialog_style_confirm_button);
-            style_confirm_button.setTag(position);
         }
+
         tempCount = 1;
         countText.setText(String.valueOf(tempCount));
         style_confirm_button.setTag(position);
@@ -165,7 +170,7 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
 
         @Override
         protected Object doInBackground(Object[] params) {
-            ArrayList<Product> feedBackProducts = ProductApi.getCategoryProducts(category_id, page);
+            ArrayList<Product> feedBackProducts = ProductApi.getCategoryProducts(categoryId, page);
             if (feedBackProducts != null && feedBackProducts.size() > 0) {
                 products.addAll(feedBackProducts);
                 page = page + 1;
