@@ -270,6 +270,6 @@
         android:layout_margin="16dp"
         android:onClick="onCustomerServiceFabClick"
         android:src="@mipmap/ic_customer_service"
-        app:backgroundTint="#49B48B"
+        app:backgroundTint="@color/fab_blue"
         app:pressedTranslationZ="12dp" />
 </android.support.design.widget.CoordinatorLayout>
