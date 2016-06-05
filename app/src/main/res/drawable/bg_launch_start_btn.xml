@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_focused="true" android:state_pressed="true">
+        <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+            <item>
+                <shape>
+                    <solid android:color="#ffffff" />
+                    <corners android:radius="5dp" />
+                </shape>
+            </item>
+            <item android:bottom="2dp" android:left="2dp" android:right="2dp" android:top="2dp">
+                <shape>
+                    <solid android:color="#ffb343" />
+                    <corners android:radius="3dp" />
+                </shape>
+            </item>
+            <item android:drawable="@drawable/gray_selector_5dp" />
+        </layer-list>
+    </item>
+
+    <item android:state_focused="false" android:state_pressed="true">
+        <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+            <item>
+                <shape>
+                    <solid android:color="#ffffff" />
+                    <corners android:radius="5dp" />
+                </shape>
+            </item>
+            <item android:bottom="2dp" android:left="2dp" android:right="2dp" android:top="2dp">
+                <shape>
+                    <solid android:color="#ffb343" />
+                    <corners android:radius="3dp" />
+                </shape>
+            </item>
+            <item android:drawable="@drawable/gray_selector_5dp" />
+        </layer-list>
+    </item>
+
+    <item>
+        <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+            <item>
+                <shape>
+                    <solid android:color="#ffffff" />
+                    <corners android:radius="5dp" />
+                </shape>
+            </item>
+            <item android:bottom="2dp" android:left="2dp" android:right="2dp" android:top="2dp">
+                <shape>
+                    <solid android:color="#ffb343" />
+                    <corners android:radius="3dp" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+</selector>
