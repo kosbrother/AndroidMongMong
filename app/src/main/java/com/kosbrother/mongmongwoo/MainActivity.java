@@ -31,6 +31,7 @@ import com.facebook.login.widget.LoginButton;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.kosbrother.mongmongwoo.api.UrlCenter;
 import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
@@ -73,6 +74,7 @@ public class MainActivity extends FbLoginActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        AppIndexManager.init(this);
         csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
 
         setToolbarAndDrawer();
@@ -82,6 +84,18 @@ public class MainActivity extends FbLoginActivity
         setViewPagerAndTabLayout();
         setLoginButton(loginButton);
         checkAndroidVersion();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AppIndexManager.startMainAppIndex();
+    }
+
+    @Override
+    protected void onStop() {
+        AppIndexManager.stopMainAppIndex();
+        super.onStop();
     }
 
     @Override
@@ -385,12 +399,12 @@ public class MainActivity extends FbLoginActivity
 
         public SampleFragmentPagerAdapter(FragmentManager fm) {
             super(fm);
-            addFragment(GoodsGridFragment.newInstance(10), " 所有商品 ");
-            addFragment(GoodsGridFragment.newInstance(11), " 新品上架 ");
-            addFragment(GoodsGridFragment.newInstance(12), " 文具用品 ");
-            addFragment(GoodsGridFragment.newInstance(13), " 日韓精選 ");
-            addFragment(GoodsGridFragment.newInstance(14), " 生日專區 ");
-            addFragment(GoodsGridFragment.newInstance(16), " 生活小物 ");
+            addFragment(GoodsGridFragment.newInstance(10, "所有商品"), " 所有商品 ");
+            addFragment(GoodsGridFragment.newInstance(11, "新品上架"), " 新品上架 ");
+            addFragment(GoodsGridFragment.newInstance(12, "文具用品"), " 文具用品 ");
+            addFragment(GoodsGridFragment.newInstance(13, "日韓精選"), " 日韓精選 ");
+            addFragment(GoodsGridFragment.newInstance(14, "生日專區"), " 生日專區 ");
+            addFragment(GoodsGridFragment.newInstance(16, "生活小物"), " 生活小物 ");
         }
 
         @Override

@@ -27,6 +27,7 @@ public class Product implements Serializable {
 
     private int buy_count;
     private Spec selectedSpec;
+    private String categoryName;
 
     public Product(int id, String name, int price, String cover) {
         this.id = id;
@@ -86,5 +87,13 @@ public class Product implements Serializable {
 
     public boolean isOnShelf() {
         return status.contains("on_shelf");
+    }
+
+    public void setCategoryName(String categoryName) {
+        this.categoryName = categoryName;
+    }
+
+    public String getCategoryName() {
+        return categoryName;
     }
 }

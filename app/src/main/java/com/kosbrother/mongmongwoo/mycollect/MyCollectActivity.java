@@ -51,9 +51,11 @@ public class MyCollectActivity extends AppCompatActivity implements MyCollectAda
     @Override
     public void onCollectItemClick(int position) {
         List<Product> productList = MyCollectManager.getCollectedList(this);
+        Product product = productList.get(position);
 
         Intent intent = new Intent(this, ProductActivity.class);
-        intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, productList.get(position).getId());
+        intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
+        intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, product.getCategoryName());
         intent.putExtra(ProductActivity.EXTRA_BOOLEAN_FROM_MY_COLLECT, true);
         startActivity(intent);
     }

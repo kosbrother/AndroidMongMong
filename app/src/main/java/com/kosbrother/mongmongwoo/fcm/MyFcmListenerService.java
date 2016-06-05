@@ -99,11 +99,15 @@ public class MyFcmListenerService extends FirebaseMessagingService {
     }
 
     private Product getProduct(Map data) {
-        return new Product(
+        Product product = new Product(
                 Integer.parseInt((String) data.get("item_id")),
                 (String) data.get("item_name"),
                 Integer.parseInt((String) data.get("item_price")),
                 "");
+        product.setCategoryName((String) data.get("category_name"));
+        // TODO: 2016/6/3 prepare for next version
+        String categoryId = (String) data.get("category_id");
+        return product;
     }
 
     private PendingIntent getPastOrderPendingIntent(Map data) {
@@ -122,7 +126,9 @@ public class MyFcmListenerService extends FirebaseMessagingService {
 
     private PendingIntent getProductPendingIntent(Map data) {
         Intent intent = new Intent(this, ProductActivity.class);
-        intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, getProduct(data).getId());
+        Product product = getProduct(data);
+        intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
+        intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, product.getCategoryName());
         intent.putExtra(ProductActivity.EXTRA_BOOLEAN_FROM_NOTIFICATION, true);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         return PendingIntent.getActivity(this, 0 /* Request code */, intent,

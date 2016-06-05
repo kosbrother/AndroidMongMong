@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.androidpagecontrol.PageControl;
 import com.kosbrother.mongmongwoo.adpters.ProductImageFragmentPagerAdapter;
 import com.kosbrother.mongmongwoo.api.ProductApi;
+import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPromoOpenedEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductAddToCartEvent;
@@ -40,6 +41,7 @@ import java.util.List;
 public class ProductActivity extends AppCompatActivity {
 
     public static final String EXTRA_INT_PRODUCT_ID = "EXTRA_INT_PRODUCT_ID";
+    public static final String EXTRA_STRING_CATEGORY_NAME = "EXTRA_STRING_CATEGORY_NAME";
     public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
     public static final String EXTRA_BOOLEAN_FROM_MY_COLLECT = "EXTRA_BOOLEAN_FROM_MY_COLLECT";
 
@@ -57,6 +59,7 @@ public class ProductActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
+        AppIndexManager.init(this);
         setToolbar();
         initSpotlightShoppingCartLayout();
         initSpotLightConfirmButton();
@@ -76,6 +79,17 @@ public class ProductActivity extends AppCompatActivity {
         LinearLayout no_net_layout = (LinearLayout) findViewById(R.id.no_net_layout);
         boolean noNetwork = NetworkUtil.getConnectivityStatus(this) == 0;
         no_net_layout.setVisibility(noNetwork ? View.VISIBLE : View.GONE);
+    }
+
+    @Override
+    protected void onStop() {
+        if (theProduct != null) {
+            String categoryName = theProduct.getCategoryName();
+            if (categoryName != null && !categoryName.isEmpty()) {
+                AppIndexManager.stopItemAppIndex(theProduct);
+            }
+        }
+        super.onStop();
     }
 
     @Override
@@ -255,6 +269,7 @@ public class ProductActivity extends AppCompatActivity {
     private void onGetProductResult() {
         if (theProduct != null) {
             GAManager.sendEvent(new ProductViewEvent(theProduct.getName()));
+            startAppIndexIfCategoryNameValid();
             sendPromoOpenedEventIfFromNotification();
             setProductView();
             setViewPagerAndPageControl();
@@ -262,6 +277,14 @@ public class ProductActivity extends AppCompatActivity {
             setCollectImageListener();
         } else {
             showAToast("無法取得資料,請檢查網路連線");
+        }
+    }
+
+    private void startAppIndexIfCategoryNameValid() {
+        String categoryName = getIntent().getStringExtra(EXTRA_STRING_CATEGORY_NAME);
+        if (categoryName != null && !categoryName.isEmpty()) {
+            theProduct.setCategoryName(categoryName);
+            AppIndexManager.startItemAppIndex(theProduct);
         }
     }
 
