@@ -28,6 +28,7 @@ public class Product implements Serializable {
     private int buy_count;
     private Spec selectedSpec;
     private String categoryName;
+    private int categoryId;
 
     public Product(int id, String name, int price, String cover) {
         this.id = id;
@@ -95,5 +96,13 @@ public class Product implements Serializable {
 
     public String getCategoryName() {
         return categoryName;
+    }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
     }
 }

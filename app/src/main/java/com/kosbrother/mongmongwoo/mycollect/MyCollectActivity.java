@@ -55,6 +55,7 @@ public class MyCollectActivity extends AppCompatActivity implements MyCollectAda
 
         Intent intent = new Intent(this, ProductActivity.class);
         intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
+        intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, product.getCategoryId());
         intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, product.getCategoryName());
         intent.putExtra(ProductActivity.EXTRA_BOOLEAN_FROM_MY_COLLECT, true);
         startActivity(intent);

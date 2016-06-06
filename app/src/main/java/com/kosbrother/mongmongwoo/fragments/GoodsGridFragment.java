@@ -92,6 +92,7 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
                 Product product = products.get(position);
                 Intent intent = new Intent(getContext(), ProductActivity.class);
                 intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
+                intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, categoryId);
                 intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, categoryName);
                 getContext().startActivity(intent);
             }

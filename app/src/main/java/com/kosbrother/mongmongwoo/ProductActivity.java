@@ -41,6 +41,7 @@ import java.util.List;
 public class ProductActivity extends AppCompatActivity {
 
     public static final String EXTRA_INT_PRODUCT_ID = "EXTRA_INT_PRODUCT_ID";
+    public static final String EXTRA_INT_CATEGORY_ID = "EXTRA_INT_CATEGORY_ID";
     public static final String EXTRA_STRING_CATEGORY_NAME = "EXTRA_STRING_CATEGORY_NAME";
     public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
     public static final String EXTRA_BOOLEAN_FROM_MY_COLLECT = "EXTRA_BOOLEAN_FROM_MY_COLLECT";
@@ -281,9 +282,10 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     private void startAppIndexIfCategoryNameValid() {
-        String categoryName = getIntent().getStringExtra(EXTRA_STRING_CATEGORY_NAME);
+        String categoryName = getCategoryName();
         if (categoryName != null && !categoryName.isEmpty()) {
             theProduct.setCategoryName(categoryName);
+            theProduct.setCategoryId(getCategoryId());
             AppIndexManager.startItemAppIndex(theProduct);
         }
     }
@@ -364,6 +366,14 @@ public class ProductActivity extends AppCompatActivity {
 
     private int getProductId() {
         return getIntent().getIntExtra(EXTRA_INT_PRODUCT_ID, 0);
+    }
+
+    private int getCategoryId() {
+        return getIntent().getIntExtra(EXTRA_INT_CATEGORY_ID, 0);
+    }
+
+    private String getCategoryName() {
+        return getIntent().getStringExtra(EXTRA_STRING_CATEGORY_NAME);
     }
 
     private ImageView getCollectImageView() {
