@@ -2,6 +2,8 @@ package com.kosbrother.mongmongwoo.api;
 
 import android.util.Log;
 
+import com.kosbrother.mongmongwoo.BuildConfig;
+
 import java.io.IOException;
 
 import okhttp3.FormBody;
@@ -25,7 +27,10 @@ public class GcmApi {
                 .build();
         try {
             Response response = client.newCall(request).execute();
-            Log.i(TAG, String.valueOf(response.isSuccessful()));
+            if (BuildConfig.DEBUG) {
+                Log.i(TAG, request.url().toString());
+                Log.i(TAG, response.body().string());
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

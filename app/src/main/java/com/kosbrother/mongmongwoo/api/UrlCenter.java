@@ -74,7 +74,7 @@ public class UrlCenter {
     }
 
     static String postRegistrationId() {
-        return HOST + API_V1 + "/device_registrations";
+        return HOST + API_V3 + "/device_registrations";
     }
 
     static String getAndroidVersion() {
