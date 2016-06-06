@@ -60,14 +60,14 @@ public class Settings {
 
     public static Store getSavedStore() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        int storeId = prefs.getInt(keyStoreId, -1);
-        if (storeId == -1) {
-            return null;
-        } else {
+        String storeName = prefs.getString(keyStoreName, "");
+        if (storeName.contains("7-11")) {
             String storeCode = prefs.getString(keyStoreCode, "");
-            String storeName = prefs.getString(keyStoreName, "");
             String storeAddress = prefs.getString(keyStoreAddress, "");
+            int storeId = prefs.getInt(keyStoreId, -1);
             return new Store(storeId, storeCode, storeName, storeAddress);
+        } else {
+            return null;
         }
     }
 

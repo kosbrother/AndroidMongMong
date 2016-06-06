@@ -247,8 +247,9 @@ public class ShoppingCarActivity extends FbLoginActivity {
 
     private void initOrder() {
         theOrder = new Order();
-        if (Settings.getSavedStore() != null) {
-            theOrder.setShippingStore(Settings.getSavedStore());
+        Store savedStore = Settings.getSavedStore();
+        if (savedStore != null) {
+            theOrder.setShippingStore(savedStore);
             theOrder.setShippingName(Settings.getShippingName());
             theOrder.setShippingPhone(Settings.getShippingPhone());
         }
