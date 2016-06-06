@@ -159,9 +159,9 @@ public class PurchaseFragment3 extends Fragment {
                     theOrder.getUid(), theOrder.getProductPrice(),
                     theOrder.getShipPrice(), theOrder.getTotalPrice(),
                     theOrder.getShippingName(), theOrder.getShippingPhone(),
-                    theOrder.getShippingStore().getStore_code(),
+                    theOrder.getShippingStore().getStoreCode(),
                     theOrder.getShippingStore().getName(),
-                    theOrder.getShippingStore().getStore_id(),
+                    theOrder.getShippingStore().getId(),
                     theOrder.getOrderProducts(),
                     theOrder.getShippingEmail(),
                     sharedPreferences.getString(FcmPreferences.TOKEN, ""));

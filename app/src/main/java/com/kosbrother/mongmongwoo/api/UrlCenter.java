@@ -10,6 +10,7 @@ public class UrlCenter {
     public static final String API = "/api";
     public static final String API_V1 = "/api/v1";
     public static final String API_V2 = "/api/v2";
+    public static final String API_V3 = "/api/v3";
 
     public static final String GOOGLE_PLAY_UPDATE =
             "https://play.google.com/store/apps/details?id=com.kosbrother.mongmongwoo&hl=zh_TW";
@@ -23,21 +24,21 @@ public class UrlCenter {
         return HOST + API_V1 + "/users";
     }
 
-    static String getTowns(int countryId) {
-        return HOST + API_V1
+    static String getCountryTowns(int countryId) {
+        return HOST + API_V3
                 + "/counties/" + countryId
                 + "/towns";
     }
 
-    static String getRoads(int county_id, int town_id) {
-        return HOST + API_V1
+    static String getCountryTownsRoads(int county_id, int town_id) {
+        return HOST + API_V3
                 + "/counties/" + county_id
                 + "/towns/" + town_id
                 + "/roads";
     }
 
-    static String getStores(int countyId, int townId, int road_id) {
-        return HOST + API_V1
+    static String getCountryTownRoadStores(int countyId, int townId, int road_id) {
+        return HOST + API_V3
                 + "/counties/" + countyId
                 + "/towns/" + townId
                 + "/roads/" + road_id

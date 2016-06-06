@@ -35,6 +35,7 @@ import com.kosbrother.mongmongwoo.model.Town;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SelectDeliverStoreActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -49,9 +50,9 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
     private int road_id;
     private Store selectedStore;
 
-    private ArrayList<County> counties;
-    private ArrayList<Town> townArray;
-    private ArrayList<Road> roadArray;
+    private List<County> counties;
+    private List<Town> townArray;
+    private List<Road> roadArray;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,7 +122,7 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         countySpinners.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                county_id = counties.get(position).getCounty_id();
+                county_id = counties.get(position).getId();
                 setLoadingLayout();
                 new TownsTask().execute();
             }
@@ -138,7 +139,7 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (townArray != null) {
-                    town_id = townArray.get(position).getTown_id();
+                    town_id = townArray.get(position).getId();
                     setLoadingLayout();
                     new RoadsTask().execute();
                 }
@@ -156,7 +157,7 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 if (roadArray != null) {
-                    road_id = roadArray.get(position).getRoad_id();
+                    road_id = roadArray.get(position).getId();
                     setLoadingLayout();
                     new StoresTask().execute();
                 }
@@ -214,15 +215,15 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         storeGridView.setLayoutParams(params);
     }
 
-    private class TownsTask extends AsyncTask<Void, Void, ArrayList<Town>> {
+    private class TownsTask extends AsyncTask<Void, Void, List<Town>> {
 
         @Override
-        protected ArrayList<Town> doInBackground(Void... params) {
+        protected List<Town> doInBackground(Void... params) {
             return StoreApi.getTowns(county_id);
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Town> result) {
+        protected void onPostExecute(List<Town> result) {
             townArray = result;
             if (townArray != null) {
                 ArrayAdapter<Town> townArrayAdapter = new ArrayAdapter<>(
@@ -237,15 +238,15 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         }
     }
 
-    private class RoadsTask extends AsyncTask<Void, Void, ArrayList<Road>> {
+    private class RoadsTask extends AsyncTask<Void, Void, List<Road>> {
 
         @Override
-        protected ArrayList<Road> doInBackground(Void... params) {
+        protected List<Road> doInBackground(Void... params) {
             return StoreApi.getRoads(county_id, town_id);
         }
 
         @Override
-        protected void onPostExecute(ArrayList<Road> result) {
+        protected void onPostExecute(List<Road> result) {
             roadArray = result;
             if (roadArray != null) {
                 ArrayAdapter<Road> roadArrayAdapter = new ArrayAdapter<>(
