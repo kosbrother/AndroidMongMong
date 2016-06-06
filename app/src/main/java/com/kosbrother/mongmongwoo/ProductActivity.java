@@ -66,7 +66,7 @@ public class ProductActivity extends AppCompatActivity {
         initSpotLightConfirmButton();
         initAddCartButton();
         initCollectImageView();
-        new GetProductTask().execute(getProductId());
+        new GetProductTask().execute(getCategoryId(), getProductId());
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -147,14 +147,14 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     public ArrayList<String> getImages() {
-        List<Photo> photos = theProduct.getImages();
+        List<Photo> photos = theProduct.getPhotos();
         int size = photos.size();
         ArrayList<String> images = new ArrayList<>();
         if (size == 0) {
-            images.add(theProduct.getCover());
+            images.add(theProduct.getCover().getUrl());
         } else {
             for (int i = 0; i < size; i++) {
-                images.add(photos.get(i).getImageUrl());
+                images.add(photos.get(i).getImage().getUrl());
             }
         }
         return images;
@@ -369,7 +369,8 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     private int getCategoryId() {
-        return getIntent().getIntExtra(EXTRA_INT_CATEGORY_ID, 0);
+        int categoryId = getIntent().getIntExtra(EXTRA_INT_CATEGORY_ID, 0);
+        return categoryId == 0 ? 10 : categoryId;
     }
 
     private String getCategoryName() {
@@ -392,7 +393,7 @@ public class ProductActivity extends AppCompatActivity {
 
         @Override
         protected Product doInBackground(Integer... params) {
-            return ProductApi.getProductById(params[0]);
+            return ProductApi.getProductById(params[0], params[1]);
         }
 
         @Override

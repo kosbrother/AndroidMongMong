@@ -1,10 +1,8 @@
 package com.kosbrother.mongmongwoo.model;
 
 import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Created by kolichung on 3/14/16.
- */
 public class Order {
 
     String uid;
@@ -12,7 +10,7 @@ public class Order {
     String shippingPhone;
     String shippingEmail;
     Store shippingStore;
-    ArrayList<Product> orderProducts;
+    List<Product> orderProducts;
     int shipPrice;
     int productPrice;
     int totalPrice;
@@ -44,7 +42,7 @@ public class Order {
         return shippingStore;
     }
 
-    public ArrayList<Product> getOrderProducts() {
+    public List<Product> getOrderProducts() {
         if (orderProducts == null) {
             orderProducts = new ArrayList<>();
         }
@@ -75,7 +73,7 @@ public class Order {
         this.shippingStore = shippingStore;
     }
 
-    public void setOrderProducts(ArrayList<Product> orderProducts) {
+    public void setOrderProducts(List<Product> orderProducts) {
         this.orderProducts = orderProducts;
     }
 

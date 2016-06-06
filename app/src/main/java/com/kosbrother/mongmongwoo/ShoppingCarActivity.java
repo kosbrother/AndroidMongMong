@@ -176,7 +176,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
         return theOrder;
     }
 
-    public void saveOrderProducts(ArrayList<Product> products) {
+    public void saveOrderProducts(List<Product> products) {
         theOrder.setOrderProducts(products);
     }
 

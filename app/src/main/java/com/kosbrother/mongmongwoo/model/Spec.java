@@ -10,16 +10,13 @@ public class Spec implements Serializable {
     private int id;
     @SerializedName("style")
     private String style;
-    @SerializedName("amount")
-    private int amount;
-    @SerializedName("pic")
-    private String pic;
+    @SerializedName("style_pic")
+    private StylePic stylePic;
 
-    public Spec(int id, String style, int amount, String pic) {
+    public Spec(int id, String style, StylePic stylePic) {
         this.id = id;
         this.style = style;
-        this.amount = amount;
-        this.pic = pic;
+        this.stylePic = stylePic;
     }
 
     public int getId() {
@@ -30,12 +27,20 @@ public class Spec implements Serializable {
         return style;
     }
 
-    public int getAmount() {
-        return amount;
+    public StylePic getStylePic() {
+        return stylePic;
     }
 
-    public String getPic() {
-        return pic;
-    }
+    public static class StylePic {
+        @SerializedName("url")
+        private String url;
 
+        public StylePic(String url) {
+            this.url = url;
+        }
+
+        public String getUrl() {
+            return url;
+        }
+    }
 }

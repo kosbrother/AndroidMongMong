@@ -24,7 +24,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class PurchaseFragment1 extends Fragment {
 
@@ -41,7 +41,7 @@ public class PurchaseFragment1 extends Fragment {
     private TextView checkoutPriceBottomTextView;
     private LinearLayout goodsContainerLinearLayout;
 
-    ArrayList<Product> shoppingCarProducts;
+    List<Product> shoppingCarProducts;
     int totalGoodsPrice;
 
     int shippingPrice = 60;
@@ -169,7 +169,7 @@ public class PurchaseFragment1 extends Fragment {
             Button selectCountButton = (Button) itemView.findViewById(R.id.item_car_count_button);
             TextView subTotalTextView = (TextView) itemView.findViewById(R.id.subtotal_tv);
             Glide.with(getContext())
-                    .load(product.getSelectedSpec().getPic())
+                    .load(product.getSelectedSpec().getStylePic().getUrl())
                     .centerCrop()
                     .placeholder(R.mipmap.img_pre_load_square)
                     .into(goodsImageView);

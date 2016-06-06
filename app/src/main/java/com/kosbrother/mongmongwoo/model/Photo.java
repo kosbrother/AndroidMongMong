@@ -1,22 +1,34 @@
 package com.kosbrother.mongmongwoo.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.kosbrother.mongmongwoo.api.Cover;
 
 import java.io.Serializable;
 
 public class Photo implements Serializable {
 
-    @SerializedName("image_url")
-    private String imageUrl;
-    @SerializedName("photo_intro")
-    private String photoIntro;
+    @SerializedName("image")
+    private Image image;
 
-    public String getImageUrl() {
-        return imageUrl;
+    public Image getImage() {
+        return image;
     }
 
-    public String getPhotoIntro() {
-        return photoIntro;
-    }
+    public class Image {
+        @SerializedName("url")
+        private String url;
+        @SerializedName("thumb")
+        private Thumb photoIntro;
+        @SerializedName("cover")
+        private Cover cover;
 
+        public String getUrl() {
+            return url;
+        }
+
+        private class Thumb {
+            @SerializedName("url")
+            private String url;
+        }
+    }
 }

@@ -29,7 +29,7 @@ import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class PurchaseFragment3 extends Fragment {
 
@@ -113,7 +113,7 @@ public class PurchaseFragment3 extends Fragment {
         }
     }
 
-    private void addGoodsItemView(ArrayList<Product> orderProducts) {
+    private void addGoodsItemView(List<Product> orderProducts) {
         goodsContainerLinearLayout.removeAllViews();
 
         for (Product product : orderProducts) {
@@ -125,7 +125,7 @@ public class PurchaseFragment3 extends Fragment {
             goodsContainerLinearLayout.addView(itemView);
 
             Glide.with(getContext())
-                    .load(product.getSelectedSpec().getPic())
+                    .load(product.getSelectedSpec().getStylePic().getUrl())
                     .centerCrop()
                     .placeholder(R.mipmap.img_pre_load_square)
                     .into(goodsImageView);

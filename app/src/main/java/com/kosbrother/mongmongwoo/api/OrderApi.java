@@ -18,6 +18,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -176,8 +177,7 @@ public class OrderApi {
         return null;
     }
 
-    public static String httpPostOrder(String uid, int items_price, int ship_fee, int total, String ship_name, String ship_phone, String ship_store_code, String ship_store_name, int ship_store_id, ArrayList<Product> products, String ship_email, String gcmToken) {
-
+    public static String httpPostOrder(String uid, int items_price, int ship_fee, int total, String ship_name, String ship_phone, String ship_store_code, String ship_store_name, int ship_store_id, List<Product> products, String ship_email, String gcmToken) {
         JSONObject jsonObject = new JSONObject();
         try {
             jsonObject.put("uid", uid);

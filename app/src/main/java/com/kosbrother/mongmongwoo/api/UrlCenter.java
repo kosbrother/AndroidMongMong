@@ -45,20 +45,16 @@ public class UrlCenter {
                 + "/stores";
     }
 
-    static String getProductById(int productId) {
-        return HOST + API_V1
+    static String getProductById(int categoryId, int productId) {
+        return HOST + API_V3
+                + "/categories/" + categoryId
                 + "/items/" + productId;
     }
 
-    static String getProductSpec(int productId) {
-        return HOST + API_V1
-                + "/items/" + productId
-                + "/spec_info";
-    }
-
     static String getCategoryProducts(int categoryId, int page) {
-        return HOST + API_V1
+        return HOST + API_V3
                 + "/categories/" + categoryId
+                + "/items"
                 + "?page=" + page;
     }
 

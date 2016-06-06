@@ -24,9 +24,9 @@ import com.kosbrother.mongmongwoo.model.Spec;
 public class ProductStyleDialog {
 
     private final Context context;
-    private final Product product;
+    private Product product;
 
-    private AlertDialog alertDialog;
+    private final AlertDialog alertDialog;
     private final ImageView styleImage;
     private final TextView styleName;
     private final GridView styleGridView;
@@ -36,7 +36,7 @@ public class ProductStyleDialog {
 
     @SuppressLint("InflateParams")
     public ProductStyleDialog(Context context,
-                              final Product product,
+                              Product product,
                               final ProductStyleDialogListener listener) {
         this.context = context;
         this.product = product;
@@ -48,28 +48,31 @@ public class ProductStyleDialog {
         styleGridView = (GridView) view.findViewById(R.id.dialog_styles_gridview);
         countTextView = (TextView) view.findViewById(R.id.count_text_view);
 
-        initAlertDialog(view);
-        initStyleName();
-        initStyleImage();
-        initGridView();
-        initCountTextView();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
+        alertDialogBuilder.setView(view);
+        alertDialog = alertDialogBuilder.create();
+
         initMinusButton(view);
         initPlusButton(view);
         initConfirmButton(view, listener);
+        initGridView();
     }
 
     public void showWithInitState() {
         initStyleName();
         initStyleImage();
-        initGridAdapter();
         initCountTextView();
+        updateSelectedStyle(0);
         alertDialog.show();
     }
 
-    private void initAlertDialog(View view) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
-        alertDialogBuilder.setView(view);
-        alertDialog = alertDialogBuilder.create();
+    public void showWithInitState(Product product) {
+        this.product = product;
+        initStyleName();
+        initStyleImage();
+        initCountTextView();
+        initGridView();
+        alertDialog.show();
     }
 
     private void initStyleName() {
@@ -77,7 +80,7 @@ public class ProductStyleDialog {
     }
 
     private void initStyleImage() {
-        updateStyleImage(product.getSpecs().get(0).getPic());
+        updateStyleImage(product.getSpecs().get(0).getStylePic().getUrl());
     }
 
     private void initGridView() {
@@ -86,11 +89,11 @@ public class ProductStyleDialog {
         styleGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                updateGridAdapter(position);
+                updateSelectedStyle(position);
 
                 Spec spec = product.getSpecs().get(position);
                 updateStyleName(spec.getStyle());
-                updateStyleImage(spec.getPic());
+                updateStyleImage(spec.getStylePic().getUrl());
             }
         });
     }
@@ -125,24 +128,20 @@ public class ProductStyleDialog {
     }
 
     private void initConfirmButton(View view, final ProductStyleDialogListener listener) {
-        Button style_confirm_button = (Button) view.findViewById(R.id.dialog_style_confirm_button);
-        style_confirm_button.setOnClickListener(new View.OnClickListener() {
+        Button styleConfirmButton = (Button) view.findViewById(R.id.dialog_style_confirm_button);
+        styleConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 GAManager.sendEvent(new ProductSelectDialogConfirmEvent(product.getName()));
                 updateConfirmProduct();
                 saveProduct();
                 checkFirstAddAndNotifyListener(listener);
-                alertDialog.cancel();
+                alertDialog.dismiss();
             }
         });
     }
 
-    private void initGridAdapter() {
-        updateGridAdapter(0);
-    }
-
-    private void updateGridAdapter(int position) {
+    private void updateSelectedStyle(int position) {
         StyleGridAdapter adapter = (StyleGridAdapter) styleGridView.getAdapter();
         adapter.updateSelectedPosition(position);
     }
