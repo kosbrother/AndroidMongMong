@@ -21,7 +21,7 @@ public class UrlCenter {
     public static final String CUSTOMER_SERVICE_FB = "https://www.facebook.com/kingofgametw/";
 
     static String postUser() {
-        return HOST + API_V1 + "/users";
+        return HOST + API_V3 + "/users";
     }
 
     static String getCountryTowns(int countryId) {

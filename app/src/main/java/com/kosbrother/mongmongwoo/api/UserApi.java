@@ -2,6 +2,8 @@ package com.kosbrother.mongmongwoo.api;
 
 import android.util.Log;
 
+import com.kosbrother.mongmongwoo.BuildConfig;
+
 import java.io.IOException;
 
 import okhttp3.MediaType;
@@ -10,10 +12,6 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
-
-/**
- * Created by kolichung on 3/9/16.
- */
 public class UserApi {
 
     public static final String TAG = "USER_API";
@@ -28,7 +26,10 @@ public class UserApi {
                 .build();
         try {
             Response response = client.newCall(request).execute();
-            Log.i(TAG, response.body().string());
+            if (BuildConfig.DEBUG) {
+                Log.d(TAG, request.url().toString());
+                Log.d(TAG, response.body().string());
+            }
             return response.isSuccessful();
         } catch (IOException e) {
             e.printStackTrace();

@@ -50,7 +50,7 @@ public class SettingActivity extends FbLoginActivity {
 
         user = Settings.getSavedUser();
 
-        nickNameEditText.setText(user.getUser_name());
+        nickNameEditText.setText(user.getUserName());
         genderEditText.setText(user.getGender());
 
         shipNameEditText.setText(user.getReal_name());

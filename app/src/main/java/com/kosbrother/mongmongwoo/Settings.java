@@ -40,7 +40,7 @@ public class Settings {
     public static void saveUserFBData(User user) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(keyUserName, user.getUser_name());
+        editor.putString(keyUserName, user.getUserName());
         editor.putString(keyUserFBUid, user.getFb_uid());
         editor.putString(keyUserGender, user.getGender());
         editor.putString(keyUserFBPic, user.getFb_pic());

@@ -124,7 +124,7 @@ public class MainActivity extends FbLoginActivity
         setNoNetLayout();
 
         User user = Settings.getSavedUser();
-        String userName = user.getUser_name();
+        String userName = user.getUserName();
 
         if (userName != null && !userName.isEmpty()) {
             setUserLoinView(userName, user.getFb_pic());

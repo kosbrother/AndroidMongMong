@@ -75,7 +75,7 @@ public class FacebookManager {
         User user = FacebookUtil.getUser(object);
         Settings.saveUserFBData(user);
         new PostUserTask(user.getJsonString()).execute();
-        listener.onFbRequestCompleted(user.getFb_uid(), user.getUser_name(), user.getFb_pic());
+        listener.onFbRequestCompleted(user.getFb_uid(), user.getUserName(), user.getFb_pic());
     }
 
     private class PostUserTask extends AsyncTask<String, Void, Boolean> {

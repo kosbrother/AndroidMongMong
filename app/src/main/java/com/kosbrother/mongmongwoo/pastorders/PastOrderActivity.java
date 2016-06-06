@@ -64,7 +64,7 @@ public class PastOrderActivity extends FbLoginActivity {
                 .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                 .placeholder(R.drawable.icon_head)
                 .into(userImage);
-        userNameText.setText(user.getUser_name());
+        userNameText.setText(user.getUserName());
 
         fb = (Button) findViewById(R.id.fb);
         loginButton = (LoginButton) findViewById(R.id.login_button);

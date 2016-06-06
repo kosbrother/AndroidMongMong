@@ -32,7 +32,7 @@ public class FacebookUtilTest {
         User actual = FacebookUtil.getUser(fbJsonObject);
 
         Assert.assertEquals(TEST_ID, actual.getFb_uid());
-        Assert.assertEquals(TEST_NAME, actual.getUser_name());
+        Assert.assertEquals(TEST_NAME, actual.getUserName());
         Assert.assertEquals(TEST_GENDER, actual.getGender());
         Assert.assertEquals(String.format(PIC_URL_FORMAT, TEST_ID), actual.getFb_pic());
         Assert.assertEquals(TEST_EMAIL, actual.getEmail());
@@ -45,7 +45,7 @@ public class FacebookUtilTest {
         User actual = FacebookUtil.getUser(fbJsonObject);
 
         Assert.assertEquals(TEST_ID, actual.getFb_uid());
-        Assert.assertEquals(TEST_NAME, actual.getUser_name());
+        Assert.assertEquals(TEST_NAME, actual.getUserName());
         Assert.assertEquals(TEST_GENDER, actual.getGender());
         Assert.assertEquals(String.format(PIC_URL_FORMAT, TEST_ID), actual.getFb_pic());
         Assert.assertEquals(TEST_FAKE_EMAIL, actual.getEmail());
