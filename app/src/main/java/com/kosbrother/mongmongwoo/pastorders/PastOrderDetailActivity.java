@@ -20,9 +20,9 @@ import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPickUpOpenedEvent;
 import com.kosbrother.mongmongwoo.model.PastOrder;
-import com.kosbrother.mongmongwoo.model.PastOrderProduct;
+import com.kosbrother.mongmongwoo.model.PostProduct;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class PastOrderDetailActivity extends AppCompatActivity {
 
@@ -74,7 +74,7 @@ public class PastOrderDetailActivity extends AppCompatActivity {
         initCsBottomSheet();
         if (pastOrder != null) {
             findViews();
-            setRecyclerView(pastOrder.getPastOrderProducts());
+            setRecyclerView(pastOrder.getItems());
             setPastOrderData(pastOrder);
         }
     }
@@ -106,7 +106,7 @@ public class PastOrderDetailActivity extends AppCompatActivity {
         noteViewStub = (ViewStub) findViewById(R.id.note_vs);
     }
 
-    private void setRecyclerView(ArrayList<PastOrderProduct> pastOrderProducts) {
+    private void setRecyclerView(List<PostProduct> pastOrderProducts) {
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(PastOrderDetailActivity.this);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -122,16 +122,16 @@ public class PastOrderDetailActivity extends AppCompatActivity {
         String totalPriceString = Integer.toString(pastOrder.getTotal());
         totalPriceText.setText(totalPriceString);
 
-        String shipNameString = "收件人：" + pastOrder.getShipName();
+        String shipNameString = "收件人：" + pastOrder.getInfo().getShipName();
         shippingNameText.setText(shipNameString);
 
-        String phoneString = "電話：" + pastOrder.getShipPhone();
+        String phoneString = "電話：" + pastOrder.getInfo().getShipPhone();
         shippingPhoneText.setText(phoneString);
 
-        String orderIdString = "訂單編號：" + pastOrder.getOrder_id();
+        String orderIdString = "訂單編號：" + pastOrder.getId();
         order_id_text.setText(orderIdString);
 
-        shippingStoreNameText.setText(pastOrder.getShippingStore().getName());
+        shippingStoreNameText.setText(pastOrder.getInfo().getShipStoreName());
         order_status_text.setText(pastOrder.getStatus());
         order_ship_way.setText("運送方式：超商取貨");
 

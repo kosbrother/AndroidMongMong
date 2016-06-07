@@ -21,9 +21,11 @@ import com.kosbrother.mongmongwoo.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
+import com.kosbrother.mongmongwoo.model.PostProduct;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PurchaseFragment1 extends Fragment {
@@ -244,10 +246,20 @@ public class PurchaseFragment1 extends Fragment {
     }
 
     private void saveOrders(ShoppingCarActivity activity) {
-        activity.saveOrderProducts(shoppingCarProducts);
-        activity.getOrder().setShipPrice(shippingPrice);
-        activity.getOrder().setProductPrice(totalGoodsPrice);
-        activity.getOrder().setTotalPrice(shippingPrice + totalGoodsPrice);
+        List<PostProduct> postProductList = new ArrayList<>();
+        for (Product product : shoppingCarProducts) {
+            PostProduct postProduct = new PostProduct();
+            postProduct.setName(product.getName());
+            postProduct.setProductId(product.getId());
+            postProduct.setSpecId(product.getSelectedSpec().getId());
+            postProduct.setStyle(product.getSelectedSpec().getStyle());
+            postProduct.setQuantity(product.getBuy_count());
+            postProduct.setPrice(product.getPrice());
+            postProductList.add(postProduct);
+        }
+        activity.savePostProducts(postProductList);
+        activity.saveProducts(shoppingCarProducts);
+        activity.savePrice(totalGoodsPrice, shippingPrice);
     }
 
     public void onDeleteImageViewClick(final int position) {

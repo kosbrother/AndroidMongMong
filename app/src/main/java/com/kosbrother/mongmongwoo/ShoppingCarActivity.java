@@ -28,6 +28,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3En
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep4EnterEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Order;
+import com.kosbrother.mongmongwoo.model.PostProduct;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Store;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
@@ -55,6 +56,8 @@ public class ShoppingCarActivity extends FbLoginActivity {
     LoginButton loginButton;
 
     LinearLayout no_net_layout;
+
+    private List<Product> products;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,8 +167,11 @@ public class ShoppingCarActivity extends FbLoginActivity {
         breadCrumbsLayout.setVisibility(view_param);
     }
 
-    public void setSelectedStore(Store store) {
-        theOrder.setShippingStore(store);
+    public void saveStoreInfo(Store store) {
+        theOrder.setStore(store);
+        theOrder.setShipStoreCode(store.getStoreCode());
+        theOrder.setShipStoreId(store.getId());
+        theOrder.setShipStoreName(store.getName());
     }
 
     public void performClickFbButton() {
@@ -176,8 +182,24 @@ public class ShoppingCarActivity extends FbLoginActivity {
         return theOrder;
     }
 
-    public void saveOrderProducts(List<Product> products) {
-        theOrder.setOrderProducts(products);
+    public void saveProducts(List<Product> shoppingCarProducts) {
+        products = shoppingCarProducts;
+    }
+
+    public void savePostProducts(List<PostProduct> products) {
+        theOrder.setProducts(products);
+    }
+
+    public void savePrice(int totalGoodsPrice, int shippingPrice) {
+        theOrder.setItemsPrice(totalGoodsPrice);
+        theOrder.setShipFee(shippingPrice);
+        theOrder.setTotal(shippingPrice + totalGoodsPrice);
+    }
+
+    public void saveShippingInfo(String shipName, String shipPhone, String shipEmail) {
+        theOrder.setShipName(shipName);
+        theOrder.setShipPhone(shipPhone);
+        theOrder.setShipEmail(shipEmail);
     }
 
     @Override
@@ -247,15 +269,12 @@ public class ShoppingCarActivity extends FbLoginActivity {
 
     private void initOrder() {
         theOrder = new Order();
-        Store savedStore = Settings.getSavedStore();
-        if (savedStore != null) {
-            theOrder.setShippingStore(savedStore);
-            theOrder.setShippingName(Settings.getShippingName());
-            theOrder.setShippingPhone(Settings.getShippingPhone());
+        if (Settings.getSavedStore() != null) {
+            saveStoreInfo(Settings.getSavedStore());
         }
-        if (Settings.checkIsLogIn()) {
-            theOrder.setUid(Settings.getSavedUser().getFb_uid());
-        }
+        theOrder.setUid(Settings.checkIsLogIn() ? Settings.getSavedUser().getFb_uid() : "9999");
+        theOrder.setShipName(Settings.getShippingName());
+        theOrder.setShipPhone(Settings.getShippingPhone());
     }
 
     private SampleFragmentPagerAdapter getViewPagerAdapter() {
@@ -270,6 +289,10 @@ public class ShoppingCarActivity extends FbLoginActivity {
     private void onStep3PressPreviousStep() {
         GAManager.sendEvent(new CheckoutStep3ClickEvent(GALabel.PREVIOUS_STEP));
         viewPager.setCurrentItem(1, true);
+    }
+
+    public List<Product> getProducts() {
+        return products;
     }
 
     public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {

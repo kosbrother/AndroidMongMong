@@ -47,4 +47,8 @@ public class PostProduct {
     public int getPrice() {
         return price;
     }
+
+    public String getName() {
+        return name;
+    }
 }

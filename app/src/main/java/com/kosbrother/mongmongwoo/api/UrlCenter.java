@@ -8,8 +8,6 @@ public class UrlCenter {
     public static final String HOST_PRD = "https://www.mmwooo.com";
     public static final String HOST = BuildConfig.DEBUG ? HOST_TEST : HOST_PRD;
     public static final String API = "/api";
-    public static final String API_V1 = "/api/v1";
-    public static final String API_V2 = "/api/v2";
     public static final String API_V3 = "/api/v3";
 
     public static final String GOOGLE_PLAY_UPDATE =
@@ -59,17 +57,17 @@ public class UrlCenter {
     }
 
     static String postOrder() {
-        return HOST + API_V1 + "/orders";
+        return HOST + API_V3 + "/orders";
     }
 
     static String getOrdersByUid(String uid, int page) {
-        return HOST + API_V2
+        return HOST + API_V3
                 + "/orders/user_owned_orders/" + uid
                 + "?page=" + page;
     }
 
     static String getPastOrderByOrderId(int orderId) {
-        return HOST + API_V1
+        return HOST + API_V3
                 + "/orders/" + orderId;
     }
 
@@ -82,7 +80,7 @@ public class UrlCenter {
     }
 
     static String getOrdersByEmailAndPhone(String email, String phone) {
-        return HOST + API_V1
+        return HOST + API_V3
                 + "/orders/by_email_phone/"
                 + "?email=" + email
                 + "&phone=" + phone;

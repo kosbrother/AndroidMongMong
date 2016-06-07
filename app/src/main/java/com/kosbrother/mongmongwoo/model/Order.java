@@ -1,19 +1,38 @@
 package com.kosbrother.mongmongwoo.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
 
-    String uid;
-    String shippingName;
-    String shippingPhone;
-    String shippingEmail;
-    Store shippingStore;
-    List<Product> orderProducts;
-    int shipPrice;
-    int productPrice;
-    int totalPrice;
+    @SerializedName("uid")
+    private String uid;
+    @SerializedName("items_price")
+    private int itemsPrice;
+    @SerializedName("ship_fee")
+    private int shipFee;
+    @SerializedName("total")
+    private int total;
+    @SerializedName("registration_id")
+    private String registrationId;
+    @SerializedName("ship_name")
+    private String shipName;
+    @SerializedName("ship_phone")
+    private String shipPhone;
+    @SerializedName("ship_store_code")
+    private String shipStoreCode;
+    @SerializedName("ship_store_id")
+    private int shipStoreId;
+    @SerializedName("ship_store_name")
+    private String shipStoreName;
+    @SerializedName("ship_email")
+    private String shipEmail;
+    @SerializedName("products")
+    private List<PostProduct> products;
+
+    private Store store;
 
     public void setUid(String uid) {
         this.uid = uid;
@@ -30,71 +49,90 @@ public class Order {
     public Order() {
     }
 
-    public String getShippingName() {
-        return shippingName;
+    public String getShipName() {
+        return shipName;
     }
 
-    public String getShippingPhone() {
-        return shippingPhone;
+    public String getShipPhone() {
+        return shipPhone;
     }
 
-    public Store getShippingStore() {
-        return shippingStore;
-    }
-
-    public List<Product> getOrderProducts() {
-        if (orderProducts == null) {
-            orderProducts = new ArrayList<>();
+    public List<PostProduct> getProducts() {
+        if (products == null) {
+            products = new ArrayList<>();
         }
-        return orderProducts;
+        return products;
     }
 
-    public int getShipPrice() {
-        return shipPrice;
+    public int getShipFee() {
+        return shipFee;
     }
 
-    public int getProductPrice() {
-        return productPrice;
+    public int getItemsPrice() {
+        return itemsPrice;
     }
 
-    public int getTotalPrice() {
-        return totalPrice;
+    public int getTotal() {
+        return total;
     }
 
-    public void setShippingName(String shippingName) {
-        this.shippingName = shippingName;
+    public void setShipName(String shipName) {
+        this.shipName = shipName;
     }
 
-    public void setShippingPhone(String shippingPhone) {
-        this.shippingPhone = shippingPhone;
+    public void setShipPhone(String shipPhone) {
+        this.shipPhone = shipPhone;
     }
 
-    public void setShippingStore(Store shippingStore) {
-        this.shippingStore = shippingStore;
+    public void setProducts(List<PostProduct> products) {
+        this.products = products;
     }
 
-    public void setOrderProducts(List<Product> orderProducts) {
-        this.orderProducts = orderProducts;
+    public void setShipFee(int shipFee) {
+        this.shipFee = shipFee;
     }
 
-    public void setShipPrice(int shipPrice) {
-        this.shipPrice = shipPrice;
+    public void setItemsPrice(int itemsPrice) {
+        this.itemsPrice = itemsPrice;
     }
 
-    public void setProductPrice(int productPrice) {
-        this.productPrice = productPrice;
+    public void setTotal(int total) {
+        this.total = total;
     }
 
-    public void setTotalPrice(int totalPrice) {
-        this.totalPrice = totalPrice;
+    public String getShipEmail() {
+        return shipEmail;
     }
 
-    public String getShippingEmail() {
-        return shippingEmail;
+    public void setShipEmail(String shipEmail) {
+        this.shipEmail = shipEmail;
     }
 
-    public void setShippingEmail(String shippingEmail) {
-        this.shippingEmail = shippingEmail;
+    public void setRegistrationId(String registrationId) {
+        this.registrationId = registrationId;
     }
 
+    public void setShipStoreCode(String shipStoreCode) {
+        this.shipStoreCode = shipStoreCode;
+    }
+
+    public void setShipStoreId(int shipStoreId) {
+        this.shipStoreId = shipStoreId;
+    }
+
+    public void setShipStoreName(String shipStoreName) {
+        this.shipStoreName = shipStoreName;
+    }
+
+    public String getShipStoreName() {
+        return shipStoreName;
+    }
+
+    public Store getStore() {
+        return store;
+    }
+
+    public void setStore(Store store) {
+        this.store = store;
+    }
 }

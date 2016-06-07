@@ -7,15 +7,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.model.PastOrderProduct;
+import com.kosbrother.mongmongwoo.model.PostProduct;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class PastOrderListAdapter extends RecyclerView.Adapter<PastOrderListAdapter.ViewHolder> {
 
-    private final ArrayList<PastOrderProduct> productList;
+    private final List<PostProduct> productList;
 
-    public PastOrderListAdapter(ArrayList<PastOrderProduct> productList) {
+    public PastOrderListAdapter(List<PostProduct> productList) {
         this.productList = productList;
     }
 
@@ -28,7 +28,7 @@ public class PastOrderListAdapter extends RecyclerView.Adapter<PastOrderListAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        PastOrderProduct product = productList.get(position);
+        PostProduct product = productList.get(position);
 
         holder.productNameTextView.setText(product.getName());
         holder.productPriceTextView.setText(getProductPrice(product));
@@ -39,14 +39,8 @@ public class PastOrderListAdapter extends RecyclerView.Adapter<PastOrderListAdap
         return productList.size();
     }
 
-    public void updateProductList(ArrayList<PastOrderProduct> productList) {
-        this.productList.clear();
-        this.productList.addAll(productList);
-        notifyDataSetChanged();
-    }
-
-    private String getProductPrice(PastOrderProduct pastOrderProduct) {
-        return "$" + pastOrderProduct.getPrice() + " x " + pastOrderProduct.getQuantity();
+    private String getProductPrice(PostProduct postProduct) {
+        return "$" + postProduct.getPrice() + " x " + postProduct.getQuantity();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

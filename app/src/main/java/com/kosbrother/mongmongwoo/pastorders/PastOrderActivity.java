@@ -25,6 +25,7 @@ import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.utils.EndlessScrollListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 
@@ -37,7 +38,7 @@ public class PastOrderActivity extends FbLoginActivity {
     Button fb;
 
     GridView mGridView;
-    ArrayList<PastOrder> pastOrders = new ArrayList<>();
+    List<PastOrder> pastOrders = new ArrayList<>();
     int mPage = 1;
     PastOrdersGridAdapter pastOrdersAdapter;
 
@@ -120,7 +121,7 @@ public class PastOrderActivity extends FbLoginActivity {
 
         @Override
         protected Object doInBackground(Object[] params) {
-            ArrayList<PastOrder> feedBackPastOrders = OrderApi.getOrdersByUid(user.getFb_uid(), mPage);
+            List<PastOrder> feedBackPastOrders = OrderApi.getOrdersByUid(user.getFb_uid(), mPage);
             if (feedBackPastOrders != null && feedBackPastOrders.size() > 0) {
                 pastOrders.addAll(feedBackPastOrders);
                 mPage = mPage + 1;
@@ -140,7 +141,7 @@ public class PastOrderActivity extends FbLoginActivity {
                         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                             Intent intent = new Intent(PastOrderActivity.this, PastOrderDetailActivity.class);
                             intent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID,
-                                    pastOrders.get(position).getOrder_id());
+                                    pastOrders.get(position).getId());
                             startActivity(intent);
                         }
                     });

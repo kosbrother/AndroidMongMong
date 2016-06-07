@@ -19,6 +19,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.Customer
 import com.kosbrother.mongmongwoo.model.PastOrder;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import rx.functions.Action1;
 
@@ -58,15 +59,15 @@ public class QueryPastOrdersResultActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String email = intent.getStringExtra(EXTRA_STRING_EMAIL);
         String phone = intent.getStringExtra(EXTRA_STRING_PHONE);
-        Webservice.getOrdersByEmailAndPhone(email, phone, new Action1<ArrayList<PastOrder>>() {
+        Webservice.getOrdersByEmailAndPhone(email, phone, new Action1<List<PastOrder>>() {
             @Override
-            public void call(ArrayList<PastOrder> pastOrders) {
+            public void call(List<PastOrder> pastOrders) {
                 onGetOrdersResult(pastOrders);
             }
         });
     }
 
-    private void onGetOrdersResult(ArrayList<PastOrder> pastOrders) {
+    private void onGetOrdersResult(List<PastOrder> pastOrders) {
         if (pastOrders == null || pastOrders.size() == 0) {
             setContentView(R.layout.activity_query_past_orders_result_empty);
             setToolbar();
@@ -83,14 +84,14 @@ public class QueryPastOrdersResultActivity extends AppCompatActivity {
         csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
     }
 
-    private void setGridView(final ArrayList<PastOrder> pastOrders) {
+    private void setGridView(final List<PastOrder> pastOrders) {
         GridView ordersGridView = (GridView) findViewById(R.id.orders_gv);
         assert ordersGridView != null;
         ordersGridView.setAdapter(new PastOrdersGridAdapter(this, pastOrders));
         ordersGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onOrderItemClick(pastOrders.get(position).getOrder_id());
+                onOrderItemClick(pastOrders.get(position).getId());
             }
         });
     }
