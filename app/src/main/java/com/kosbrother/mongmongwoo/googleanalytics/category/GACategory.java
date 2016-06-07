@@ -13,4 +13,6 @@ public interface GACategory {
     String CHECKOUT_STEP_3 = "Checkout_step3";
     String CHECKOUT_STEP_4 = "Checkout_step4";
     String CUSTOMER_SERVICE = "Customer_service";
+    String EXCEPTION = "Exception";
+    String ERROR = "error";
 }

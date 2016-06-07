@@ -11,13 +11,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.api.Webservice;
-import com.kosbrother.mongmongwoo.model.PastOrder;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import rx.functions.Action1;
 
 public class QueryPastOrdersActivity extends AppCompatActivity {
 
@@ -54,16 +47,10 @@ public class QueryPastOrdersActivity extends AppCompatActivity {
             return;
         }
 
-        Webservice.getOrdersByEmailAndPhone(emailString, phoneString,
-                new Action1<List<PastOrder>>() {
-                    @Override
-                    public void call(List<PastOrder> pastOrders) {
-                        Intent intent = new Intent(QueryPastOrdersActivity.this, QueryPastOrdersResultActivity.class);
-                        intent.putExtra(QueryPastOrdersResultActivity.EXTRA_STRING_EMAIL, emailString);
-                        intent.putExtra(QueryPastOrdersResultActivity.EXTRA_STRING_PHONE, phoneString);
-                        startActivity(intent);
-                    }
-                });
+        Intent intent = new Intent(QueryPastOrdersActivity.this, QueryPastOrdersResultActivity.class);
+        intent.putExtra(QueryPastOrdersResultActivity.EXTRA_STRING_EMAIL, emailString);
+        intent.putExtra(QueryPastOrdersResultActivity.EXTRA_STRING_PHONE, phoneString);
+        startActivity(intent);
     }
 
     @SuppressWarnings("ConstantConditions")

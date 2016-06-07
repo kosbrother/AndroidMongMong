@@ -1,4 +1,4 @@
-package com.kosbrother.mongmongwoo.api;
+package com.kosbrother.mongmongwoo.model;
 
 import com.google.gson.annotations.SerializedName;
 

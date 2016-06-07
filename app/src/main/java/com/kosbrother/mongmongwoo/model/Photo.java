@@ -1,7 +1,6 @@
 package com.kosbrother.mongmongwoo.model;
 
 import com.google.gson.annotations.SerializedName;
-import com.kosbrother.mongmongwoo.api.Cover;
 
 import java.io.Serializable;
 

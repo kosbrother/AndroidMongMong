@@ -1,7 +1,6 @@
 package com.kosbrother.mongmongwoo;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -28,14 +27,18 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.kosbrother.mongmongwoo.adpters.StoreGridAdapter;
 import com.kosbrother.mongmongwoo.api.DensityApi;
 import com.kosbrother.mongmongwoo.api.StoreApi;
+import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.model.County;
 import com.kosbrother.mongmongwoo.model.Road;
 import com.kosbrother.mongmongwoo.model.Store;
 import com.kosbrother.mongmongwoo.model.Town;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 
-import java.util.ArrayList;
 import java.util.List;
+
+import rx.functions.Action1;
 
 public class SelectDeliverStoreActivity extends AppCompatActivity implements OnMapReadyCallback {
 
@@ -124,7 +127,24 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 county_id = counties.get(position).getId();
                 setLoadingLayout();
-                new TownsTask().execute();
+                Webservice.getTowns(county_id, new Action1<ResponseEntity<List<Town>>>() {
+                    @Override
+                    public void call(ResponseEntity<List<Town>> listResponseEntity) {
+                        List<Town> data = listResponseEntity.getData();
+                        if (data == null) {
+                            GAManager.sendError("getTownsError", listResponseEntity.getError());
+                            if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this) == 0) {
+                                Toast.makeText(SelectDeliverStoreActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            townArray = data;
+                            ArrayAdapter<Town> townArrayAdapter = new ArrayAdapter<>(
+                                    SelectDeliverStoreActivity.this, R.layout.myspinner, townArray);
+                            townArrayAdapter.setDropDownViewResource(R.layout.myspinner);
+                            townSpinners.setAdapter(townArrayAdapter);
+                        }
+                    }
+                });
             }
 
             @Override
@@ -141,7 +161,24 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
                 if (townArray != null) {
                     town_id = townArray.get(position).getId();
                     setLoadingLayout();
-                    new RoadsTask().execute();
+                    Webservice.getRoads(county_id, town_id, new Action1<ResponseEntity<List<Road>>>() {
+                        @Override
+                        public void call(ResponseEntity<List<Road>> listResponseEntity) {
+                            List<Road> data = listResponseEntity.getData();
+                            if (data == null) {
+                                GAManager.sendError("getRoadsError", listResponseEntity.getError());
+                                if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this) == 0) {
+                                    Toast.makeText(SelectDeliverStoreActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                roadArray = data;
+                                ArrayAdapter<Road> roadArrayAdapter = new ArrayAdapter<>(
+                                        SelectDeliverStoreActivity.this, R.layout.myspinner, roadArray);
+                                roadArrayAdapter.setDropDownViewResource(R.layout.myspinner);
+                                roadSpinners.setAdapter(roadArrayAdapter);
+                            }
+                        }
+                    });
                 }
             }
 
@@ -159,7 +196,36 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
                 if (roadArray != null) {
                     road_id = roadArray.get(position).getId();
                     setLoadingLayout();
-                    new StoresTask().execute();
+                    Webservice.getStores(county_id, town_id, road_id, new Action1<ResponseEntity<List<Store>>>() {
+                        @Override
+                        public void call(ResponseEntity<List<Store>> listResponseEntity) {
+                            final List<Store> data = listResponseEntity.getData();
+                            if (data == null) {
+                                GAManager.sendError("getStoresError", listResponseEntity.getError());
+                                if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this) == 0) {
+                                    Toast.makeText(SelectDeliverStoreActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                getProgressBar().setVisibility(View.GONE);
+                                if (data.size() == 0) {
+                                    Toast.makeText(SelectDeliverStoreActivity.this, "此區無寄送店面", Toast.LENGTH_SHORT).show();
+                                    return;
+                                }
+                                final StoreGridAdapter storeGridAdapter = new StoreGridAdapter(SelectDeliverStoreActivity.this, data);
+                                GridView storeGridView = getStoreGridView();
+                                storeGridView.setAdapter(storeGridAdapter);
+                                setStoreGridViewHeight(data, storeGridView);
+                                storeGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                    @Override
+                                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                        updateStoreInfo(data.get(position));
+                                        storeGridAdapter.updateSelectedPosition(position);
+                                    }
+                                });
+                                storeGridView.setVisibility(View.VISIBLE);
+                            }
+                        }
+                    });
                 }
             }
 
@@ -203,7 +269,7 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         selectStoreButton.setVisibility(View.GONE);
     }
 
-    private void setStoreGridViewHeight(ArrayList<Store> result, GridView storeGridView) {
+    private void setStoreGridViewHeight(List<Store> result, GridView storeGridView) {
         ViewGroup.LayoutParams params = storeGridView.getLayoutParams();
         int height_size;
         if (result.size() % 2 == 0) {
@@ -213,85 +279,6 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         }
         params.height = (int) DensityApi.convertDpToPixel(42 * height_size, this);
         storeGridView.setLayoutParams(params);
-    }
-
-    private class TownsTask extends AsyncTask<Void, Void, List<Town>> {
-
-        @Override
-        protected List<Town> doInBackground(Void... params) {
-            return StoreApi.getTowns(county_id);
-        }
-
-        @Override
-        protected void onPostExecute(List<Town> result) {
-            townArray = result;
-            if (townArray != null) {
-                ArrayAdapter<Town> townArrayAdapter = new ArrayAdapter<>(
-                        SelectDeliverStoreActivity.this, R.layout.myspinner, townArray);
-                townArrayAdapter.setDropDownViewResource(R.layout.myspinner);
-                townSpinners.setAdapter(townArrayAdapter);
-            } else {
-                if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this) == 0) {
-                    Toast.makeText(SelectDeliverStoreActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
-
-    private class RoadsTask extends AsyncTask<Void, Void, List<Road>> {
-
-        @Override
-        protected List<Road> doInBackground(Void... params) {
-            return StoreApi.getRoads(county_id, town_id);
-        }
-
-        @Override
-        protected void onPostExecute(List<Road> result) {
-            roadArray = result;
-            if (roadArray != null) {
-                ArrayAdapter<Road> roadArrayAdapter = new ArrayAdapter<>(
-                        SelectDeliverStoreActivity.this, R.layout.myspinner, roadArray);
-                roadArrayAdapter.setDropDownViewResource(R.layout.myspinner);
-                roadSpinners.setAdapter(roadArrayAdapter);
-            } else {
-                if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this) == 0) {
-                    Toast.makeText(SelectDeliverStoreActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
-    }
-
-    private class StoresTask extends AsyncTask<Void, Void, ArrayList<Store>> {
-
-        @Override
-        protected ArrayList<Store> doInBackground(Void... params) {
-            return StoreApi.getStores(county_id, town_id, road_id);
-        }
-
-        @Override
-        protected void onPostExecute(final ArrayList<Store> result) {
-            getProgressBar().setVisibility(View.GONE);
-            if (result != null) {
-                final StoreGridAdapter storeGridAdapter = new StoreGridAdapter(SelectDeliverStoreActivity.this, result);
-                GridView storeGridView = getStoreGridView();
-                storeGridView.setAdapter(storeGridAdapter);
-                setStoreGridViewHeight(result, storeGridView);
-                storeGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                        updateStoreInfo(result.get(position));
-                        storeGridAdapter.updateSelectedPosition(position);
-                    }
-                });
-                storeGridView.setVisibility(View.VISIBLE);
-            } else {
-                if (NetworkUtil.getConnectivityStatus(SelectDeliverStoreActivity.this) == 0) {
-                    Toast.makeText(SelectDeliverStoreActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(SelectDeliverStoreActivity.this, "此區無寄送店面", Toast.LENGTH_SHORT).show();
-                }
-            }
-        }
     }
 
 }

@@ -1,7 +1,6 @@
 package com.kosbrother.mongmongwoo.fragments;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -16,7 +15,8 @@ import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.ProductActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
-import com.kosbrother.mongmongwoo.api.ProductApi;
+import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.indexgridcart.IndexGridCartAddToCartEvent;
 import com.kosbrother.mongmongwoo.model.Product;
@@ -25,6 +25,8 @@ import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.functions.Action1;
 
 public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.GoodsGridAdapterListener {
 
@@ -81,7 +83,7 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
         mGridView.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                new GetCategoryProductsTask().execute();
+                getProducts();
             }
         });
 
@@ -90,9 +92,33 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
             mGridView.setAdapter(goodsGridAdapter);
         } else {
             layoutProgress.setVisibility(View.VISIBLE);
-            new GetCategoryProductsTask().execute();
+            getProducts();
         }
         return view;
+    }
+
+    private void getProducts() {
+        Webservice.getProducts(categoryId, page, new Action1<ResponseEntity<List<Product>>>() {
+            @Override
+            public void call(ResponseEntity<List<Product>> listResponseEntity) {
+                List<Product> feedBackProducts = listResponseEntity.getData();
+                if (feedBackProducts == null) {
+                    GAManager.sendError("getProductsError", listResponseEntity.getError());
+                } else {
+                    products.addAll(feedBackProducts);
+                    page = page + 1;
+                    layoutProgress.setVisibility(View.GONE);
+                    if (goodsGridAdapter == null) {
+                        MainActivity activity = (MainActivity) getActivity();
+                        goodsGridAdapter = new GoodsGridAdapter(activity, products, GoodsGridFragment.this);
+                        mGridView.setAdapter(goodsGridAdapter);
+                    } else {
+                        goodsGridAdapter.notifyDataSetChanged();
+                    }
+                }
+
+            }
+        });
     }
 
     @Override
@@ -114,35 +140,6 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
             });
         }
         dialog.showWithInitState(product);
-    }
-
-    private class GetCategoryProductsTask extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            List<Product> feedBackProducts = ProductApi.getCategoryProducts(categoryId, page);
-            if (feedBackProducts != null && feedBackProducts.size() > 0) {
-                products.addAll(feedBackProducts);
-                page = page + 1;
-                return true;
-            } else {
-                return false;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            layoutProgress.setVisibility(View.GONE);
-            if ((boolean) result) {
-                if (goodsGridAdapter == null) {
-                    MainActivity activity = (MainActivity) getActivity();
-                    goodsGridAdapter = new GoodsGridAdapter(activity, products, GoodsGridFragment.this);
-                    mGridView.setAdapter(goodsGridAdapter);
-                } else {
-                    goodsGridAdapter.notifyDataSetChanged();
-                }
-            }
-        }
     }
 
 }

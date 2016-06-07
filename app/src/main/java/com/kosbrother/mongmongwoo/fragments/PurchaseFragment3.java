@@ -1,7 +1,6 @@
 package com.kosbrother.mongmongwoo.fragments;
 
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -21,17 +20,20 @@ import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.ShoppingCarPreference;
-import com.kosbrother.mongmongwoo.api.OrderApi;
+import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.fcm.FcmPreferences;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Order;
+import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
-import java.io.IOException;
 import java.util.List;
+
+import rx.functions.Action1;
 
 public class PurchaseFragment3 extends Fragment {
 
@@ -73,11 +75,35 @@ public class PurchaseFragment3 extends Fragment {
             @Override
             public void onClick(View v) {
                 GAManager.sendEvent(new CheckoutStep3ClickEvent(GALabel.SEND_ORDER));
-                new NewsTask().execute();
+                requestPostOrder();
             }
         });
 
         return view;
+    }
+
+    private void requestPostOrder() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        theOrder.setRegistrationId(sharedPreferences.getString(FcmPreferences.TOKEN, ""));
+        String json = new Gson().toJson(theOrder);
+        Webservice.postOrder(json, new Action1<ResponseEntity<PastOrder>>() {
+            @Override
+            public void call(ResponseEntity<PastOrder> stringResponseEntity) {
+                PastOrder data = stringResponseEntity.getData();
+                if (data == null) {
+                    GAManager.sendError("postOrderError", stringResponseEntity.getError());
+                    Toast.makeText(getActivity(), "訂單未成功送出 資料異常", Toast.LENGTH_SHORT).show();
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    Settings.saveUserStoreData(theOrder.getStore());
+                    Settings.saveUserShippingNameAndPhone(theOrder.getShipName(), theOrder.getShipPhone());
+
+                    ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+                    new ShoppingCarPreference().removeAllShoppingItems(activity);
+                    activity.startPurchaseFragment4();
+                }
+            }
+        });
     }
 
     @Override
@@ -140,48 +166,6 @@ public class PurchaseFragment3 extends Fragment {
 
             String subTotalText = "小計：NT$ " + (product.getBuy_count() * product.getPrice());
             subTotalTextView.setText(subTotalText);
-        }
-    }
-
-    private class NewsTask extends AsyncTask {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressBar.setVisibility(View.VISIBLE);
-            if (theOrder.getProducts() == null || theOrder.getProducts().size() == 0) {
-                Toast.makeText(getActivity(), "購物車商品資料錯誤,請聯絡客服LINE@,感謝您^^", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            String message;
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-            theOrder.setRegistrationId(sharedPreferences.getString(FcmPreferences.TOKEN, ""));
-            String json = new Gson().toJson(theOrder);
-            try {
-                message = OrderApi.postOrder(json);
-            } catch (IOException e) {
-                e.printStackTrace();
-                message = "error";
-            }
-            return !message.contains("error");
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            progressBar.setVisibility(View.GONE);
-            if ((boolean) result == true) {
-                Settings.saveUserStoreData(theOrder.getStore());
-                Settings.saveUserShippingNameAndPhone(theOrder.getShipName(), theOrder.getShipPhone());
-
-                ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-                new ShoppingCarPreference().removeAllShoppingItems(activity);
-                activity.startPurchaseFragment4();
-            } else {
-                Toast.makeText(getActivity(), "訂單未成功送出 資料異常", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 

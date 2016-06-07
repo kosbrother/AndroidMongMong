@@ -2,7 +2,6 @@ package com.kosbrother.mongmongwoo;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -20,8 +19,9 @@ import android.widget.Toast;
 
 import com.androidpagecontrol.PageControl;
 import com.kosbrother.mongmongwoo.adpters.ProductImageFragmentPagerAdapter;
-import com.kosbrother.mongmongwoo.api.ProductApi;
+import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
+import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPromoOpenedEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductAddToCartEvent;
@@ -37,6 +37,8 @@ import com.kosbrother.mongmongwoo.utils.ShoppingCartIconUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.functions.Action1;
 
 public class ProductActivity extends AppCompatActivity {
 
@@ -66,7 +68,23 @@ public class ProductActivity extends AppCompatActivity {
         initSpotLightConfirmButton();
         initAddCartButton();
         initCollectImageView();
-        new GetProductTask().execute(getCategoryId(), getProductId());
+        getProduct();
+    }
+
+    private void getProduct() {
+        Webservice.getProduct(getCategoryId(), getProductId(), new Action1<ResponseEntity<Product>>() {
+            @Override
+            public void call(ResponseEntity<Product> listResponseEntity) {
+                Product data = listResponseEntity.getData();
+                if (data == null) {
+                    GAManager.sendError("getProduct", listResponseEntity.getError());
+                    showAToast("無法取得資料，請檢查網路連線");
+                } else {
+                    theProduct = data;
+                    onGetProductResult();
+                }
+            }
+        });
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -268,17 +286,13 @@ public class ProductActivity extends AppCompatActivity {
 
     @SuppressWarnings("ConstantConditions")
     private void onGetProductResult() {
-        if (theProduct != null) {
-            GAManager.sendEvent(new ProductViewEvent(theProduct.getName()));
-            startAppIndexIfCategoryNameValid();
-            sendPromoOpenedEventIfFromNotification();
-            setProductView();
-            setViewPagerAndPageControl();
-            setAddCartButton();
-            setCollectImageListener();
-        } else {
-            showAToast("無法取得資料,請檢查網路連線");
-        }
+        GAManager.sendEvent(new ProductViewEvent(theProduct.getName()));
+        startAppIndexIfCategoryNameValid();
+        sendPromoOpenedEventIfFromNotification();
+        setProductView();
+        setViewPagerAndPageControl();
+        setAddCartButton();
+        setCollectImageListener();
     }
 
     private void startAppIndexIfCategoryNameValid() {
@@ -387,20 +401,6 @@ public class ProductActivity extends AppCompatActivity {
         }
         toast = Toast.makeText(this, message, Toast.LENGTH_SHORT);
         toast.show();
-    }
-
-    private class GetProductTask extends AsyncTask<Integer, Void, Product> {
-
-        @Override
-        protected Product doInBackground(Integer... params) {
-            return ProductApi.getProductById(params[0], params[1]);
-        }
-
-        @Override
-        protected void onPostExecute(Product product) {
-            theProduct = product;
-            onGetProductResult();
-        }
     }
 
 }
