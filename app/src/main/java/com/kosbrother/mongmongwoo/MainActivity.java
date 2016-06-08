@@ -46,6 +46,7 @@ import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
 import com.kosbrother.mongmongwoo.pastorders.QueryPastOrdersActivity;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
+import com.kosbrother.mongmongwoo.utils.ShareUtil;
 import com.kosbrother.mongmongwoo.utils.ShoppingCartIconUtil;
 import com.kosbrother.mongmongwoo.utils.VersionUtil;
 
@@ -183,12 +184,10 @@ public class MainActivity extends FbLoginActivity
         } else if (id == R.id.nav_about) {
             startActivity(new Intent(this, AboutActivity.class));
         } else if (id == R.id.nav_share) {
-            Intent i = new Intent(Intent.ACTION_SEND);
-            i.setType("text/plain");
-            String sAux = "萌萌屋 - 走在青年流行前線\n\n";
-            sAux = sAux + UrlCenter.GOOGLE_PLAY_SHARE + "\n";
-            i.putExtra(Intent.EXTRA_TEXT, sAux);
-            startActivity(Intent.createChooser(i, "分享萌萌屋"));
+            String title = "分享萌萌屋";
+            String subject = "萌萌屋 - 走在青年流行前線";
+            String text = UrlCenter.GOOGLE_PLAY_SHARE;
+            ShareUtil.shareText(this, title, subject, text);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
