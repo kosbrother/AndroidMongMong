@@ -40,7 +40,7 @@ public class Settings {
     public static void saveUserFBData(User user) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(keyUserName, user.getUser_name());
+        editor.putString(keyUserName, user.getUserName());
         editor.putString(keyUserFBUid, user.getFb_uid());
         editor.putString(keyUserGender, user.getGender());
         editor.putString(keyUserFBPic, user.getFb_pic());
@@ -51,8 +51,8 @@ public class Settings {
     public static void saveUserStoreData(Store theStore) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(keyStoreId, theStore.getStore_id());
-        editor.putString(keyStoreCode, theStore.getStore_code());
+        editor.putInt(keyStoreId, theStore.getId());
+        editor.putString(keyStoreCode, theStore.getStoreCode());
         editor.putString(keyStoreName, theStore.getName());
         editor.putString(keyStoreAddress, theStore.getAddress());
         editor.apply();

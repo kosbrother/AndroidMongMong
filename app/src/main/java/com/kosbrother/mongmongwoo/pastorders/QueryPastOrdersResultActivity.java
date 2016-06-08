@@ -13,12 +13,13 @@ import android.widget.GridView;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.PastOrdersGridAdapter;
 import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import rx.functions.Action1;
 
@@ -58,16 +59,24 @@ public class QueryPastOrdersResultActivity extends AppCompatActivity {
         Intent intent = getIntent();
         String email = intent.getStringExtra(EXTRA_STRING_EMAIL);
         String phone = intent.getStringExtra(EXTRA_STRING_PHONE);
-        Webservice.getOrdersByEmailAndPhone(email, phone, new Action1<ArrayList<PastOrder>>() {
-            @Override
-            public void call(ArrayList<PastOrder> pastOrders) {
-                onGetOrdersResult(pastOrders);
-            }
-        });
+        Webservice.getOrdersByEmailAndPhone(email, phone,
+                new Action1<ResponseEntity<List<PastOrder>>>() {
+                    @Override
+                    public void call(ResponseEntity<List<PastOrder>> listResponseEntity) {
+                        List<PastOrder> data = listResponseEntity.getData();
+                        if (data == null) {
+                            GAManager.sendError("getOrdersByEmailAndPhoneError", listResponseEntity.getError());
+                        } else {
+                            onGetOrdersResult(data);
+                        }
+                    }
+                }
+        );
+
     }
 
-    private void onGetOrdersResult(ArrayList<PastOrder> pastOrders) {
-        if (pastOrders == null || pastOrders.size() == 0) {
+    private void onGetOrdersResult(List<PastOrder> pastOrders) {
+        if (pastOrders.size() == 0) {
             setContentView(R.layout.activity_query_past_orders_result_empty);
             setToolbar();
             initCsBottomSheet();
@@ -83,14 +92,14 @@ public class QueryPastOrdersResultActivity extends AppCompatActivity {
         csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
     }
 
-    private void setGridView(final ArrayList<PastOrder> pastOrders) {
+    private void setGridView(final List<PastOrder> pastOrders) {
         GridView ordersGridView = (GridView) findViewById(R.id.orders_gv);
         assert ordersGridView != null;
         ordersGridView.setAdapter(new PastOrdersGridAdapter(this, pastOrders));
         ordersGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                onOrderItemClick(pastOrders.get(position).getOrder_id());
+                onOrderItemClick(pastOrders.get(position).getId());
             }
         });
     }

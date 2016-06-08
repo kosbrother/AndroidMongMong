@@ -47,7 +47,7 @@ public class PurchaseFragment2 extends Fragment {
             public void onClick(View v) {
                 // save to activity order store and shipping name, phone
                 ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-                if (activity.getOrder().getShippingStore() == null) {
+                if (activity.getOrder().getStore() == null) {
                     Toast.makeText(getActivity(), "請選擇寄件的商店", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -56,11 +56,12 @@ public class PurchaseFragment2 extends Fragment {
                 } else if (!isLoginWithValidEmail() && nameOrPhoneOrEmailEmpty()) {
                     Toast.makeText(getActivity(), "收件人名稱、電話跟Email不可空白", Toast.LENGTH_SHORT).show();
                 } else {
-                    activity.getOrder().setShippingName(shippingNameEditText.getText().toString());
-                    activity.getOrder().setShippingPhone(shippingPhoneEditText.getText().toString());
-                    activity.getOrder().setShippingEmail(getUserInputEmailOrFbEmail());
-                    activity.startPurchaseFragment3();
+                    String shipName = shippingNameEditText.getText().toString();
+                    String shipPhone = shippingPhoneEditText.getText().toString();
+                    String shipEmail = getUserInputEmailOrFbEmail();
+                    activity.saveShippingInfo(shipName, shipPhone, shipEmail);
 
+                    activity.startPurchaseFragment3();
                     View view = activity.getCurrentFocus();
                     if (view != null) {
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -78,12 +79,11 @@ public class PurchaseFragment2 extends Fragment {
         });
 
         ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-        if (activity.getOrder().getShippingStore() != null) {
-            selectStoreButton.setText(activity.getOrder().getShippingStore().getName());
-            shippingNameEditText.setText(activity.getOrder().getShippingName());
-            shippingPhoneEditText.setText(activity.getOrder().getShippingPhone());
+        if (activity.getOrder().getStore() != null) {
+            selectStoreButton.setText(activity.getOrder().getStore().getName());
+            shippingNameEditText.setText(activity.getOrder().getShipName());
+            shippingPhoneEditText.setText(activity.getOrder().getShipPhone());
         }
-
         return view;
     }
 
@@ -94,7 +94,7 @@ public class PurchaseFragment2 extends Fragment {
             Bundle bundle = data.getExtras();
             Store theStore = (Store) bundle.getSerializable("Selected_Store");
             ShoppingCarActivity mActivity = (ShoppingCarActivity) getActivity();
-            mActivity.setSelectedStore(theStore);
+            mActivity.saveStoreInfo(theStore);
             selectStoreButton.setText(theStore.getName());
         }
     }

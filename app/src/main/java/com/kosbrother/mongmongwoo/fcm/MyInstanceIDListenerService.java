@@ -6,7 +6,11 @@ import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
-import com.kosbrother.mongmongwoo.api.GcmApi;
+import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+
+import rx.functions.Action1;
 
 public class MyInstanceIDListenerService extends FirebaseInstanceIdService {
 
@@ -33,7 +37,14 @@ public class MyInstanceIDListenerService extends FirebaseInstanceIdService {
     }
 
     private void sendRegistrationToServer(String token) {
-        GcmApi.postRegistrationId(token);
+        Webservice.postRegistrationId(token, new Action1<ResponseEntity<String>>() {
+            @Override
+            public void call(ResponseEntity<String> stringResponseEntity) {
+                if (stringResponseEntity.getData() == null) {
+                    GAManager.sendError("sendRegistrationToServerError", stringResponseEntity.getError());
+                }
+            }
+        });
     }
 
 }

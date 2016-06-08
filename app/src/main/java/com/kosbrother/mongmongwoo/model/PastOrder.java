@@ -1,123 +1,102 @@
 package com.kosbrother.mongmongwoo.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.List;
 
-/**
- * Created by kolichung on 3/22/16.
- */
 public class PastOrder implements Serializable {
+    @SerializedName("id")
+    private int id;
+    @SerializedName("items_price")
+    private int itemsPrice;
+    @SerializedName("note")
+    private String note;
+    @SerializedName("info")
+    private Info info;
+    @SerializedName("items")
+    private List<PostProduct> items;
+    @SerializedName("user_id")
+    private int userId;
+    @SerializedName("ship_fee")
+    private int shipFee;
+    @SerializedName("total")
+    private int total;
+    @SerializedName("status")
+    private String status;
+    @SerializedName("uid")
+    private String uid;
+    @SerializedName("created_on")
+    private String createdOn;
 
-    ArrayList<PastOrderProduct> pastOrderProducts;
-    String shipName;
-    String shipPhone;
-    Store shippingStore;
-    int shipFee;
-    int itemPrice;
-    String note;
-//    "id":18,
-//    "user_id":26,
-//    "total":110,
-//    "created_at":"2016-03-18T05:14:33.000Z",
-//    "status":"order_placed",
-//    "uid":"1153503537995545"
-
-    public PastOrder(int order_id, int total, String date, String status) {
-        this.order_id = order_id;
-        this.total = total;
-        this.date = date;
-        this.status = status;
-    }
-
-    public int getOrder_id() {
-        return order_id;
-    }
-
-    public int getTotal() {
-        return total;
-    }
-
-    public String getDate() {
-        return date;
+    public int getId() {
+        return id;
     }
 
     public String getStatus() {
         return status;
     }
 
-    int order_id;
-
-    public void setTotalPrice(int total_price) {
-        this.total = total_price;
+    public String getCreatedOn() {
+        return createdOn;
     }
 
-    int total;
-
-    public void setDate(String date) {
-        this.date = date;
+    public int getTotal() {
+        return total;
     }
 
-    String date;
-
-    public void setStatus(String status) {
-        this.status = status;
+    public Info getInfo() {
+        return info;
     }
 
-    String status;
-
-    public void setPastOrderProducts(ArrayList<PastOrderProduct> pastOrderProducts) {
-        this.pastOrderProducts = pastOrderProducts;
-    }
-
-    public void setShipName(String shipName) {
-        this.shipName = shipName;
-    }
-
-    public void setShipPhone(String shipPhone) {
-        this.shipPhone = shipPhone;
-    }
-
-    public void setShippingStore(Store shippingStore) {
-        this.shippingStore = shippingStore;
-    }
-
-    public void setShipFee(int shipFee) {
-        this.shipFee = shipFee;
-    }
-
-    public void setItemPrice(int itemPrice) {
-        this.itemPrice = itemPrice;
-    }
-
-    public ArrayList<PastOrderProduct> getPastOrderProducts() {
-        return pastOrderProducts;
-    }
-
-    public String getShipName() {
-        return shipName;
-    }
-
-    public String getShipPhone() {
-        return shipPhone;
-    }
-
-    public Store getShippingStore() {
-        return shippingStore;
-    }
-
-    public int getShipFee() {
-        return shipFee;
-    }
-
-    public int getItemPrice() {
-        return itemPrice;
+    public List<PostProduct> getItems() {
+        return items;
     }
 
     public String getNote() {
         return note;
     }
 
-    public void setNote(String note) {
-        this.note = note;
+    public int getShipFee() {
+        return shipFee;
+    }
+
+    public static class Info {
+        @SerializedName("id")
+        private int id;
+        @SerializedName("ship_name")
+        private String shipName;
+        @SerializedName("ship_phone")
+        private String shipPhone;
+        @SerializedName("ship_store_code")
+        private String shipStoreCode;
+        @SerializedName("ship_store_id")
+        private int shipStoreId;
+        @SerializedName("ship_store_name")
+        private String shipStoreName;
+
+        public int getId() {
+            return id;
+        }
+
+        public String getShipName() {
+            return shipName;
+        }
+
+        public String getShipPhone() {
+            return shipPhone;
+        }
+
+        public String getShipStoreCode() {
+            return shipStoreCode;
+        }
+
+        public int getShipStoreId() {
+            return shipStoreId;
+        }
+
+        public String getShipStoreName() {
+            return shipStoreName;
+        }
     }
 }

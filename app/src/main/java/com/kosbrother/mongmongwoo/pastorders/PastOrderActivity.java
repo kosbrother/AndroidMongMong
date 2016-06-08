@@ -1,7 +1,6 @@
 package com.kosbrother.mongmongwoo.pastorders;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -18,15 +17,19 @@ import com.github.siyamed.shapeimageview.CircularImageView;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.adpters.PastOrdersGridAdapter;
-import com.kosbrother.mongmongwoo.api.OrderApi;
+import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.utils.EndlessScrollListener;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
+import rx.functions.Action1;
 
 public class PastOrderActivity extends FbLoginActivity {
 
@@ -37,7 +40,7 @@ public class PastOrderActivity extends FbLoginActivity {
     Button fb;
 
     GridView mGridView;
-    ArrayList<PastOrder> pastOrders = new ArrayList<>();
+    List<PastOrder> pastOrders = new ArrayList<>();
     int mPage = 1;
     PastOrdersGridAdapter pastOrdersAdapter;
 
@@ -64,7 +67,7 @@ public class PastOrderActivity extends FbLoginActivity {
                 .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                 .placeholder(R.drawable.icon_head)
                 .into(userImage);
-        userNameText.setText(user.getUser_name());
+        userNameText.setText(user.getUserName());
 
         fb = (Button) findViewById(R.id.fb);
         loginButton = (LoginButton) findViewById(R.id.login_button);
@@ -81,10 +84,10 @@ public class PastOrderActivity extends FbLoginActivity {
         mGridView.setOnScrollListener(new EndlessScrollListener() {
             @Override
             public void onLoadMore(int page, int totalItemsCount) {
-                new NewsTask().execute();
+                getOrders();
             }
         });
-        new NewsTask().execute();
+        getOrders();
 
     }
 
@@ -116,38 +119,38 @@ public class PastOrderActivity extends FbLoginActivity {
         finish();
     }
 
-    private class NewsTask extends AsyncTask {
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            ArrayList<PastOrder> feedBackPastOrders = OrderApi.getOrdersByUid(user.getFb_uid(), mPage);
-            if (feedBackPastOrders != null && feedBackPastOrders.size() > 0) {
-                pastOrders.addAll(feedBackPastOrders);
-                mPage = mPage + 1;
-                return true;
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            if (result != null) {
-                if (pastOrdersAdapter == null) {
-                    pastOrdersAdapter = new PastOrdersGridAdapter(PastOrderActivity.this, pastOrders);
-                    mGridView.setAdapter(pastOrdersAdapter);
-                    mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                            Intent intent = new Intent(PastOrderActivity.this, PastOrderDetailActivity.class);
-                            intent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID,
-                                    pastOrders.get(position).getOrder_id());
-                            startActivity(intent);
+    private void getOrders() {
+        Webservice.getOrdersByUid(user.getFb_uid(), mPage,
+                new Action1<ResponseEntity<List<PastOrder>>>() {
+                    @Override
+                    public void call(ResponseEntity<List<PastOrder>> listResponseEntity) {
+                        List<PastOrder> pastOrders = listResponseEntity.getData();
+                        if (pastOrders != null && pastOrders.size() > 0) {
+                            PastOrderActivity.this.pastOrders.addAll(pastOrders);
+                            mPage = mPage + 1;
+                            onGetDataResult();
+                        } else {
+                            GAManager.sendError("getOrdersByUidError", listResponseEntity.getError());
                         }
-                    });
-                } else {
-                    pastOrdersAdapter.notifyDataSetChanged();
+                    }
+                });
+    }
+
+    private void onGetDataResult() {
+        if (pastOrdersAdapter == null) {
+            pastOrdersAdapter = new PastOrdersGridAdapter(PastOrderActivity.this, pastOrders);
+            mGridView.setAdapter(pastOrdersAdapter);
+            mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent = new Intent(PastOrderActivity.this, PastOrderDetailActivity.class);
+                    intent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID,
+                            PastOrderActivity.this.pastOrders.get(position).getId());
+                    startActivity(intent);
                 }
-            }
+            });
+        } else {
+            pastOrdersAdapter.notifyDataSetChanged();
         }
     }
 }

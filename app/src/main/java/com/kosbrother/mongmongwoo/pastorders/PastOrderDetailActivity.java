@@ -1,7 +1,6 @@
 package com.kosbrother.mongmongwoo.pastorders;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -14,15 +13,18 @@ import android.widget.TextView;
 
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.PastOrderListAdapter;
-import com.kosbrother.mongmongwoo.api.OrderApi;
+import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPickUpOpenedEvent;
 import com.kosbrother.mongmongwoo.model.PastOrder;
-import com.kosbrother.mongmongwoo.model.PastOrderProduct;
+import com.kosbrother.mongmongwoo.model.PostProduct;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import rx.functions.Action1;
 
 public class PastOrderDetailActivity extends AppCompatActivity {
 
@@ -52,7 +54,17 @@ public class PastOrderDetailActivity extends AppCompatActivity {
         Intent intent = getIntent();
 
         int orderId = intent.getIntExtra(EXTRA_INT_ORDER_ID, 0);
-        new getPastOrderByOrderIdTask().execute(orderId);
+        Webservice.getPastOrderByOrderId(orderId, new Action1<ResponseEntity<PastOrder>>() {
+            @Override
+            public void call(ResponseEntity<PastOrder> pastOrderResponseEntity) {
+                PastOrder result = pastOrderResponseEntity.getData();
+                if (result == null) {
+                    GAManager.sendError("getPastOrderByOrderIdError", pastOrderResponseEntity.getError());
+                } else {
+                    onGetPostOrderResult(result);
+                }
+            }
+        });
 
         boolean fromNotification = intent.getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
         if (fromNotification) {
@@ -74,7 +86,7 @@ public class PastOrderDetailActivity extends AppCompatActivity {
         initCsBottomSheet();
         if (pastOrder != null) {
             findViews();
-            setRecyclerView(pastOrder.getPastOrderProducts());
+            setRecyclerView(pastOrder.getItems());
             setPastOrderData(pastOrder);
         }
     }
@@ -106,7 +118,7 @@ public class PastOrderDetailActivity extends AppCompatActivity {
         noteViewStub = (ViewStub) findViewById(R.id.note_vs);
     }
 
-    private void setRecyclerView(ArrayList<PastOrderProduct> pastOrderProducts) {
+    private void setRecyclerView(List<PostProduct> pastOrderProducts) {
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(PastOrderDetailActivity.this);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -122,16 +134,16 @@ public class PastOrderDetailActivity extends AppCompatActivity {
         String totalPriceString = Integer.toString(pastOrder.getTotal());
         totalPriceText.setText(totalPriceString);
 
-        String shipNameString = "收件人：" + pastOrder.getShipName();
+        String shipNameString = "收件人：" + pastOrder.getInfo().getShipName();
         shippingNameText.setText(shipNameString);
 
-        String phoneString = "電話：" + pastOrder.getShipPhone();
+        String phoneString = "電話：" + pastOrder.getInfo().getShipPhone();
         shippingPhoneText.setText(phoneString);
 
-        String orderIdString = "訂單編號：" + pastOrder.getOrder_id();
+        String orderIdString = "訂單編號：" + pastOrder.getId();
         order_id_text.setText(orderIdString);
 
-        shippingStoreNameText.setText(pastOrder.getShippingStore().getName());
+        shippingStoreNameText.setText(pastOrder.getInfo().getShipStoreName());
         order_status_text.setText(pastOrder.getStatus());
         order_ship_way.setText("運送方式：超商取貨");
 
@@ -146,19 +158,6 @@ public class PastOrderDetailActivity extends AppCompatActivity {
     public void onCustomerServiceFabClick(View view) {
         csBottomSheetDialogFragment.show(getSupportFragmentManager(), "");
         GAManager.sendEvent(new CustomerServiceClickEvent("FAB"));
-    }
-
-    private class getPastOrderByOrderIdTask extends AsyncTask<Integer, Void, PastOrder> {
-
-        @Override
-        protected PastOrder doInBackground(Integer... params) {
-            return OrderApi.getPastOrderByOrderId(params[0]);
-        }
-
-        @Override
-        protected void onPostExecute(PastOrder result) {
-            onGetPostOrderResult(result);
-        }
     }
 
 }

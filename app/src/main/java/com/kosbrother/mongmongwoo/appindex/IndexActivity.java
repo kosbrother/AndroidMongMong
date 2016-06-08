@@ -26,15 +26,19 @@ public class IndexActivity extends AppCompatActivity {
             String dataString = data.getEncodedPath();
             Intent indexIntent;
             if (dataString.contains("categories")) {
-                String categoryName = dataString.substring(
-                        dataString.indexOf("categories/") + 11, dataString.indexOf("/items"));
                 int productId = Integer.parseInt(dataString.substring(dataString.lastIndexOf("-") + 1));
+                String categoryString = dataString.substring(
+                        dataString.indexOf("categories/") + 11, dataString.indexOf("/items"));
+                String categoryName = categoryString.split("-")[0];
+                String categoryId = categoryString.split("-")[1];
 
                 indexIntent = new Intent(this, ProductActivity.class);
                 indexIntent.putExtra(
                         ProductActivity.EXTRA_INT_PRODUCT_ID, productId);
                 indexIntent.putExtra(
                         ProductActivity.EXTRA_STRING_CATEGORY_NAME, categoryName);
+                indexIntent.putExtra(
+                        ProductActivity.EXTRA_INT_CATEGORY_ID, categoryId);
             } else {
                 indexIntent = new Intent(this, MainActivity.class);
             }

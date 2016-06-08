@@ -7,6 +7,7 @@ import android.support.annotation.VisibleForTesting;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.utils.ProductUtil;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -25,9 +26,18 @@ public class MyCollectManager {
         if (myCollectedJsonString.isEmpty()) {
             return new ArrayList<>();
         }
-        Type listType = new TypeToken<List<Product>>() {
-        }.getType();
-        List<Product> productList = new Gson().fromJson(myCollectedJsonString, listType);
+        List<Product> productList;
+        // amount is json key only in old version
+        if (myCollectedJsonString.contains("amount")) {
+            removeAllCollectList(context);
+            productList = ProductUtil.getNewProductListFromOldProductString(myCollectedJsonString);
+            storeCollectList(context, productList);
+        } else {
+            Type typeToken = new TypeToken<List<Product>>() {
+            }.getType();
+            Gson gson = new Gson();
+            productList = gson.fromJson(myCollectedJsonString, typeToken);
+        }
         // To fix null product bug
         removeAllNullFromListThenSave(context, productList);
         return productList;
@@ -71,6 +81,13 @@ public class MyCollectManager {
     private static void removeAllNullFromListThenSave(Context context, List<Product> productList) {
         removeAllNullFromList(productList);
         storeCollectList(context, productList);
+    }
+
+    public static void removeAllCollectList(Context context) {
+        context.getSharedPreferences(PREF_MY_COLLECT, Context.MODE_PRIVATE)
+                .edit()
+                .remove(PREF_STRING_COLLECT_LIST)
+                .apply();
     }
 
     @VisibleForTesting

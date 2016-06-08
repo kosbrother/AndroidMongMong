@@ -41,7 +41,7 @@ public class MyCollectAdapter extends RecyclerView.Adapter<MyCollectAdapter.View
         holder.productPriceTextView.setText(priceString);
 
         Glide.with(context)
-                .load(product.getCover())
+                .load(product.getCover().getUrl())
                 .centerCrop()
                 .placeholder(R.mipmap.img_pre_load_rectangle)
                 .into(holder.productImageView);

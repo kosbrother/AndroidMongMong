@@ -1,29 +1,26 @@
 package com.kosbrother.mongmongwoo.model;
 
-/**
- * Created by kolichung on 3/14/16.
- */
+import com.google.gson.annotations.SerializedName;
+
 public class Town {
 
-    int town_id;
-    String name;
+    @SerializedName("id")
+    private int id;
+    @SerializedName("name")
+    private String name;
 
-    public Town(int town_id, String name) {
-        this.town_id = town_id;
+    public Town(int id, String name) {
+        this.id = id;
         this.name = name;
     }
 
-    public int getTown_id() {
-        return town_id;
-    }
-
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
     }
 
     @Override
     public String toString() {
-        return this.name;
+        return name;
     }
 
 }

@@ -13,28 +13,30 @@ public class Product implements Serializable {
     private String name;
     @SerializedName("price")
     private int price;
-    @SerializedName("cover")
-    private String cover;
-    @SerializedName("description")
-    private String description;
     @SerializedName("status")
     private String status;
-
-    @SerializedName("photos")
-    private List<Photo> images;
+    @SerializedName("description")
+    private String description;
+    @SerializedName("cover")
+    private Cover cover;
+    @SerializedName("special_price")
+    private String specialPrice;
     @SerializedName("specs")
     private List<Spec> specs;
+    @SerializedName("photos")
+    private List<Photo> photos;
 
     private int buy_count;
     private Spec selectedSpec;
     private String categoryName;
+    private int categoryId;
 
-    public Product(int id, String name, int price, String cover) {
+    public Product(int id, String name, int price, String coverUrl) {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.cover = cover;
         this.buy_count = 0;
+        this.cover = new Cover(coverUrl);
     }
 
     public int getId() {
@@ -49,24 +51,28 @@ public class Product implements Serializable {
         return price;
     }
 
-    public String getCover() {
-        return cover;
-    }
-
-    public List<Photo> getImages() {
-        return images;
-    }
-
-    public List<Spec> getSpecs() {
-        return specs;
+    public String getStatus() {
+        return status;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public String getStatus() {
-        return status;
+    public Cover getCover() {
+        return cover;
+    }
+
+    public String getSpecialPrice() {
+        return specialPrice;
+    }
+
+    public List<Spec> getSpecs() {
+        return specs;
+    }
+
+    public List<Photo> getPhotos() {
+        return photos;
     }
 
     public void setSelectedSpec(Spec selectedSpec) {
@@ -96,4 +102,13 @@ public class Product implements Serializable {
     public String getCategoryName() {
         return categoryName;
     }
+
+    public int getCategoryId() {
+        return categoryId;
+    }
+
+    public void setCategoryId(int categoryId) {
+        this.categoryId = categoryId;
+    }
+
 }

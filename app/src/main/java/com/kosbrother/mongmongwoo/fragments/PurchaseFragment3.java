@@ -1,7 +1,6 @@
 package com.kosbrother.mongmongwoo.fragments;
 
 import android.content.SharedPreferences;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
@@ -16,20 +15,25 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.gson.Gson;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.ShoppingCarPreference;
-import com.kosbrother.mongmongwoo.api.OrderApi;
+import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.fcm.FcmPreferences;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Order;
+import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
-import java.util.ArrayList;
+import java.util.List;
+
+import rx.functions.Action1;
 
 public class PurchaseFragment3 extends Fragment {
 
@@ -71,11 +75,35 @@ public class PurchaseFragment3 extends Fragment {
             @Override
             public void onClick(View v) {
                 GAManager.sendEvent(new CheckoutStep3ClickEvent(GALabel.SEND_ORDER));
-                new NewsTask().execute();
+                requestPostOrder();
             }
         });
 
         return view;
+    }
+
+    private void requestPostOrder() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
+        theOrder.setRegistrationId(sharedPreferences.getString(FcmPreferences.TOKEN, ""));
+        String json = new Gson().toJson(theOrder);
+        Webservice.postOrder(json, new Action1<ResponseEntity<PastOrder>>() {
+            @Override
+            public void call(ResponseEntity<PastOrder> stringResponseEntity) {
+                PastOrder data = stringResponseEntity.getData();
+                if (data == null) {
+                    GAManager.sendError("postOrderError", stringResponseEntity.getError());
+                    Toast.makeText(getActivity(), "訂單未成功送出 資料異常", Toast.LENGTH_SHORT).show();
+                } else {
+                    progressBar.setVisibility(View.GONE);
+                    Settings.saveUserStoreData(theOrder.getStore());
+                    Settings.saveUserShippingNameAndPhone(theOrder.getShipName(), theOrder.getShipPhone());
+
+                    ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+                    new ShoppingCarPreference().removeAllShoppingItems(activity);
+                    activity.startPurchaseFragment4();
+                }
+            }
+        });
     }
 
     @Override
@@ -86,11 +114,11 @@ public class PurchaseFragment3 extends Fragment {
             ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
             theOrder = activity.getOrder();
 
-            int totalGoodsPrice = CalculateUtil.calculateTotalGoodsPrice(theOrder.getOrderProducts());
+            int totalGoodsPrice = CalculateUtil.calculateTotalGoodsPrice(activity.getProducts());
             String totalGoodsPriceString = "" + totalGoodsPrice;
             totalGoodsPriceTextView.setText(totalGoodsPriceString);
 
-            int shipPrice = theOrder.getShipPrice();
+            int shipPrice = theOrder.getShipFee();
             if (shipPrice == 0) {
                 shippingPriceText.setText("免運費");
             } else {
@@ -98,22 +126,22 @@ public class PurchaseFragment3 extends Fragment {
                 shippingPriceText.setText(shippingPriceString);
             }
 
-            String totalPriceString = "NT$ " + theOrder.getTotalPrice();
+            String totalPriceString = "NT$ " + theOrder.getTotal();
             totalPriceText.setText(totalPriceString);
 
-            shippingNameText.setText(theOrder.getShippingName());
-            shippingPhoneText.setText(theOrder.getShippingPhone());
-            shippingStoreNameText.setText(theOrder.getShippingStore().getName());
-            shippingStoreAddressText.setText(theOrder.getShippingStore().getAddress());
-            emailTextView.setText(theOrder.getShippingEmail());
+            shippingNameText.setText(theOrder.getShipName());
+            shippingPhoneText.setText(theOrder.getShipPhone());
+            shippingStoreNameText.setText(theOrder.getStore().getName());
+            shippingStoreAddressText.setText(theOrder.getStore().getAddress());
+            emailTextView.setText(theOrder.getShipEmail());
 
-            addGoodsItemView(theOrder.getOrderProducts());
+            addGoodsItemView(activity.getProducts());
         } else {
             //相当于Fragment的onPause
         }
     }
 
-    private void addGoodsItemView(ArrayList<Product> orderProducts) {
+    private void addGoodsItemView(List<Product> orderProducts) {
         goodsContainerLinearLayout.removeAllViews();
 
         for (Product product : orderProducts) {
@@ -125,7 +153,7 @@ public class PurchaseFragment3 extends Fragment {
             goodsContainerLinearLayout.addView(itemView);
 
             Glide.with(getContext())
-                    .load(product.getSelectedSpec().getPic())
+                    .load(product.getSelectedSpec().getStylePic().getUrl())
                     .centerCrop()
                     .placeholder(R.mipmap.img_pre_load_square)
                     .into(goodsImageView);
@@ -138,49 +166,6 @@ public class PurchaseFragment3 extends Fragment {
 
             String subTotalText = "小計：NT$ " + (product.getBuy_count() * product.getPrice());
             subTotalTextView.setText(subTotalText);
-        }
-    }
-
-    private class NewsTask extends AsyncTask {
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressBar.setVisibility(View.VISIBLE);
-            if (theOrder.getOrderProducts() == null || theOrder.getOrderProducts().size() == 0) {
-                Toast.makeText(getActivity(), "購物車商品資料錯誤,請聯絡客服LINE@,感謝您^^", Toast.LENGTH_LONG).show();
-            }
-        }
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-            String message = OrderApi.httpPostOrder(
-                    theOrder.getUid(), theOrder.getProductPrice(),
-                    theOrder.getShipPrice(), theOrder.getTotalPrice(),
-                    theOrder.getShippingName(), theOrder.getShippingPhone(),
-                    theOrder.getShippingStore().getStore_code(),
-                    theOrder.getShippingStore().getName(),
-                    theOrder.getShippingStore().getStore_id(),
-                    theOrder.getOrderProducts(),
-                    theOrder.getShippingEmail(),
-                    sharedPreferences.getString(FcmPreferences.TOKEN, ""));
-            return !message.contains("Error");
-        }
-
-        @Override
-        protected void onPostExecute(Object result) {
-            progressBar.setVisibility(View.GONE);
-            if ((boolean) result == true) {
-                Settings.saveUserStoreData(theOrder.getShippingStore());
-                Settings.saveUserShippingNameAndPhone(theOrder.getShippingName(), theOrder.getShippingPhone());
-
-                ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-                new ShoppingCarPreference().removeAllShoppingItems(activity);
-                activity.startPurchaseFragment4();
-            } else {
-                Toast.makeText(getActivity(), "訂單未成功送出 資料異常", Toast.LENGTH_SHORT).show();
-            }
         }
     }
 

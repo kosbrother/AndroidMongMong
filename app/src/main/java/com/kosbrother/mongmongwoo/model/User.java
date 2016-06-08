@@ -1,24 +1,29 @@
 package com.kosbrother.mongmongwoo.model;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 
-/**
- * Created by kolichung on 3/9/16.
- */
 public class User {
 
-    String user_name;
-    String real_name;
-    String gender;
-    String phone;
-    String address;
-    String fb_uid;
-    String fb_pic;
-    private final String email;
+    @SerializedName("user_name")
+    private String userName;
+    @SerializedName("real_name")
+    private String real_name;
+    @SerializedName("gender")
+    private String gender;
+    @SerializedName("phone")
+    private String phone;
+    @SerializedName("address")
+    private String address;
+    @SerializedName("uid")
+    private String fb_uid;
+    @SerializedName("email")
+    private String email;
 
-    public User(String user_name, String real_name, String gender, String phone, String address, String fb_uid, String fb_pic, String email) {
-        this.user_name = user_name;
+    private String fb_pic;
+
+    public User(String userName, String real_name, String gender, String phone, String address, String fb_uid, String fb_pic, String email) {
+        this.userName = userName;
         this.real_name = real_name;
         this.gender = gender;
         this.phone = phone;
@@ -28,8 +33,8 @@ public class User {
         this.email = email;
     }
 
-    public String getUser_name() {
-        return user_name;
+    public String getUserName() {
+        return userName;
     }
 
     public String getReal_name() {
@@ -61,18 +66,6 @@ public class User {
     }
 
     public String getJsonString() {
-        JSONObject jsonObject = new JSONObject();
-        try {
-            jsonObject.put("user_name", user_name);
-            jsonObject.put("real_name", real_name);
-            jsonObject.put("gender", gender);
-            jsonObject.put("phone", phone);
-            jsonObject.put("address", address);
-            jsonObject.put("uid", fb_uid);
-            jsonObject.put("email", email);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return jsonObject.toString();
+        return new Gson().toJson(this, User.class);
     }
 }

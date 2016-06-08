@@ -21,10 +21,12 @@ import com.kosbrother.mongmongwoo.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
+import com.kosbrother.mongmongwoo.model.PostProduct;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class PurchaseFragment1 extends Fragment {
 
@@ -41,7 +43,7 @@ public class PurchaseFragment1 extends Fragment {
     private TextView checkoutPriceBottomTextView;
     private LinearLayout goodsContainerLinearLayout;
 
-    ArrayList<Product> shoppingCarProducts;
+    List<Product> shoppingCarProducts;
     int totalGoodsPrice;
 
     int shippingPrice = 60;
@@ -169,7 +171,7 @@ public class PurchaseFragment1 extends Fragment {
             Button selectCountButton = (Button) itemView.findViewById(R.id.item_car_count_button);
             TextView subTotalTextView = (TextView) itemView.findViewById(R.id.subtotal_tv);
             Glide.with(getContext())
-                    .load(product.getSelectedSpec().getPic())
+                    .load(product.getSelectedSpec().getStylePic().getUrl())
                     .centerCrop()
                     .placeholder(R.mipmap.img_pre_load_square)
                     .into(goodsImageView);
@@ -244,10 +246,20 @@ public class PurchaseFragment1 extends Fragment {
     }
 
     private void saveOrders(ShoppingCarActivity activity) {
-        activity.saveOrderProducts(shoppingCarProducts);
-        activity.getOrder().setShipPrice(shippingPrice);
-        activity.getOrder().setProductPrice(totalGoodsPrice);
-        activity.getOrder().setTotalPrice(shippingPrice + totalGoodsPrice);
+        List<PostProduct> postProductList = new ArrayList<>();
+        for (Product product : shoppingCarProducts) {
+            PostProduct postProduct = new PostProduct();
+            postProduct.setName(product.getName());
+            postProduct.setProductId(product.getId());
+            postProduct.setSpecId(product.getSelectedSpec().getId());
+            postProduct.setStyle(product.getSelectedSpec().getStyle());
+            postProduct.setQuantity(product.getBuy_count());
+            postProduct.setPrice(product.getPrice());
+            postProductList.add(postProduct);
+        }
+        activity.savePostProducts(postProductList);
+        activity.saveProducts(shoppingCarProducts);
+        activity.savePrice(totalGoodsPrice, shippingPrice);
     }
 
     public void onDeleteImageViewClick(final int position) {
