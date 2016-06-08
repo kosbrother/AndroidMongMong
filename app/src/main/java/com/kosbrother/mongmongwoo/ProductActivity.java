@@ -140,6 +140,9 @@ public class ProductActivity extends AppCompatActivity {
                 onBackPressed();
                 return true;
             case R.id.share:
+                GAManager.sendShareItemEvent(
+                        getCategoryName(), String.valueOf(theProduct.getId()), theProduct.getName());
+
                 String text = theProduct.getUrl();
                 String title = "分享商品";
                 String subject = theProduct.getName();
