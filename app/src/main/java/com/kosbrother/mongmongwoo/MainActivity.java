@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -59,8 +60,6 @@ import rx.functions.Action1;
 public class MainActivity extends FbLoginActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    String TAG = "MainActivity";
-
     private CircularImageView userImage;
     private TextView userText;
     private LoginButton loginButton;
@@ -68,7 +67,6 @@ public class MainActivity extends FbLoginActivity
 
     private ViewPager viewPager;
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
-    private MenuItem shoppingCartMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,6 +120,7 @@ public class MainActivity extends FbLoginActivity
     @Override
     protected void onResume() {
         super.onResume();
+        invalidateOptionsMenu();
         setNoNetLayout();
 
         User user = Settings.getSavedUser();
@@ -132,32 +131,32 @@ public class MainActivity extends FbLoginActivity
         } else {
             setUserLogoutView();
         }
-        if (shoppingCartMenuItem != null) {
-            setShoppingCartMenuItemIconWithItemCount();
-        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem menuItem = menu.findItem(99);
-        if (menuItem == null) {
-            shoppingCartMenuItem = menu.add(0, 99, 0, "購物車");
-        } else {
-            shoppingCartMenuItem = menuItem;
-        }
-        shoppingCartMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        shoppingCartMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                GAManager.sendEvent(new CartClickEvent());
-
-                Intent shoppingCarIntent = new Intent(MainActivity.this, ShoppingCarActivity.class);
-                startActivity(shoppingCarIntent);
-                return true;
-            }
-        });
-        setShoppingCartMenuItemIconWithItemCount();
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        setShoppingCartMenuItemIconWithItemCount(menu.findItem(R.id.shopping_cart));
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        setShoppingCartMenuItemIconWithItemCount(menu.findItem(R.id.shopping_cart));
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.shopping_cart) {
+            GAManager.sendEvent(new CartClickEvent());
+
+            Intent shoppingCarIntent = new Intent(MainActivity.this, ShoppingCarActivity.class);
+            startActivity(shoppingCarIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -199,10 +198,6 @@ public class MainActivity extends FbLoginActivity
     public void onCustomerServiceFabClick(View view) {
         csBottomSheetDialogFragment.show(getSupportFragmentManager(), "");
         GAManager.sendEvent(new CustomerServiceClickEvent("FAB"));
-    }
-
-    public void doIncrease() {
-        invalidateOptionsMenu();
     }
 
     public void showShoppingCarInstruction() {
@@ -385,11 +380,11 @@ public class MainActivity extends FbLoginActivity
         });
     }
 
-    private void setShoppingCartMenuItemIconWithItemCount() {
+    private void setShoppingCartMenuItemIconWithItemCount(MenuItem item) {
         ShoppingCarPreference pref = new ShoppingCarPreference();
         int count = pref.getShoppingCarItemSize(this);
         Drawable shoppingCartIcon = ShoppingCartIconUtil.getIcon(this, count);
-        shoppingCartMenuItem.setIcon(shoppingCartIcon);
+        item.setIcon(shoppingCartIcon);
     }
 
     class SampleFragmentPagerAdapter extends FragmentPagerAdapter {

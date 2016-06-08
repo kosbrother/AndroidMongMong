@@ -7,9 +7,9 @@
         android:title="分享商品"
         android:visible="false"
         app:showAsAction="always" />
-
     <item
         android:id="@+id/shopping_cart"
+        android:icon="@drawable/icon_shopping_car"
         android:title="購物車"
         app:showAsAction="always" />
 </menu>

@@ -24,6 +24,7 @@ import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPromoOpenedEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductAddToCartEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductAddToCollectionEvent;
@@ -145,6 +146,8 @@ public class ProductActivity extends AppCompatActivity {
                 ShareUtil.shareText(this, title, subject, text);
                 return true;
             case R.id.shopping_cart:
+                GAManager.sendEvent(new CartClickEvent());
+
                 Intent intent = new Intent(this, ShoppingCarActivity.class);
                 startActivity(intent);
                 return true;
