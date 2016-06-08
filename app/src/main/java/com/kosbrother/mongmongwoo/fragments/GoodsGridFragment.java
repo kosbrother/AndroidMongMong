@@ -37,7 +37,7 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
     private GoodsGridAdapter goodsGridAdapter;
     private RelativeLayout layoutProgress;
 
-    private ArrayList<Product> products = new ArrayList<>();
+    private List<Product> products = new ArrayList<>();
     private int categoryId;
     private String categoryName;
 

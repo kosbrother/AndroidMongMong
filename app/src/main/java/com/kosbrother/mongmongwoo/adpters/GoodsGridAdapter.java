@@ -12,17 +12,18 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.utils.TextViewUtil;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class GoodsGridAdapter extends BaseAdapter {
 
     private Context context;
-    private ArrayList<Product> productList;
+    private List<Product> productList;
     private GoodsGridAdapterListener listener;
 
     public GoodsGridAdapter(Context context,
-                            ArrayList<Product> productList,
+                            List<Product> productList,
                             GoodsGridAdapterListener listener) {
         this.context = context;
         this.productList = productList;
@@ -51,9 +52,11 @@ public class GoodsGridAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_goods, null);
 
             viewHolder = new ViewHolder();
-            viewHolder.itemImage = (ImageView) convertView.findViewById(R.id.item_imageview);
-            viewHolder.itemNameText = (TextView) convertView.findViewById(R.id.item_name_text);
-            viewHolder.itemPriceText = (TextView) convertView.findViewById(R.id.item_price_text);
+            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.item_imageview);
+            viewHolder.nameTextView = (TextView) convertView.findViewById(R.id.item_name_text);
+            viewHolder.priceTextView = (TextView) convertView.findViewById(R.id.item_price_text);
+            viewHolder.specialPriceTextView =
+                    (TextView) convertView.findViewById(R.id.item_special_price_tv);
             viewHolder.addShoppingCarButton =
                     (LinearLayout) convertView.findViewById(R.id.add_shopping_car_ll);
 
@@ -68,12 +71,14 @@ public class GoodsGridAdapter extends BaseAdapter {
                 .load(theProduct.getCover().getUrl())
                 .centerCrop()
                 .placeholder(R.mipmap.img_pre_load_rectangle)
-                .into(viewHolder.itemImage);
+                .into(viewHolder.imageView);
 
-        viewHolder.itemNameText.setText(theProduct.getName());
+        viewHolder.nameTextView.setText(theProduct.getName());
 
-        String priceString = "NT$" + theProduct.getPrice();
-        viewHolder.itemPriceText.setText(priceString);
+        String priceText = "NT$" + theProduct.getPrice();
+        viewHolder.priceTextView.setText(priceText);
+
+        setSpecialPrice(viewHolder.specialPriceTextView, theProduct.getSpecialPrice());
 
         viewHolder.addShoppingCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -85,10 +90,23 @@ public class GoodsGridAdapter extends BaseAdapter {
         return convertView;
     }
 
+    private void setSpecialPrice(TextView specialPriceTextView, int specialPrice) {
+        String specialPriceText;
+        if (specialPrice > 0) {
+            specialPriceText = "優惠價NT$" + specialPrice;
+            TextViewUtil.paintLineThroughTextView(specialPriceTextView);
+        } else {
+            specialPriceText = "-優惠價-";
+        }
+
+        specialPriceTextView.setText(specialPriceText);
+    }
+
     static class ViewHolder {
-        ImageView itemImage;
-        TextView itemNameText;
-        TextView itemPriceText;
+        ImageView imageView;
+        TextView nameTextView;
+        TextView priceTextView;
+        TextView specialPriceTextView;
         LinearLayout addShoppingCarButton;
     }
 
