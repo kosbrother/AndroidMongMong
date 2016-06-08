@@ -34,6 +34,7 @@ import com.kosbrother.mongmongwoo.utils.CustomerServiceUtil;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
 import com.kosbrother.mongmongwoo.utils.ShoppingCartIconUtil;
+import com.kosbrother.mongmongwoo.utils.TextViewUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -316,12 +317,27 @@ public class ProductActivity extends AppCompatActivity {
         TextView nameText = (TextView) findViewById(R.id.product_name_text);
         nameText.setText(theProduct.getName());
 
-        TextView priceText = (TextView) findViewById(R.id.product_price_text);
-        String priceString = "NT$ " + theProduct.getPrice();
-        priceText.setText(priceString);
+        TextView priceTextView = (TextView) findViewById(R.id.product_price_text);
+        String priceText = "NT$ " + theProduct.getPrice();
+        priceTextView.setText(priceText);
 
-        TextView infoText = (TextView) findViewById(R.id.product_information_text);
-        infoText.setText(Html.fromHtml(theProduct.getDescription()));
+        TextView specialPriceTextView = (TextView) findViewById(R.id.product_special_price_tv);
+        setSpecialPrice(specialPriceTextView, theProduct.getSpecialPrice());
+
+        TextView infoTextView = (TextView) findViewById(R.id.product_information_text);
+        infoTextView.setText(Html.fromHtml(theProduct.getDescription()));
+    }
+
+    private void setSpecialPrice(TextView specialPriceTextView, int specialPrice) {
+        String specialPriceText;
+        if (specialPrice > 0) {
+            specialPriceText = "優惠價NT$" + specialPrice;
+            TextViewUtil.paintLineThroughTextView(specialPriceTextView);
+        } else {
+            specialPriceText = "-優惠價-";
+        }
+
+        specialPriceTextView.setText(specialPriceText);
     }
 
     @SuppressWarnings("ConstantConditions")

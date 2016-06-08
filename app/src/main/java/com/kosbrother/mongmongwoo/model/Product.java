@@ -20,7 +20,7 @@ public class Product implements Serializable {
     @SerializedName("cover")
     private Cover cover;
     @SerializedName("special_price")
-    private String specialPrice;
+    private int specialPrice;
     @SerializedName("specs")
     private List<Spec> specs;
     @SerializedName("photos")
@@ -63,7 +63,7 @@ public class Product implements Serializable {
         return cover;
     }
 
-    public String getSpecialPrice() {
+    public int getSpecialPrice() {
         return specialPrice;
     }
 

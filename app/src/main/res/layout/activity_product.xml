@@ -106,38 +106,61 @@
                         tools:src="@mipmap/ic_favorite_pink_border" />
                 </RelativeLayout>
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/product_title_gray_bg"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:paddingBottom="10dp"
+                    android:paddingBottom="4dp"
                     android:paddingLeft="16dp"
                     android:paddingRight="16dp"
-                    android:paddingTop="10dp">
+                    android:paddingTop="4dp">
+
+                    <LinearLayout
+                        android:id="@+id/price_ll"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/product_special_price_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="end"
+                            android:textColor="@color/black_text"
+                            android:textSize="11sp"
+                            tools:text="-優惠價-" />
+
+                        <TextView
+                            android:id="@+id/product_price_text"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@android:color/holo_red_light"
+                            android:textSize="18sp"
+                            tools:text="NT$ 149" />
+                    </LinearLayout>
 
                     <TextView
                         android:id="@+id/product_name_text"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginRight="16dp"
-                        android:layout_weight="1"
-                        android:maxLines="2"
-                        android:textColor="@color/black_text"
-                        android:textSize="21sp"
-                        tools:text="節目卡片迷你小賀卡" />
-
-                    <TextView
-                        android:id="@+id/product_price_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:gravity="center"
-                        android:textColor="@android:color/holo_red_light"
+                        android:layout_alignParentBottom="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignParentTop="true"
+                        android:layout_marginEnd="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_toLeftOf="@id/price_ll"
+                        android:layout_toStartOf="@id/price_ll"
+                        android:gravity="bottom"
+                        android:maxLines="2"
+                        android:textColor="@color/black_text"
                         android:textSize="18sp"
-                        tools:text="NT$ 149" />
-                </LinearLayout>
+                        tools:text="節目卡片迷你小賀卡" />
+
+                </RelativeLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
