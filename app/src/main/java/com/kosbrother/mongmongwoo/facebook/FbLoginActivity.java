@@ -7,8 +7,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.facebook.login.widget.LoginButton;
 
-import java.util.Arrays;
-
 public abstract class FbLoginActivity extends AppCompatActivity
         implements FacebookManager.FacebookListener {
 
@@ -39,6 +37,10 @@ public abstract class FbLoginActivity extends AppCompatActivity
     public abstract void onFbLogout();
 
     protected void setLoginButton(LoginButton loginButton) {
-        loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
+        fbManager.setLoginButton(loginButton);
+    }
+
+    protected void startFbLogin(){
+        fbManager.startLogin(this);
     }
 }
