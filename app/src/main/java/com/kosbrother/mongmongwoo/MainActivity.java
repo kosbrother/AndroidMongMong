@@ -3,7 +3,6 @@ package com.kosbrother.mongmongwoo;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -12,6 +11,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -48,7 +48,6 @@ import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
 import com.kosbrother.mongmongwoo.pastorders.QueryPastOrdersActivity;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.ShareUtil;
-import com.kosbrother.mongmongwoo.utils.ShoppingCartIconUtil;
 import com.kosbrother.mongmongwoo.utils.VersionUtil;
 
 import java.util.ArrayList;
@@ -137,26 +136,35 @@ public class MainActivity extends FbLoginActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.main, menu);
-        setShoppingCartMenuItemIconWithItemCount(menu.findItem(R.id.shopping_cart));
+        MenuItem shoppingCartItem = menu.findItem(R.id.shopping_cart);
+        View shoppingCartView = MenuItemCompat.getActionView(shoppingCartItem);
+        shoppingCartView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GAManager.sendEvent(new CartClickEvent());
+
+                Intent shoppingCarIntent = new Intent(MainActivity.this, ShoppingCarActivity.class);
+                startActivity(shoppingCarIntent);
+            }
+        });
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        setShoppingCartMenuItemIconWithItemCount(menu.findItem(R.id.shopping_cart));
-        return super.onPrepareOptionsMenu(menu);
-    }
+        MenuItem item = menu.findItem(R.id.shopping_cart);
+        View countView = MenuItemCompat.getActionView(item);
+        TextView countTextView = (TextView) countView.findViewById(R.id.count);
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.shopping_cart) {
-            GAManager.sendEvent(new CartClickEvent());
-
-            Intent shoppingCarIntent = new Intent(MainActivity.this, ShoppingCarActivity.class);
-            startActivity(shoppingCarIntent);
-            return true;
+        ShoppingCarPreference pref = new ShoppingCarPreference();
+        int count = pref.getShoppingCarItemSize(this);
+        if (count == 0) {
+            countTextView.setVisibility(View.GONE);
+        } else {
+            countTextView.setText(String.valueOf(count));
+            countTextView.setVisibility(View.VISIBLE);
         }
-        return super.onOptionsItemSelected(item);
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -378,13 +386,6 @@ public class MainActivity extends FbLoginActivity
                 dialog.dismiss();
             }
         });
-    }
-
-    private void setShoppingCartMenuItemIconWithItemCount(MenuItem item) {
-        ShoppingCarPreference pref = new ShoppingCarPreference();
-        int count = pref.getShoppingCarItemSize(this);
-        Drawable shoppingCartIcon = ShoppingCartIconUtil.getIcon(this, count);
-        item.setIcon(shoppingCartIcon);
     }
 
     class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
