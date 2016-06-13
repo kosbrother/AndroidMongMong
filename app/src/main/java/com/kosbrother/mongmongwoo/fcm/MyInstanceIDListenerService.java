@@ -1,11 +1,10 @@
 package com.kosbrother.mongmongwoo.fcm;
 
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
+import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
@@ -27,13 +26,10 @@ public class MyInstanceIDListenerService extends FirebaseInstanceIdService {
     public void onTokenRefresh() {
         // Get updated InstanceID token.
         String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        Log.d(TAG, "Refreshed token: " + refreshedToken);
+        if (BuildConfig.DEBUG) {
+            Log.d(TAG, "Refreshed token: " + refreshedToken);
+        }
         sendRegistrationToServer(refreshedToken);
-
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        SharedPreferences.Editor edit = sharedPreferences.edit();
-        edit.putString(FcmPreferences.TOKEN, refreshedToken);
-        edit.apply();
     }
 
     private void sendRegistrationToServer(String token) {

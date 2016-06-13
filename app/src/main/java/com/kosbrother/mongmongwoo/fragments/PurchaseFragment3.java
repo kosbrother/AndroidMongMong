@@ -1,8 +1,6 @@
 package com.kosbrother.mongmongwoo.fragments;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +18,6 @@ import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
-import com.kosbrother.mongmongwoo.fcm.FcmPreferences;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
@@ -83,8 +80,6 @@ public class PurchaseFragment3 extends Fragment {
     }
 
     private void requestPostOrder() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        theOrder.setRegistrationId(sharedPreferences.getString(FcmPreferences.TOKEN, ""));
         String json = new Gson().toJson(theOrder);
         Webservice.postOrder(json, new Action1<ResponseEntity<PastOrder>>() {
             @Override

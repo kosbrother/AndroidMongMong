@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
@@ -262,6 +263,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
         theOrder.setUid(Settings.checkIsLogIn() ? Settings.getSavedUser().getFb_uid() : "9999");
         theOrder.setShipName(Settings.getShippingName());
         theOrder.setShipPhone(Settings.getShippingPhone());
+        theOrder.setRegistrationId(FirebaseInstanceId.getInstance().getToken());
     }
 
     private SampleFragmentPagerAdapter getViewPagerAdapter() {
