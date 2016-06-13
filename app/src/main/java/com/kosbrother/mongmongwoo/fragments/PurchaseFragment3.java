@@ -18,8 +18,6 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
-import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.fcm.FcmPreferences;
@@ -29,6 +27,8 @@ import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
 import java.util.List;
@@ -98,8 +98,8 @@ public class PurchaseFragment3 extends Fragment {
                     Settings.saveUserStoreData(theOrder.getStore());
                     Settings.saveUserShippingNameAndPhone(theOrder.getShipName(), theOrder.getShipPhone());
 
+                    ShoppingCartManager.getInstance().removeAllShoppingItems();
                     ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-                    new ShoppingCarPreference().removeAllShoppingItems(activity);
                     activity.startPurchaseFragment4();
                 }
             }

@@ -16,13 +16,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
-import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.PostProduct;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
 import java.util.ArrayList;
@@ -81,8 +81,7 @@ public class PurchaseFragment1 extends Fragment {
     }
 
     public void loadShoppingCart() {
-        ShoppingCarPreference pref = new ShoppingCarPreference();
-        shoppingCarProducts = pref.loadShoppingItems(getContext());
+        shoppingCarProducts = ShoppingCartManager.getInstance().loadShoppingItems();
     }
 
     public void updatePricesText() {
@@ -277,9 +276,7 @@ public class PurchaseFragment1 extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.PRODUCT_DELETE));
 
-                ShoppingCarPreference prefs = new ShoppingCarPreference();
-                prefs.removeShoppingItem(getContext(), position);
-
+                ShoppingCartManager.getInstance().removeShoppingItem(position);
                 loadShoppingCart();
                 updateGoodsLinearLayout();
                 updatePricesText();
@@ -338,14 +335,7 @@ public class PurchaseFragment1 extends Fragment {
         alertDialogBuilder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 shoppingCarProducts.get(product_position).setBuy_count(tempCount);
-
-                ShoppingCarPreference pref = new ShoppingCarPreference();
-                for (int i = 0; i < shoppingCarProducts.size(); i++) {
-                    pref.removeShoppingItem(getContext(), shoppingCarProducts.size() - 1 - i);
-                }
-                for (int i = 0; i < shoppingCarProducts.size(); i++) {
-                    pref.addShoppingItem(getContext(), shoppingCarProducts.get(i));
-                }
+                ShoppingCartManager.getInstance().storeShoppingItems(shoppingCarProducts);
                 loadShoppingCart();
                 updateGoodsLinearLayout();
                 updatePricesText();

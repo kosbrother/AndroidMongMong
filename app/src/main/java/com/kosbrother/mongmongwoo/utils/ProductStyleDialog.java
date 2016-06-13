@@ -14,12 +14,12 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.adpters.StyleGridAdapter;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductSelectDialogConfirmEvent;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Spec;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 
 public class ProductStyleDialog {
 
@@ -170,8 +170,7 @@ public class ProductStyleDialog {
     }
 
     private void saveProduct() {
-        ShoppingCarPreference pref = new ShoppingCarPreference();
-        pref.addShoppingItem(context, product);
+        ShoppingCartManager.getInstance().addShoppingItem(product);
     }
 
     private void checkFirstAddAndNotifyListener(ProductStyleDialogListener listener) {
