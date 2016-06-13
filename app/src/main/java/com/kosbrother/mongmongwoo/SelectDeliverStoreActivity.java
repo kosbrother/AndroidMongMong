@@ -86,19 +86,21 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         getLinearMap().setVisibility(View.VISIBLE);
         selectStoreButton.setVisibility(View.VISIBLE);
 
-        mMap.clear();
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(theStore.getLatLng()));
-        mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
-        mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-            @Override
-            public void onCameraChange(CameraPosition cameraPosition) {
-                mMap.addMarker(new MarkerOptions()
-                        .title(selectedStore.getName())
-                        .position(cameraPosition.target)
-                        .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_7_11)));
-                mMap.setOnCameraChangeListener(null);
-            }
-        });
+        if (mMap != null) {
+            mMap.clear();
+            mMap.moveCamera(CameraUpdateFactory.newLatLng(theStore.getLatLng()));
+            mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
+            mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
+                @Override
+                public void onCameraChange(CameraPosition cameraPosition) {
+                    mMap.addMarker(new MarkerOptions()
+                            .title(selectedStore.getName())
+                            .position(cameraPosition.target)
+                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_7_11)));
+                    mMap.setOnCameraChangeListener(null);
+                }
+            });
+        }
     }
 
     private void setToolBar() {
