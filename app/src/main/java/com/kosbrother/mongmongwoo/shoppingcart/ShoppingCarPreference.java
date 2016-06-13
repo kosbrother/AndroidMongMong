@@ -1,4 +1,4 @@
-package com.kosbrother.mongmongwoo;
+package com.kosbrother.mongmongwoo.shoppingcart;
 
 import android.content.Context;
 import android.content.SharedPreferences;

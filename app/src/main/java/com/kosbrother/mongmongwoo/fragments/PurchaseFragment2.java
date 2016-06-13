@@ -15,7 +15,7 @@ import android.widget.Toast;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.SelectDeliverStoreActivity;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.ShoppingCarActivity;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.facebook.FacebookUtil;
 import com.kosbrother.mongmongwoo.model.Store;
 
