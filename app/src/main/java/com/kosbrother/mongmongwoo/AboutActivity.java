@@ -1,20 +1,14 @@
 package com.kosbrother.mongmongwoo;
 
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.kosbrother.mongmongwoo.api.UrlCenter;
+import com.kosbrother.mongmongwoo.utils.MongMongWooUtil;
 
-/**
- * Created by kolichung on 3/10/16.
- */
 public class AboutActivity extends AppCompatActivity implements View.OnClickListener {
 
     @Override
@@ -55,14 +49,7 @@ public class AboutActivity extends AppCompatActivity implements View.OnClickList
 
     @Override
     public void onClick(View v) {
-        Uri uri = Uri.parse(UrlCenter.GOOGLE_PLAY_UPDATE);
-        Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-        startActivity(intent);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return super.onCreateOptionsMenu(menu);
+        MongMongWooUtil.startToGooglePlayPage(this);
     }
 
     @Override

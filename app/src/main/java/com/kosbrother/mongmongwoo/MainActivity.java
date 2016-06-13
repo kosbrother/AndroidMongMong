@@ -3,7 +3,6 @@ package com.kosbrother.mongmongwoo;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -35,6 +34,8 @@ import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
+import com.kosbrother.mongmongwoo.fivestars.FiveStarsActivity;
+import com.kosbrother.mongmongwoo.fivestars.FiveStartsManager;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
 import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
@@ -46,6 +47,7 @@ import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
 import com.kosbrother.mongmongwoo.pastorders.QueryPastOrdersActivity;
+import com.kosbrother.mongmongwoo.utils.MongMongWooUtil;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.ShareUtil;
 import com.kosbrother.mongmongwoo.utils.VersionUtil;
@@ -112,7 +114,11 @@ public class MainActivity extends FbLoginActivity
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+            if (FiveStartsManager.getInstance(this).showFiveStarsRecommend()) {
+                startActivity(new Intent(this, FiveStarsActivity.class));
+            } else {
+                super.onBackPressed();
+            }
         }
     }
 
@@ -380,9 +386,7 @@ public class MainActivity extends FbLoginActivity
         dialogView.findViewById(R.id.update_btn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Uri uri = Uri.parse(UrlCenter.GOOGLE_PLAY_UPDATE);
-                Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-                startActivity(intent);
+                MongMongWooUtil.startToGooglePlayPage(MainActivity.this);
                 dialog.dismiss();
             }
         });
