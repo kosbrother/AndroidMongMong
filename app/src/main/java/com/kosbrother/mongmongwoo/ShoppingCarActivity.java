@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
@@ -39,7 +40,6 @@ import java.util.List;
 public class ShoppingCarActivity extends FbLoginActivity {
 
     NonSwipeableViewPager viewPager;
-    private static MenuItem menuItem;
     Order theOrder;
 
     TextView breadCrumb1;
@@ -92,54 +92,37 @@ public class ShoppingCarActivity extends FbLoginActivity {
             public void onPageSelected(int position) {
                 switch (position) {
                     case 0:
-                        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                finish();
-                                return true;
-                            }
-                        });
+                        GAManager.sendEvent(new CheckoutStep1EnterEvent());
+
                         breadCrumb1.setBackgroundResource(R.drawable.circle_style);
                         breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
-                        GAManager.sendEvent(new CheckoutStep1EnterEvent());
                         break;
                     case 1:
-                        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                onStep2PressPreviousStep();
-                                return true;
-                            }
-                        });
+                        GAManager.sendEvent(new CheckoutStep2EnterEvent());
+
                         breadCrumb1.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb2.setBackgroundResource(R.drawable.circle_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
-                        GAManager.sendEvent(new CheckoutStep2EnterEvent());
                         break;
                     case 2:
-                        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-                            @Override
-                            public boolean onMenuItemClick(MenuItem item) {
-                                onStep3PressPreviousStep();
-                                return true;
-                            }
-                        });
+                        GAManager.sendEvent(new CheckoutStep3EnterEvent());
+
                         breadCrumb1.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_style);
                         breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
-                        GAManager.sendEvent(new CheckoutStep3EnterEvent());
                         break;
                     case 3:
-                        menuItem.setVisible(false);
+                        invalidateOptionsMenu();
+                        GAManager.sendEvent(new CheckoutStep4EnterEvent());
+
                         breadCrumb1.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
                         breadCrumb4.setBackgroundResource(R.drawable.circle_style);
-                        GAManager.sendEvent(new CheckoutStep4EnterEvent());
                         break;
                 }
             }
@@ -150,6 +133,48 @@ public class ShoppingCarActivity extends FbLoginActivity {
             }
         });
         GAManager.sendEvent(new CheckoutStep1EnterEvent());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.shopping_cart, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.previous) {
+            onBackPressed();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (viewPager.getCurrentItem() == 3) {
+            menu.findItem(R.id.previous).setVisible(false);
+        }
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        int currentItem = viewPager.getCurrentItem();
+        switch (currentItem) {
+            case 1:
+                GAManager.sendEvent(new CheckoutStep2ClickEvent(GALabel.PREVIOUS_STEP));
+                viewPager.setCurrentItem(currentItem - 1, true);
+                break;
+            case 2:
+                GAManager.sendEvent(new CheckoutStep3ClickEvent(GALabel.PREVIOUS_STEP));
+                viewPager.setCurrentItem(currentItem - 1, true);
+                break;
+            default:
+                super.onBackPressed();
+                break;
+        }
     }
 
     public void setBreadCurmbsVisibility(int view_param) {
@@ -189,35 +214,6 @@ public class ShoppingCarActivity extends FbLoginActivity {
         theOrder.setShipName(shipName);
         theOrder.setShipPhone(shipPhone);
         theOrder.setShipEmail(shipEmail);
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        menuItem = menu.add("上一步");
-        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                finish();
-                return true;
-            }
-        });
-        return true;
-    }
-
-    @Override
-    public void onBackPressed() {
-        switch (viewPager.getCurrentItem()) {
-            case 1:
-                onStep2PressPreviousStep();
-                break;
-            case 2:
-                onStep3PressPreviousStep();
-                break;
-            default:
-                super.onBackPressed();
-                break;
-        }
     }
 
     public void startPurchaseFragment2() {
@@ -268,16 +264,6 @@ public class ShoppingCarActivity extends FbLoginActivity {
 
     private SampleFragmentPagerAdapter getViewPagerAdapter() {
         return (SampleFragmentPagerAdapter) viewPager.getAdapter();
-    }
-
-    private void onStep2PressPreviousStep() {
-        GAManager.sendEvent(new CheckoutStep2ClickEvent(GALabel.PREVIOUS_STEP));
-        viewPager.setCurrentItem(0, true);
-    }
-
-    private void onStep3PressPreviousStep() {
-        GAManager.sendEvent(new CheckoutStep3ClickEvent(GALabel.PREVIOUS_STEP));
-        viewPager.setCurrentItem(1, true);
     }
 
     public List<Product> getProducts() {
