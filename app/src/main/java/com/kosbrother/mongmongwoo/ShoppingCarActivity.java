@@ -3,7 +3,7 @@ package com.kosbrother.mongmongwoo;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -295,7 +295,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
         return products;
     }
 
-    public class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
+    public class SampleFragmentPagerAdapter extends FragmentStatePagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
 
         public SampleFragmentPagerAdapter(FragmentManager fm) {
