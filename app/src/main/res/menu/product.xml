@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/share"
+        android:icon="@mipmap/ic_share_white"
+        android:title="分享商品"
+        android:visible="false"
+        app:showAsAction="always" />
+    <item
         android:id="@+id/shopping_cart"
         android:icon="@drawable/icon_shopping_car"
         android:title="購物車"

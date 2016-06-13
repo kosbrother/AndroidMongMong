@@ -115,4 +115,14 @@ public class GAManager {
         mFirebaseAnalytics.logEvent("ScreenName", bundle);
     }
 
+    public static void sendShareItemEvent(String category, String id, String name) {
+        if (mFirebaseAnalytics == null) {
+            return;
+        }
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, category);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, id);
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name);
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SHARE, bundle);
+    }
 }

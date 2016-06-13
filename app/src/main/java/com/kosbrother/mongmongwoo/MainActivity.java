@@ -17,6 +17,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -46,6 +47,7 @@ import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
 import com.kosbrother.mongmongwoo.pastorders.QueryPastOrdersActivity;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
+import com.kosbrother.mongmongwoo.utils.ShareUtil;
 import com.kosbrother.mongmongwoo.utils.ShoppingCartIconUtil;
 import com.kosbrother.mongmongwoo.utils.VersionUtil;
 
@@ -58,8 +60,6 @@ import rx.functions.Action1;
 public class MainActivity extends FbLoginActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    String TAG = "MainActivity";
-
     private CircularImageView userImage;
     private TextView userText;
     private LoginButton loginButton;
@@ -67,7 +67,6 @@ public class MainActivity extends FbLoginActivity
 
     private ViewPager viewPager;
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
-    private MenuItem shoppingCartMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -121,6 +120,7 @@ public class MainActivity extends FbLoginActivity
     @Override
     protected void onResume() {
         super.onResume();
+        invalidateOptionsMenu();
         setNoNetLayout();
 
         User user = Settings.getSavedUser();
@@ -131,32 +131,32 @@ public class MainActivity extends FbLoginActivity
         } else {
             setUserLogoutView();
         }
-        if (shoppingCartMenuItem != null) {
-            setShoppingCartMenuItemIconWithItemCount();
-        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem menuItem = menu.findItem(99);
-        if (menuItem == null) {
-            shoppingCartMenuItem = menu.add(0, 99, 0, "購物車");
-        } else {
-            shoppingCartMenuItem = menuItem;
-        }
-        shoppingCartMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        shoppingCartMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                GAManager.sendEvent(new CartClickEvent());
-
-                Intent shoppingCarIntent = new Intent(MainActivity.this, ShoppingCarActivity.class);
-                startActivity(shoppingCarIntent);
-                return true;
-            }
-        });
-        setShoppingCartMenuItemIconWithItemCount();
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.main, menu);
+        setShoppingCartMenuItemIconWithItemCount(menu.findItem(R.id.shopping_cart));
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        setShoppingCartMenuItemIconWithItemCount(menu.findItem(R.id.shopping_cart));
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.shopping_cart) {
+            GAManager.sendEvent(new CartClickEvent());
+
+            Intent shoppingCarIntent = new Intent(MainActivity.this, ShoppingCarActivity.class);
+            startActivity(shoppingCarIntent);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
@@ -183,12 +183,10 @@ public class MainActivity extends FbLoginActivity
         } else if (id == R.id.nav_about) {
             startActivity(new Intent(this, AboutActivity.class));
         } else if (id == R.id.nav_share) {
-            Intent i = new Intent(Intent.ACTION_SEND);
-            i.setType("text/plain");
-            String sAux = "萌萌屋 - 走在青年流行前線\n\n";
-            sAux = sAux + UrlCenter.GOOGLE_PLAY_SHARE + "\n";
-            i.putExtra(Intent.EXTRA_TEXT, sAux);
-            startActivity(Intent.createChooser(i, "分享萌萌屋"));
+            String title = "分享萌萌屋";
+            String subject = "萌萌屋 - 走在青年流行前線";
+            String text = UrlCenter.GOOGLE_PLAY_SHARE;
+            ShareUtil.shareText(this, title, subject, text);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -200,10 +198,6 @@ public class MainActivity extends FbLoginActivity
     public void onCustomerServiceFabClick(View view) {
         csBottomSheetDialogFragment.show(getSupportFragmentManager(), "");
         GAManager.sendEvent(new CustomerServiceClickEvent("FAB"));
-    }
-
-    public void doIncrease() {
-        invalidateOptionsMenu();
     }
 
     public void showShoppingCarInstruction() {
@@ -386,11 +380,11 @@ public class MainActivity extends FbLoginActivity
         });
     }
 
-    private void setShoppingCartMenuItemIconWithItemCount() {
+    private void setShoppingCartMenuItemIconWithItemCount(MenuItem item) {
         ShoppingCarPreference pref = new ShoppingCarPreference();
         int count = pref.getShoppingCarItemSize(this);
         Drawable shoppingCartIcon = ShoppingCartIconUtil.getIcon(this, count);
-        shoppingCartMenuItem.setIcon(shoppingCartIcon);
+        item.setIcon(shoppingCartIcon);
     }
 
     class SampleFragmentPagerAdapter extends FragmentPagerAdapter {

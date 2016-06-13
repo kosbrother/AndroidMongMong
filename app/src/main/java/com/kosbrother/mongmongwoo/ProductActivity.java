@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.Html;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -23,6 +24,7 @@ import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPromoOpenedEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductAddToCartEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductAddToCollectionEvent;
@@ -33,6 +35,7 @@ import com.kosbrother.mongmongwoo.mycollect.MyCollectManager;
 import com.kosbrother.mongmongwoo.utils.CustomerServiceUtil;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
+import com.kosbrother.mongmongwoo.utils.ShareUtil;
 import com.kosbrother.mongmongwoo.utils.ShoppingCartIconUtil;
 import com.kosbrother.mongmongwoo.utils.TextViewUtil;
 
@@ -52,7 +55,6 @@ public class ProductActivity extends AppCompatActivity {
     private Button addCarButton;
 
     private Product theProduct;
-    private MenuItem shoppingCartMenuItem;
 
     private RelativeLayout spotLightShoppingCarLayout;
 
@@ -92,9 +94,7 @@ public class ProductActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (shoppingCartMenuItem != null) {
-            setShoppingCartMenuItemIconWithItemCount();
-        }
+        invalidateOptionsMenu();
 
         LinearLayout no_net_layout = (LinearLayout) findViewById(R.id.no_net_layout);
         boolean noNetwork = NetworkUtil.getConnectivityStatus(this) == 0;
@@ -114,23 +114,22 @@ public class ProductActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(99);
-        if (item == null) {
-            shoppingCartMenuItem = menu.add(0, 99, 0, "購物車");
-        } else {
-            shoppingCartMenuItem = item;
-        }
-        shoppingCartMenuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        shoppingCartMenuItem.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                Intent shoppingCarIntent = new Intent(ProductActivity.this, ShoppingCarActivity.class);
-                startActivity(shoppingCarIntent);
-                return true;
-            }
-        });
-        setShoppingCartMenuItemIconWithItemCount();
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.product, menu);
+        setShoppingCartMenuItemIconWithItemCount(menu.findItem(R.id.shopping_cart));
         return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (theProduct == null) {
+            return true;
+        }
+        if (theProduct.isShareUrlValid()) {
+            menu.findItem(R.id.share).setVisible(true);
+        }
+        setShoppingCartMenuItemIconWithItemCount(menu.findItem(R.id.shopping_cart));
+        return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
@@ -139,17 +138,25 @@ public class ProductActivity extends AppCompatActivity {
         switch (id) {
             case android.R.id.home:
                 onBackPressed();
-                break;
-            case R.id.action_search:
-                Intent searchIntent = new Intent(ProductActivity.this, SearchActivity.class);
-                startActivity(searchIntent);
                 return true;
-            case R.id.action_shopping_car:
-                Intent shoppingCarIntent = new Intent(ProductActivity.this, ShoppingCarActivity.class);
-                startActivity(shoppingCarIntent);
+            case R.id.share:
+                GAManager.sendShareItemEvent(
+                        getCategoryName(), String.valueOf(theProduct.getId()), theProduct.getName());
+
+                String text = theProduct.getUrl();
+                String title = "分享商品";
+                String subject = theProduct.getName();
+                ShareUtil.shareText(this, title, subject, text);
                 return true;
+            case R.id.shopping_cart:
+                GAManager.sendEvent(new CartClickEvent());
+
+                Intent intent = new Intent(this, ShoppingCarActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(menuItem);
         }
-        return super.onOptionsItemSelected(menuItem);
     }
 
     @Override
@@ -294,6 +301,7 @@ public class ProductActivity extends AppCompatActivity {
         setViewPagerAndPageControl();
         setAddCartButton();
         setCollectImageListener();
+        invalidateOptionsMenu();
     }
 
     private void startAppIndexIfCategoryNameValid() {
@@ -387,7 +395,7 @@ public class ProductActivity extends AppCompatActivity {
                 R.mipmap.ic_favorite_pink_border : R.mipmap.ic_favorite_white_border);
     }
 
-    private void setShoppingCartMenuItemIconWithItemCount() {
+    private void setShoppingCartMenuItemIconWithItemCount(MenuItem shoppingCartMenuItem) {
         ShoppingCarPreference pref = new ShoppingCarPreference();
         int count = pref.getShoppingCarItemSize(this);
         Drawable shippingCartIcon = ShoppingCartIconUtil.getIcon(this, count);

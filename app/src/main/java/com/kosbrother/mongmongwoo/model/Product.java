@@ -1,11 +1,15 @@
 package com.kosbrother.mongmongwoo.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.kosbrother.mongmongwoo.api.UrlCenter;
 
 import java.io.Serializable;
 import java.util.List;
 
 public class Product implements Serializable {
+
+    private static final String ITEM_URI_STRING =
+            UrlCenter.HOST + "/categories/%s/items/%s";
 
     @SerializedName("id")
     private int id;
@@ -111,4 +115,11 @@ public class Product implements Serializable {
         this.categoryId = categoryId;
     }
 
+    public boolean isShareUrlValid() {
+        return categoryName != null && !categoryName.isEmpty();
+    }
+
+    public String getUrl() {
+        return String.format(ITEM_URI_STRING, categoryName, name);
+    }
 }
