@@ -6,8 +6,13 @@ import android.os.Bundle;
 import com.facebook.AccessToken;
 import com.facebook.AccessTokenTracker;
 import com.facebook.CallbackManager;
+import com.facebook.FacebookCallback;
+import com.facebook.FacebookException;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
@@ -15,6 +20,8 @@ import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.model.User;
 
 import org.json.JSONObject;
+
+import java.util.Arrays;
 
 import rx.functions.Action1;
 
@@ -24,17 +31,34 @@ public class FacebookManager {
 
     private static FacebookManager instance;
     private FacebookListener listener;
+    private final CallbackManager callbackManager;
+    private FacebookCallback<LoginResult> facebookCallback;
 
     private FacebookManager() {
+        callbackManager = CallbackManager.Factory.create();
         new AccessTokenTracker() {
             @Override
             protected void onCurrentAccessTokenChanged(AccessToken oldAccessToken, AccessToken newAccessToken) {
-                if (oldAccessToken == null) {
-                    handleLoginResult(newAccessToken);
-                } else if (newAccessToken == null) {
+                if (newAccessToken == null) {
                     Settings.clearAllUserData();
                     listener.onFbLogout();
                 }
+            }
+        };
+        facebookCallback = new FacebookCallback<LoginResult>() {
+            @Override
+            public void onSuccess(LoginResult loginResult) {
+                handleLoginResult(loginResult.getAccessToken());
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException error) {
+                error.printStackTrace();
             }
         };
     }
@@ -51,7 +75,7 @@ public class FacebookManager {
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        CallbackManager.Factory.create().onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void handleLoginResult(AccessToken accessToken) {
@@ -74,6 +98,11 @@ public class FacebookManager {
     }
 
     private void handleFbRequestResult(JSONObject object) {
+        if (object == null) {
+            LoginManager.getInstance().logOut();
+            listener.onFbLogout();
+            return;
+        }
         User user = FacebookUtil.getUser(object);
         Settings.saveUserFBData(user);
         Webservice.postUser(user.getJsonString(), new Action1<ResponseEntity<String>>() {
@@ -86,6 +115,18 @@ public class FacebookManager {
             }
         });
         listener.onFbRequestCompleted(user.getFb_uid(), user.getUserName(), user.getFb_pic());
+    }
+
+    public void setLoginButton(LoginButton loginButton) {
+        loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
+        loginButton.registerCallback(callbackManager, facebookCallback);
+    }
+
+    public void startLogin(FbLoginActivity fbLoginActivity) {
+        LoginManager loginManager = LoginManager.getInstance();
+        loginManager.logInWithReadPermissions(fbLoginActivity,
+                Arrays.asList("public_profile", "email"));
+        loginManager.registerCallback(callbackManager, facebookCallback);
     }
 
     public interface FacebookListener {

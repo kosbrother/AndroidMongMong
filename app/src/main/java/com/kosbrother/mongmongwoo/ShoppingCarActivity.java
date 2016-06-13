@@ -13,7 +13,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.facebook.login.widget.LoginButton;
 import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment1;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment2;
@@ -39,21 +38,16 @@ import java.util.List;
 
 public class ShoppingCarActivity extends FbLoginActivity {
 
-    String TAG = "ShoppingCarActivity";
-
     NonSwipeableViewPager viewPager;
     private static MenuItem menuItem;
     Order theOrder;
 
-    //    LinearLayout loginLayout;
     TextView breadCrumb1;
     TextView breadCrumb2;
     TextView breadCrumb3;
     private TextView breadCrumb4;
 
     LinearLayout breadCrumbsLayout;
-
-    LoginButton loginButton;
 
     LinearLayout no_net_layout;
 
@@ -65,8 +59,6 @@ public class ShoppingCarActivity extends FbLoginActivity {
         setContentView(R.layout.activity_shopping_car);
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        toolbar.setNavigationIcon(R.drawable.icon_back_white);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
         toolbar.setTitleTextColor(0xFFFFFFFF);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("結帳");
@@ -77,9 +69,6 @@ public class ShoppingCarActivity extends FbLoginActivity {
         breadCrumb4 = (TextView) findViewById(R.id.bread_crumbs_4_text);
         breadCrumbsLayout = (LinearLayout) findViewById(R.id.bread_crumbs_layout);
         no_net_layout = (LinearLayout) findViewById(R.id.no_net_layout);
-
-        loginButton = (LoginButton) findViewById(R.id.login_button_main);
-        setLoginButton(loginButton);
 
         initOrder();
 
@@ -175,7 +164,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
     }
 
     public void performClickFbButton() {
-        loginButton.performClick();
+        startFbLogin();
     }
 
     public Order getOrder() {
