@@ -9,7 +9,7 @@
         app:showAsAction="always" />
     <item
         android:id="@+id/shopping_cart"
-        android:icon="@drawable/icon_shopping_car"
         android:title="購物車"
+        app:actionLayout="@layout/action_layout_shopping_cart_count"
         app:showAsAction="always" />
 </menu>
