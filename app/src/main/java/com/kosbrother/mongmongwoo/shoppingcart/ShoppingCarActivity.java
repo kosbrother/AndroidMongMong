@@ -185,7 +185,6 @@ public class ShoppingCarActivity extends FbLoginActivity {
     }
 
     public void saveStoreInfo(Store store) {
-        theOrder.setStore(store);
         theOrder.setShipStoreCode(store.getStoreCode());
         theOrder.setShipStoreId(store.getId());
         theOrder.setShipStoreName(store.getName());
@@ -261,8 +260,6 @@ public class ShoppingCarActivity extends FbLoginActivity {
             saveStoreInfo(Settings.getSavedStore());
         }
         theOrder.setUid(Settings.checkIsLogIn() ? Settings.getSavedUser().getFb_uid() : "9999");
-        theOrder.setShipName(Settings.getShippingName());
-        theOrder.setShipPhone(Settings.getShippingPhone());
         theOrder.setRegistrationId(FirebaseInstanceId.getInstance().getToken());
     }
 

@@ -24,6 +24,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.model.Store;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
@@ -90,9 +91,6 @@ public class PurchaseFragment3 extends Fragment {
                     Toast.makeText(getActivity(), "訂單未成功送出 資料異常", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBar.setVisibility(View.GONE);
-                    Settings.saveUserStoreData(theOrder.getStore());
-                    Settings.saveUserShippingNameAndPhone(theOrder.getShipName(), theOrder.getShipPhone());
-
                     ShoppingCartManager.getInstance().removeAllShoppingItems();
                     ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
                     activity.startPurchaseFragment4();
@@ -124,11 +122,14 @@ public class PurchaseFragment3 extends Fragment {
             String totalPriceString = "NT$ " + theOrder.getTotal();
             totalPriceText.setText(totalPriceString);
 
-            shippingNameText.setText(theOrder.getShipName());
-            shippingPhoneText.setText(theOrder.getShipPhone());
-            shippingStoreNameText.setText(theOrder.getStore().getName());
-            shippingStoreAddressText.setText(theOrder.getStore().getAddress());
+            shippingNameText.setText(Settings.getShippingName());
+            shippingPhoneText.setText(Settings.getShippingPhone());
             emailTextView.setText(theOrder.getShipEmail());
+            Store savedStore = Settings.getSavedStore();
+            if (savedStore != null) {
+                shippingStoreNameText.setText(savedStore.getName());
+                shippingStoreAddressText.setText(savedStore.getAddress());
+            }
 
             addGoodsItemView(activity.getProducts());
         } else {

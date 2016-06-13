@@ -2,7 +2,6 @@ package com.kosbrother.mongmongwoo.model;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Order {
@@ -32,48 +31,20 @@ public class Order {
     @SerializedName("products")
     private List<PostProduct> products;
 
-    private Store store;
-
-    public void setUid(String uid) {
-        this.uid = uid;
-    }
-
-    public String getUid() {
-        if (uid == null) {
-            return "9999"; //匿名購買
-        } else {
-            return uid;
-        }
-    }
-
-    public Order() {
-    }
-
-    public String getShipName() {
-        return shipName;
-    }
-
-    public String getShipPhone() {
-        return shipPhone;
-    }
-
-    public List<PostProduct> getProducts() {
-        if (products == null) {
-            products = new ArrayList<>();
-        }
-        return products;
-    }
-
     public int getShipFee() {
         return shipFee;
     }
 
-    public int getItemsPrice() {
-        return itemsPrice;
-    }
-
     public int getTotal() {
         return total;
+    }
+
+    public String getShipEmail() {
+        return shipEmail;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public void setShipName(String shipName) {
@@ -100,10 +71,6 @@ public class Order {
         this.total = total;
     }
 
-    public String getShipEmail() {
-        return shipEmail;
-    }
-
     public void setShipEmail(String shipEmail) {
         this.shipEmail = shipEmail;
     }
@@ -124,15 +91,4 @@ public class Order {
         this.shipStoreName = shipStoreName;
     }
 
-    public String getShipStoreName() {
-        return shipStoreName;
-    }
-
-    public Store getStore() {
-        return store;
-    }
-
-    public void setStore(Store store) {
-        this.store = store;
-    }
 }
