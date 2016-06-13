@@ -143,6 +143,7 @@ public class PurchaseFragment3 extends Fragment {
         for (Product product : orderProducts) {
             View itemView = LayoutInflater.from(getContext()).inflate(R.layout.item_checkout_review_goods, null);
             TextView goodsNameTextView = (TextView) itemView.findViewById(R.id.item_car_name);
+            TextView styleTextView = (TextView) itemView.findViewById(R.id.item_style_tv);
             ImageView goodsImageView = (ImageView) itemView.findViewById(R.id.item_car_ig);
             TextView priceAndQuantityTextView = (TextView) itemView.findViewById(R.id.item_price_and_quantity_tv);
             TextView subTotalTextView = (TextView) itemView.findViewById(R.id.subtotal_tv);
@@ -154,8 +155,8 @@ public class PurchaseFragment3 extends Fragment {
                     .placeholder(R.mipmap.img_pre_load_square)
                     .into(goodsImageView);
 
-            String nameString = product.getName();
-            goodsNameTextView.setText(nameString);
+            goodsNameTextView.setText(product.getName());
+            styleTextView.setText(product.getSelectedSpec().getStyle());
 
             String countText = "NT$ " + product.getFinalPrice() + " X " + product.getBuy_count();
             priceAndQuantityTextView.setText(countText);
