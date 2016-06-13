@@ -64,6 +64,7 @@
         android:background="@color/light_gray" />
 
     <LinearLayout
+        android:id="@+id/count_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"

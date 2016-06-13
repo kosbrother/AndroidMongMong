@@ -255,7 +255,8 @@ public class ProductActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onConfirmButtonClick() {
+                public void onConfirmButtonClick(Product product) {
+                    ShoppingCartManager.getInstance().addShoppingItem(product);
                     invalidateOptionsMenu();
                     showAToast("成功加入購物車");
                 }

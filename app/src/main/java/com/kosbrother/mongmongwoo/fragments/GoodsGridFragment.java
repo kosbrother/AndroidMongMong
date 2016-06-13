@@ -20,6 +20,7 @@ import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.indexgridcart.IndexGridCartAddToCartEvent;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.EndlessScrollListener;
 import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
 
@@ -133,7 +134,8 @@ public class GoodsGridFragment extends Fragment implements GoodsGridAdapter.Good
                 }
 
                 @Override
-                public void onConfirmButtonClick() {
+                public void onConfirmButtonClick(Product product) {
+                    ShoppingCartManager.getInstance().addShoppingItem(product);
                     getActivity().invalidateOptionsMenu();
                     Toast.makeText(getContext(), "成功加入購物車", Toast.LENGTH_SHORT).show();
                 }

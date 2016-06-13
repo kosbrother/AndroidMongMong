@@ -24,6 +24,7 @@ import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
+import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -167,6 +168,7 @@ public class PurchaseFragment1 extends Fragment {
             TextView priceTextView = (TextView) itemView.findViewById(R.id.item_car_price);
             ImageView goodsImageView = (ImageView) itemView.findViewById(R.id.item_car_ig);
             ImageView deleteImageView = (ImageView) itemView.findViewById(R.id.item_car_delete_iv);
+            Button styleButton = (Button) itemView.findViewById(R.id.item_car_style_btn);
             Button selectCountButton = (Button) itemView.findViewById(R.id.item_car_count_button);
             TextView subTotalTextView = (TextView) itemView.findViewById(R.id.subtotal_tv);
             Glide.with(getContext())
@@ -178,11 +180,28 @@ public class PurchaseFragment1 extends Fragment {
             String nameString = product.getName();
             goodsNameTextView.setText(nameString);
 
-            String priceString = "NT$ " + product.getFinalPrice();
+            String priceString = "NT$ " + product.getFinalPrice() + "X " + product.getBuy_count();
             priceTextView.setText(priceString);
+
+            String styleText = product.getSelectedSpec().getStyle();
+            styleButton.setText(styleText);
+            styleButton.setTag(i);
+            styleButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onSelectStyleButtonClick((int) v.getTag(), product);
+                }
+            });
 
             String countText = "數量：" + product.getBuy_count();
             selectCountButton.setText(countText);
+            selectCountButton.setTag(i);
+            selectCountButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onSelectCountButtonClick((int) v.getTag(), product.getBuy_count());
+                }
+            });
 
             String subTotalText = "小計：NT$ " + (product.getBuy_count() * product.getFinalPrice());
             subTotalTextView.setText(subTotalText);
@@ -195,13 +214,6 @@ public class PurchaseFragment1 extends Fragment {
                 }
             });
 
-            selectCountButton.setTag(i);
-            selectCountButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onSelectCountButtonClick((int) v.getTag(), product.getBuy_count());
-                }
-            });
         }
     }
 
@@ -284,6 +296,23 @@ public class PurchaseFragment1 extends Fragment {
             }
         });
         alertDialogBuilder.show();
+    }
+
+    private void onSelectStyleButtonClick(final int productPosition, Product product) {
+        ProductStyleDialog styleDialog = new ProductStyleDialog(getActivity(), product, new ProductStyleDialog.ProductStyleDialogListener() {
+            @Override
+            public void onFirstAddShoppingCart() {
+
+            }
+
+            @Override
+            public void onConfirmButtonClick(Product product) {
+                shoppingCarProducts.get(productPosition).setSelectedSpec(product.getSelectedSpec());
+                ShoppingCartManager.getInstance().storeShoppingItems(shoppingCarProducts);
+                updateGoodsLinearLayout();
+            }
+        });
+        styleDialog.showNoCountStyleDialog(product);
     }
 
     public void onSelectCountButtonClick(int position, int tempCount) {
