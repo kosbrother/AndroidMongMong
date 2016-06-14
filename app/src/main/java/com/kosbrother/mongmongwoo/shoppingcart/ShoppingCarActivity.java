@@ -1,4 +1,4 @@
-package com.kosbrother.mongmongwoo;
+package com.kosbrother.mongmongwoo.shoppingcart;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,6 +14,9 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.kosbrother.mongmongwoo.R;
+import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment1;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment2;
@@ -182,7 +185,6 @@ public class ShoppingCarActivity extends FbLoginActivity {
     }
 
     public void saveStoreInfo(Store store) {
-        theOrder.setStore(store);
         theOrder.setShipStoreCode(store.getStoreCode());
         theOrder.setShipStoreId(store.getId());
         theOrder.setShipStoreName(store.getName());
@@ -258,8 +260,7 @@ public class ShoppingCarActivity extends FbLoginActivity {
             saveStoreInfo(Settings.getSavedStore());
         }
         theOrder.setUid(Settings.checkIsLogIn() ? Settings.getSavedUser().getFb_uid() : "9999");
-        theOrder.setShipName(Settings.getShippingName());
-        theOrder.setShipPhone(Settings.getShippingPhone());
+        theOrder.setRegistrationId(FirebaseInstanceId.getInstance().getToken());
     }
 
     private SampleFragmentPagerAdapter getViewPagerAdapter() {

@@ -1,8 +1,6 @@
 package com.kosbrother.mongmongwoo.fragments;
 
-import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,17 +16,17 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.ShoppingCarActivity;
-import com.kosbrother.mongmongwoo.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
-import com.kosbrother.mongmongwoo.fcm.FcmPreferences;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.model.Store;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
 import java.util.List;
@@ -83,8 +81,6 @@ public class PurchaseFragment3 extends Fragment {
     }
 
     private void requestPostOrder() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        theOrder.setRegistrationId(sharedPreferences.getString(FcmPreferences.TOKEN, ""));
         String json = new Gson().toJson(theOrder);
         Webservice.postOrder(json, new Action1<ResponseEntity<PastOrder>>() {
             @Override
@@ -95,11 +91,8 @@ public class PurchaseFragment3 extends Fragment {
                     Toast.makeText(getActivity(), "訂單未成功送出 資料異常", Toast.LENGTH_SHORT).show();
                 } else {
                     progressBar.setVisibility(View.GONE);
-                    Settings.saveUserStoreData(theOrder.getStore());
-                    Settings.saveUserShippingNameAndPhone(theOrder.getShipName(), theOrder.getShipPhone());
-
+                    ShoppingCartManager.getInstance().removeAllShoppingItems();
                     ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-                    new ShoppingCarPreference().removeAllShoppingItems(activity);
                     activity.startPurchaseFragment4();
                 }
             }
@@ -129,11 +122,14 @@ public class PurchaseFragment3 extends Fragment {
             String totalPriceString = "NT$ " + theOrder.getTotal();
             totalPriceText.setText(totalPriceString);
 
-            shippingNameText.setText(theOrder.getShipName());
-            shippingPhoneText.setText(theOrder.getShipPhone());
-            shippingStoreNameText.setText(theOrder.getStore().getName());
-            shippingStoreAddressText.setText(theOrder.getStore().getAddress());
+            shippingNameText.setText(Settings.getShippingName());
+            shippingPhoneText.setText(Settings.getShippingPhone());
             emailTextView.setText(theOrder.getShipEmail());
+            Store savedStore = Settings.getSavedStore();
+            if (savedStore != null) {
+                shippingStoreNameText.setText(savedStore.getName());
+                shippingStoreAddressText.setText(savedStore.getAddress());
+            }
 
             addGoodsItemView(activity.getProducts());
         } else {
@@ -147,6 +143,7 @@ public class PurchaseFragment3 extends Fragment {
         for (Product product : orderProducts) {
             View itemView = LayoutInflater.from(getContext()).inflate(R.layout.item_checkout_review_goods, null);
             TextView goodsNameTextView = (TextView) itemView.findViewById(R.id.item_car_name);
+            TextView styleTextView = (TextView) itemView.findViewById(R.id.item_style_tv);
             ImageView goodsImageView = (ImageView) itemView.findViewById(R.id.item_car_ig);
             TextView priceAndQuantityTextView = (TextView) itemView.findViewById(R.id.item_price_and_quantity_tv);
             TextView subTotalTextView = (TextView) itemView.findViewById(R.id.subtotal_tv);
@@ -158,8 +155,8 @@ public class PurchaseFragment3 extends Fragment {
                     .placeholder(R.mipmap.img_pre_load_square)
                     .into(goodsImageView);
 
-            String nameString = product.getName();
-            goodsNameTextView.setText(nameString);
+            goodsNameTextView.setText(product.getName());
+            styleTextView.setText(product.getSelectedSpec().getStyle());
 
             String countText = "NT$ " + product.getFinalPrice() + " X " + product.getBuy_count();
             priceAndQuantityTextView.setText(countText);

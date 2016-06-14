@@ -1,4 +1,4 @@
-package com.kosbrother.mongmongwoo;
+package com.kosbrother.mongmongwoo.shoppingcart;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,26 +12,39 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShoppingCarPreference {
+public class ShoppingCartManager {
 
     public static final String PREFS_NAME = "MONMON_APP";
     public static final String SHOPPING_CAR = "SHOPPING_CAR";
 
-    public void storeShoppingItems(Context context, List favorites) {
-        // used for store arrayList in json format
-        SharedPreferences settings;
-        SharedPreferences.Editor editor;
-        settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        editor = settings.edit();
+    private static ShoppingCartManager instance;
+    private final SharedPreferences mPref;
+
+    public ShoppingCartManager(Context context) {
+        mPref = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    }
+
+    public static void init(Context context) {
+        if (instance == null) {
+            instance = new ShoppingCartManager(context);
+        }
+    }
+
+    public static ShoppingCartManager getInstance() {
+        return instance;
+    }
+
+    public void storeShoppingItems(List favorites) {
         Gson gson = new Gson();
         String jsonFavorites = gson.toJson(favorites);
+
+        SharedPreferences.Editor editor = mPref.edit();
         editor.putString(SHOPPING_CAR, jsonFavorites);
         editor.apply();
     }
 
-    public List<Product> loadShoppingItems(Context context) {
-        SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String shoppingCartString = settings.getString(SHOPPING_CAR, "");
+    public List<Product> loadShoppingItems() {
+        String shoppingCartString = mPref.getString(SHOPPING_CAR, "");
         if (shoppingCartString.isEmpty()) {
             return new ArrayList<>();
         }
@@ -39,9 +52,9 @@ public class ShoppingCarPreference {
         List<Product> productList;
         // amount is json key only in old version
         if (shoppingCartString.contains("amount")) {
-            removeAllShoppingItems(context);
+            removeAllShoppingItems();
             productList = ProductUtil.getNewProductListFromOldProductString(shoppingCartString);
-            storeShoppingItems(context, productList);
+            storeShoppingItems(productList);
         } else {
             Type typeToken = new TypeToken<List<Product>>() {
             }.getType();
@@ -51,29 +64,28 @@ public class ShoppingCarPreference {
         return productList;
     }
 
-    public void addShoppingItem(Context context, Product theProduct) {
-        List<Product> favorites = loadShoppingItems(context);
+    public void addShoppingItem(Product theProduct) {
+        List<Product> favorites = loadShoppingItems();
         favorites.add(theProduct);
-        storeShoppingItems(context, favorites);
+        storeShoppingItems(favorites);
     }
 
-    public void removeShoppingItem(Context context, int itemPostition) {
-        List favorites = loadShoppingItems(context);
+    public void removeShoppingItem(int itemPostition) {
+        List favorites = loadShoppingItems();
         if (favorites != null) {
             favorites.remove(itemPostition);
-            storeShoppingItems(context, favorites);
+            storeShoppingItems(favorites);
         }
     }
 
-    public void removeAllShoppingItems(Context context) {
-        context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
-                .edit()
+    public void removeAllShoppingItems() {
+        mPref.edit()
                 .remove(SHOPPING_CAR)
                 .apply();
     }
 
-    public int getShoppingCarItemSize(Context context) {
-        List arrayList = loadShoppingItems(context);
+    public int getShoppingCarItemSize() {
+        List arrayList = loadShoppingItems();
         return arrayList.size();
     }
 

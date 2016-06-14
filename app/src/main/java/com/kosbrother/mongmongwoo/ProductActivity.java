@@ -32,6 +32,8 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductViewEvent
 import com.kosbrother.mongmongwoo.model.Photo;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectManager;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.CustomerServiceUtil;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
@@ -135,8 +137,7 @@ public class ProductActivity extends AppCompatActivity {
         View countView = MenuItemCompat.getActionView(item);
         TextView countTextView = (TextView) countView.findViewById(R.id.count);
 
-        ShoppingCarPreference pref = new ShoppingCarPreference();
-        int count = pref.getShoppingCarItemSize(this);
+        int count = ShoppingCartManager.getInstance().getShoppingCarItemSize();
         if (count == 0) {
             countTextView.setVisibility(View.GONE);
         } else {
@@ -254,7 +255,8 @@ public class ProductActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onConfirmButtonClick() {
+                public void onConfirmButtonClick(Product product) {
+                    ShoppingCartManager.getInstance().addShoppingItem(product);
                     invalidateOptionsMenu();
                     showAToast("成功加入購物車");
                 }

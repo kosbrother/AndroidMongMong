@@ -66,7 +66,7 @@
             android:theme="@style/CustomTheme" />
 
         <activity
-            android:name="com.kosbrother.mongmongwoo.ShoppingCarActivity"
+            android:name=".shoppingcart.ShoppingCarActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme" />
 

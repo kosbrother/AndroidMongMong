@@ -14,12 +14,13 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.ShoppingCarPreference;
 import com.kosbrother.mongmongwoo.adpters.StyleGridAdapter;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductSelectDialogConfirmEvent;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Spec;
+
+import java.util.List;
 
 public class ProductStyleDialog {
 
@@ -30,6 +31,7 @@ public class ProductStyleDialog {
     private final ImageView styleImage;
     private final TextView styleName;
     private final GridView styleGridView;
+    private final View countLinearLayout;
     private final TextView countTextView;
 
     private int tempCount = 1;
@@ -46,6 +48,7 @@ public class ProductStyleDialog {
         styleName = (TextView) view.findViewById(R.id.dialog_style_name);
         styleImage = (ImageView) view.findViewById(R.id.dialog_style_image);
         styleGridView = (GridView) view.findViewById(R.id.dialog_styles_gridview);
+        countLinearLayout = view.findViewById(R.id.count_ll);
         countTextView = (TextView) view.findViewById(R.id.count_text_view);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
@@ -72,6 +75,18 @@ public class ProductStyleDialog {
         initStyleImage();
         initCountTextView();
         initGridView();
+        alertDialog.show();
+    }
+
+    public void showNoCountStyleDialog(Product product) {
+        this.product = product;
+        tempCount = product.getBuy_count();
+        countLinearLayout.setVisibility(View.GONE);
+        Spec selectedSpec = product.getSelectedSpec();
+
+        updateStyleName(selectedSpec.getStyle());
+        updateStyleImage(selectedSpec.getStylePic().getUrl());
+        updateSelectedStyle(getSelectedSpecPosition(product, selectedSpec));
         alertDialog.show();
     }
 
@@ -134,11 +149,21 @@ public class ProductStyleDialog {
             public void onClick(View v) {
                 GAManager.sendEvent(new ProductSelectDialogConfirmEvent(product.getName()));
                 updateConfirmProduct();
-                saveProduct();
                 checkFirstAddAndNotifyListener(listener);
                 alertDialog.dismiss();
             }
         });
+    }
+
+    private int getSelectedSpecPosition(Product product, Spec selectedSpec) {
+        List<Spec> specs = product.getSpecs();
+        int position = 0;
+        for (int i = 0; i < specs.size(); i++) {
+            if (specs.get(i).getId() == selectedSpec.getId()) {
+                return i;
+            }
+        }
+        return position;
     }
 
     private void updateSelectedStyle(int position) {
@@ -169,23 +194,18 @@ public class ProductStyleDialog {
         product.setBuy_count(tempCount);
     }
 
-    private void saveProduct() {
-        ShoppingCarPreference pref = new ShoppingCarPreference();
-        pref.addShoppingItem(context, product);
-    }
-
     private void checkFirstAddAndNotifyListener(ProductStyleDialogListener listener) {
         if (Settings.checkIsFirstAddShoppingCar()) {
             Settings.setKownShoppingCar();
             listener.onFirstAddShoppingCart();
         }
-        listener.onConfirmButtonClick();
+        listener.onConfirmButtonClick(product);
     }
 
     public interface ProductStyleDialogListener {
 
         void onFirstAddShoppingCart();
 
-        void onConfirmButtonClick();
+        void onConfirmButtonClick(Product product);
     }
 }

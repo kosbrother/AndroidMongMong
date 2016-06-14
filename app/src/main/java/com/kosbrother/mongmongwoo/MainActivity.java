@@ -48,6 +48,8 @@ import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
 import com.kosbrother.mongmongwoo.pastorders.QueryPastOrdersActivity;
 import com.kosbrother.mongmongwoo.utils.MongMongWooUtil;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.ShareUtil;
 import com.kosbrother.mongmongwoo.utils.VersionUtil;
@@ -162,8 +164,7 @@ public class MainActivity extends FbLoginActivity
         View countView = MenuItemCompat.getActionView(item);
         TextView countTextView = (TextView) countView.findViewById(R.id.count);
 
-        ShoppingCarPreference pref = new ShoppingCarPreference();
-        int count = pref.getShoppingCarItemSize(this);
+        int count = ShoppingCartManager.getInstance().getShoppingCarItemSize();
         if (count == 0) {
             countTextView.setVisibility(View.GONE);
         } else {

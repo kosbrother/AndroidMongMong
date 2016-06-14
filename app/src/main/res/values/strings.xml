@@ -23,5 +23,6 @@
     <string name="email">電子信箱</string>
     <string name="email_hint">請輸入訂購人電子信箱</string>
     <string name="submit">送出</string>
+    <string name="choose_store">選擇門市</string>
 
 </resources>

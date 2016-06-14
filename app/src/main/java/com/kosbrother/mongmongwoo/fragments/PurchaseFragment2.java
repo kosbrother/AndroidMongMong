@@ -1,5 +1,6 @@
 package com.kosbrother.mongmongwoo.fragments;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,9 +16,9 @@ import android.widget.Toast;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.SelectDeliverStoreActivity;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.facebook.FacebookUtil;
 import com.kosbrother.mongmongwoo.model.Store;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 
 public class PurchaseFragment2 extends Fragment {
 
@@ -47,7 +48,7 @@ public class PurchaseFragment2 extends Fragment {
             public void onClick(View v) {
                 // save to activity order store and shipping name, phone
                 ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-                if (activity.getOrder().getStore() == null) {
+                if (selectStoreButton.getText().equals(getString(R.string.choose_store))) {
                     Toast.makeText(getActivity(), "請選擇寄件的商店", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -59,9 +60,12 @@ public class PurchaseFragment2 extends Fragment {
                     String shipName = shippingNameEditText.getText().toString();
                     String shipPhone = shippingPhoneEditText.getText().toString();
                     String shipEmail = getUserInputEmailOrFbEmail();
+
                     activity.saveShippingInfo(shipName, shipPhone, shipEmail);
+                    Settings.saveUserShippingNameAndPhone(shipName, shipPhone);
 
                     activity.startPurchaseFragment3();
+
                     View view = activity.getCurrentFocus();
                     if (view != null) {
                         InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -78,11 +82,11 @@ public class PurchaseFragment2 extends Fragment {
             }
         });
 
-        ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-        if (activity.getOrder().getStore() != null) {
-            selectStoreButton.setText(activity.getOrder().getStore().getName());
-            shippingNameEditText.setText(activity.getOrder().getShipName());
-            shippingPhoneEditText.setText(activity.getOrder().getShipPhone());
+        Store store = Settings.getSavedStore();
+        if (store != null) {
+            selectStoreButton.setText(store.getName());
+            shippingNameEditText.setText(Settings.getShippingName());
+            shippingPhoneEditText.setText(Settings.getShippingPhone());
         }
         return view;
     }
@@ -90,11 +94,12 @@ public class PurchaseFragment2 extends Fragment {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == getActivity().RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK) {
             Bundle bundle = data.getExtras();
             Store theStore = (Store) bundle.getSerializable("Selected_Store");
             ShoppingCarActivity mActivity = (ShoppingCarActivity) getActivity();
             mActivity.saveStoreInfo(theStore);
+            Settings.saveUserStoreData(theStore);
             selectStoreButton.setText(theStore.getName());
         }
     }
