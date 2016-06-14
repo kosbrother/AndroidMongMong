@@ -345,21 +345,13 @@ public class ProductActivity extends AppCompatActivity {
         priceTextView.setText(priceText);
 
         TextView specialPriceTextView = (TextView) findViewById(R.id.product_special_price_tv);
-        setSpecialPrice(specialPriceTextView, theProduct.getPrice(), theProduct.getFinalPrice());
+        specialPriceTextView.setText(theProduct.getSpecialPriceText());
+        if (theProduct.isSpecial()) {
+            TextViewUtil.paintLineThroughTextView(specialPriceTextView);
+        }
 
         TextView infoTextView = (TextView) findViewById(R.id.product_information_text);
         infoTextView.setText(Html.fromHtml(theProduct.getDescription()));
-    }
-
-    private void setSpecialPrice(TextView specialPriceTextView, int price, int finalPrice) {
-        String specialPriceText;
-        if (price == finalPrice) {
-            specialPriceText = "-優惠價-";
-        } else {
-            specialPriceText = "優惠價NT$" + price;
-            TextViewUtil.paintLineThroughTextView(specialPriceTextView);
-        }
-        specialPriceTextView.setText(specialPriceText);
     }
 
     @SuppressWarnings("ConstantConditions")

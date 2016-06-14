@@ -48,8 +48,8 @@
         tools:text="超萌卡通悠遊卡立體卡套" />
 
     <TextView
-        android:id="@+id/product_price_tv"
-        android:layout_width="wrap_content"
+        android:id="@+id/special_price_tv"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@id/product_iv"
         android:layout_marginEnd="16dp"
@@ -58,7 +58,22 @@
         android:layout_toLeftOf="@id/collect_iv"
         android:layout_toRightOf="@id/product_iv"
         android:layout_toStartOf="@id/collect_iv"
-        android:textColor="@color/green_text"
+        android:textColor="@color/black_text"
+        android:textSize="10sp"
+        tools:text="-優惠價-" />
+
+    <TextView
+        android:id="@+id/product_price_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/special_price_tv"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_toEndOf="@id/product_iv"
+        android:layout_toLeftOf="@id/collect_iv"
+        android:layout_toRightOf="@id/product_iv"
+        android:layout_toStartOf="@id/collect_iv"
+        android:textColor="@android:color/holo_red_light"
         android:textSize="12sp"
         tools:text="NT$89" />
 

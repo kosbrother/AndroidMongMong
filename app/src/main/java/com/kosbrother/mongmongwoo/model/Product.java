@@ -124,4 +124,18 @@ public class Product implements Serializable {
     public int getFinalPrice() {
         return finalPrice;
     }
+
+    public String getSpecialPriceText() {
+        String specialPriceText;
+        if (isSpecial()) {
+            specialPriceText = "優惠價NT$ " + price;
+        } else {
+            specialPriceText = "-優惠價-";
+        }
+        return specialPriceText;
+    }
+
+    public boolean isSpecial() {
+        return price != finalPrice;
+    }
 }
