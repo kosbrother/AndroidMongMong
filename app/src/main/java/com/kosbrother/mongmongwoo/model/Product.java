@@ -29,6 +29,8 @@ public class Product implements Serializable {
     private List<Spec> specs;
     @SerializedName("photos")
     private List<Photo> photos;
+    @SerializedName("final_price")
+    private int finalPrice;
 
     private int buy_count;
     private Spec selectedSpec;
@@ -121,5 +123,9 @@ public class Product implements Serializable {
 
     public String getUrl() {
         return String.format(ITEM_URI_STRING, categoryName, name);
+    }
+
+    public int getFinalPrice() {
+        return finalPrice;
     }
 }
