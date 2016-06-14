@@ -57,8 +57,8 @@ public class PurchaseFragment2 extends Fragment {
                 } else if (!isLoginWithValidEmail() && nameOrPhoneOrEmailEmpty()) {
                     Toast.makeText(getActivity(), "收件人名稱、電話跟Email不可空白", Toast.LENGTH_SHORT).show();
                 } else {
-                    String shipName = shippingNameEditText.getText().toString();
-                    String shipPhone = shippingPhoneEditText.getText().toString();
+                    String shipName = shippingNameEditText.getText().toString().trim();
+                    String shipPhone = shippingPhoneEditText.getText().toString().trim();
                     String shipEmail = getUserInputEmailOrFbEmail();
 
                     activity.saveShippingInfo(shipName, shipPhone, shipEmail);
@@ -114,16 +114,16 @@ public class PurchaseFragment2 extends Fragment {
     }
 
     private boolean nameOrPhoneEmpty() {
-        return shippingNameEditText.getText().toString().isEmpty()
-                || shippingPhoneEditText.getText().toString().isEmpty();
+        return shippingNameEditText.getText().toString().trim().isEmpty()
+                || shippingPhoneEditText.getText().toString().trim().isEmpty();
     }
 
     private boolean nameOrPhoneOrEmailEmpty() {
-        return nameOrPhoneEmpty() || shippingEmailEditText.getText().toString().isEmpty();
+        return nameOrPhoneEmpty() || shippingEmailEditText.getText().toString().trim().isEmpty();
     }
 
     private String getUserInputEmailOrFbEmail() {
-        String userInputEmail = shippingEmailEditText.getText().toString();
+        String userInputEmail = shippingEmailEditText.getText().toString().trim();
         if (userInputEmail.isEmpty()) {
             return Settings.getEmail();
         } else {
