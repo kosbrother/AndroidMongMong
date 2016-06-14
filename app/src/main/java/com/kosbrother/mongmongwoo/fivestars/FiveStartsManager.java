@@ -25,7 +25,7 @@ public class FiveStartsManager {
         if (stared) {
             return false;
         }
-        int count = sharedPreferences.getInt(FiveStarsPreferences.COUNT, 7);
+        int count = sharedPreferences.getInt(FiveStarsPreferences.COUNT, 4);
         saveUpdateCount(count);
         return count == 7;
     }
