@@ -161,10 +161,10 @@ public class PurchaseFragment3 extends Fragment {
             String nameString = product.getName();
             goodsNameTextView.setText(nameString);
 
-            String countText = "NT$ " + product.getPrice() + " X " + product.getBuy_count();
+            String countText = "NT$ " + product.getFinalPrice() + " X " + product.getBuy_count();
             priceAndQuantityTextView.setText(countText);
 
-            String subTotalText = "小計：NT$ " + (product.getBuy_count() * product.getPrice());
+            String subTotalText = "小計：NT$ " + (product.getBuy_count() * product.getFinalPrice());
             subTotalTextView.setText(subTotalText);
         }
     }

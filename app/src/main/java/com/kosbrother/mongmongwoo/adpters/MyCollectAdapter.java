@@ -37,7 +37,7 @@ public class MyCollectAdapter extends RecyclerView.Adapter<MyCollectAdapter.View
 
         holder.productNameTextView.setText(product.getName());
 
-        String priceString = "NT$" + product.getPrice();
+        String priceString = "NT$" + product.getFinalPrice();
         holder.productPriceTextView.setText(priceString);
 
         Glide.with(context)

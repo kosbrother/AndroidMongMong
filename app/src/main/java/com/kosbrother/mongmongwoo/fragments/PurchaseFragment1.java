@@ -179,13 +179,13 @@ public class PurchaseFragment1 extends Fragment {
             String nameString = product.getName();
             goodsNameTextView.setText(nameString);
 
-            String priceString = "NT$ " + product.getPrice();
+            String priceString = "NT$ " + product.getFinalPrice();
             priceTextView.setText(priceString);
 
             String countText = "數量：" + product.getBuy_count();
             selectCountButton.setText(countText);
 
-            String subTotalText = "小計：NT$ " + (product.getBuy_count() * product.getPrice());
+            String subTotalText = "小計：NT$ " + (product.getBuy_count() * product.getFinalPrice());
             subTotalTextView.setText(subTotalText);
 
             deleteImageView.setTag(i);
@@ -254,7 +254,7 @@ public class PurchaseFragment1 extends Fragment {
             postProduct.setSpecId(product.getSelectedSpec().getId());
             postProduct.setStyle(product.getSelectedSpec().getStyle());
             postProduct.setQuantity(product.getBuy_count());
-            postProduct.setPrice(product.getPrice());
+            postProduct.setPrice(product.getFinalPrice());
             postProductList.add(postProduct);
         }
         activity.savePostProducts(postProductList);

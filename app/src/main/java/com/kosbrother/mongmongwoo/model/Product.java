@@ -69,10 +69,6 @@ public class Product implements Serializable {
         return cover;
     }
 
-    public int getSpecialPrice() {
-        return specialPrice;
-    }
-
     public List<Spec> getSpecs() {
         return specs;
     }
