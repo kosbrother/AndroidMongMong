@@ -122,7 +122,13 @@ public class Product implements Serializable {
     }
 
     public int getFinalPrice() {
-        return finalPrice;
+        if (finalPrice != 0) {
+            return finalPrice;
+        }
+        if (specialPrice != 0) {
+            return specialPrice;
+        }
+        return price;
     }
 
     public String getSpecialPriceText() {
@@ -136,6 +142,6 @@ public class Product implements Serializable {
     }
 
     public boolean isSpecial() {
-        return price != finalPrice;
+        return price != getFinalPrice();
     }
 }
