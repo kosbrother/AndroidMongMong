@@ -10,7 +10,7 @@ public class CalculateUtil {
         int totalGoodsPrice = 0;
         for (int i = 0; i < shoppingCarProducts.size(); i++) {
             totalGoodsPrice = totalGoodsPrice +
-                    shoppingCarProducts.get(i).getPrice() * shoppingCarProducts.get(i).getBuy_count();
+                    shoppingCarProducts.get(i).getFinalPrice() * shoppingCarProducts.get(i).getBuy_count();
         }
         return totalGoodsPrice;
     }

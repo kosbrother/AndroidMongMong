@@ -75,10 +75,13 @@ public class GoodsGridAdapter extends BaseAdapter {
 
         viewHolder.nameTextView.setText(theProduct.getName());
 
-        String priceText = "NT$" + theProduct.getPrice();
+        String priceText = "NT$" + theProduct.getFinalPrice();
         viewHolder.priceTextView.setText(priceText);
 
-        setSpecialPrice(viewHolder.specialPriceTextView, theProduct.getSpecialPrice());
+        viewHolder.specialPriceTextView.setText(theProduct.getSpecialPriceText());
+        if (theProduct.isSpecial()) {
+            TextViewUtil.paintLineThroughTextView(viewHolder.specialPriceTextView);
+        }
 
         viewHolder.addShoppingCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,18 +91,6 @@ public class GoodsGridAdapter extends BaseAdapter {
         });
 
         return convertView;
-    }
-
-    private void setSpecialPrice(TextView specialPriceTextView, int specialPrice) {
-        String specialPriceText;
-        if (specialPrice > 0) {
-            specialPriceText = "優惠價NT$" + specialPrice;
-            TextViewUtil.paintLineThroughTextView(specialPriceTextView);
-        } else {
-            specialPriceText = "-優惠價-";
-        }
-
-        specialPriceTextView.setText(specialPriceText);
     }
 
     static class ViewHolder {

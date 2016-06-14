@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.utils.TextViewUtil;
 
 import java.util.List;
 
@@ -37,8 +38,13 @@ public class MyCollectAdapter extends RecyclerView.Adapter<MyCollectAdapter.View
 
         holder.productNameTextView.setText(product.getName());
 
-        String priceString = "NT$" + product.getPrice();
+        String priceString = "NT$" + product.getFinalPrice();
         holder.productPriceTextView.setText(priceString);
+
+        holder.specialPriceTextView.setText(product.getSpecialPriceText());
+        if (product.isSpecial()) {
+            TextViewUtil.paintLineThroughTextView(holder.specialPriceTextView);
+        }
 
         Glide.with(context)
                 .load(product.getCover().getUrl())
@@ -69,6 +75,7 @@ public class MyCollectAdapter extends RecyclerView.Adapter<MyCollectAdapter.View
         private final ImageView collectImageView;
         private final TextView productNameTextView;
         private final TextView productPriceTextView;
+        private final TextView specialPriceTextView;
 
         public ViewHolder(View itemView, final MyCollectListener listener) {
             super(itemView);
@@ -89,7 +96,7 @@ public class MyCollectAdapter extends RecyclerView.Adapter<MyCollectAdapter.View
             });
             productNameTextView = (TextView) itemView.findViewById(R.id.product_name_tv);
             productPriceTextView = (TextView) itemView.findViewById(R.id.product_price_tv);
-
+            specialPriceTextView = (TextView) itemView.findViewById(R.id.special_price_tv);
         }
     }
 }

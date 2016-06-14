@@ -341,26 +341,17 @@ public class ProductActivity extends AppCompatActivity {
         nameText.setText(theProduct.getName());
 
         TextView priceTextView = (TextView) findViewById(R.id.product_price_text);
-        String priceText = "NT$ " + theProduct.getPrice();
+        String priceText = "NT$ " + theProduct.getFinalPrice();
         priceTextView.setText(priceText);
 
         TextView specialPriceTextView = (TextView) findViewById(R.id.product_special_price_tv);
-        setSpecialPrice(specialPriceTextView, theProduct.getSpecialPrice());
+        specialPriceTextView.setText(theProduct.getSpecialPriceText());
+        if (theProduct.isSpecial()) {
+            TextViewUtil.paintLineThroughTextView(specialPriceTextView);
+        }
 
         TextView infoTextView = (TextView) findViewById(R.id.product_information_text);
         infoTextView.setText(Html.fromHtml(theProduct.getDescription()));
-    }
-
-    private void setSpecialPrice(TextView specialPriceTextView, int specialPrice) {
-        String specialPriceText;
-        if (specialPrice > 0) {
-            specialPriceText = "優惠價NT$" + specialPrice;
-            TextViewUtil.paintLineThroughTextView(specialPriceTextView);
-        } else {
-            specialPriceText = "-優惠價-";
-        }
-
-        specialPriceTextView.setText(specialPriceText);
     }
 
     @SuppressWarnings("ConstantConditions")

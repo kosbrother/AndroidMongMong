@@ -29,6 +29,8 @@ public class Product implements Serializable {
     private List<Spec> specs;
     @SerializedName("photos")
     private List<Photo> photos;
+    @SerializedName("final_price")
+    private int finalPrice;
 
     private int buy_count;
     private Spec selectedSpec;
@@ -65,10 +67,6 @@ public class Product implements Serializable {
 
     public Cover getCover() {
         return cover;
-    }
-
-    public int getSpecialPrice() {
-        return specialPrice;
     }
 
     public List<Spec> getSpecs() {
@@ -121,5 +119,23 @@ public class Product implements Serializable {
 
     public String getUrl() {
         return String.format(ITEM_URI_STRING, categoryName, name);
+    }
+
+    public int getFinalPrice() {
+        return finalPrice;
+    }
+
+    public String getSpecialPriceText() {
+        String specialPriceText;
+        if (isSpecial()) {
+            specialPriceText = "優惠價NT$ " + price;
+        } else {
+            specialPriceText = "-優惠價-";
+        }
+        return specialPriceText;
+    }
+
+    public boolean isSpecial() {
+        return price != finalPrice;
     }
 }
