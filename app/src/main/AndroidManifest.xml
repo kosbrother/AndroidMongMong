@@ -130,6 +130,11 @@
             android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <activity
+            android:name=".fivestars.FiveStarsActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Translucent" />
+
+        <activity
             android:name=".appindex.IndexActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Translucent">

@@ -22,6 +22,7 @@
     <color name="product_bg">#fdfdfe</color>
     <color name="bg_gray_checkout_bottom">#f1f1f1</color>
     <color name="bg_divider">#9b9b9b</color>
+    <color name="bg_dark_transparent">#99000000</color>
 
     <color name="fab_blue">#03a9f4</color>
     <color name="fab_yellow">#ffc400</color>
