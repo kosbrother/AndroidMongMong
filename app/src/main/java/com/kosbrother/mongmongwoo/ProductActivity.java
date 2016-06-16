@@ -50,6 +50,7 @@ public class ProductActivity extends AppCompatActivity {
     public static final String EXTRA_INT_PRODUCT_ID = "EXTRA_INT_PRODUCT_ID";
     public static final String EXTRA_INT_CATEGORY_ID = "EXTRA_INT_CATEGORY_ID";
     public static final String EXTRA_STRING_CATEGORY_NAME = "EXTRA_STRING_CATEGORY_NAME";
+    public static final String EXTRA_STRING_SLUG = "EXTRA_STRING_SLUG";
     public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
     public static final String EXTRA_BOOLEAN_FROM_MY_COLLECT = "EXTRA_BOOLEAN_FROM_MY_COLLECT";
 
@@ -76,7 +77,7 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     private void getProduct() {
-        Webservice.getProduct(getCategoryId(), getProductId(), new Action1<ResponseEntity<Product>>() {
+        Action1<ResponseEntity<Product>> getProductAction = new Action1<ResponseEntity<Product>>() {
             @Override
             public void call(ResponseEntity<Product> listResponseEntity) {
                 Product data = listResponseEntity.getData();
@@ -88,7 +89,13 @@ public class ProductActivity extends AppCompatActivity {
                     onGetProductResult();
                 }
             }
-        });
+        };
+        String slug = getIntent().getStringExtra(EXTRA_STRING_SLUG);
+        if (slug == null || slug.isEmpty()) {
+            Webservice.getProduct(getCategoryId(), getProductId(), getProductAction);
+        } else {
+            Webservice.getProduct(getCategoryName(), slug, getProductAction);
+        }
     }
 
     @SuppressWarnings("ConstantConditions")
