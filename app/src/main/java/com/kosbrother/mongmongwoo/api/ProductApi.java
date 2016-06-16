@@ -8,8 +8,11 @@ public class ProductApi {
         return RequestUtil.get(UrlCenter.getProductById(categoryId, productId));
     }
 
+    public static String getProduct(String categoryName, String slug) throws IOException {
+        return RequestUtil.get(UrlCenter.getProductBySlug(categoryName, slug));
+    }
+
     public static String getCategoryProducts(int categoryId, int page) throws IOException {
         return RequestUtil.get(UrlCenter.getCategoryProducts(categoryId, page));
     }
-
 }

@@ -49,6 +49,12 @@ public class UrlCenter {
                 + "/items/" + productId;
     }
 
+    static String getProductBySlug(String categoryName, String slug) {
+        return HOST + API_V3
+                + "/categories/" + categoryName
+                + "/items/" + slug;
+    }
+
     static String getCategoryProducts(int categoryId, int page) {
         return HOST + API_V3
                 + "/categories/" + categoryId
