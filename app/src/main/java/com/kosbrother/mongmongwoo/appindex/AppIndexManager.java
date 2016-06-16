@@ -12,9 +12,9 @@ import com.kosbrother.mongmongwoo.model.Product;
 public class AppIndexManager {
 
     public static final String MAIN_URI_STRING =
-            "android-app://com.kosbrother.mongmongwoo/mmwooo/";
+            "android-app://com.kosbrother.mongmongwoo/https/www.mmwooo.com";
     public static final String ITEM_URI_STRING =
-            "android-app://com.kosbrother.mongmongwoo/mmwooo/www.mmwooo.com/categories/%s-%s/items/%s-%s";
+            "android-app://com.kosbrother.mongmongwoo/https/www.mmwooo.com/categories/%s/items/%s";
 
     private static GoogleApiClient mClient = null;
 
@@ -69,7 +69,7 @@ public class AppIndexManager {
 
     private static Action getItemAction(Product theProduct) {
         String urlString = String.format(ITEM_URI_STRING,
-                theProduct.getCategoryName(), theProduct.getCategoryId(), theProduct.getName(), theProduct.getId());
+                theProduct.getCategoryName(), theProduct.getSlug());
         Thing object = new Thing.Builder()
                 .setName(theProduct.getName())
                 .setDescription(theProduct.getDescription())
