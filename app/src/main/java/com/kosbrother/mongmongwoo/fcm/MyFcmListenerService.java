@@ -43,12 +43,12 @@ public class MyFcmListenerService extends FirebaseMessagingService {
     }
 
     private void onReceivedOrder(Map data) {
-        String contentText = (String) data.get("content_text");
+        String contentText = data.get("content_text").toString();
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon9))
                 .setSmallIcon(R.mipmap.ic_mhouse)
-                .setContentTitle((String) data.get("content_title"))
+                .setContentTitle(data.get("content_title").toString())
                 .setContentText(contentText)
                 .setStyle(new NotificationCompat.BigTextStyle()
                         .bigText(contentText))
@@ -57,13 +57,13 @@ public class MyFcmListenerService extends FirebaseMessagingService {
                 .setAutoCancel(true);
 
         sendNotification(notificationBuilder);
-        GAManager.sendEvent(new NotificationPickUpSendEvent((String) data.get("order_id")));
+        GAManager.sendEvent(new NotificationPickUpSendEvent(data.get("order_id").toString()));
     }
 
     private void onReceivedProduct(Map data) {
         Bitmap productBitmap = getProductBitmap(data);
-        String contentTitle = (String) data.get("content_title");
-        String contentText = (String) data.get("content_text");
+        String contentTitle = data.get("content_title").toString();
+        String contentText = data.get("content_text").toString();
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                 .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon9))
@@ -83,7 +83,7 @@ public class MyFcmListenerService extends FirebaseMessagingService {
     private Bitmap getProductBitmap(Map data) {
         Bitmap bitmap;
         try {
-            URL url = new URL((String) data.get("content_pic"));
+            URL url = new URL(data.get("content_pic").toString());
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             connection.setDoInput(true);
             connection.connect();
@@ -100,19 +100,19 @@ public class MyFcmListenerService extends FirebaseMessagingService {
 
     private Product getProduct(Map data) {
         Product product = new Product(
-                Integer.parseInt((String) data.get("item_id")),
-                (String) data.get("item_name"),
-                Integer.parseInt((String) data.get("item_price")),
+                Integer.parseInt(data.get("item_id").toString()),
+                data.get("item_name").toString(),
+                Integer.parseInt(data.get("item_price").toString()),
                 "");
-        product.setCategoryName((String) data.get("category_name"));
-        product.setCategoryId((Integer) data.get("category_id"));
+        product.setCategoryName(data.get("category_name").toString());
+        product.setCategoryId(Integer.parseInt(data.get("category_id").toString()));
         return product;
     }
 
     private PendingIntent getPastOrderPendingIntent(Map data) {
         Intent pastOrderIntent = new Intent(this, PastOrderDetailActivity.class);
         pastOrderIntent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID,
-                Integer.valueOf((String) data.get("order_id")));
+                Integer.parseInt(data.get("order_id").toString()));
         pastOrderIntent.putExtra(PastOrderDetailActivity.EXTRA_BOOLEAN_FROM_NOTIFICATION,
                 true);
         return PendingIntent.getActivity(
