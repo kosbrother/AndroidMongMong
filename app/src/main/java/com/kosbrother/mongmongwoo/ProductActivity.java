@@ -415,8 +415,7 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     private int getCategoryId() {
-        int categoryId = getIntent().getIntExtra(EXTRA_INT_CATEGORY_ID, 0);
-        return categoryId == 0 ? 10 : categoryId;
+        return getIntent().getIntExtra(EXTRA_INT_CATEGORY_ID, 10);
     }
 
     private String getCategoryName() {
