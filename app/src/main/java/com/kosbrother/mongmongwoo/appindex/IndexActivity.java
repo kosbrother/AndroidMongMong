@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.text.TextUtils;
 
 import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.ProductActivity;
@@ -25,20 +26,23 @@ public class IndexActivity extends AppCompatActivity {
         if (Intent.ACTION_VIEW.equals(action) && data != null) {
             String dataString = data.getEncodedPath();
             Intent indexIntent;
-            if (dataString.contains("categories")) {
-                int productId = Integer.parseInt(dataString.substring(dataString.lastIndexOf("-") + 1));
-                String categoryString = dataString.substring(
-                        dataString.indexOf("categories/") + 11, dataString.indexOf("/items"));
-                String categoryName = categoryString.split("-")[0];
-                String categoryId = categoryString.split("-")[1];
-
+            if (dataString.contains("categories") && dataString.contains("items")) {
                 indexIntent = new Intent(this, ProductActivity.class);
-                indexIntent.putExtra(
-                        ProductActivity.EXTRA_INT_PRODUCT_ID, productId);
-                indexIntent.putExtra(
-                        ProductActivity.EXTRA_STRING_CATEGORY_NAME, categoryName);
-                indexIntent.putExtra(
-                        ProductActivity.EXTRA_INT_CATEGORY_ID, categoryId);
+
+                String categoriesData = dataString.substring(
+                        dataString.indexOf("categories/") + 11, dataString.indexOf("/items"));
+                String itemsData = dataString.substring(dataString.indexOf("items/") + 6);
+                if (TextUtils.isDigitsOnly(categoriesData) && TextUtils.isDigitsOnly(itemsData)) {
+                    indexIntent.putExtra(
+                            ProductActivity.EXTRA_INT_CATEGORY_ID, Integer.parseInt(categoriesData));
+                    indexIntent.putExtra(
+                            ProductActivity.EXTRA_INT_PRODUCT_ID, Integer.parseInt(itemsData));
+                } else {
+                    indexIntent.putExtra(
+                            ProductActivity.EXTRA_STRING_CATEGORY_NAME, categoriesData);
+                    indexIntent.putExtra(
+                            ProductActivity.EXTRA_STRING_SLUG, itemsData);
+                }
             } else {
                 indexIntent = new Intent(this, MainActivity.class);
             }

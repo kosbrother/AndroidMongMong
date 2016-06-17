@@ -89,6 +89,39 @@ public class Webservice {
                 });
     }
 
+    public static void getProduct(
+            final String categoryName, final String slug,
+            Action1<? super ResponseEntity<Product>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(ProductApi.getProduct(categoryName, slug));
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .map(new Func1<String, ResponseEntity<Product>>() {
+                    @Override
+                    public ResponseEntity<Product> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<Product>>() {
+                        }.getType();
+                        return new Gson().fromJson(json, listType);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        handleThrowable(throwable, "getProductException");
+                    }
+                });
+    }
+
     public static void getProducts(
             final int categoryId, final int page,
             Action1<? super ResponseEntity<List<Product>>> onNextAction) {

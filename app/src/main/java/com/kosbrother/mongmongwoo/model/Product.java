@@ -17,6 +17,8 @@ public class Product implements Serializable {
     private String name;
     @SerializedName("price")
     private int price;
+    @SerializedName("slug")
+    private String slug;
     @SerializedName("status")
     private String status;
     @SerializedName("description")
@@ -55,6 +57,15 @@ public class Product implements Serializable {
 
     public int getPrice() {
         return price;
+    }
+
+    /**
+     * Product slug for google app indexing.
+     *
+     * @return product slug.
+     */
+    public String getSlug() {
+        return slug;
     }
 
     public String getStatus() {
@@ -144,4 +155,5 @@ public class Product implements Serializable {
     public boolean isSpecial() {
         return price != getFinalPrice();
     }
+
 }
