@@ -1,17 +1,15 @@
 package com.kosbrother.mongmongwoo;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
@@ -19,38 +17,47 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewStub;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.facebook.login.widget.LoginButton;
 import com.github.siyamed.shapeimageview.CircularImageView;
+import com.kosbrother.mongmongwoo.adpters.CategoryAdapter;
+import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
 import com.kosbrother.mongmongwoo.api.UrlCenter;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
+import com.kosbrother.mongmongwoo.category.CategoryActivity;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
+import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.fivestars.FiveStarsActivity;
 import com.kosbrother.mongmongwoo.fivestars.FiveStartsManager;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
-import com.kosbrother.mongmongwoo.fragments.GoodsGridFragment;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.navigationdrawer.NavigationDrawerClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.navigationdrawer.NavigationDrawerOpenEvent;
+import com.kosbrother.mongmongwoo.model.Category;
+import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
 import com.kosbrother.mongmongwoo.pastorders.QueryPastOrdersActivity;
-import com.kosbrother.mongmongwoo.utils.MongMongWooUtil;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
+import com.kosbrother.mongmongwoo.utils.ExpandableHeightGridView;
+import com.kosbrother.mongmongwoo.utils.InteractiveNestedScrollView;
+import com.kosbrother.mongmongwoo.utils.MongMongWooUtil;
 import com.kosbrother.mongmongwoo.utils.NetworkUtil;
+import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
 import com.kosbrother.mongmongwoo.utils.ShareUtil;
 import com.kosbrother.mongmongwoo.utils.VersionUtil;
 
@@ -66,9 +73,7 @@ public class MainActivity extends FbLoginActivity
     private CircularImageView userImage;
     private TextView userText;
     private LoginButton loginButton;
-    private RelativeLayout spotLightShoppingCarLayout;
 
-    private ViewPager viewPager;
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
 
     @Override
@@ -79,12 +84,13 @@ public class MainActivity extends FbLoginActivity
         AppIndexManager.init(this);
         csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
 
+        setMorePopularViewWithScrollView();
         setToolbarAndDrawer();
-        setSpotLightShoppingCarLayout();
-        setSpotLightConfirmButton();
         setNavigationView();
-        setViewPagerAndTabLayout();
         setLoginButton(loginButton);
+        getCategories();
+        getAllPopularItems();
+        getNewDateItems();
         checkAndroidVersion();
     }
 
@@ -215,8 +221,100 @@ public class MainActivity extends FbLoginActivity
         GAManager.sendEvent(new CustomerServiceClickEvent("FAB"));
     }
 
-    public void showShoppingCarInstruction() {
-        spotLightShoppingCarLayout.setVisibility(View.VISIBLE);
+    public void onMoreLatestItemsClick(View view) {
+        Intent intent = new Intent(this, CategoryActivity.class);
+        intent.putExtra(CategoryActivity.EXTRA_INT_CATEGORY_ID, Category.Type.ALL.getId());
+        intent.putExtra(CategoryActivity.EXTRA_STRING_CATEGORY_NAME, Category.Type.ALL.getName());
+        intent.putExtra(CategoryActivity.EXTRA_INT_SORT_INDEX, Category.SortName.date.ordinal());
+        startActivity(intent);
+    }
+
+    public void onMorePopularItemsClick(View view) {
+        Intent intent = new Intent(this, CategoryActivity.class);
+        intent.putExtra(CategoryActivity.EXTRA_INT_CATEGORY_ID, Category.Type.ALL.getId());
+        intent.putExtra(CategoryActivity.EXTRA_STRING_CATEGORY_NAME, Category.Type.ALL.getName());
+        intent.putExtra(CategoryActivity.EXTRA_INT_SORT_INDEX, Category.SortName.popular.ordinal());
+        startActivity(intent);
+    }
+
+    private void setMorePopularViewWithScrollView() {
+        getMorePopularView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onMorePopularItemsClick(v);
+            }
+        });
+        InteractiveNestedScrollView scrollView = (InteractiveNestedScrollView) findViewById(R.id.scrollView);
+        scrollView.setOnBottomReachedListener(new InteractiveNestedScrollView.OnBottomReachedListener() {
+            @Override
+            public void onBottomReached() {
+                final View morePopularView = getMorePopularView();
+                ObjectAnimator animY = ObjectAnimator.ofFloat(
+                        morePopularView, "y", -morePopularView.getHeight(), 0);
+                animY.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationStart(Animator animation) {
+                        super.onAnimationStart(animation);
+                        morePopularView.setVisibility(View.VISIBLE);
+                    }
+                });
+                animY.start();
+            }
+
+            @Override
+            public void onBottomLeft() {
+                final View morePopularView = getMorePopularView();
+                ObjectAnimator animY = ObjectAnimator.ofFloat(
+                        morePopularView, "y", 0, -morePopularView.getHeight());
+                animY.addListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        super.onAnimationEnd(animation);
+                        morePopularView.setVisibility(View.GONE);
+                    }
+                });
+                animY.start();
+            }
+
+        });
+    }
+
+    private void getCategories() {
+        Webservice.getCategories(new Action1<ResponseEntity<List<Category>>>() {
+            @Override
+            public void call(ResponseEntity<List<Category>> listResponseEntity) {
+                List<Category> data = listResponseEntity.getData();
+                if (data == null) {
+                    GAManager.sendError("getCategoriesError", listResponseEntity.getError());
+                } else {
+                    setCategoryGridView(data);
+                }
+            }
+        });
+    }
+
+    private void getAllPopularItems() {
+        Webservice.getCategorySortItems(
+                Category.Type.ALL.getId(), Category.SortName.popular.name(), 1, new Action1<List<Product>>() {
+                    @Override
+                    public void call(List<Product> products) {
+                        if (products != null) {
+                            setPopularItemsGridView(products);
+                        }
+                    }
+                });
+    }
+
+    private void getNewDateItems() {
+        Webservice.getCategorySortItems(
+                Category.Type.NEW.getId(), Category.SortName.date.name(), 1, new Action1<List<Product>>() {
+                    @Override
+                    public void call(List<Product> products) {
+                        if (products != null) {
+                            setLatestItemsGridView(products);
+                        }
+                    }
+                });
     }
 
     private void checkAndroidVersion() {
@@ -288,21 +386,6 @@ public class MainActivity extends FbLoginActivity
         toggle.syncState();
     }
 
-    private void setSpotLightShoppingCarLayout() {
-        spotLightShoppingCarLayout = (RelativeLayout) findViewById(R.id.spotlight_shopping_car_layout);
-        spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
-    }
-
-    private void setSpotLightConfirmButton() {
-        Button spotLightConfirmButton = (Button) findViewById(R.id.confirm_button);
-        spotLightConfirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
-            }
-        });
-    }
-
     private void setNavigationView() {
         NavigationView navigationView = getNavigationView();
         navigationView.setNavigationItemSelectedListener(this);
@@ -312,29 +395,86 @@ public class MainActivity extends FbLoginActivity
         loginButton = (LoginButton) header.findViewById(R.id.login_button_main);
     }
 
-    private void setViewPagerAndTabLayout() {
-        SampleFragmentPagerAdapter adapter = new SampleFragmentPagerAdapter(getSupportFragmentManager());
-
-        viewPager = (ViewPager) findViewById(R.id.viewpager);
-        viewPager.setAdapter(adapter);
-        viewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+    private void setCategoryGridView(List<Category> data) {
+        ExpandableHeightGridView gridView = (ExpandableHeightGridView) findViewById(R.id.category_gv);
+        gridView.setAdapter(new CategoryAdapter(this, data));
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-            }
-
-            @Override
-            public void onPageSelected(int position) {
-                SampleFragmentPagerAdapter adapter = (SampleFragmentPagerAdapter) viewPager.getAdapter();
-                GAManager.sendScreen("Fragment~" + adapter.getPageTitle(position).toString());
-            }
-
-            @Override
-            public void onPageScrollStateChanged(int state) {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Category category = (Category) parent.getAdapter().getItem(position);
+                Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
+                intent.putExtra(CategoryActivity.EXTRA_INT_CATEGORY_ID, category.getId());
+                intent.putExtra(CategoryActivity.EXTRA_STRING_CATEGORY_NAME, category.getName());
+                startActivity(intent);
             }
         });
+    }
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
-        tabLayout.setupWithViewPager(viewPager);
+    private void setLatestItemsGridView(List<Product> products) {
+        ExpandableHeightGridView gridView = (ExpandableHeightGridView) findViewById(R.id.latest_items_gv);
+        List<Product> displayProducts = getDisplayProducts(products);
+        setDisplayGridView(displayProducts, gridView);
+    }
+
+    private void setPopularItemsGridView(List<Product> products) {
+        ExpandableHeightGridView gridView = (ExpandableHeightGridView) findViewById(R.id.popular_items_gv);
+        List<Product> displayProducts = getDisplayProducts(products);
+        setDisplayGridView(displayProducts, gridView);
+    }
+
+    private void setDisplayGridView(final List<Product> displayProducts, ExpandableHeightGridView gridView) {
+        GoodsGridAdapter adapter = new GoodsGridAdapter(this, displayProducts,
+                new GoodsGridAdapter.GoodsGridAdapterListener() {
+                    @Override
+                    public void onAddShoppingCartButtonClick(int productId, int position) {
+                        showProductStyleDialog(displayProducts.get(position));
+                    }
+                });
+        gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Product product = (Product) parent.getAdapter().getItem(position);
+                Intent intent = new Intent(MainActivity.this, ProductActivity.class);
+                intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
+                intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, Category.Type.ALL.getId());
+                intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, Category.Type.ALL.getName());
+                startActivity(intent);
+            }
+        });
+    }
+
+    private List<Product> getDisplayProducts(List<Product> products) {
+        final List<Product> displayProducts = new ArrayList<>();
+        for (int i = 0; i < 6; i++) {
+            displayProducts.add(products.get(i));
+        }
+        return displayProducts;
+    }
+
+    private void showProductStyleDialog(Product product) {
+        new ProductStyleDialog(MainActivity.this, product, new ProductStyleDialog.ProductStyleDialogListener() {
+            @Override
+            public void onFirstAddShoppingCart() {
+                ViewStub viewStub = (ViewStub) findViewById(R.id.shopping_car_spotlight_vs);
+                final View spotLightShoppingCarLayout = viewStub.inflate();
+                Button spotLightConfirmButton =
+                        (Button) spotLightShoppingCarLayout.findViewById(R.id.confirm_button);
+                spotLightConfirmButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
+                    }
+                });
+            }
+
+            @Override
+            public void onConfirmButtonClick(Product product) {
+                ShoppingCartManager.getInstance().addShoppingItem(product);
+                invalidateOptionsMenu();
+                Toast.makeText(MainActivity.this, "成功加入購物車", Toast.LENGTH_SHORT).show();
+            }
+        }).showWithInitState();
     }
 
     private void setNoNetLayout() {
@@ -372,6 +512,10 @@ public class MainActivity extends FbLoginActivity
         return (NavigationView) findViewById(R.id.nav_view);
     }
 
+    private View getMorePopularView() {
+        return findViewById(R.id.more_popular_rl);
+    }
+
     @SuppressLint("InflateParams")
     private void showUpdateDialog(String version_name, String update_message) {
         View dialogView = getLayoutInflater().inflate(R.layout.dialog_update_version, null);
@@ -391,41 +535,6 @@ public class MainActivity extends FbLoginActivity
                 dialog.dismiss();
             }
         });
-    }
-
-    class SampleFragmentPagerAdapter extends FragmentPagerAdapter {
-        private final List<Fragment> mFragmentList = new ArrayList<>();
-        private final List<String> mFragmentTitleList = new ArrayList<>();
-
-        public SampleFragmentPagerAdapter(FragmentManager fm) {
-            super(fm);
-            addFragment(GoodsGridFragment.newInstance(10, "所有商品"), " 所有商品 ");
-            addFragment(GoodsGridFragment.newInstance(11, "新品上架"), " 新品上架 ");
-            addFragment(GoodsGridFragment.newInstance(12, "文具用品"), " 文具用品 ");
-            addFragment(GoodsGridFragment.newInstance(13, "日韓精選"), " 日韓精選 ");
-            addFragment(GoodsGridFragment.newInstance(14, "生日專區"), " 生日專區 ");
-            addFragment(GoodsGridFragment.newInstance(16, "生活小物"), " 生活小物 ");
-        }
-
-        @Override
-        public int getCount() {
-            return mFragmentList.size();
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return mFragmentList.get(position);
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            return mFragmentTitleList.get(position);
-        }
-
-        private void addFragment(Fragment fragment, String title) {
-            mFragmentList.add(fragment);
-            mFragmentTitleList.add(title);
-        }
     }
 
 }

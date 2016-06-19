@@ -11,10 +11,10 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,8 +58,6 @@ public class ProductActivity extends AppCompatActivity {
 
     private Product theProduct;
 
-    private RelativeLayout spotLightShoppingCarLayout;
-
     private Toast toast;
     private ProductStyleDialog dialog;
 
@@ -69,8 +67,6 @@ public class ProductActivity extends AppCompatActivity {
         setContentView(R.layout.activity_product);
         AppIndexManager.init(this);
         setToolbar();
-        initSpotlightShoppingCartLayout();
-        initSpotLightConfirmButton();
         initAddCartButton();
         initCollectImageView();
         getProduct();
@@ -226,23 +222,6 @@ public class ProductActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
-    @SuppressWarnings("ConstantConditions")
-    private void initSpotlightShoppingCartLayout() {
-        spotLightShoppingCarLayout = (RelativeLayout) findViewById(R.id.spotlight_shopping_car_layout);
-        spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private void initSpotLightConfirmButton() {
-        Button spotLightConfirmButton = (Button) findViewById(R.id.confirm_button);
-        spotLightConfirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
-            }
-        });
-    }
-
     private void initAddCartButton() {
         addCarButton = (Button) findViewById(R.id.product_add_car_button);
         addCarButton.setOnClickListener(new View.OnClickListener() {
@@ -258,7 +237,16 @@ public class ProductActivity extends AppCompatActivity {
             dialog = new ProductStyleDialog(this, theProduct, new ProductStyleDialog.ProductStyleDialogListener() {
                 @Override
                 public void onFirstAddShoppingCart() {
-                    spotLightShoppingCarLayout.setVisibility(View.VISIBLE);
+                    ViewStub viewStub = (ViewStub) findViewById(R.id.shopping_car_spotlight_vs);
+                    final View spotLightShoppingCarLayout = viewStub.inflate();
+                    Button spotLightConfirmButton =
+                            (Button) spotLightShoppingCarLayout.findViewById(R.id.confirm_button);
+                    spotLightConfirmButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
+                        }
+                    });
                 }
 
                 @Override
