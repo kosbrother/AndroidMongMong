@@ -1,6 +1,8 @@
 package com.kosbrother.mongmongwoo.fragments;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,7 +10,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,11 +30,14 @@ import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
+import java.io.IOException;
 import java.util.List;
 
 import rx.functions.Action1;
 
 public class PurchaseFragment3 extends Fragment {
+
+    private long mLastClickTime = 0;
 
     TextView shippingPriceText;
     TextView totalPriceText;
@@ -47,7 +51,7 @@ public class PurchaseFragment3 extends Fragment {
     private LinearLayout goodsContainerLinearLayout;
 
     Order theOrder;
-    ProgressBar progressBar;
+    private ProgressDialog progressDialog;
 
     public static PurchaseFragment3 newInstance() {
         return new PurchaseFragment3();
@@ -66,12 +70,18 @@ public class PurchaseFragment3 extends Fragment {
         totalGoodsPriceTextView = (TextView) view.findViewById(R.id.fragment3_total_goods_price_text);
         emailTextView = (TextView) view.findViewById(R.id.fragment3_email_text);
         sendButton = (Button) view.findViewById(R.id.fragment3_send_button);
-        progressBar = (ProgressBar) view.findViewById(R.id.my_progress_bar);
         goodsContainerLinearLayout = (LinearLayout) view.findViewById(R.id.goods_container_ll);
 
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // mis-clicking prevention, using threshold of 1000 ms
+                if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+                    return;
+                }
+                mLastClickTime = SystemClock.elapsedRealtime();
+
+                showProgressDialog();
                 GAManager.sendEvent(new CheckoutStep3ClickEvent(GALabel.SEND_ORDER));
                 requestPostOrder();
             }
@@ -85,16 +95,22 @@ public class PurchaseFragment3 extends Fragment {
         Webservice.postOrder(json, new Action1<ResponseEntity<PastOrder>>() {
             @Override
             public void call(ResponseEntity<PastOrder> stringResponseEntity) {
+                hideProgressDialog();
                 PastOrder data = stringResponseEntity.getData();
                 if (data == null) {
                     GAManager.sendError("postOrderError", stringResponseEntity.getError());
-                    Toast.makeText(getActivity(), "訂單未成功送出 資料異常", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "訂單未成功送出，資料異常", Toast.LENGTH_SHORT).show();
                 } else {
-                    progressBar.setVisibility(View.GONE);
                     ShoppingCartManager.getInstance().removeAllShoppingItems();
                     ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
                     activity.startPurchaseFragment4();
                 }
+            }
+        }, new Action1<IOException>() {
+            @Override
+            public void call(IOException e) {
+                hideProgressDialog();
+                Toast.makeText(getActivity(), "網路發生異常，請檢查網路是否連線", Toast.LENGTH_SHORT).show();
             }
         });
     }
@@ -163,6 +179,20 @@ public class PurchaseFragment3 extends Fragment {
 
             String subTotalText = "小計：NT$ " + (product.getBuy_count() * product.getFinalPrice());
             subTotalTextView.setText(subTotalText);
+        }
+    }
+
+    private void showProgressDialog() {
+        if (progressDialog == null) {
+            progressDialog = new ProgressDialog(getContext());
+            progressDialog.setMessage("送出訂單...");
+        }
+        progressDialog.show();
+    }
+
+    private void hideProgressDialog() {
+        if (progressDialog != null) {
+            progressDialog.dismiss();
         }
     }
 

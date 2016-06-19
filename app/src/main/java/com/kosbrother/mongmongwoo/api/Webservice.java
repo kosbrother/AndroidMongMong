@@ -421,7 +421,8 @@ public class Webservice {
 
     public static void postOrder(
             final String orderJsonString,
-            Action1<? super ResponseEntity<PastOrder>> onNextAction) {
+            Action1<? super ResponseEntity<PastOrder>> onNextAction,
+            final Action1<IOException> onWebserviceExceptionAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -447,13 +448,17 @@ public class Webservice {
                 .subscribe(onNextAction, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        handleThrowable(throwable, "postUserException");
+                        if (throwable instanceof IOException) {
+                            onWebserviceExceptionAction.call((IOException) throwable);
+                        }else {
+                            handleThrowable(throwable, "postOrderException");
+                        }
                     }
                 });
     }
 
     private static void handleThrowable(Throwable throwable, String exceptionTitle) {
         throwable.printStackTrace();
-        GAManager.sendException(new ExceptionEvent(exceptionTitle, throwable.toString()));
+        GAManager.sendException(new ExceptionEvent(exceptionTitle, throwable.getMessage()));
     }
 }
