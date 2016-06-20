@@ -272,13 +272,4 @@
 
     </ScrollView>
 
-    <ProgressBar
-        android:id="@+id/my_progress_bar"
-        style="@android:style/Widget.ProgressBar.Large"
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:paddingBottom="50dp"
-        android:visibility="gone" />
-
 </RelativeLayout>
