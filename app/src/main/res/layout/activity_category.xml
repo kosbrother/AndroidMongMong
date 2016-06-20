@@ -33,7 +33,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/gray_tab_background"
                 app:layout_scrollFlags="scroll|enterAlways"
-                app:tabGravity="center"
+                app:tabGravity="fill"
                 app:tabIndicatorColor="@color/green_text"
                 app:tabSelectedTextColor="@color/green_text"
                 app:tabTextColor="@android:color/black" />
