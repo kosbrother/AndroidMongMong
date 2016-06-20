@@ -14,29 +14,6 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/no_net_layout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:gravity="center"
-            android:orientation="vertical"
-            android:visibility="gone">
-
-            <ImageView
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:src="@drawable/icon_problem" />
-
-            <TextView
-                android:layout_width="180dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text="無網路連接,請檢查網路連線,並重啟APP~"
-                android:textSize="17dp"
-                android:textStyle="bold" />
-
-        </LinearLayout>
-
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -60,7 +37,7 @@
                 android:id="@+id/category_gv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#fafafa"
+                android:background="@color/white"
                 android:gravity="center"
                 android:horizontalSpacing="0dp"
                 android:numColumns="3"
@@ -95,17 +72,20 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
                         android:layout_marginLeft="8dp"
                         android:layout_marginStart="8dp"
                         android:text="熱銷商品"
                         android:textColor="@color/green_text"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
                         android:layout_marginEnd="8dp"
                         android:layout_marginRight="8dp"
                         android:drawableEnd="@mipmap/ic_keyboard_arrow_right_black_18dp"
@@ -127,12 +107,15 @@
                     android:horizontalSpacing="8dp"
                     android:listSelector="@drawable/grid_view_list_selector_corner3"
                     android:numColumns="2"
-                    android:padding="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
                     android:scrollbarStyle="outsideOverlay"
                     android:stretchMode="columnWidth"
                     android:verticalSpacing="8dp" />
 
                 <Button
+                    style="?android:attr/borderlessButtonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:layout_marginBottom="8dp"
@@ -140,8 +123,9 @@
                     android:layout_marginRight="8dp"
                     android:background="@drawable/bg_green_border_white_button"
                     android:onClick="onMorePopularItemsClick"
-                    android:text="瀏覽更多"
-                    android:textColor="@color/green_text" />
+                    android:text="瀏覽更多熱銷商品"
+                    android:textColor="@color/green_text"
+                    android:textSize="14sp" />
             </LinearLayout>
 
         </android.support.v7.widget.CardView>
@@ -150,7 +134,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="80dp"
+            android:layout_marginBottom="24dp"
             card_view:cardCornerRadius="2dp">
 
             <LinearLayout
@@ -172,17 +156,20 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
                         android:layout_marginLeft="8dp"
                         android:layout_marginStart="8dp"
                         android:text="最新商品"
                         android:textColor="@color/green_text"
-                        android:textSize="12sp" />
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
                         android:layout_marginEnd="8dp"
                         android:layout_marginRight="8dp"
                         android:drawableEnd="@mipmap/ic_keyboard_arrow_right_black_18dp"
@@ -204,12 +191,15 @@
                     android:horizontalSpacing="8dp"
                     android:listSelector="@drawable/grid_view_list_selector_corner3"
                     android:numColumns="2"
-                    android:padding="8dp"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
                     android:scrollbarStyle="outsideOverlay"
                     android:stretchMode="columnWidth"
                     android:verticalSpacing="8dp" />
 
                 <Button
+                    style="?android:attr/borderlessButtonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:layout_marginBottom="8dp"
@@ -217,8 +207,9 @@
                     android:layout_marginRight="8dp"
                     android:background="@drawable/bg_green_border_white_button"
                     android:onClick="onMoreLatestItemsClick"
-                    android:text="瀏覽更多"
-                    android:textColor="@color/green_text" />
+                    android:text="瀏覽更多最新商品"
+                    android:textColor="@color/green_text"
+                    android:textSize="14sp" />
             </LinearLayout>
 
         </android.support.v7.widget.CardView>

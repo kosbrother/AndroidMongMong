@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <bitmap android:src="@drawable/shadow_fill_gray" />
+            </item>
+            <item android:bottom="2dp">
+                <shape>
+                    <solid android:color="@color/gray_tab_background" />
+                </shape>
+            </item>
+            <item>
+                <shape>
+                    <solid android:color="@color/dark_color_control_highlight" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item>
+        <layer-list>
+            <item>
+                <bitmap android:src="@drawable/shadow_fill_gray" />
+            </item>
+            <item android:bottom="2dp">
+                <shape>
+                    <solid android:color="@color/gray_tab_background" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+</selector>

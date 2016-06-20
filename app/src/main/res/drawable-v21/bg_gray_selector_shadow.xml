@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="?android:colorControlHighlight">
+
+    <item>
+        <layer-list>
+            <item>
+                <bitmap android:src="@drawable/shadow_fill_gray" />
+            </item>
+            <item android:bottom="2dp">
+                <shape>
+                    <solid android:color="@color/gray_tab_background" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+</ripple>
