@@ -500,7 +500,7 @@ public class MainActivity extends FbLoginActivity
 
     private List<Product> getDisplayProducts(List<Product> products) {
         final List<Product> displayProducts = new ArrayList<>();
-        for (int i = 0; i < 6; i++) {
+        for (int i = 0; i < 18; i++) {
             displayProducts.add(products.get(i));
         }
         return displayProducts;
