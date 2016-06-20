@@ -60,6 +60,7 @@
                 android:orientation="vertical">
 
                 <RelativeLayout
+                    android:id="@+id/popular_title_rl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/gray_selector"
@@ -115,6 +116,7 @@
                     android:verticalSpacing="8dp" />
 
                 <Button
+                    android:id="@+id/popular_more_btn"
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
@@ -144,6 +146,7 @@
                 android:orientation="vertical">
 
                 <RelativeLayout
+                    android:id="@+id/new_title_rl"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/gray_selector"
@@ -199,6 +202,7 @@
                     android:verticalSpacing="8dp" />
 
                 <Button
+                    android:id="@+id/new_more_btn"
                     style="?android:attr/borderlessButtonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="32dp"

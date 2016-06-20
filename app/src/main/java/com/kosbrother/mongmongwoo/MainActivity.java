@@ -19,9 +19,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
 import android.view.Window;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -84,9 +87,10 @@ public class MainActivity extends FbLoginActivity
         AppIndexManager.init(this);
         csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
 
-        setMorePopularViewWithScrollView();
         setToolbarAndDrawer();
         setNavigationView();
+        setQuickBarTextSwitcher();
+        setQuickBarWithScrollView();
         setLoginButton(loginButton);
         getCategories();
         getAllPopularItems();
@@ -237,46 +241,96 @@ public class MainActivity extends FbLoginActivity
         startActivity(intent);
     }
 
-    private void setMorePopularViewWithScrollView() {
-        getMorePopularView().setOnClickListener(new View.OnClickListener() {
+    private void setQuickBarWithScrollView() {
+        getQuickBarContent().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onMorePopularItemsClick(v);
             }
         });
         InteractiveNestedScrollView scrollView = (InteractiveNestedScrollView) findViewById(R.id.scrollView);
+        scrollView.setPopularTitleView(findViewById(R.id.popular_title_rl));
+        scrollView.setNewItemTitleView(findViewById(R.id.new_title_rl));
         scrollView.setOnBottomReachedListener(new InteractiveNestedScrollView.OnBottomReachedListener() {
             @Override
-            public void onBottomReached() {
-                final View morePopularView = getMorePopularView();
+            public void onShowQuickBar() {
+                final View quickBar = getQuickBarCardContainer();
                 ObjectAnimator animY = ObjectAnimator.ofFloat(
-                        morePopularView, "y", -morePopularView.getHeight(), 0);
+                        quickBar, "y", -quickBar.getHeight(), 0);
                 animY.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationStart(Animator animation) {
                         super.onAnimationStart(animation);
-                        morePopularView.setVisibility(View.VISIBLE);
+                        quickBar.setVisibility(View.VISIBLE);
                     }
                 });
                 animY.start();
             }
 
             @Override
-            public void onBottomLeft() {
-                final View morePopularView = getMorePopularView();
+            public void onHideQuickBar() {
+                final View quickBar = getQuickBarCardContainer();
                 ObjectAnimator animY = ObjectAnimator.ofFloat(
-                        morePopularView, "y", 0, -morePopularView.getHeight());
+                        quickBar, "y", 0, -quickBar.getHeight());
                 animY.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
-                        morePopularView.setVisibility(View.GONE);
+                        quickBar.setVisibility(View.INVISIBLE);
                     }
                 });
                 animY.start();
             }
 
+            @Override
+            public void onSwitchNewQuickBar() {
+                getQuickBarContent().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onMoreLatestItemsClick(v);
+                    }
+                });
+
+                TextSwitcher switcher = getTextSwitcher();
+                final Animation in = new TranslateAnimation(0, 0, 100, 0);
+                in.setDuration(300);
+                final Animation out = new TranslateAnimation(0, 0, 0, -100);
+                out.setDuration(300);
+                switcher.setInAnimation(in);
+                switcher.setOutAnimation(out);
+                switcher.showNext();
+            }
+
+            @Override
+            public void onSwitchPopularQuickBar() {
+                getQuickBarContent().setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onMorePopularItemsClick(v);
+                    }
+                });
+
+                TextSwitcher switcher = getTextSwitcher();
+                final Animation in = new TranslateAnimation(0, 0, -100, 0);
+                in.setDuration(300);
+                final Animation out = new TranslateAnimation(0, 0, 0, 100);
+                out.setDuration(300);
+                switcher.setInAnimation(in);
+                switcher.setOutAnimation(out);
+                switcher.showNext();
+            }
+
         });
+    }
+
+    private void setQuickBarTextSwitcher() {
+        TextSwitcher switcher = getTextSwitcher();
+        TextView popularTextView = (TextView) getLayoutInflater().inflate(R.layout.green_title_text_view, null);
+        popularTextView.setText("熱銷商品");
+        TextView newTextView = (TextView) getLayoutInflater().inflate(R.layout.green_title_text_view, null);
+        newTextView.setText("最新商品");
+        switcher.addView(popularTextView);
+        switcher.addView(newTextView);
     }
 
     private void getCategories() {
@@ -512,8 +566,16 @@ public class MainActivity extends FbLoginActivity
         return (NavigationView) findViewById(R.id.nav_view);
     }
 
-    private View getMorePopularView() {
-        return findViewById(R.id.more_popular_rl);
+    private View getQuickBarCardContainer() {
+        return findViewById(R.id.quick_bar_container_cv);
+    }
+
+    private View getQuickBarContent() {
+        return findViewById(R.id.quick_bar_content_rl);
+    }
+
+    private TextSwitcher getTextSwitcher() {
+        return (TextSwitcher) findViewById(R.id.bar_title_text_switcher);
     }
 
     @SuppressLint("InflateParams")
