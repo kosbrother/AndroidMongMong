@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.kosbrother.mongmongwoo.MainActivity">
+    tools:context=".MainActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -35,20 +35,96 @@
                 android:textSize="20dp" />
         </android.support.v7.widget.Toolbar>
 
-        <android.support.design.widget.TabLayout
-            android:id="@+id/tabs"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/gray_tab_background"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            app:tabGravity="center"
-            app:tabIndicatorColor="@color/green_text"
-            app:tabMode="scrollable"
-            app:tabSelectedTextColor="@color/green_text"
-            app:tabTextColor="@android:color/black" />
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_main" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <include layout="@layout/content_main" />
+
+        <RelativeLayout
+            android:id="@+id/quick_bar_container_cv"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentTop="true"
+            android:background="@android:color/transparent"
+            android:visibility="invisible"
+            android:clipToPadding="false">
+
+            <RelativeLayout
+                android:id="@+id/quick_bar_content_rl"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/bg_gray_selector"
+                android:clickable="true"
+                android:elevation="2dp">
+
+                <TextSwitcher
+                    android:id="@+id/bar_title_text_switcher"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:text="熱銷商品"
+                    android:textColor="@color/green_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
+                    android:drawableEnd="@mipmap/ic_keyboard_arrow_right_black_18dp"
+                    android:drawableRight="@mipmap/ic_keyboard_arrow_right_black_18dp"
+                    android:gravity="center_vertical"
+                    android:text="逛更多"
+                    android:textColor="@color/black_text"
+                    android:textSize="11sp" />
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <ViewStub
+            android:id="@+id/shopping_car_spotlight_vs"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout="@layout/view_stub_shopping_cart_spotlight" />
+
+        <LinearLayout
+            android:id="@+id/no_net_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <ImageView
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:src="@drawable/icon_problem" />
+
+            <TextView
+                android:layout_width="180dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="無網路連接,請檢查網路連線,並重啟APP~"
+                android:textSize="17dp"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </RelativeLayout>
 
 </android.support.design.widget.CoordinatorLayout>

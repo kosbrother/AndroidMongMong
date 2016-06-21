@@ -6,6 +6,7 @@ import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.exception.ExceptionEvent;
+import com.kosbrother.mongmongwoo.model.Category;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Road;
@@ -52,6 +53,82 @@ public class Webservice {
                     @Override
                     public void call(Throwable throwable) {
                         handleThrowable(throwable, "checkAndroidVersionException");
+                    }
+                });
+    }
+
+    public static void getCategories(
+            Action1<? super ResponseEntity<List<Category>>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(RequestUtil.get(UrlCenter.getCategories()));
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .map(new Func1<String, ResponseEntity<List<Category>>>() {
+                    @Override
+                    public ResponseEntity<List<Category>> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<List<Category>>>() {
+                        }.getType();
+                        return new Gson().fromJson(json, listType);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        handleThrowable(throwable, "getCategoriesException");
+                    }
+                });
+    }
+
+    public static void getCategorySortItems(
+            final int categoryId, final String sortName, final int page,
+            Action1<? super List<Product>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(RequestUtil.get(UrlCenter.getCategorySortItems(
+                            categoryId, sortName, page)));
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .map(new Func1<String, ResponseEntity<List<Product>>>() {
+                    @Override
+                    public ResponseEntity<List<Product>> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<List<Product>>>() {
+                        }.getType();
+                        return new Gson().fromJson(json, listType);
+                    }
+                })
+                .map(new Func1<ResponseEntity<List<Product>>, List<Product>>() {
+                    @Override
+                    public List<Product> call(ResponseEntity<List<Product>> listResponseEntity) {
+                        List<Product> data = listResponseEntity.getData();
+                        if (data == null) {
+                            handleError(listResponseEntity.getError(), "getCategorySortItemsError");
+                        }
+                        return data;
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        handleThrowable(throwable, "getCategorySortItemsException");
                     }
                 });
     }
@@ -118,39 +195,6 @@ public class Webservice {
                     @Override
                     public void call(Throwable throwable) {
                         handleThrowable(throwable, "getProductException");
-                    }
-                });
-    }
-
-    public static void getProducts(
-            final int categoryId, final int page,
-            Action1<? super ResponseEntity<List<Product>>> onNextAction) {
-        Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                try {
-                    subscriber.onNext(ProductApi.getCategoryProducts(categoryId, page));
-                    subscriber.onCompleted();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    subscriber.onError(e);
-                }
-            }
-        })
-                .map(new Func1<String, ResponseEntity<List<Product>>>() {
-                    @Override
-                    public ResponseEntity<List<Product>> call(String json) {
-                        Type listType = new TypeToken<ResponseEntity<List<Product>>>() {
-                        }.getType();
-                        return new Gson().fromJson(json, listType);
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onNextAction, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        handleThrowable(throwable, "getProductsException");
                     }
                 });
     }
@@ -461,4 +505,9 @@ public class Webservice {
         throwable.printStackTrace();
         GAManager.sendException(new ExceptionEvent(exceptionTitle, throwable.getMessage()));
     }
+
+    private static void handleError(ResponseEntity.Error error, String errorTitle) {
+        GAManager.sendError(errorTitle, error);
+    }
+
 }

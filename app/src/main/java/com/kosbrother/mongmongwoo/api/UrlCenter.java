@@ -55,11 +55,16 @@ public class UrlCenter {
                 + "/items/" + slug;
     }
 
-    static String getCategoryProducts(int categoryId, int page) {
+    static String getCategories() {
+        return HOST + API_V3 + "/categories";
+    }
+
+    static String getCategorySortItems(int categoryId, String sortName, int page) {
         return HOST + API_V3
                 + "/categories/" + categoryId
                 + "/items"
-                + "?page=" + page;
+                + "?sort=" + sortName
+                + "&page=" + page;
     }
 
     static String postOrder() {
