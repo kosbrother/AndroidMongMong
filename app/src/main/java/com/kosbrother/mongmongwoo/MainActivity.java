@@ -6,7 +6,9 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
@@ -31,6 +33,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.facebook.login.widget.LoginButton;
 import com.github.siyamed.shapeimageview.CircularImageView;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.kosbrother.mongmongwoo.adpters.CategoryAdapter;
 import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
 import com.kosbrother.mongmongwoo.api.UrlCenter;
@@ -40,6 +43,7 @@ import com.kosbrother.mongmongwoo.category.CategoryActivity;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
+import com.kosbrother.mongmongwoo.fcm.FcmPreferences;
 import com.kosbrother.mongmongwoo.fivestars.FiveStarsActivity;
 import com.kosbrother.mongmongwoo.fivestars.FiveStartsManager;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
@@ -96,6 +100,7 @@ public class MainActivity extends FbLoginActivity
         getAllPopularItems();
         getNewDateItems();
         checkAndroidVersion();
+        postFcmTokenIfServerNotReceived();
     }
 
     @Override
@@ -376,6 +381,27 @@ public class MainActivity extends FbLoginActivity
             @Override
             public void call(AndroidVersionEntity version) {
                 onGetVersionResult(version);
+            }
+        });
+    }
+
+    private void postFcmTokenIfServerNotReceived() {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+        boolean serverReceived = sharedPreferences.getBoolean(FcmPreferences.UPLOAD_SUCCESS, false);
+        if (serverReceived) {
+            return;
+        }
+        Webservice.postRegistrationId(FirebaseInstanceId.getInstance().getToken(), new Action1<String>() {
+            @Override
+            public void call(String s) {
+                if (s != null) {
+                    SharedPreferences sharedPreferences =
+                            PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    SharedPreferences.Editor edit = sharedPreferences.edit();
+                    edit.putBoolean(FcmPreferences.UPLOAD_SUCCESS, true);
+                    edit.apply();
+                }
             }
         });
     }
