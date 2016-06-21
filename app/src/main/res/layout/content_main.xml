@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.kosbrother.mongmongwoo.utils.InteractiveNestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.kosbrother.mongmongwoo.utils.InteractiveNestedScrollView android:id="@+id/scrollView"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/scrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -19,29 +19,17 @@
             android:adjustViewBounds="true"
             android:src="@mipmap/img_banner" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1.5dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/bg_bottom_shadow_line" />
-
         <com.kosbrother.mongmongwoo.utils.ExpandableHeightGridView
             android:id="@+id/category_gv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
+            android:elevation="2dp"
             android:gravity="center"
             android:horizontalSpacing="0dp"
             android:numColumns="3"
             android:stretchMode="columnWidth"
             android:verticalSpacing="0dp" />
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1.5dp"
-            android:layout_marginBottom="8dp"
-            android:background="@drawable/bg_bottom_shadow_line" />
-
 
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
@@ -215,5 +203,4 @@
 
         </android.support.v7.widget.CardView>
     </LinearLayout>
-
 </com.kosbrother.mongmongwoo.utils.InteractiveNestedScrollView>

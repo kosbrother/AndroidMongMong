@@ -50,7 +50,8 @@
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
             android:background="@android:color/transparent"
-            android:visibility="invisible">
+            android:visibility="invisible"
+            android:clipToPadding="false">
 
             <RelativeLayout
                 android:id="@+id/quick_bar_content_rl"
@@ -58,7 +59,8 @@
                 android:layout_height="48dp"
                 android:layout_alignParentTop="true"
                 android:background="@drawable/bg_gray_selector"
-                android:clickable="true">
+                android:clickable="true"
+                android:elevation="2dp">
 
                 <TextSwitcher
                     android:id="@+id/bar_title_text_switcher"
@@ -91,11 +93,6 @@
 
             </RelativeLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_alignParentBottom="true"
-                android:background="@drawable/bg_bottom_shadow_line" />
         </RelativeLayout>
 
         <ViewStub
