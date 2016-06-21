@@ -1,11 +1,14 @@
 package com.kosbrother.mongmongwoo.utils;
 
 import android.content.Context;
+import android.graphics.Point;
 import android.support.v4.widget.NestedScrollView;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+
+import com.kosbrother.mongmongwoo.api.DensityApi;
 
 public class InteractiveNestedScrollView extends NestedScrollView {
     OnBottomReachedListener mListener = new OnBottomReachedListener() {
@@ -30,6 +33,7 @@ public class InteractiveNestedScrollView extends NestedScrollView {
         }
 
     };
+    private float quickBarHeight = 0;
     private boolean showQuickBar = false;
     private boolean switchNewQuickBar = false;
 
@@ -39,14 +43,17 @@ public class InteractiveNestedScrollView extends NestedScrollView {
     public InteractiveNestedScrollView(Context context, AttributeSet attrs,
                                        int defStyle) {
         super(context, attrs, defStyle);
+        quickBarHeight = DensityApi.convertDpToPixel(50, context);
     }
 
     public InteractiveNestedScrollView(Context context, AttributeSet attrs) {
         super(context, attrs);
+        quickBarHeight = DensityApi.convertDpToPixel(50, context);
     }
 
     public InteractiveNestedScrollView(Context context) {
         super(context);
+        quickBarHeight = DensityApi.convertDpToPixel(50, context);
     }
 
     public void setOnBottomReachedListener(
@@ -64,33 +71,30 @@ public class InteractiveNestedScrollView extends NestedScrollView {
 
     @Override
     protected void onScrollChanged(int l, int t, int oldl, int oldt) {
-        int popularTitleY = 0;
-        getDeepChildOffset(popularTitleView.getParent(), popularTitleView, popularTitleY);
-        int newItemTitleY = 0;
-        getDeepChildOffset(newItemTitleView.getParent(), newItemTitleView, newItemTitleY);
+        Point popularItemPoint = new Point();
+        getDeepChildOffset(popularTitleView.getParent(), popularTitleView, popularItemPoint);
+        Point newItemPoint = new Point();
+        getDeepChildOffset(newItemTitleView.getParent(), newItemTitleView, newItemPoint);
 
-        int showPopularBarY = popularTitleY + popularTitleView.getHeight();
-        int showNewItemBarTop = newItemTitleY + newItemTitleView.getHeight();
-
-        if (t > showPopularBarY && !showQuickBar) {
+        if (t > popularItemPoint.y && !showQuickBar) {
             showQuickBar = true;
             mListener.onShowQuickBar();
-        } else if (t < popularTitleY && showQuickBar) {
+        } else if (t < popularItemPoint.y && showQuickBar) {
             showQuickBar = false;
             mListener.onHideQuickBar();
-        } else if (t > showNewItemBarTop && !switchNewQuickBar) {
+        } else if (t + quickBarHeight > newItemPoint.y && !switchNewQuickBar) {
             switchNewQuickBar = true;
             mListener.onSwitchNewQuickBar();
-        } else if (t < showNewItemBarTop && switchNewQuickBar) {
+        } else if (t + quickBarHeight < newItemPoint.y && switchNewQuickBar) {
             switchNewQuickBar = false;
             mListener.onSwitchPopularQuickBar();
         }
         super.onScrollChanged(l, t, oldl, oldt);
     }
 
-    private void getDeepChildOffset(final ViewParent parent, final View child, int accumulatedOffset) {
+    private void getDeepChildOffset(final ViewParent parent, final View child, Point accumulatedOffset) {
         ViewGroup parentGroup = (ViewGroup) parent;
-        accumulatedOffset += child.getTop();
+        accumulatedOffset.y += child.getTop();
         if (parentGroup.equals(this)) {
             return;
         }
