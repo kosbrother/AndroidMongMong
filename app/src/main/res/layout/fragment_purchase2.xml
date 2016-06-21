@@ -163,8 +163,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="6dp"
                 android:layout_marginTop="8dp"
-                android:text="* 姓名和電話必須正確才能取貨"
-                android:textColor="@color/black_text"
+                android:text="* 姓名和電話必須正確填寫，貨到會有簡訊，也才能收貨喔~"
+                android:textColor="@color/red_text"
                 android:textSize="9sp" />
 
             <Button
