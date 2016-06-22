@@ -83,6 +83,7 @@
 
         <activity
             android:name="com.kosbrother.mongmongwoo.ServiceActivity"
+            android:label="客服中心"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme" />
 
