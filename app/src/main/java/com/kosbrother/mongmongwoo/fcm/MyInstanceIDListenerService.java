@@ -1,13 +1,13 @@
 package com.kosbrother.mongmongwoo.fcm;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.FirebaseInstanceIdService;
 import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.api.Webservice;
-import com.kosbrother.mongmongwoo.entity.ResponseEntity;
-import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 
 import rx.functions.Action1;
 
@@ -32,12 +32,16 @@ public class MyInstanceIDListenerService extends FirebaseInstanceIdService {
         sendRegistrationToServer(refreshedToken);
     }
 
-    private void sendRegistrationToServer(String token) {
-        Webservice.postRegistrationId(token, new Action1<ResponseEntity<String>>() {
+    private void sendRegistrationToServer(final String token) {
+        Webservice.postRegistrationId(token, new Action1<String>() {
             @Override
-            public void call(ResponseEntity<String> stringResponseEntity) {
-                if (stringResponseEntity.getData() == null) {
-                    GAManager.sendError("sendRegistrationToServerError", stringResponseEntity.getError());
+            public void call(String data) {
+                if (data != null && data.equals("success")) {
+                    SharedPreferences sharedPreferences =
+                            PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                    SharedPreferences.Editor edit = sharedPreferences.edit();
+                    edit.putBoolean(FcmPreferences.UPLOAD_SUCCESS, true);
+                    edit.apply();
                 }
             }
         });

@@ -399,7 +399,7 @@ public class Webservice {
 
     public static void postRegistrationId(
             final String token,
-            Action1<? super ResponseEntity<String>> onNextAction) {
+            Action1<? super String> onNextAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -418,6 +418,16 @@ public class Webservice {
                         Type listType = new TypeToken<ResponseEntity<String>>() {
                         }.getType();
                         return new Gson().fromJson(json, listType);
+                    }
+                })
+                .map(new Func1<ResponseEntity<String>, String>() {
+                    @Override
+                    public String call(ResponseEntity<String> stringResponseEntity) {
+                        String data = stringResponseEntity.getData();
+                        if (data == null) {
+                            handleError(stringResponseEntity.getError(), "postRegistrationToServerError");
+                        }
+                        return data;
                     }
                 })
                 .subscribeOn(Schedulers.newThread())
@@ -494,7 +504,7 @@ public class Webservice {
                     public void call(Throwable throwable) {
                         if (throwable instanceof IOException) {
                             onWebserviceExceptionAction.call((IOException) throwable);
-                        }else {
+                        } else {
                             handleThrowable(throwable, "postOrderException");
                         }
                     }
