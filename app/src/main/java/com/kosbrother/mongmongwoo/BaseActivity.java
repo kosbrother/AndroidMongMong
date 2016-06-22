@@ -6,6 +6,10 @@ import android.view.MenuItem;
 
 public class BaseActivity extends AppCompatActivity {
 
+    protected void setToolbar() {
+        setToolbar(getTitle().toString());
+    }
+
     protected void setToolbar(String title) {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         assert toolbar != null;

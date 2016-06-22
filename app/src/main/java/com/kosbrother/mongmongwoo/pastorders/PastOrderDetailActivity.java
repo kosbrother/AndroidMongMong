@@ -2,15 +2,14 @@ package com.kosbrother.mongmongwoo.pastorders;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.TextView;
 
+import com.kosbrother.mongmongwoo.BaseActivity;
+import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.PastOrderListAdapter;
 import com.kosbrother.mongmongwoo.api.Webservice;
@@ -26,7 +25,7 @@ import java.util.List;
 
 import rx.functions.Action1;
 
-public class PastOrderDetailActivity extends AppCompatActivity {
+public class PastOrderDetailActivity extends BaseActivity {
 
     public static final String EXTRA_INT_ORDER_ID = "EXTRA_INT_ORDER_ID";
     public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
@@ -51,9 +50,7 @@ public class PastOrderDetailActivity extends AppCompatActivity {
         setContentView(R.layout.loading);
         setToolbar();
 
-        Intent intent = getIntent();
-
-        int orderId = intent.getIntExtra(EXTRA_INT_ORDER_ID, 0);
+        int orderId = getIntent().getIntExtra(EXTRA_INT_ORDER_ID, 0);
         Webservice.getPastOrderByOrderId(orderId, new Action1<ResponseEntity<PastOrder>>() {
             @Override
             public void call(ResponseEntity<PastOrder> pastOrderResponseEntity) {
@@ -66,18 +63,18 @@ public class PastOrderDetailActivity extends AppCompatActivity {
             }
         });
 
-        boolean fromNotification = intent.getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
-        if (fromNotification) {
+        if (isFromNotification()) {
             GAManager.sendEvent(new NotificationPickUpOpenedEvent("" + orderId));
         }
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == android.R.id.home) {
-            finish();
+    public void onBackPressed() {
+        if (isFromNotification()) {
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
         }
-        return super.onOptionsItemSelected(menuItem);
+        super.onBackPressed();
     }
 
     private void onGetPostOrderResult(PastOrder pastOrder) {
@@ -89,16 +86,6 @@ public class PastOrderDetailActivity extends AppCompatActivity {
             setRecyclerView(pastOrder.getItems());
             setPastOrderData(pastOrder);
         }
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private void setToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.icon_back_white);
-        toolbar.setTitleTextColor(0xFFFFFFFF);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setTitle("訂單明細");
     }
 
     private void initCsBottomSheet() {
@@ -158,6 +145,10 @@ public class PastOrderDetailActivity extends AppCompatActivity {
     public void onCustomerServiceFabClick(View view) {
         csBottomSheetDialogFragment.show(getSupportFragmentManager(), "");
         GAManager.sendEvent(new CustomerServiceClickEvent("FAB"));
+    }
+
+    private boolean isFromNotification() {
+        return getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
     }
 
 }
