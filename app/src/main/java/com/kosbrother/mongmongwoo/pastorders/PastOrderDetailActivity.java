@@ -6,6 +6,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.view.ViewStub;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.kosbrother.mongmongwoo.BaseActivity;
@@ -40,7 +41,6 @@ public class PastOrderDetailActivity extends BaseActivity {
     private TextView shippingStoreNameText;
 
     private TextView order_id_text;
-    private TextView order_status_text;
     private TextView order_ship_way;
     private ViewStub noteViewStub;
 
@@ -83,6 +83,7 @@ public class PastOrderDetailActivity extends BaseActivity {
         initCsBottomSheet();
         if (pastOrder != null) {
             findViews();
+            setOrderStatusLayout(pastOrder.getStatus());
             setRecyclerView(pastOrder.getItems());
             setPastOrderData(pastOrder);
         }
@@ -99,10 +100,14 @@ public class PastOrderDetailActivity extends BaseActivity {
         shippingPhoneText = (TextView) findViewById(R.id.fragment3_shipping_phone_text);
         shippingStoreNameText = (TextView) findViewById(R.id.fragment3_shipping_store_name_text);
         order_id_text = (TextView) findViewById(R.id.order_detail_num_text);
-        order_status_text = (TextView) findViewById(R.id.order_detail_status_text);
         order_ship_way = (TextView) findViewById(R.id.order_detail_ship_way);
         recyclerView = (RecyclerView) findViewById(R.id.recycler_buy_goods);
         noteViewStub = (ViewStub) findViewById(R.id.note_vs);
+    }
+
+    private void setOrderStatusLayout(String status) {
+        FrameLayout container = (FrameLayout) findViewById(R.id.order_status_container);
+        container.addView(OrderStatusLayoutFactory.create(this, status));
     }
 
     private void setRecyclerView(List<PostProduct> pastOrderProducts) {
@@ -131,7 +136,7 @@ public class PastOrderDetailActivity extends BaseActivity {
         order_id_text.setText(orderIdString);
 
         shippingStoreNameText.setText(pastOrder.getInfo().getShipStoreName());
-        order_status_text.setText(pastOrder.getStatus());
+
         order_ship_way.setText("運送方式：超商取貨");
 
         String note = pastOrder.getNote();
