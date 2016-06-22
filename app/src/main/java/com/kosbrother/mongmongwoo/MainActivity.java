@@ -394,8 +394,8 @@ public class MainActivity extends FbLoginActivity
         }
         Webservice.postRegistrationId(FirebaseInstanceId.getInstance().getToken(), new Action1<String>() {
             @Override
-            public void call(String s) {
-                if (s != null) {
+            public void call(String data) {
+                if (data != null && data.equals("success")) {
                     SharedPreferences sharedPreferences =
                             PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
                     SharedPreferences.Editor edit = sharedPreferences.edit();
