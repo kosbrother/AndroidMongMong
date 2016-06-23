@@ -222,7 +222,7 @@ public class PurchaseFragment1 extends Fragment {
             @Override
             public void onClick(View v) {
                 GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.ANONYMOUS_PURCHASE));
-                startNextStep();
+                onNotLoginButtonClick();
             }
         });
     }
@@ -232,7 +232,7 @@ public class PurchaseFragment1 extends Fragment {
             @Override
             public void onClick(View v) {
                 GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.CONFIRM_FACEBOOK_LOGIN));
-                startNextStep();
+                onNotLoginButtonClick();
             }
         });
     }
@@ -242,12 +242,57 @@ public class PurchaseFragment1 extends Fragment {
             @Override
             public void onClick(View v) {
                 GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.FACEBOOK_LOGIN));
-
-                ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-                saveOrders(activity);
-                activity.performClickFbButton();
+                onFbLoginButtonClick();
             }
         });
+    }
+
+    private void onNotLoginButtonClick() {
+        if (totalGoodsPrice < shippingPrice) {
+            showPriceAlertDialog(new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startNextStep();
+                }
+            });
+        } else {
+            startNextStep();
+        }
+    }
+
+    private void onFbLoginButtonClick() {
+        if (totalGoodsPrice < shippingPrice) {
+            showPriceAlertDialog(new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+                    saveOrders(activity);
+                    activity.performClickFbButton();
+                }
+            });
+        } else {
+            ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
+            saveOrders(activity);
+            activity.performClickFbButton();
+        }
+    }
+
+    private void showPriceAlertDialog(DialogInterface.OnClickListener onConfirmClickListener) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+
+        alertDialogBuilder
+                .setTitle("購買金額低於運費")
+                .setMessage("提醒您，您所購買的金額低於運費60元，是否確認購買")
+                .setCancelable(false)
+                .setPositiveButton("確認", onConfirmClickListener)
+                .setNegativeButton("再逛逛", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
     }
 
     private void startNextStep() {
