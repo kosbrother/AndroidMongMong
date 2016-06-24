@@ -8,5 +8,5 @@ public interface GALabel {
     String ANONYMOUS_PURCHASE = "anonymous_purchase";
     String PREVIOUS_STEP = "previous_step";
     String SEND_ORDER = "send_order";
-    String FINISH_PURCHASE = "finish_purchase";
+    String VIEW_ORDER = "view_order";
 }

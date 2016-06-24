@@ -1,5 +1,6 @@
 package com.kosbrother.mongmongwoo.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -19,6 +20,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep4ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep4EnterEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
+import com.kosbrother.mongmongwoo.pastorders.PastOrderDetailActivity;
 
 public class PurchaseFragment4 extends Fragment implements View.OnClickListener {
 
@@ -46,13 +48,16 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         view.findViewById(R.id.finish_btn).setOnClickListener(this);
+        view.findViewById(R.id.view_order_btn).setOnClickListener(this);
         setThankYouMessage(view);
     }
 
     @Override
     public void onClick(View v) {
-        GAManager.sendEvent(new CheckoutStep4ClickEvent(GALabel.FINISH_PURCHASE));
-        getActivity().finish();
+        GAManager.sendEvent(new CheckoutStep4ClickEvent(GALabel.VIEW_ORDER));
+        Intent intent = new Intent(getActivity(), PastOrderDetailActivity.class);
+        intent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID, orderId);
+        startActivity(intent);
     }
 
     private void setThankYouMessage(View view) {
