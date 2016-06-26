@@ -33,7 +33,7 @@ public class OrderStatusLayoutFactory {
             case "訂單變更":
             case "訂單取消":
             default:
-                statusLayout = getCancelOrderLayout(context);
+                statusLayout = getCancelOrderLayout(context, status);
                 break;
         }
         return statusLayout;
@@ -74,14 +74,17 @@ public class OrderStatusLayoutFactory {
         imageView.setImageResource(R.mipmap.img_order_status_on);
 
         TextView textView = (TextView) orderStatus.findViewById(stepTextViewId);
-        textView.setTextColor(ContextCompat.getColor(context,R.color.green_text));
+        textView.setTextColor(ContextCompat.getColor(context, R.color.green_text));
     }
 
     private static View getOrderStatusLayout(Context context) {
         return LayoutInflater.from(context).inflate(R.layout.order_status, null);
     }
 
-    private static View getCancelOrderLayout(Context context) {
-        return LayoutInflater.from(context).inflate(R.layout.order_status_cancel_order, null);
+    private static View getCancelOrderLayout(Context context, String status) {
+        View cancelOrderLayout = LayoutInflater.from(context).inflate(R.layout.order_status_cancel_order, null);
+        TextView textView = (TextView) cancelOrderLayout.findViewById(R.id.order_status_tv);
+        textView.setText(status);
+        return cancelOrderLayout;
     }
 }
