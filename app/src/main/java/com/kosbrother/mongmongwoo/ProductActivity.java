@@ -52,7 +52,6 @@ public class ProductActivity extends AppCompatActivity {
     public static final String EXTRA_STRING_CATEGORY_NAME = "EXTRA_STRING_CATEGORY_NAME";
     public static final String EXTRA_STRING_SLUG = "EXTRA_STRING_SLUG";
     public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
-    public static final String EXTRA_BOOLEAN_FROM_MY_COLLECT = "EXTRA_BOOLEAN_FROM_MY_COLLECT";
 
     private Button addCarButton;
 
@@ -180,14 +179,12 @@ public class ProductActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        boolean fromMyCollect = getIntent()
-                .getBooleanExtra(EXTRA_BOOLEAN_FROM_MY_COLLECT, false);
-        if (fromMyCollect) {
-            super.onBackPressed();
-        } else {
+        if (isFromNotification()) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -326,8 +323,7 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     private void sendPromoOpenedEventIfFromNotification() {
-        boolean fromNotification = getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
-        if (fromNotification) {
+        if (isFromNotification()) {
             GAManager.sendEvent(new NotificationPromoOpenedEvent(theProduct.getName()));
         }
     }
@@ -422,4 +418,7 @@ public class ProductActivity extends AppCompatActivity {
         toast.show();
     }
 
+    private boolean isFromNotification() {
+        return getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
+    }
 }
