@@ -45,14 +45,13 @@ import java.util.List;
 
 import rx.functions.Action1;
 
-public class ProductActivity extends AppCompatActivity {
+public class ProductActivity extends BaseActivity {
 
     public static final String EXTRA_INT_PRODUCT_ID = "EXTRA_INT_PRODUCT_ID";
     public static final String EXTRA_INT_CATEGORY_ID = "EXTRA_INT_CATEGORY_ID";
     public static final String EXTRA_STRING_CATEGORY_NAME = "EXTRA_STRING_CATEGORY_NAME";
     public static final String EXTRA_STRING_SLUG = "EXTRA_STRING_SLUG";
     public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
-    public static final String EXTRA_BOOLEAN_FROM_MY_COLLECT = "EXTRA_BOOLEAN_FROM_MY_COLLECT";
 
     private Button addCarButton;
 
@@ -161,9 +160,6 @@ public class ProductActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         int id = menuItem.getItemId();
         switch (id) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
             case R.id.share:
                 GAManager.sendShareItemEvent(
                         getCategoryName(), String.valueOf(theProduct.getId()), theProduct.getName());
@@ -180,14 +176,12 @@ public class ProductActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        boolean fromMyCollect = getIntent()
-                .getBooleanExtra(EXTRA_BOOLEAN_FROM_MY_COLLECT, false);
-        if (fromMyCollect) {
-            super.onBackPressed();
-        } else {
+        if (isFromNotification()) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
+        } else {
+            super.onBackPressed();
         }
     }
 
@@ -211,15 +205,6 @@ public class ProductActivity extends AppCompatActivity {
 
     public void onFbClick(View view) {
         CustomerServiceUtil.startToFbService(this);
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private void setToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.icon_back_white);
-        toolbar.setTitleTextColor(0xFFFFFFFF);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     private void initAddCartButton() {
@@ -326,8 +311,7 @@ public class ProductActivity extends AppCompatActivity {
     }
 
     private void sendPromoOpenedEventIfFromNotification() {
-        boolean fromNotification = getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
-        if (fromNotification) {
+        if (isFromNotification()) {
             GAManager.sendEvent(new NotificationPromoOpenedEvent(theProduct.getName()));
         }
     }
@@ -422,4 +406,7 @@ public class ProductActivity extends AppCompatActivity {
         toast.show();
     }
 
+    private boolean isFromNotification() {
+        return getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
+    }
 }

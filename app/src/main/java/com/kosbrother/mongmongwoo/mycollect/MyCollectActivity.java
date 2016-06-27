@@ -5,13 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 
+import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.ProductActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.MyCollectAdapter;
@@ -19,7 +17,7 @@ import com.kosbrother.mongmongwoo.model.Product;
 
 import java.util.List;
 
-public class MyCollectActivity extends AppCompatActivity implements MyCollectAdapter.MyCollectListener {
+public class MyCollectActivity extends BaseActivity implements MyCollectAdapter.MyCollectListener {
 
     private View emptyView;
     private RecyclerView recyclerView;
@@ -41,14 +39,6 @@ public class MyCollectActivity extends AppCompatActivity implements MyCollectAda
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == android.R.id.home) {
-            finish();
-        }
-        return super.onOptionsItemSelected(menuItem);
-    }
-
-    @Override
     public void onCollectItemClick(int position) {
         List<Product> productList = MyCollectManager.getCollectedList(this);
         Product product = productList.get(position);
@@ -57,7 +47,6 @@ public class MyCollectActivity extends AppCompatActivity implements MyCollectAda
         intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
         intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, product.getCategoryId());
         intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, product.getCategoryName());
-        intent.putExtra(ProductActivity.EXTRA_BOOLEAN_FROM_MY_COLLECT, true);
         startActivity(intent);
     }
 
@@ -82,14 +71,6 @@ public class MyCollectActivity extends AppCompatActivity implements MyCollectAda
             }
         });
         alertDialogBuilder.show();
-    }
-
-    private void setToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.icon_back_white);
-        toolbar.setTitleTextColor(0xFFFFFFFF);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     private void setContentView(List<Product> productList) {
