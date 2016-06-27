@@ -45,7 +45,7 @@ import java.util.List;
 
 import rx.functions.Action1;
 
-public class ProductActivity extends AppCompatActivity {
+public class ProductActivity extends BaseActivity {
 
     public static final String EXTRA_INT_PRODUCT_ID = "EXTRA_INT_PRODUCT_ID";
     public static final String EXTRA_INT_CATEGORY_ID = "EXTRA_INT_CATEGORY_ID";
@@ -160,9 +160,6 @@ public class ProductActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem menuItem) {
         int id = menuItem.getItemId();
         switch (id) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
             case R.id.share:
                 GAManager.sendShareItemEvent(
                         getCategoryName(), String.valueOf(theProduct.getId()), theProduct.getName());
@@ -208,15 +205,6 @@ public class ProductActivity extends AppCompatActivity {
 
     public void onFbClick(View view) {
         CustomerServiceUtil.startToFbService(this);
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private void setToolbar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.icon_back_white);
-        toolbar.setTitleTextColor(0xFFFFFFFF);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     private void initAddCartButton() {
