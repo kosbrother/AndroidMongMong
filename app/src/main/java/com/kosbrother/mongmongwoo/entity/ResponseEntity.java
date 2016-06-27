@@ -16,7 +16,7 @@ public class ResponseEntity<T> {
         return error;
     }
 
-    public static class Error{
+    public static class Error {
         @SerializedName("code")
         private int code;
         @SerializedName("message")

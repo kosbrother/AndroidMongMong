@@ -7,6 +7,7 @@ import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.exception.ExceptionEvent;
 import com.kosbrother.mongmongwoo.model.Category;
+import com.kosbrother.mongmongwoo.entity.ShopInfoEntity;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Road;
@@ -393,6 +394,47 @@ public class Webservice {
                     @Override
                     public void call(Throwable throwable) {
                         handleThrowable(throwable, "getStoresException");
+                    }
+                });
+    }
+
+    public static void getShopInfos(Action1<? super List<ShopInfoEntity>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(ShopInfoApi.getShopInfos());
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .map(new Func1<String, ResponseEntity<List<ShopInfoEntity>>>() {
+                    @Override
+                    public ResponseEntity<List<ShopInfoEntity>> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<List<ShopInfoEntity>>>() {
+                        }.getType();
+                        return new Gson().fromJson(json, listType);
+                    }
+                })
+                .map(new Func1<ResponseEntity<List<ShopInfoEntity>>, List<ShopInfoEntity>>() {
+                    @Override
+                    public List<ShopInfoEntity> call(ResponseEntity<List<ShopInfoEntity>> listResponseEntity) {
+                        List<ShopInfoEntity> data = listResponseEntity.getData();
+                        if (data == null) {
+                            handleError(listResponseEntity.getError(), "getFaqError");
+                        }
+                        return data;
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        handleThrowable(throwable, "getFaqException");
                     }
                 });
     }
