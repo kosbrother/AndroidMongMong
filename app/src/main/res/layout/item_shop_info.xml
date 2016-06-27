@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:background="@drawable/bg_item_shop_info"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/faq_title_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawableEnd="@mipmap/ic_arrow_drop_down_black_36dp"
+        android:drawableRight="@mipmap/ic_arrow_drop_down_black_36dp"
+        android:gravity="center_vertical"
+        android:paddingBottom="8dp"
+        android:paddingEnd="8dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="8dp"
+        android:paddingStart="16dp"
+        android:paddingTop="8dp"
+        android:textColor="@color/green_text"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="Q:下單後如何確認訂單" />
+
+    <TextView
+        android:id="@+id/faq_content_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/black_text"
+        android:textSize="14sp"
+        tools:text="萌萌屋接收訂單後, 包含假日 7~10 天左右會將商品寄送到取貨門市,如果您等待的天數超過 10 天, 請一定記得通知小編.倘若小編出貨疏失, 會補與精美小禮喔~" />
+</LinearLayout>

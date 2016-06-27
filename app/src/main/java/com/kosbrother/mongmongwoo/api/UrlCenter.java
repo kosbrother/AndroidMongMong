@@ -96,4 +96,8 @@ public class UrlCenter {
                 + "?email=" + email
                 + "&phone=" + phone;
     }
+
+    static String getShopInfos() {
+        return HOST + API_V3 + "/shop_infos";
+    }
 }

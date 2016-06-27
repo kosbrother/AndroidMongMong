@@ -143,6 +143,12 @@
             android:theme="@style/Theme.AppCompat.Translucent" />
 
         <activity
+            android:name=".shopinfo.ShopInfoActivity"
+            android:label="購物說明"
+            android:screenOrientation="portrait"
+            android:theme="@style/CustomTheme" />
+
+        <activity
             android:name=".appindex.IndexActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Translucent">

@@ -13,6 +13,7 @@
     <color name="black_text">#4a4a4a</color>
     <color name="red_text">#ff001f</color>
     <color name="gray_tab_background">#f5f5f5</color>
+    <color name="bg_shop_info">#f2f2f2</color>
 
     <color name="dark_color_control_highlight">#40000000</color>
     <color name="default_background">#FFF9F9F9</color>
