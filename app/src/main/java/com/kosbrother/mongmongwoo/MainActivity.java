@@ -43,6 +43,7 @@ import com.kosbrother.mongmongwoo.category.CategoryActivity;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
+import com.kosbrother.mongmongwoo.shopinfo.ShopInfoActivity;
 import com.kosbrother.mongmongwoo.fcm.FcmPreferences;
 import com.kosbrother.mongmongwoo.fivestars.FiveStarsActivity;
 import com.kosbrother.mongmongwoo.fivestars.FiveStartsManager;
@@ -208,6 +209,8 @@ public class MainActivity extends FbLoginActivity
             }
         } else if (id == R.id.nav_service) {
             startActivity(new Intent(this, ServiceActivity.class));
+        } else if (id == R.id.nav_shop_infos) {
+            startActivity(new Intent(this, ShopInfoActivity.class));
         } else if (id == R.id.nav_collect) {
             startActivity(new Intent(this, MyCollectActivity.class));
         } else if (id == R.id.nav_about) {
