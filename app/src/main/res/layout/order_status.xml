@@ -127,7 +127,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:gravity="center"
-            android:text="新訂單"
+            android:text="訂單成立"
             android:textColor="@color/black_text"
             android:textSize="11sp" />
 
