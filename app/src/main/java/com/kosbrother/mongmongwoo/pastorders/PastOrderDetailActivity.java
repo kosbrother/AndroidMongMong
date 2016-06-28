@@ -152,8 +152,12 @@ public class PastOrderDetailActivity extends BaseActivity {
         GAManager.sendEvent(new CustomerServiceClickEvent("FAB"));
     }
 
+    public void onContinueShoppingClick(View view) {
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
+    }
+
     private boolean isFromNotification() {
         return getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
     }
-
 }
