@@ -149,6 +149,11 @@
             android:theme="@style/CustomTheme" />
 
         <activity
+            android:name=".login.LoginActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoTitleDialog" />
+
+        <activity
             android:name=".appindex.IndexActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Translucent">
