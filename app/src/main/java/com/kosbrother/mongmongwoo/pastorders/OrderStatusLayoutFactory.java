@@ -14,7 +14,7 @@ public class OrderStatusLayoutFactory {
     public static View create(Context context, String status) {
         View statusLayout;
         switch (status) {
-            case "新訂單":
+            case "訂單成立":
                 statusLayout = getStep1Layout(context);
                 break;
             case "處理中":
