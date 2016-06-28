@@ -553,6 +553,105 @@ public class Webservice {
                 });
     }
 
+    public static void register(
+            final String email, final String password,
+            Action1<? super ResponseEntity<String>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(LoginApi.register(email, password));
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .map(new Func1<String, ResponseEntity<String>>() {
+                    @Override
+                    public ResponseEntity<String> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<String>>() {
+                        }.getType();
+                        return new Gson().fromJson(json, listType);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        handleThrowable(throwable, "registerException");
+                    }
+                });
+    }
+
+    public static void login(
+            final String email, final String password,
+            Action1<? super ResponseEntity<String>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(LoginApi.login(email, password));
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .map(new Func1<String, ResponseEntity<String>>() {
+                    @Override
+                    public ResponseEntity<String> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<String>>() {
+                        }.getType();
+                        return new Gson().fromJson(json, listType);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        handleThrowable(throwable, "loginException");
+                    }
+                });
+    }
+
+    public static void forget(
+            final String email,
+            Action1<? super ResponseEntity<String>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(LoginApi.forget(email));
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .map(new Func1<String, ResponseEntity<String>>() {
+                    @Override
+                    public ResponseEntity<String> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<String>>() {
+                        }.getType();
+                        return new Gson().fromJson(json, listType);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        handleThrowable(throwable, "forgetException");
+                    }
+                });
+    }
+
     private static void handleThrowable(Throwable throwable, String exceptionTitle) {
         throwable.printStackTrace();
         GAManager.sendException(new ExceptionEvent(exceptionTitle, throwable.getMessage()));

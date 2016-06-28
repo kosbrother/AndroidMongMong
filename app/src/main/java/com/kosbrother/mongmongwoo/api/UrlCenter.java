@@ -100,4 +100,21 @@ public class UrlCenter {
     static String getShopInfos() {
         return HOST + API_V3 + "/shop_infos";
     }
+
+    static String register() {
+        return HOST + API_V3
+                + "/mmw_registrations";
+    }
+
+    static String login() {
+        return HOST + API_V3
+                + "/mmw_registrations"
+                + "/login";
+    }
+
+    static String forget() {
+        return HOST + API_V3
+                + "/mmw_registrations"
+                + "/forget";
+    }
 }
