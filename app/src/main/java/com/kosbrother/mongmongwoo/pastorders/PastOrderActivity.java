@@ -25,7 +25,6 @@ import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.User;
-import com.kosbrother.mongmongwoo.utils.EndlessScrollListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +40,6 @@ public class PastOrderActivity extends FbLoginActivity implements View.OnClickLi
 
     GridView mGridView;
     List<PastOrder> pastOrders = new ArrayList<>();
-    int mPage = 1;
     PastOrdersGridAdapter pastOrdersAdapter;
 
     CircularImageView userImage;
@@ -81,16 +79,7 @@ public class PastOrderActivity extends FbLoginActivity implements View.OnClickLi
             fbLoginButton.setVisibility(View.VISIBLE);
             setLoginButton(fbLoginButton);
         }
-
-        mGridView = (GridView) findViewById(R.id.fragment_gridview);
-        mGridView.setOnScrollListener(new EndlessScrollListener() {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                getOrders();
-            }
-        });
         getOrders();
-
     }
 
     @Override
@@ -122,17 +111,16 @@ public class PastOrderActivity extends FbLoginActivity implements View.OnClickLi
     }
 
     private void getOrders() {
-        Webservice.getOrdersByUid(user.getFb_uid(), mPage,
+        Webservice.getOrdersByEmail(user.getEmail(),
                 new Action1<ResponseEntity<List<PastOrder>>>() {
                     @Override
                     public void call(ResponseEntity<List<PastOrder>> listResponseEntity) {
                         List<PastOrder> pastOrders = listResponseEntity.getData();
                         if (pastOrders != null && pastOrders.size() > 0) {
                             PastOrderActivity.this.pastOrders.addAll(pastOrders);
-                            mPage = mPage + 1;
                             onGetDataResult();
                         } else {
-                            GAManager.sendError("getOrdersByUidError", listResponseEntity.getError());
+                            GAManager.sendError("getOrdersByEmailError", listResponseEntity.getError());
                         }
                     }
                 });
@@ -141,6 +129,7 @@ public class PastOrderActivity extends FbLoginActivity implements View.OnClickLi
     private void onGetDataResult() {
         if (pastOrdersAdapter == null) {
             pastOrdersAdapter = new PastOrdersGridAdapter(PastOrderActivity.this, pastOrders);
+            mGridView = (GridView) findViewById(R.id.fragment_gridview);
             mGridView.setAdapter(pastOrdersAdapter);
             mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override

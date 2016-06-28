@@ -4,8 +4,8 @@ import java.io.IOException;
 
 public class OrderApi {
 
-    public static String getOrdersByUid(String uid, int page) throws IOException {
-        return RequestUtil.get(UrlCenter.getOrdersByUid(uid, page));
+    public static String getOrdersByEmail(String email) throws IOException {
+        return RequestUtil.get(UrlCenter.getOrdersByEmail(email));
     }
 
     public static String getPastOrderByOrderId(int orderId) throws IOException {
