@@ -2,7 +2,9 @@ package com.kosbrother.mongmongwoo.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class Cover {
+import java.io.Serializable;
+
+public class Cover implements Serializable {
     @SerializedName("url")
     private String url;
     @SerializedName("icon")
@@ -16,7 +18,7 @@ public class Cover {
         return url;
     }
 
-    private class Icon {
+    private class Icon implements Serializable{
         @SerializedName("url")
         private String url;
     }

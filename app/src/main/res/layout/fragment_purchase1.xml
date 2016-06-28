@@ -79,7 +79,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:orientation="vertical"
-            android:visibility="gone">
+            android:visibility="visible">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -87,12 +87,12 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/fragment1_fb_buy_button"
+                    android:id="@+id/login_btn"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:layout_weight="1"
-                    android:background="@drawable/fb_button_selector"
-                    android:text="使用Facebook登入購買"
+                    android:background="@drawable/pink_selector"
+                    android:text="登入購買"
                     android:textAllCaps="false"
                     android:textColor="@color/white"
                     android:textSize="12sp" />
@@ -102,11 +102,11 @@
                     android:layout_height="0dp" />
 
                 <Button
-                    android:id="@+id/fragment1_no_name_buy_button"
+                    android:id="@+id/fragment1_guest_checkout_btn"
                     android:layout_width="match_parent"
                     android:layout_height="30dp"
                     android:layout_weight="1"
-                    android:background="@drawable/button_purchase_car_selector"
+                    android:background="@drawable/button_green_selector"
                     android:text="免註冊匿名購買"
                     android:textColor="@color/white"
                     android:textSize="12sp" />
@@ -166,9 +166,9 @@
 
             <LinearLayout
                 android:id="@+id/goods_container_ll"
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
 
             <View
                 android:layout_width="match_parent"
@@ -269,30 +269,5 @@
         </LinearLayout>
 
     </ScrollView>
-
-    <LinearLayout
-        android:id="@+id/shopping_car_no_item_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/gray_background"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <ImageView
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:background="@drawable/icon_shopping_car" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="10dp"
-            android:text="目前購物車沒有商品"
-            android:textColor="@color/white"
-            android:textSize="18dp" />
-
-    </LinearLayout>
 
 </RelativeLayout>

@@ -1,6 +1,7 @@
 package com.kosbrother.mongmongwoo.fragments;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -18,62 +19,63 @@ import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1ClickEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1EnterEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
-import com.kosbrother.mongmongwoo.model.PostProduct;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class PurchaseFragment1 extends Fragment {
 
-    LinearLayout noItemLayout;
-    LinearLayout noLoginLayout;
-    Button fb_buy_button;
-    Button no_name_buy_button;
+    private LinearLayout noLoginLayout;
+    private Button loginButton;
+    private Button guestCheckoutButton;
 
-    TextView totalGoodsPriceText;
-    TextView shippingPriceText;
-    TextView totalPriceText;
-    Button confirmButton;
+    private TextView totalGoodsPriceText;
+    private TextView shippingPriceText;
+    private TextView totalPriceText;
+    private Button confirmButton;
     private TextView freeShippingPriceRemainTextView;
     private TextView checkoutPriceBottomTextView;
     private LinearLayout goodsContainerLinearLayout;
 
-    List<Product> shoppingCarProducts;
-    int totalGoodsPrice;
+    private List<Product> shoppingCarProducts;
+    private int totalGoodsPrice;
+    private int shippingPrice = 60;
 
-    int shippingPrice = 60;
     private int tempCount;
+    private OnStep1ButtonClickListener mCallback;
 
-    public static PurchaseFragment1 newInstance() {
-        return new PurchaseFragment1();
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (OnStep1ButtonClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() +
+                    " must implement OnStep1ButtonClickListener");
+        }
     }
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        loadShoppingCart();
+        shoppingCarProducts = ((ShoppingCarActivity) getActivity()).getProducts();
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_purchase1, container, false);
         findView(view);
 
-        boolean noItem = showNoItemLayoutIfNoItem();
-        if (noItem) {
-            return view;
-        }
         addGoodsViewToLinearLayout();
-        setFbBuyButton();
-        setNoNameBuyButton();
+        setLoginButton();
+        setGuestCheckoutButton();
         setConfirmButton();
 
         updatePricesText();
@@ -81,33 +83,10 @@ public class PurchaseFragment1 extends Fragment {
         return view;
     }
 
-    public void loadShoppingCart() {
-        shoppingCarProducts = ShoppingCartManager.getInstance().loadShoppingItems();
-    }
-
-    public void updatePricesText() {
-        totalGoodsPrice = CalculateUtil.calculateTotalGoodsPrice(shoppingCarProducts);
-
-        String totalGoodsPriceString = "$" + totalGoodsPrice;
-        totalGoodsPriceText.setText(totalGoodsPriceString);
-
-        String shippingPriceString;
-        String freeShippingPriceRemainString;
-        if (totalGoodsPrice >= 490) {
-            shippingPrice = 0;
-            shippingPriceString = "免運費";
-            freeShippingPriceRemainString = "NT$ " + 0;
-        } else {
-            shippingPrice = 60;
-            shippingPriceString = "$" + shippingPrice;
-            freeShippingPriceRemainString = "NT$ " + (490 - totalGoodsPrice);
-        }
-        freeShippingPriceRemainTextView.setText(freeShippingPriceRemainString);
-        shippingPriceText.setText(shippingPriceString);
-
-        String totalPrice = "$" + (totalGoodsPrice + shippingPrice);
-        totalPriceText.setText(totalPrice);
-        checkoutPriceBottomTextView.setText(totalPrice);
+    @Override
+    public void onResume() {
+        super.onResume();
+        GAManager.sendEvent(new CheckoutStep1EnterEvent());
     }
 
     public void updateLayoutByLoginStatus() {
@@ -120,15 +99,33 @@ public class PurchaseFragment1 extends Fragment {
         }
     }
 
-    public void updateGoodsLinearLayout() {
+    private void updatePricesText() {
+        totalGoodsPrice = CalculateUtil.calculateTotalGoodsPrice(shoppingCarProducts);
+        shippingPrice = totalGoodsPrice >= 490 ? 0 : 60;
+
+        String totalGoodsPriceString = "$" + totalGoodsPrice;
+        totalGoodsPriceText.setText(totalGoodsPriceString);
+
+        String shippingPriceString;
+        String freeShippingPriceRemainString;
+        if (shippingPrice == 0) {
+            shippingPriceString = "免運費";
+            freeShippingPriceRemainString = "NT$ " + 0;
+        } else {
+            shippingPriceString = "$" + shippingPrice;
+            freeShippingPriceRemainString = "NT$ " + (490 - totalGoodsPrice);
+        }
+        freeShippingPriceRemainTextView.setText(freeShippingPriceRemainString);
+        shippingPriceText.setText(shippingPriceString);
+
+        String totalPrice = "$" + (totalGoodsPrice + shippingPrice);
+        totalPriceText.setText(totalPrice);
+        checkoutPriceBottomTextView.setText(totalPrice);
+    }
+
+    private void updateGoodsLinearLayout() {
         goodsContainerLinearLayout.removeAllViews();
         addGoodsViewToLinearLayout();
-
-        if (shoppingCarProducts.size() == 0) {
-            noItemLayout.setVisibility(View.VISIBLE);
-            ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-            activity.setBreadCurmbsVisibility(View.INVISIBLE);
-        }
     }
 
     private void findView(View view) {
@@ -136,26 +133,12 @@ public class PurchaseFragment1 extends Fragment {
         shippingPriceText = (TextView) view.findViewById(R.id.fragment1_shippingPriceText);
         totalPriceText = (TextView) view.findViewById(R.id.fragment1_totalPriceText);
         confirmButton = (Button) view.findViewById(R.id.fragment1_confirm_button);
-        noItemLayout = (LinearLayout) view.findViewById(R.id.shopping_car_no_item_layout);
         noLoginLayout = (LinearLayout) view.findViewById(R.id.layout_buy_button);
-        fb_buy_button = (Button) view.findViewById(R.id.fragment1_fb_buy_button);
-        no_name_buy_button = (Button) view.findViewById(R.id.fragment1_no_name_buy_button);
+        loginButton = (Button) view.findViewById(R.id.login_btn);
+        guestCheckoutButton = (Button) view.findViewById(R.id.fragment1_guest_checkout_btn);
         freeShippingPriceRemainTextView = (TextView) view.findViewById(R.id.free_shipping_price_remain_tv);
         checkoutPriceBottomTextView = (TextView) view.findViewById(R.id.checkout_price_bottom_tv);
         goodsContainerLinearLayout = (LinearLayout) view.findViewById(R.id.goods_container_ll);
-    }
-
-    private boolean showNoItemLayoutIfNoItem() {
-        ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-        if (shoppingCarProducts.size() == 0) {
-            noItemLayout.setVisibility(View.VISIBLE);
-            activity.setBreadCurmbsVisibility(View.INVISIBLE);
-            return true;
-        } else {
-            noItemLayout.setVisibility(View.GONE);
-            activity.setBreadCurmbsVisibility(View.VISIBLE);
-            return false;
-        }
     }
 
     private void addGoodsViewToLinearLayout() {
@@ -217,12 +200,22 @@ public class PurchaseFragment1 extends Fragment {
         }
     }
 
-    private void setNoNameBuyButton() {
-        no_name_buy_button.setOnClickListener(new View.OnClickListener() {
+    private void setGuestCheckoutButton() {
+        guestCheckoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.ANONYMOUS_PURCHASE));
-                onNotLoginButtonClick();
+                mCallback.onGuestCheckoutClick(totalGoodsPrice, shippingPrice);
+            }
+        });
+    }
+
+    private void setLoginButton() {
+        loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.LOGIN));
+                mCallback.onLoginClick(totalGoodsPrice, shippingPrice);
             }
         });
     }
@@ -232,90 +225,9 @@ public class PurchaseFragment1 extends Fragment {
             @Override
             public void onClick(View v) {
                 GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.CONFIRM_FACEBOOK_LOGIN));
-                onNotLoginButtonClick();
+                mCallback.onConfirmButtonClick(totalGoodsPrice, shippingPrice);
             }
         });
-    }
-
-    private void setFbBuyButton() {
-        fb_buy_button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.FACEBOOK_LOGIN));
-                onFbLoginButtonClick();
-            }
-        });
-    }
-
-    private void onNotLoginButtonClick() {
-        if (totalGoodsPrice < shippingPrice) {
-            showPriceAlertDialog(new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    startNextStep();
-                }
-            });
-        } else {
-            startNextStep();
-        }
-    }
-
-    private void onFbLoginButtonClick() {
-        if (totalGoodsPrice < shippingPrice) {
-            showPriceAlertDialog(new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-                    saveOrders(activity);
-                    activity.performClickFbButton();
-                }
-            });
-        } else {
-            ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-            saveOrders(activity);
-            activity.performClickFbButton();
-        }
-    }
-
-    private void showPriceAlertDialog(DialogInterface.OnClickListener onConfirmClickListener) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-
-        alertDialogBuilder
-                .setTitle("購買金額低於運費")
-                .setMessage("提醒您，您所購買的金額低於運費60元，是否確認購買")
-                .setCancelable(false)
-                .setPositiveButton("確認", onConfirmClickListener)
-                .setNegativeButton("再逛逛", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
-    }
-
-    private void startNextStep() {
-        ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
-        saveOrders(activity);
-        activity.startPurchaseFragment2();
-    }
-
-    private void saveOrders(ShoppingCarActivity activity) {
-        List<PostProduct> postProductList = new ArrayList<>();
-        for (Product product : shoppingCarProducts) {
-            PostProduct postProduct = new PostProduct();
-            postProduct.setName(product.getName());
-            postProduct.setProductId(product.getId());
-            postProduct.setSpecId(product.getSelectedSpec().getId());
-            postProduct.setStyle(product.getSelectedSpec().getStyle());
-            postProduct.setQuantity(product.getBuy_count());
-            postProduct.setPrice(product.getFinalPrice());
-            postProductList.add(postProduct);
-        }
-        activity.savePostProducts(postProductList);
-        activity.saveProducts(shoppingCarProducts);
-        activity.savePrice(totalGoodsPrice, shippingPrice);
     }
 
     public void onDeleteImageViewClick(final int position) {
@@ -333,10 +245,14 @@ public class PurchaseFragment1 extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.PRODUCT_DELETE));
 
+                shoppingCarProducts.remove(position);
                 ShoppingCartManager.getInstance().removeShoppingItem(position);
-                loadShoppingCart();
-                updateGoodsLinearLayout();
-                updatePricesText();
+                if (shoppingCarProducts.size() == 0) {
+                    mCallback.onNoShoppingItem();
+                } else {
+                    updateGoodsLinearLayout();
+                    updatePricesText();
+                }
                 dialog.dismiss();
             }
         });
@@ -344,7 +260,7 @@ public class PurchaseFragment1 extends Fragment {
     }
 
     private void onSelectStyleButtonClick(final int productPosition, Product product) {
-        ProductStyleDialog styleDialog = new ProductStyleDialog(getActivity(), product, new ProductStyleDialog.ProductStyleDialogListener() {
+        ProductStyleDialog styleDialog = new ProductStyleDialog(getContext(), product, new ProductStyleDialog.ProductStyleDialogListener() {
             @Override
             public void onFirstAddShoppingCart() {
 
@@ -410,7 +326,6 @@ public class PurchaseFragment1 extends Fragment {
             public void onClick(DialogInterface dialog, int id) {
                 shoppingCarProducts.get(product_position).setBuy_count(tempCount);
                 ShoppingCartManager.getInstance().storeShoppingItems(shoppingCarProducts);
-                loadShoppingCart();
                 updateGoodsLinearLayout();
                 updatePricesText();
             }
@@ -422,5 +337,16 @@ public class PurchaseFragment1 extends Fragment {
         });
 
         return alertDialogBuilder.create();
+    }
+
+    public interface OnStep1ButtonClickListener {
+
+        void onGuestCheckoutClick(int totalGoodsPrice, int shippingPrice);
+
+        void onLoginClick(int totalGoodsPrice, int shippingPrice);
+
+        void onConfirmButtonClick(int totalGoodsPrice, int shippingPrice);
+
+        void onNoShoppingItem();
     }
 }

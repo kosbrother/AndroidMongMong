@@ -92,33 +92,15 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <LinearLayout
-        android:id="@+id/no_net_layout"
+    <ViewStub
+        android:id="@+id/empty_shopping_car_vs"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical"
-        android:visibility="gone">
+        android:layout="@layout/view_stub_empty_shopping_car" />
 
-        <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/icon_problem" />
-
-        <TextView
-            android:layout_width="180dp"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:text="無網路連接,請檢查網路連線,並重啟APP~"
-            android:textSize="17dp"
-            android:textStyle="bold" />
-
-    </LinearLayout>
-
-    <com.kosbrother.mongmongwoo.utils.NonSwipeableViewPager
-        android:id="@+id/viewpager"
+    <FrameLayout
+        android:id="@+id/fragment_container"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@android:color/white" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>

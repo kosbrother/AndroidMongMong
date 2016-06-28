@@ -115,7 +115,7 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:layout_marginTop="10dp"
-        android:background="@drawable/button_purchase_car_selector"
+        android:background="@drawable/pink_selector"
         android:text="確定"
         android:textColor="@color/white" />
 

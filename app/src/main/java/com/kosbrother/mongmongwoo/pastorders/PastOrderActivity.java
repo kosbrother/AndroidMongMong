@@ -65,7 +65,7 @@ public class PastOrderActivity extends FbLoginActivity {
         Glide.with(PastOrderActivity.this)
                 .load(user.getFb_pic())
                 .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                .placeholder(R.drawable.icon_head)
+                .placeholder(R.mipmap.ic_head)
                 .into(userImage);
         userNameText.setText(user.getUserName());
 
