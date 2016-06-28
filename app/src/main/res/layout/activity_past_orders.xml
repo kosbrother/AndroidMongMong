@@ -91,23 +91,29 @@
         android:layout_height="wrap_content">
 
         <com.facebook.login.widget.LoginButton
-            android:id="@+id/login_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/fb"
+            android:id="@+id/fb_login_btn"
             android:layout_width="match_parent"
-            android:layout_height="35dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp" />
+
+        <TextView
+            android:id="@+id/mmw_login_tv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_marginBottom="10dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginTop="10dp"
-            android:background="@drawable/fb_button_selector"
-            android:text="登出此帳戶"
-            android:textColor="@color/white" />
+            android:background="@drawable/pink_selector_white_border"
+            android:clickable="true"
+            android:gravity="center"
+            android:padding="8dp"
+            android:text="登出"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
     </FrameLayout>
-
 
 </LinearLayout>

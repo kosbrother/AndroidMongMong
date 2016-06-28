@@ -1,13 +1,15 @@
 package com.kosbrother.mongmongwoo.pastorders;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -31,13 +33,11 @@ import java.util.List;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import rx.functions.Action1;
 
-public class PastOrderActivity extends FbLoginActivity {
+public class PastOrderActivity extends FbLoginActivity implements View.OnClickListener {
 
     User user;
 
     String TAG = "PastOrderActivity";
-    LoginButton loginButton;
-    Button fb;
 
     GridView mGridView;
     List<PastOrder> pastOrders = new ArrayList<>();
@@ -69,16 +69,18 @@ public class PastOrderActivity extends FbLoginActivity {
                 .into(userImage);
         userNameText.setText(user.getUserName());
 
-        fb = (Button) findViewById(R.id.fb);
-        loginButton = (LoginButton) findViewById(R.id.login_button);
-        setLoginButton(loginButton);
-
-        fb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginButton.performClick();
-            }
-        });
+        final String fb_uid = Settings.getSavedUser().getFb_uid();
+        LoginButton fbLoginButton = (LoginButton) findViewById(R.id.fb_login_btn);
+        View mmwLoginTextView = findViewById(R.id.mmw_login_tv);
+        if (fb_uid.isEmpty()) {
+            fbLoginButton.setVisibility(View.GONE);
+            mmwLoginTextView.setVisibility(View.VISIBLE);
+            mmwLoginTextView.setOnClickListener(this);
+        } else {
+            mmwLoginTextView.setVisibility(View.GONE);
+            fbLoginButton.setVisibility(View.VISIBLE);
+            setLoginButton(fbLoginButton);
+        }
 
         mGridView = (GridView) findViewById(R.id.fragment_gridview);
         mGridView.setOnScrollListener(new EndlessScrollListener() {
@@ -152,5 +154,34 @@ public class PastOrderActivity extends FbLoginActivity {
         } else {
             pastOrdersAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.mmw_login_tv) {
+            showLogoutAlertDialog();
+        }
+    }
+
+    private void showLogoutAlertDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("是否確定要登出");
+        alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alertDialogBuilder.setPositiveButton("登出", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Settings.clearAllUserData();
+                finish();
+            }
+        });
+        AlertDialog dialog = alertDialogBuilder.create();
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.show();
     }
 }
