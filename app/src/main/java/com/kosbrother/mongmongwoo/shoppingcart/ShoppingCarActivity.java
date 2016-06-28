@@ -341,11 +341,14 @@ public class ShoppingCarActivity extends BaseActivity implements
                 .commit();
     }
 
-    private void startStep4() {
+    private void startStep4(int id) {
         invalidateOptionsMenu();
         setStepBar4();
 
         PurchaseFragment4 purchaseFragment4 = new PurchaseFragment4();
+        Bundle args = new Bundle();
+        args.putInt(PurchaseFragment4.ARG_INT_ORDER_ID, id);
+        purchaseFragment4.setArguments(args);
 
         FragmentManager supportFragmentManager = getSupportFragmentManager();
         supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
@@ -406,7 +409,7 @@ public class ShoppingCarActivity extends BaseActivity implements
                     Toast.makeText(ShoppingCarActivity.this, "訂單未成功送出，資料異常", Toast.LENGTH_SHORT).show();
                 } else {
                     ShoppingCartManager.getInstance().removeAllShoppingItems();
-                    startStep4();
+                    startStep4(data.getId());
                 }
             }
         }, new Action1<IOException>() {

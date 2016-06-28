@@ -50,5 +50,16 @@
             android:text="@string/view_order"
             android:textColor="@color/white"
             android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/continue_shopping_btn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@id/view_order_btn"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_green_border_white_button"
+            android:text="@string/continue_shopping"
+            android:textColor="@color/green_text"
+            android:textSize="14sp" />
     </RelativeLayout>
 </FrameLayout>

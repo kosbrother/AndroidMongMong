@@ -24,6 +24,8 @@ import com.kosbrother.mongmongwoo.pastorders.PastOrderDetailActivity;
 
 public class PurchaseFragment4 extends Fragment implements View.OnClickListener {
 
+    public static final String ARG_INT_ORDER_ID = "ARG_INT_ORDER_ID";
+
     private static final String HINT_MESSAGE_LOGIN = "您可以在「我的訂單」掌握商品的最新動向。";
     private static final String HINT_MESSAGE_NOT_LOGIN = "此次購物明細已寄至您的信箱，";
 
@@ -47,17 +49,25 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.findViewById(R.id.finish_btn).setOnClickListener(this);
+        view.findViewById(R.id.continue_shopping_btn).setOnClickListener(this);
         view.findViewById(R.id.view_order_btn).setOnClickListener(this);
         setThankYouMessage(view);
     }
 
     @Override
     public void onClick(View v) {
-        GAManager.sendEvent(new CheckoutStep4ClickEvent(GALabel.VIEW_ORDER));
-        Intent intent = new Intent(getActivity(), PastOrderDetailActivity.class);
-        intent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID, orderId);
-        startActivity(intent);
+        switch (v.getId()){
+            case R.id.continue_shopping_btn:
+                GAManager.sendEvent(new CheckoutStep4ClickEvent(GALabel.FINISH_PURCHASE));
+                getActivity().finish();
+                break;
+            case R.id.view_order_btn:
+                GAManager.sendEvent(new CheckoutStep4ClickEvent(GALabel.VIEW_ORDER));
+                Intent intent = new Intent(getActivity(), PastOrderDetailActivity.class);
+                intent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID, getOrderId());
+                startActivity(intent);
+                break;
+        }
     }
 
     private void setThankYouMessage(View view) {
@@ -95,6 +105,10 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
                 spanStartIndex, spanStartIndex + shippingName.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         return messageSpannable;
+    }
+
+    private int getOrderId() {
+        return getArguments().getInt(ARG_INT_ORDER_ID);
     }
 
 }

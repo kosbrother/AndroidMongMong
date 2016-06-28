@@ -9,4 +9,5 @@ public interface GALabel {
     String PREVIOUS_STEP = "previous_step";
     String SEND_ORDER = "send_order";
     String VIEW_ORDER = "view_order";
+    String FINISH_PURCHASE = "finish_purchase";
 }
