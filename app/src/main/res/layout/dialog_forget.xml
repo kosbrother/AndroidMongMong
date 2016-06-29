@@ -35,7 +35,7 @@
         android:layout_marginBottom="140dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:background="@drawable/bg_green_border_corner_2dp"
+        android:background="@drawable/bg_white_green_border_corner_2dp"
         android:drawableLeft="@mipmap/ic_mail_outline_green_18dp"
         android:drawablePadding="12dp"
         android:drawableStart="@mipmap/ic_mail_outline_green_18dp"
