@@ -14,7 +14,7 @@ import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 
 import rx.functions.Action1;
 
-public class RegisterDialog extends NoTitleDialog implements View.OnClickListener {
+public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickListener {
     private Toast toast;
 
     public RegisterDialog(Context context) {

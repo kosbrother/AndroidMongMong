@@ -13,7 +13,7 @@ import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 
 import rx.functions.Action1;
 
-public class ForgetDialog extends NoTitleDialog implements View.OnClickListener {
+public class ForgetDialog extends BaseNoTitleDialog implements View.OnClickListener {
 
     public ForgetDialog(Context context) {
         super(context);
