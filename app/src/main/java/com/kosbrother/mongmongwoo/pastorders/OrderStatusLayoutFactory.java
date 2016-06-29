@@ -1,5 +1,6 @@
 package com.kosbrother.mongmongwoo.pastorders;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
@@ -14,7 +15,7 @@ public class OrderStatusLayoutFactory {
     public static View create(Context context, String status) {
         View statusLayout;
         switch (status) {
-            case "訂單成立":
+            case "新訂單":
                 statusLayout = getStep1Layout(context);
                 break;
             case "處理中":
@@ -77,10 +78,12 @@ public class OrderStatusLayoutFactory {
         textView.setTextColor(ContextCompat.getColor(context, R.color.green_text));
     }
 
+    @SuppressLint("InflateParams")
     private static View getOrderStatusLayout(Context context) {
         return LayoutInflater.from(context).inflate(R.layout.order_status, null);
     }
 
+    @SuppressLint("InflateParams")
     private static View getCancelOrderLayout(Context context, String status) {
         View cancelOrderLayout = LayoutInflater.from(context).inflate(R.layout.order_status_cancel_order, null);
         TextView textView = (TextView) cancelOrderLayout.findViewById(R.id.order_status_tv);
