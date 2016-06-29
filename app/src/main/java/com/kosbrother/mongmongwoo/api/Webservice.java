@@ -484,7 +484,8 @@ public class Webservice {
 
     public static void postUser(
             final String userJsonString,
-            Action1<? super ResponseEntity<String>> onNextAction) {
+            Action1<? super ResponseEntity<String>> onNextAction,
+            final Action1<? super Throwable> onExceptionAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -510,6 +511,7 @@ public class Webservice {
                 .subscribe(onNextAction, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
+                        onExceptionAction.call(throwable);
                         handleThrowable(throwable, "postUserException");
                     }
                 });

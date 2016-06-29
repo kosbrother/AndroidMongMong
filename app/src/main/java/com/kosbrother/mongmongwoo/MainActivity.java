@@ -119,7 +119,7 @@ public class MainActivity extends FbLoginActivity
         String userName = user.getUserName();
 
         if (userName != null && !userName.isEmpty()) {
-            setUserLoinView(userName, user.getFb_pic());
+            setUserLoinView(userName, user.getFbPic());
         } else {
             setUserLogoutView();
         }

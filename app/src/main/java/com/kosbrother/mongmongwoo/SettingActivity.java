@@ -53,10 +53,6 @@ public class SettingActivity extends FbLoginActivity {
         nickNameEditText.setText(user.getUserName());
         genderEditText.setText(user.getGender());
 
-        shipNameEditText.setText(user.getReal_name());
-        shipPhoneEditText.setText(user.getPhone());
-        shipAddressEditText.setText(user.getAddress());
-
         loginButton = (LoginButton) findViewById(R.id.login_button);
         setLoginButton(loginButton);
 

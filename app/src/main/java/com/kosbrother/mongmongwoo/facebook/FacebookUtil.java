@@ -33,6 +33,6 @@ public class FacebookUtil {
         } catch (JSONException e) {
             email = id + FAKE_EMAIL_APPEND;
         }
-        return new User(user_name, "", gender, "", "", id, String.format(PIC_URL_FORMAT, id), email);
+        return new User(user_name, gender, id, String.format(PIC_URL_FORMAT, id), email);
     }
 }

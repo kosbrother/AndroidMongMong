@@ -15,7 +15,6 @@ public class Settings {
     private final static String keyUserGender = "USER_GENDER";
     private final static String keyUserRealName = "USER_REAL_NAME";
     private final static String keyUserPhone = "USER_PHONE";
-    private final static String keyUserAddress = "USER_ADDRESS";
     private final static String keyUserFBPic = "USER_PIC";
     private final static String keyUserFBEmail = "USER_EMAIL";
 
@@ -42,9 +41,9 @@ public class Settings {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(keyUserName, user.getUserName());
-        editor.putString(keyUserFBUid, user.getFb_uid());
+        editor.putString(keyUserFBUid, user.getUid());
         editor.putString(keyUserGender, user.getGender());
-        editor.putString(keyUserFBPic, user.getFb_pic());
+        editor.putString(keyUserFBPic, user.getFbPic());
         editor.putString(keyUserFBEmail, user.getEmail());
         editor.apply();
     }
@@ -134,14 +133,11 @@ public class Settings {
     public static User getSavedUser() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String userName = prefs.getString(keyUserName, "");
-        String realName = prefs.getString(keyUserRealName, "");
         String gender = prefs.getString(keyUserGender, "");
-        String phone = prefs.getString(keyUserPhone, "");
-        String address = prefs.getString(keyUserAddress, "");
         String fb_uid = prefs.getString(keyUserFBUid, "");
         String fb_pic = prefs.getString(keyUserFBPic, "");
         String email = prefs.getString(keyUserFBEmail, "");
-        return new User(userName, realName, gender, phone, address, fb_uid, fb_pic, email);
+        return new User(userName, gender, fb_uid, fb_pic, email);
     }
 
     public static void saveAndroidVersion(String versionName, boolean upToDate) {
