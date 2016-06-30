@@ -1,13 +1,15 @@
 package com.kosbrother.mongmongwoo.pastorders;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.GridView;
 import android.widget.TextView;
 
@@ -23,7 +25,6 @@ import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.User;
-import com.kosbrother.mongmongwoo.utils.EndlessScrollListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,17 +32,14 @@ import java.util.List;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import rx.functions.Action1;
 
-public class PastOrderActivity extends FbLoginActivity {
+public class PastOrderActivity extends FbLoginActivity implements View.OnClickListener {
 
     User user;
 
     String TAG = "PastOrderActivity";
-    LoginButton loginButton;
-    Button fb;
 
     GridView mGridView;
     List<PastOrder> pastOrders = new ArrayList<>();
-    int mPage = 1;
     PastOrdersGridAdapter pastOrdersAdapter;
 
     CircularImageView userImage;
@@ -65,30 +63,23 @@ public class PastOrderActivity extends FbLoginActivity {
         Glide.with(PastOrderActivity.this)
                 .load(user.getFb_pic())
                 .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                .placeholder(R.drawable.icon_head)
+                .placeholder(R.mipmap.ic_head)
                 .into(userImage);
         userNameText.setText(user.getUserName());
 
-        fb = (Button) findViewById(R.id.fb);
-        loginButton = (LoginButton) findViewById(R.id.login_button);
-        setLoginButton(loginButton);
-
-        fb.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                loginButton.performClick();
-            }
-        });
-
-        mGridView = (GridView) findViewById(R.id.fragment_gridview);
-        mGridView.setOnScrollListener(new EndlessScrollListener() {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                getOrders();
-            }
-        });
+        final String fb_uid = Settings.getSavedUser().getFb_uid();
+        LoginButton fbLoginButton = (LoginButton) findViewById(R.id.fb_login_btn);
+        View mmwLoginTextView = findViewById(R.id.mmw_login_tv);
+        if (fb_uid.isEmpty()) {
+            fbLoginButton.setVisibility(View.GONE);
+            mmwLoginTextView.setVisibility(View.VISIBLE);
+            mmwLoginTextView.setOnClickListener(this);
+        } else {
+            mmwLoginTextView.setVisibility(View.GONE);
+            fbLoginButton.setVisibility(View.VISIBLE);
+            setLoginButton(fbLoginButton);
+        }
         getOrders();
-
     }
 
     @Override
@@ -120,17 +111,16 @@ public class PastOrderActivity extends FbLoginActivity {
     }
 
     private void getOrders() {
-        Webservice.getOrdersByUid(user.getFb_uid(), mPage,
+        Webservice.getOrdersByEmail(user.getEmail(),
                 new Action1<ResponseEntity<List<PastOrder>>>() {
                     @Override
                     public void call(ResponseEntity<List<PastOrder>> listResponseEntity) {
                         List<PastOrder> pastOrders = listResponseEntity.getData();
                         if (pastOrders != null && pastOrders.size() > 0) {
                             PastOrderActivity.this.pastOrders.addAll(pastOrders);
-                            mPage = mPage + 1;
                             onGetDataResult();
                         } else {
-                            GAManager.sendError("getOrdersByUidError", listResponseEntity.getError());
+                            GAManager.sendError("getOrdersByEmailError", listResponseEntity.getError());
                         }
                     }
                 });
@@ -139,6 +129,7 @@ public class PastOrderActivity extends FbLoginActivity {
     private void onGetDataResult() {
         if (pastOrdersAdapter == null) {
             pastOrdersAdapter = new PastOrdersGridAdapter(PastOrderActivity.this, pastOrders);
+            mGridView = (GridView) findViewById(R.id.fragment_gridview);
             mGridView.setAdapter(pastOrdersAdapter);
             mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -152,5 +143,34 @@ public class PastOrderActivity extends FbLoginActivity {
         } else {
             pastOrdersAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.mmw_login_tv) {
+            showLogoutAlertDialog();
+        }
+    }
+
+    private void showLogoutAlertDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("是否確定要登出");
+        alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alertDialogBuilder.setPositiveButton("登出", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+                Settings.clearAllUserData();
+                finish();
+            }
+        });
+        AlertDialog dialog = alertDialogBuilder.create();
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.show();
     }
 }

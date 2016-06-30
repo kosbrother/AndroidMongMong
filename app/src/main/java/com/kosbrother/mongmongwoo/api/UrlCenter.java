@@ -71,10 +71,11 @@ public class UrlCenter {
         return HOST + API_V3 + "/orders";
     }
 
-    static String getOrdersByUid(String uid, int page) {
+    static String getOrdersByEmail(String email) {
         return HOST + API_V3
-                + "/orders/user_owned_orders/" + uid
-                + "?page=" + page;
+                + "/orders/"
+                + "by_user_email"
+                + "?email=" + email;
     }
 
     static String getPastOrderByOrderId(int orderId) {
@@ -99,5 +100,22 @@ public class UrlCenter {
 
     static String getShopInfos() {
         return HOST + API_V3 + "/shop_infos";
+    }
+
+    static String register() {
+        return HOST + API_V3
+                + "/mmw_registrations";
+    }
+
+    static String login() {
+        return HOST + API_V3
+                + "/mmw_registrations"
+                + "/login";
+    }
+
+    static String forget() {
+        return HOST + API_V3
+                + "/mmw_registrations"
+                + "/forget";
     }
 }

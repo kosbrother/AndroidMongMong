@@ -1,5 +1,6 @@
 package com.kosbrother.mongmongwoo.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -17,9 +18,13 @@ import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep4ClickEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep4EnterEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
+import com.kosbrother.mongmongwoo.pastorders.PastOrderDetailActivity;
 
 public class PurchaseFragment4 extends Fragment implements View.OnClickListener {
+
+    public static final String ARG_INT_ORDER_ID = "ARG_INT_ORDER_ID";
 
     private static final String HINT_MESSAGE_LOGIN = "您可以在「我的訂單」掌握商品的最新動向。";
     private static final String HINT_MESSAGE_NOT_LOGIN = "此次購物明細已寄至您的信箱，";
@@ -30,8 +35,10 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
                     + "商品抵達您指定超商時，會有簡訊通知，" + "\n"
                     + "還請您多加留意！萌萌屋全體期待您再次光臨！！";
 
-    public static Fragment newInstance() {
-        return new PurchaseFragment4();
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        GAManager.sendEvent(new CheckoutStep4EnterEvent());
     }
 
     @Override
@@ -42,17 +49,37 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        view.findViewById(R.id.finish_btn).setOnClickListener(this);
+        view.findViewById(R.id.continue_shopping_btn).setOnClickListener(this);
+        view.findViewById(R.id.view_order_btn).setOnClickListener(this);
+        setThankYouMessage(view);
     }
 
     @Override
     public void onClick(View v) {
-        GAManager.sendEvent(new CheckoutStep4ClickEvent(GALabel.FINISH_PURCHASE));
-        getActivity().finish();
+        switch (v.getId()){
+            case R.id.continue_shopping_btn:
+                GAManager.sendEvent(new CheckoutStep4ClickEvent(GALabel.FINISH_PURCHASE));
+                getActivity().finish();
+                break;
+            case R.id.view_order_btn:
+                GAManager.sendEvent(new CheckoutStep4ClickEvent(GALabel.VIEW_ORDER));
+                Intent intent = new Intent(getActivity(), PastOrderDetailActivity.class);
+                intent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID, getOrderId());
+                startActivity(intent);
+                break;
+        }
     }
 
-    public void setThankYouMessage() {
+    private void setThankYouMessage(View view) {
         String shippingName = Settings.getShippingName();
+        setThankYouMessage(shippingName);
+        Spannable messageSpannable = getMessageSpannable(shippingName);
+
+        TextView thankYouTextView = (TextView) view.findViewById(R.id.thank_you_tv);
+        thankYouTextView.setText(messageSpannable);
+    }
+
+    private void setThankYouMessage(String shippingName) {
         if (Settings.checkIsLogIn()) {
             thankYouMessage = String.format(thankYouMessage,
                     shippingName,
@@ -62,6 +89,9 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
                     shippingName,
                     HINT_MESSAGE_NOT_LOGIN);
         }
+    }
+
+    private Spannable getMessageSpannable(String shippingName) {
         Spannable messageSpannable = new SpannableString(thankYouMessage);
         StyleSpan boldSpan = new StyleSpan(android.graphics.Typeface.BOLD);
         ForegroundColorSpan colorSpan = new ForegroundColorSpan(
@@ -74,10 +104,11 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
         messageSpannable.setSpan(boldSpan,
                 spanStartIndex, spanStartIndex + shippingName.length(),
                 Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        return messageSpannable;
+    }
 
-        assert getView() != null;
-        TextView thankYouTextView = (TextView) getView().findViewById(R.id.thank_you_tv);
-        thankYouTextView.setText(messageSpannable);
+    private int getOrderId() {
+        return getArguments().getInt(ARG_INT_ORDER_ID);
     }
 
 }

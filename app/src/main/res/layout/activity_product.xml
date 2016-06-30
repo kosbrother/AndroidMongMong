@@ -60,7 +60,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_margin="8dp"
-                android:background="@drawable/button_purchase_car_selector"
+                android:background="@drawable/pink_selector"
                 android:text="放入購物車"
                 android:textColor="@color/white"
                 android:textSize="14sp" />

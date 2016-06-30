@@ -24,8 +24,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="112dp"
         android:clipToPadding="false"
-        android:paddingBottom="144dp"
+        android:paddingBottom="8dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -239,6 +240,30 @@
             </android.support.v7.widget.CardView>
         </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
+
+        <View
+            android:layout_width="match_parent"
+            android:background="@drawable/bg_top_shadow"
+            android:layout_height="2dp" />
+
+        <Button
+            android:id="@+id/continue_shopping_btn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_margin="8dp"
+            android:background="@drawable/button_green_selector"
+            android:onClick="onContinueShoppingClick"
+            android:text="@string/continue_shopping"
+            android:textColor="@color/white"
+            android:textSize="14sp" />
+
+    </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:layout_width="56dp"

@@ -25,6 +25,7 @@ import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
@@ -32,7 +33,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.facebook.login.widget.LoginButton;
-import com.github.siyamed.shapeimageview.CircularImageView;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.kosbrother.mongmongwoo.adpters.CategoryAdapter;
 import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
@@ -43,7 +43,6 @@ import com.kosbrother.mongmongwoo.category.CategoryActivity;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
-import com.kosbrother.mongmongwoo.shopinfo.ShopInfoActivity;
 import com.kosbrother.mongmongwoo.fcm.FcmPreferences;
 import com.kosbrother.mongmongwoo.fivestars.FiveStarsActivity;
 import com.kosbrother.mongmongwoo.fivestars.FiveStartsManager;
@@ -53,12 +52,14 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.navigationdrawer.NavigationDrawerClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.navigationdrawer.NavigationDrawerOpenEvent;
+import com.kosbrother.mongmongwoo.login.LoginActivity;
 import com.kosbrother.mongmongwoo.model.Category;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
 import com.kosbrother.mongmongwoo.pastorders.QueryPastOrdersActivity;
+import com.kosbrother.mongmongwoo.shopinfo.ShopInfoActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.ExpandableHeightGridView;
@@ -78,9 +79,7 @@ import rx.functions.Action1;
 public class MainActivity extends FbLoginActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private CircularImageView userImage;
-    private TextView userText;
-    private LoginButton loginButton;
+    private static final int REQUEST_LOGIN = 111;
 
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
 
@@ -96,7 +95,7 @@ public class MainActivity extends FbLoginActivity
         setNavigationView();
         setQuickBarTextSwitcher();
         setQuickBarWithScrollView();
-        setLoginButton(loginButton);
+        setLoginButton((LoginButton) getNavigationView().getHeaderView(0).findViewById(R.id.fb_login_btn));
         getCategories();
         getAllPopularItems();
         getNewDateItems();
@@ -108,6 +107,22 @@ public class MainActivity extends FbLoginActivity
     protected void onStart() {
         super.onStart();
         AppIndexManager.startMainAppIndex();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        invalidateOptionsMenu();
+        setNoNetLayout();
+
+        User user = Settings.getSavedUser();
+        String userName = user.getUserName();
+
+        if (userName != null && !userName.isEmpty()) {
+            setUserLoinView(userName, user.getFb_pic());
+        } else {
+            setUserLogoutView();
+        }
     }
 
     @Override
@@ -137,22 +152,6 @@ public class MainActivity extends FbLoginActivity
             } else {
                 super.onBackPressed();
             }
-        }
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        invalidateOptionsMenu();
-        setNoNetLayout();
-
-        User user = Settings.getSavedUser();
-        String userName = user.getUserName();
-
-        if (userName != null && !userName.isEmpty()) {
-            setUserLoinView(userName, user.getFb_pic());
-        } else {
-            setUserLogoutView();
         }
     }
 
@@ -472,10 +471,6 @@ public class MainActivity extends FbLoginActivity
     private void setNavigationView() {
         NavigationView navigationView = getNavigationView();
         navigationView.setNavigationItemSelectedListener(this);
-        View header = navigationView.getHeaderView(0);
-        userImage = (CircularImageView) header.findViewById(R.id.user_imageview);
-        userText = (TextView) header.findViewById(R.id.user_name_text);
-        loginButton = (LoginButton) header.findViewById(R.id.login_button_main);
     }
 
     private void setCategoryGridView(List<Category> data) {
@@ -570,22 +565,24 @@ public class MainActivity extends FbLoginActivity
     }
 
     private void setUserLoinView(String user_name, String picUrl) {
-        loginButton.setVisibility(View.GONE);
-        userText.setText(user_name);
+        View headerView = getNavigationView().getHeaderView(0);
+        headerView.findViewById(R.id.login_ll).setVisibility(View.GONE);
+        ((TextView) headerView.findViewById(R.id.user_name_text)).setText(user_name);
         Glide.with(this)
                 .load(picUrl)
                 .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
-                .placeholder(R.drawable.icon_head)
-                .into(userImage);
+                .placeholder(R.mipmap.ic_head)
+                .into((ImageView) headerView.findViewById(R.id.user_imageview));
 
         MenuItem ordersMenuItem = getNavigationView().getMenu().findItem(R.id.nav_orders);
         ordersMenuItem.setTitle("我的訂單");
     }
 
     private void setUserLogoutView() {
-        userImage.setImageResource(R.drawable.icon_head);
-        userText.setText("");
-        loginButton.setVisibility(View.VISIBLE);
+        View headerView = getNavigationView().getHeaderView(0);
+        ((ImageView) headerView.findViewById(R.id.user_imageview)).setImageResource(R.mipmap.ic_head);
+        ((TextView) headerView.findViewById(R.id.user_name_text)).setText("");
+        headerView.findViewById(R.id.login_ll).setVisibility(View.VISIBLE);
 
         MenuItem ordersMenuItem = getNavigationView().getMenu().findItem(R.id.nav_orders);
         ordersMenuItem.setTitle("查詢訂單");
@@ -628,4 +625,8 @@ public class MainActivity extends FbLoginActivity
         });
     }
 
+    public void onMongMongWooLoginClick(View view) {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivityForResult(intent, REQUEST_LOGIN);
+    }
 }

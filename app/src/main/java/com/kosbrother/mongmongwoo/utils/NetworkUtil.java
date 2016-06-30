@@ -4,14 +4,10 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-/**
- * Created by kolichung on 3/31/16.
- */
 public class NetworkUtil {
 
     public static int TYPE_WIFI = 1;
     public static int TYPE_MOBILE = 2;
-    public static int TYPE_MOBILE_SUPL = 3;
     public static int TYPE_WIMAX = 6;
     public static int TYPE_NOT_CONNECTED = 0;
 
@@ -31,11 +27,6 @@ public class NetworkUtil {
             if (activeNetwork.getType() == ConnectivityManager.TYPE_WIMAX)
             {
                 return TYPE_WIMAX;
-            }
-
-            if (activeNetwork.getType() == ConnectivityManager.TYPE_MOBILE_SUPL)
-            {
-                return TYPE_MOBILE_SUPL;
             }
 
         }

@@ -41,14 +41,25 @@
 商品抵達您指定超商時，會有簡訊通知，\n還請您稍加留意！萌萌屋全體期待您再次光臨！！" />
 
         <Button
-            android:id="@+id/finish_btn"
+            android:id="@+id/view_order_btn"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_below="@id/thank_you_tv"
             android:layout_marginTop="16dp"
             android:background="@drawable/button_green_selector"
-            android:text="@string/finish"
+            android:text="@string/view_order"
             android:textColor="@color/white"
+            android:textSize="14sp" />
+
+        <Button
+            android:id="@+id/continue_shopping_btn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_below="@id/view_order_btn"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_green_border_white_button"
+            android:text="@string/continue_shopping"
+            android:textColor="@color/green_text"
             android:textSize="14sp" />
     </RelativeLayout>
 </FrameLayout>

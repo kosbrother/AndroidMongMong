@@ -31,7 +31,7 @@ public class Spec implements Serializable {
         return stylePic;
     }
 
-    public static class StylePic {
+    public static class StylePic implements Serializable{
         @SerializedName("url")
         private String url;
 

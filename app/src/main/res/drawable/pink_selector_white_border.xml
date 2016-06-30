@@ -5,11 +5,12 @@
         <layer-list>
             <item>
                 <shape>
-                    <solid android:color="#ff3d53" />
+                    <solid android:color="#fd6879" />
                     <corners android:radius="3dp" />
+                    <stroke android:width="1dp" android:color="@color/white" />
                 </shape>
             </item>
-            <item>
+            <item android:bottom="1dp" android:left="1dp" android:right="1dp" android:top="1dp">
                 <shape>
                     <solid android:color="@color/dark_color_control_highlight" />
                     <corners android:radius="3dp" />
@@ -20,9 +21,9 @@
 
     <item>
         <shape>
-            <solid android:color="#F22727" />
+            <solid android:color="#fd6879" />
             <corners android:radius="3dp" />
+            <stroke android:width="1dp" android:color="@color/white" />
         </shape>
     </item>
-
 </selector>

@@ -1,59 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="130dp"
-    android:background="@drawable/side_nav_bar"
-    android:orientation="vertical"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark"
+    android:layout_height="154dp"
+    android:background="@mipmap/img_bg_login"
     android:gravity="bottom"
-    >
+    android:orientation="vertical"
+    android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
+    <com.github.siyamed.shapeimageview.CircularImageView
+        android:id="@+id/user_imageview"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="16dp"
+        android:src="@mipmap/ic_head"
+        app:siBorderColor="@color/white"
+        app:siBorderWidth="2dp" />
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:layout_marginTop="0dp"
-        android:layout_marginBottom="20dp"
-        android:layout_marginLeft="16dp"
-        >
+        android:layout_marginBottom="16dp">
 
-        <com.github.siyamed.shapeimageview.CircularImageView
-            android:id="@+id/user_imageview"
-            android:layout_width="70dp"
-            android:layout_height="70dp"
-            android:src="@drawable/icon_head"
-            app:siBorderWidth="2dp"
-            app:siBorderColor="@color/white"
-            />
-
-
-        <com.facebook.login.widget.LoginButton
-            android:id="@+id/login_button_main"
+        <LinearLayout
+            android:id="@+id/login_ll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            />
+            android:layout_centerHorizontal="true"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/bg_white_corner_3dp"
+                android:padding="1dp">
+
+                <com.facebook.login.widget.LoginButton xmlns:facebook="http://schemas.android.com/apk/res-auto"
+                    android:id="@+id/fb_login_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:textSize="11sp"
+                    facebook:com_facebook_login_text="Facebook登入"
+                    facebook:com_facebook_logout_text="登出" />
+            </FrameLayout>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@drawable/pink_selector_white_border"
+                android:clickable="true"
+                android:drawableLeft="@mipmap/ic_logo_white_small"
+                android:drawablePadding="8dp"
+                android:drawableStart="@mipmap/ic_logo_white_small"
+                android:gravity="center_vertical"
+                android:onClick="onMongMongWooLoginClick"
+                android:paddingBottom="1dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="1dp"
+                android:text="萌萌屋註冊/登入"
+                android:textColor="@color/white"
+                android:textSize="11sp" />
+
+        </LinearLayout>
 
         <TextView
             android:id="@+id/user_name_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="10dp"
-            android:text=""
-            android:textSize="20dp"
-            android:layout_marginLeft="20dp"
-            android:textColor="@color/white"
+            android:layout_centerHorizontal="true"
             android:shadowColor="#A1A1A1"
             android:shadowDx="3"
             android:shadowDy="3"
             android:shadowRadius="0.5"
-            />
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            tools:text="test@gmail.com" />
 
-    </LinearLayout>
-
-
+    </RelativeLayout>
 
 </LinearLayout>

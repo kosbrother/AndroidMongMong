@@ -1,53 +1,62 @@
 package com.kosbrother.mongmongwoo.fragments;
 
-import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.SelectDeliverStoreActivity;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.facebook.FacebookUtil;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep2EnterEvent;
 import com.kosbrother.mongmongwoo.model.Store;
-import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 
 public class PurchaseFragment2 extends Fragment {
 
-    Button nextButton;
-    Button selectStoreButton;
-    EditText shippingNameEditText;
-    EditText shippingPhoneEditText;
-    EditText shippingEmailEditText;
+    private OnStep2ButtonClickListener mCallback;
 
-    public static PurchaseFragment2 newInstance() {
-        return new PurchaseFragment2();
+    private Button selectStoreButton;
+    private EditText shippingNameEditText;
+    private EditText shippingPhoneEditText;
+    private EditText shippingEmailEditText;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        try {
+            mCallback = (OnStep2ButtonClickListener) context;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(context.toString() +
+                    " must implement OnStep2ButtonClickListener");
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_purchase2, container, false);
-        nextButton = (Button) view.findViewById(R.id.fragment2_next_button);
+        return inflater.inflate(R.layout.fragment_purchase2, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
         selectStoreButton = (Button) view.findViewById(R.id.select_store_button);
         shippingNameEditText = (EditText) view.findViewById(R.id.shipping_name_edit_text);
         shippingPhoneEditText = (EditText) view.findViewById(R.id.shipping_phone_edit_text);
         shippingEmailEditText = (EditText) view.findViewById(R.id.shipping_email_edit_text);
 
+        Button nextButton = (Button) view.findViewById(R.id.fragment2_next_button);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // save to activity order store and shipping name, phone
-                ShoppingCarActivity activity = (ShoppingCarActivity) getActivity();
                 if (selectStoreButton.getText().equals(getString(R.string.choose_store))) {
                     Toast.makeText(getActivity(), "請選擇寄件的商店", Toast.LENGTH_SHORT).show();
                     return;
@@ -60,25 +69,14 @@ public class PurchaseFragment2 extends Fragment {
                     String shipName = shippingNameEditText.getText().toString().trim();
                     String shipPhone = shippingPhoneEditText.getText().toString().trim();
                     String shipEmail = getUserInputEmailOrFbEmail();
-
-                    activity.saveShippingInfo(shipName, shipPhone, shipEmail);
-                    Settings.saveUserShippingNameAndPhone(shipName, shipPhone);
-
-                    activity.startPurchaseFragment3();
-
-                    View view = activity.getCurrentFocus();
-                    if (view != null) {
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
-                    }
+                    mCallback.onStep2NextButtonClick(shipName, shipPhone, shipEmail);
                 }
             }
         });
         selectStoreButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent selectStoreIntent = new Intent(getActivity(), SelectDeliverStoreActivity.class);
-                startActivityForResult(selectStoreIntent, 200);
+                mCallback.onSelectStoreClick();
             }
         });
 
@@ -88,24 +86,13 @@ public class PurchaseFragment2 extends Fragment {
             shippingNameEditText.setText(Settings.getShippingName());
             shippingPhoneEditText.setText(Settings.getShippingPhone());
         }
-        return view;
+        view.findViewById(R.id.email_ll).setVisibility(isLoginWithValidEmail() ? View.GONE : View.VISIBLE);
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-            Bundle bundle = data.getExtras();
-            Store theStore = (Store) bundle.getSerializable("Selected_Store");
-            ShoppingCarActivity mActivity = (ShoppingCarActivity) getActivity();
-            mActivity.saveStoreInfo(theStore);
-            Settings.saveUserStoreData(theStore);
-            selectStoreButton.setText(theStore.getName());
-        }
-    }
-
-    public void setEmailLayoutByLoginStatus() {
-        getView().findViewById(R.id.email_ll).setVisibility(isLoginWithValidEmail() ? View.GONE : View.VISIBLE);
+    public void onResume() {
+        super.onResume();
+        GAManager.sendEvent(new CheckoutStep2EnterEvent());
     }
 
     private boolean isLoginWithValidEmail() {
@@ -129,5 +116,16 @@ public class PurchaseFragment2 extends Fragment {
         } else {
             return userInputEmail;
         }
+    }
+
+    public void updateStoreName(String storeName) {
+        selectStoreButton.setText(storeName);
+    }
+
+    public interface OnStep2ButtonClickListener {
+
+        void onSelectStoreClick();
+
+        void onStep2NextButtonClick(String shipName, String shipPhone, String shipEmail);
     }
 }

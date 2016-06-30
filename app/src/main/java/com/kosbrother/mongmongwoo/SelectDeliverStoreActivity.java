@@ -42,6 +42,7 @@ import rx.functions.Action1;
 
 public class SelectDeliverStoreActivity extends AppCompatActivity implements OnMapReadyCallback {
 
+    public static final String EXTRA_SELECTED_STORE = "EXTRA_SELECTED_STORE";
     private GoogleMap mMap;
 
     private Spinner townSpinners;
@@ -243,9 +244,7 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent();
-                Bundle bundleBack = new Bundle();
-                bundleBack.putSerializable("Selected_Store", selectedStore);
-                intent.putExtras(bundleBack);
+                intent.putExtra(EXTRA_SELECTED_STORE, selectedStore);
                 setResult(RESULT_OK, intent);
                 finish();
             }

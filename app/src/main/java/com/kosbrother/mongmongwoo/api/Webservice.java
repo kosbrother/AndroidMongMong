@@ -4,10 +4,10 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.entity.ShopInfoEntity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.exception.ExceptionEvent;
 import com.kosbrother.mongmongwoo.model.Category;
-import com.kosbrother.mongmongwoo.entity.ShopInfoEntity;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Road;
@@ -233,14 +233,14 @@ public class Webservice {
                 });
     }
 
-    public static void getOrdersByUid(
-            final String uid, final int page,
+    public static void getOrdersByEmail(
+            final String email,
             Action1<? super ResponseEntity<List<PastOrder>>> onNextAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
                 try {
-                    subscriber.onNext(OrderApi.getOrdersByUid(uid, page));
+                    subscriber.onNext(OrderApi.getOrdersByEmail(email));
                     subscriber.onCompleted();
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -261,7 +261,7 @@ public class Webservice {
                 .subscribe(onNextAction, new Action1<Throwable>() {
                     @Override
                     public void call(Throwable throwable) {
-                        handleThrowable(throwable, "getOrdersByUidException");
+                        handleThrowable(throwable, "getOrdersByEmailException");
                     }
                 });
     }
@@ -549,6 +549,105 @@ public class Webservice {
                         } else {
                             handleThrowable(throwable, "postOrderException");
                         }
+                    }
+                });
+    }
+
+    public static void register(
+            final String email, final String password,
+            Action1<? super ResponseEntity<String>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(LoginApi.register(email, password));
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .map(new Func1<String, ResponseEntity<String>>() {
+                    @Override
+                    public ResponseEntity<String> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<String>>() {
+                        }.getType();
+                        return new Gson().fromJson(json, listType);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        handleThrowable(throwable, "registerException");
+                    }
+                });
+    }
+
+    public static void login(
+            final String email, final String password,
+            Action1<? super ResponseEntity<String>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(LoginApi.login(email, password));
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .map(new Func1<String, ResponseEntity<String>>() {
+                    @Override
+                    public ResponseEntity<String> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<String>>() {
+                        }.getType();
+                        return new Gson().fromJson(json, listType);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        handleThrowable(throwable, "loginException");
+                    }
+                });
+    }
+
+    public static void forget(
+            final String email,
+            Action1<? super ResponseEntity<String>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(LoginApi.forget(email));
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .map(new Func1<String, ResponseEntity<String>>() {
+                    @Override
+                    public ResponseEntity<String> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<String>>() {
+                        }.getType();
+                        return new Gson().fromJson(json, listType);
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        handleThrowable(throwable, "forgetException");
                     }
                 });
     }

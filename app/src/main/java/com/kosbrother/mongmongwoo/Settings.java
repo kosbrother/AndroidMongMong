@@ -38,6 +38,7 @@ public class Settings {
     }
 
     public static void saveUserFBData(User user) {
+        clearAllUserData();
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(keyUserName, user.getUserName());
@@ -45,6 +46,15 @@ public class Settings {
         editor.putString(keyUserGender, user.getGender());
         editor.putString(keyUserFBPic, user.getFb_pic());
         editor.putString(keyUserFBEmail, user.getEmail());
+        editor.apply();
+    }
+
+    public static void saveMmwUserData(String emailText) {
+        clearAllUserData();
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(keyUserName, emailText);
+        editor.putString(keyUserFBEmail, emailText);
         editor.apply();
     }
 

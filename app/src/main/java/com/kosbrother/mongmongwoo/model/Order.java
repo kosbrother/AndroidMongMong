@@ -2,12 +2,13 @@ package com.kosbrother.mongmongwoo.model;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class Order {
+public class Order implements Serializable {
 
-    @SerializedName("uid")
-    private String uid;
+    @SerializedName("email")
+    private String email;
     @SerializedName("items_price")
     private int itemsPrice;
     @SerializedName("ship_fee")
@@ -43,8 +44,8 @@ public class Order {
         return shipEmail;
     }
 
-    public void setUid(String uid) {
-        this.uid = uid;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public void setShipName(String shipName) {
@@ -89,6 +90,10 @@ public class Order {
 
     public void setShipStoreName(String shipStoreName) {
         this.shipStoreName = shipStoreName;
+    }
+
+    public int getItemsPrice() {
+        return itemsPrice;
     }
 
 }
