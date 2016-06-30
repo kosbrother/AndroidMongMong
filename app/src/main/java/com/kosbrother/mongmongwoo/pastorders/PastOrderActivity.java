@@ -61,13 +61,13 @@ public class PastOrderActivity extends FbLoginActivity implements View.OnClickLi
         userNameText = (TextView) findViewById(R.id.user_name_text);
         user = Settings.getSavedUser();
         Glide.with(PastOrderActivity.this)
-                .load(user.getFb_pic())
+                .load(user.getFbPic())
                 .bitmapTransform(new CropCircleTransformation(getApplicationContext()))
                 .placeholder(R.mipmap.ic_head)
                 .into(userImage);
         userNameText.setText(user.getUserName());
 
-        final String fb_uid = Settings.getSavedUser().getFb_uid();
+        final String fb_uid = Settings.getSavedUser().getUid();
         LoginButton fbLoginButton = (LoginButton) findViewById(R.id.fb_login_btn);
         View mmwLoginTextView = findViewById(R.id.mmw_login_tv);
         if (fb_uid.isEmpty()) {

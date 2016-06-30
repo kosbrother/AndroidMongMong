@@ -40,7 +40,4 @@ public abstract class FbLoginActivity extends AppCompatActivity
         fbManager.setLoginButton(loginButton);
     }
 
-    protected void startFbLogin(){
-        fbManager.startLogin(this);
-    }
 }

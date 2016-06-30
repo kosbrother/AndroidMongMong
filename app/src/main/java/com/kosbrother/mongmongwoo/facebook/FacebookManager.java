@@ -78,6 +78,11 @@ public class FacebookManager {
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
+    public void setLoginButton(LoginButton loginButton) {
+        loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
+        loginButton.registerCallback(callbackManager, facebookCallback);
+    }
+
     private void handleLoginResult(AccessToken accessToken) {
         GraphRequest request = GraphRequest.newMeRequest(
                 accessToken, new GraphRequest.GraphJSONObjectCallback() {
@@ -100,33 +105,27 @@ public class FacebookManager {
     private void handleFbRequestResult(JSONObject object) {
         if (object == null) {
             LoginManager.getInstance().logOut();
-            listener.onFbLogout();
             return;
         }
-        User user = FacebookUtil.getUser(object);
-        Settings.saveUserFBData(user);
-        Webservice.postUser(user.getJsonString(), new Action1<ResponseEntity<String>>() {
+        final User user = FacebookUtil.getUser(object);
+        Webservice.postUser(user.getFbUserJsonString(), new Action1<ResponseEntity<String>>() {
             @Override
             public void call(ResponseEntity<String> stringResponseEntity) {
                 String data = stringResponseEntity.getData();
                 if (data == null) {
+                    LoginManager.getInstance().logOut();
                     GAManager.sendError("postUserError", stringResponseEntity.getError());
+                } else {
+                    Settings.saveUserFBData(user);
+                    listener.onFbRequestCompleted(user.getUid(), user.getUserName(), user.getFbPic());
                 }
             }
+        }, new Action1<Throwable>() {
+            @Override
+            public void call(Throwable throwable) {
+                LoginManager.getInstance().logOut();
+            }
         });
-        listener.onFbRequestCompleted(user.getFb_uid(), user.getUserName(), user.getFb_pic());
-    }
-
-    public void setLoginButton(LoginButton loginButton) {
-        loginButton.setReadPermissions(Arrays.asList("public_profile", "email"));
-        loginButton.registerCallback(callbackManager, facebookCallback);
-    }
-
-    public void startLogin(FbLoginActivity fbLoginActivity) {
-        LoginManager loginManager = LoginManager.getInstance();
-        loginManager.logInWithReadPermissions(fbLoginActivity,
-                Arrays.asList("public_profile", "email"));
-        loginManager.registerCallback(callbackManager, facebookCallback);
     }
 
     public interface FacebookListener {
