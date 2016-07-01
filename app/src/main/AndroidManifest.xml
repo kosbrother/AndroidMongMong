@@ -99,11 +99,6 @@
             android:theme="@style/CustomTheme" />
 
         <activity
-            android:name="com.kosbrother.mongmongwoo.SettingActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/CustomTheme" />
-
-        <activity
             android:name=".pastorders.PastOrderActivity"
             android:screenOrientation="portrait"
             android:theme="@style/CustomTheme" />
