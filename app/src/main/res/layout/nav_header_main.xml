@@ -42,10 +42,10 @@
                 android:drawableStart="@mipmap/ic_logo_white_small"
                 android:gravity="center_vertical"
                 android:onClick="onMongMongWooLoginClick"
-                android:paddingBottom="1dp"
+                android:paddingBottom="4dp"
                 android:paddingLeft="8dp"
                 android:paddingRight="8dp"
-                android:paddingTop="1dp"
+                android:paddingTop="4dp"
                 android:text="萌萌屋註冊/登入"
                 android:textColor="@color/white"
                 android:textSize="11sp" />
