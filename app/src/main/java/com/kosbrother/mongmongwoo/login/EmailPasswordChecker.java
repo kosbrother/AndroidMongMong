@@ -3,7 +3,7 @@ package com.kosbrother.mongmongwoo.login;
 public class EmailPasswordChecker {
 
     public void check(String emailText, String passwordText, OnCheckResultListener listener) {
-        String errorMessage = checkError(emailText, passwordText);
+        String errorMessage = checkError(emailText.trim(), passwordText.trim());
         if (errorMessage == null) {
             listener.onCheckValid();
         } else {

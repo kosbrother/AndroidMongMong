@@ -1,5 +1,6 @@
 package com.kosbrother.mongmongwoo.login;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -7,18 +8,16 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.facebook.login.widget.LoginButton;
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.api.Webservice;
-import com.kosbrother.mongmongwoo.entity.ResponseEntity;
-import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 
-import rx.functions.Action1;
+public class LoginActivity extends BaseLoginActivity implements
+        LoginContract.View,
+        View.OnClickListener {
 
-public class LoginActivity extends FbLoginActivity {
+    private static final int REQUEST_GOOGLE_SIGN_IN = 9001;
+    private static final int REQUEST_FACEBOOK_SIGN_IN = REQUEST_GOOGLE_SIGN_IN + 1;
 
-    public static final String EXTRA_STRING_EMAIL = "EXTRA_STRING_EMAIL";
+    private LoginPresenter mPresenter;
 
     private Toast toast;
 
@@ -26,76 +25,69 @@ public class LoginActivity extends FbLoginActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        initShowPasswordHelper();
+        findViewById(R.id.fb_login_btn).setOnClickListener(this);
+        findViewById(R.id.google_sign_in_btn).setOnClickListener(this);
 
-        ShowPasswordHelper helper = new ShowPasswordHelper();
-        helper.setShowPasswordBehavior(
-                findViewById(R.id.show_pw_ll),
-                (CheckBox) findViewById(R.id.show_pw_cb),
-                (EditText) findViewById(R.id.password_et));
-
-        setLoginButton((LoginButton) findViewById(R.id.fb_login_btn));
-    }
-
-    @Override
-    public void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
-        onLoginSuccess(Settings.getEmail());
-    }
-
-    @Override
-    public void onFbLogout() {
-
+        mPresenter = new LoginPresenter(this);
     }
 
     public void onRegisterClick(View view) {
+        mPresenter.onMmwRegisterClick();
+    }
+
+    public void onForgetPasswordClick(View view) {
+        mPresenter.onForgetPasswordClick();
+    }
+
+    public void onMmwLoginClick(View view) {
+        EditText emailEditText = (EditText) findViewById(R.id.email_et);
+        EditText passwordEditText = (EditText) findViewById(R.id.password_et);
+        String email = emailEditText.getText().toString();
+        String password = passwordEditText.getText().toString();
+        mPresenter.onMmwLoginClick(email, password);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.google_sign_in_btn:
+                mPresenter.onGoogleSignInClick();
+                break;
+            case R.id.fb_login_btn:
+                mPresenter.onFacebookLoginClick();
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void startGoogleSignInActivityForResult(int requestCode) {
+        Intent intent = new Intent(this, GoogleSignInActivity.class);
+        startActivityForResult(intent, requestCode);
+    }
+
+    @Override
+    public void startFacebookLoginActivityForResult(int requestCode) {
+        Intent intent = new Intent(this, FacebookLogInActivity.class);
+        startActivityForResult(intent, requestCode);
+    }
+
+    @Override
+    public void showRegisterDialog() {
         RegisterDialog dialog = new RegisterDialog(this);
         dialog.show();
     }
 
-    public void onForgetPasswordClick(View view) {
+    @Override
+    public void showForgetDialog() {
         ForgetDialog dialog = new ForgetDialog(this);
         dialog.show();
     }
 
-    public void onLoginClick(View view) {
-        EditText emailEditText = (EditText) findViewById(R.id.email_et);
-        EditText passwordEditText = (EditText) findViewById(R.id.password_et);
-        final String emailText = emailEditText.getText().toString().trim();
-        final String passwordText = passwordEditText.getText().toString().trim();
-
-        EmailPasswordChecker checker = new EmailPasswordChecker();
-        checker.check(emailText, passwordText, new EmailPasswordChecker.OnCheckResultListener() {
-            @Override
-            public void onCheckValid() {
-                Webservice.login(emailText, passwordText, new Action1<ResponseEntity<String>>() {
-                    @Override
-                    public void call(ResponseEntity<String> stringResponseEntity) {
-                        String data = stringResponseEntity.getData();
-                        if (data != null) {
-                            Settings.saveMmwUserData(emailText);
-                            onLoginSuccess(emailText);
-                        } else {
-                            ResponseEntity.Error error = stringResponseEntity.getError();
-                            showAToast(error.getMessage());
-                        }
-                    }
-                });
-            }
-
-            @Override
-            public void onCheckError(String errorMessage) {
-                showAToast(errorMessage);
-            }
-        });
-    }
-
-    private void onLoginSuccess(String email) {
-        Intent data = new Intent();
-        data.putExtra(EXTRA_STRING_EMAIL, email);
-        setResult(RESULT_OK, data);
-        finish();
-    }
-
-    private void showAToast(String message) {
+    @Override
+    public void showToast(String message) {
         if (toast != null) {
             toast.cancel();
         }
@@ -103,4 +95,37 @@ public class LoginActivity extends FbLoginActivity {
         toast.show();
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_GOOGLE_SIGN_IN:
+            case REQUEST_FACEBOOK_SIGN_IN:
+                handleSignInResult(resultCode, data);
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void initShowPasswordHelper() {
+        ShowPasswordHelper helper = new ShowPasswordHelper();
+        helper.setShowPasswordBehavior(
+                findViewById(R.id.show_pw_ll),
+                (CheckBox) findViewById(R.id.show_pw_cb),
+                (EditText) findViewById(R.id.password_et));
+    }
+
+    private void handleSignInResult(int resultCode, Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+            String email = data.getStringExtra(GoogleSignInActivity.EXTRA_STRING_EMAIL);
+            mPresenter.onSignInResultOK(email);
+        } else {
+            if (data != null) {
+                String errorMessage =
+                        data.getStringExtra(GoogleSignInActivity.EXTRA_STRING_ERROR_MESSAGE);
+                mPresenter.onSignInResultError(errorMessage);
+            }
+        }
+    }
 }

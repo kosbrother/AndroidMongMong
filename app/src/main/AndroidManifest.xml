@@ -149,6 +149,21 @@
             android:theme="@style/Theme.AppCompat.NoTitleDialog" />
 
         <activity
+            android:name=".login.GoogleSignInActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Translucent" />
+
+        <activity
+            android:name=".login.FacebookLogInActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Translucent" />
+
+        <activity
+            android:name=".login.LogOutActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.Translucent" />
+
+        <activity
             android:name=".appindex.IndexActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.Translucent">

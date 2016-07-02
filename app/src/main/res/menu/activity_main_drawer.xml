@@ -35,6 +35,10 @@
                 android:icon="@drawable/drawer_about"
                 android:title="關於萌萌屋"
                 app:actionLayout="@layout/new_version_tv" />
+            <item
+                android:id="@+id/nav_log_out"
+                android:icon="@mipmap/ic_log_out"
+                android:title="登出" />
         </menu>
     </item>
 
