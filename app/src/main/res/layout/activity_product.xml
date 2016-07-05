@@ -46,7 +46,8 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/product_bg">
+        android:background="@color/product_bg"
+        android:transitionName="view">
 
         <FrameLayout
             android:id="@+id/bottom_fl"
@@ -63,7 +64,8 @@
                 android:background="@drawable/pink_selector"
                 android:text="放入購物車"
                 android:textColor="@color/white"
-                android:textSize="14sp" />
+                android:textSize="14sp"
+                android:transitionName="button" />
         </FrameLayout>
 
         <ScrollView
@@ -85,7 +87,8 @@
                         android:id="@+id/image_pager"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:layout_alignParentTop="true" />
+                        android:layout_alignParentTop="true"
+                        android:transitionName="image" />
 
                     <com.androidpagecontrol.PageControl
                         android:id="@+id/page_control"
@@ -158,6 +161,7 @@
                         android:maxLines="2"
                         android:textColor="@color/black_text"
                         android:textSize="18sp"
+                        android:transitionName="name"
                         tools:text="節目卡片迷你小賀卡" />
 
                 </RelativeLayout>

@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:transitionName="view"
     card_view:cardCornerRadius="2dp">
 
     <LinearLayout
@@ -16,7 +17,8 @@
             android:layout_width="match_parent"
             android:layout_height="120dp"
             android:layout_marginBottom="8dp"
-            android:scaleType="centerCrop" />
+            android:scaleType="centerCrop"
+            android:transitionName="image" />
 
         <TextView
             android:id="@+id/item_name_text"
@@ -32,6 +34,7 @@
             android:maxLines="1"
             android:textColor="@color/black_text"
             android:textSize="14sp"
+            android:transitionName="name"
             tools:text="Tsum Tsum 手機螢幕擦 多款可選" />
 
         <RelativeLayout
@@ -71,7 +74,8 @@
                 android:layout_alignParentRight="true"
                 android:background="@drawable/button_green_selector"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:transitionName="button">
 
                 <TextView
                     android:layout_width="wrap_content"
