@@ -1,12 +1,15 @@
 package com.kosbrother.mongmongwoo.category;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.view.LayoutInflater;
@@ -186,7 +189,18 @@ public class CategoryActivity extends BaseActivity {
                         intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
                         intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, categoryId);
                         intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, categoryName);
-                        getContext().startActivity(intent);
+
+                        Pair<View, String> p1 = Pair.create(view, "view");
+                        Pair<View, String> p2 = Pair.create(view.findViewById(R.id.item_name_text), "name");
+                        Pair<View, String> p3 = Pair.create(view.findViewById(R.id.add_shopping_car_ll), "button");
+                        Pair<View, String> p4 = Pair.create(view.findViewById(R.id.item_imageview), "image");
+                        ActivityOptionsCompat options = ActivityOptionsCompat.
+                                makeSceneTransitionAnimation(getActivity(), p1, p2, p3, p4);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            getContext().startActivity(intent, options.toBundle());
+                        } else {
+                            getContext().startActivity(intent);
+                        }
                     }
                 }
             });
