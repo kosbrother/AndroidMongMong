@@ -80,7 +80,7 @@ public class ShopInfoAdapter extends RecyclerView.Adapter<ShopInfoAdapter.ViewHo
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
-                        titleTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_arrow_drop_up_black_36dp, 0);
+                        titleTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_arrow_drop_up_grey_36dp, 0);
                     }
                 });
             } else {
@@ -90,7 +90,7 @@ public class ShopInfoAdapter extends RecyclerView.Adapter<ShopInfoAdapter.ViewHo
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         super.onAnimationEnd(animation);
-                        titleTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_arrow_drop_down_black_36dp, 0);
+                        titleTextView.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.mipmap.ic_arrow_drop_down_grey_36dp, 0);
                         contentTextView.setVisibility(View.GONE);
                     }
                 });

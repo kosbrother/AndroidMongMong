@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="8dp"
+    android:layout_marginBottom="8dp"
     android:background="@drawable/bg_item_shop_info"
     android:orientation="vertical">
 
@@ -11,8 +11,8 @@
         android:id="@+id/faq_title_tv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:drawableEnd="@mipmap/ic_arrow_drop_down_black_36dp"
-        android:drawableRight="@mipmap/ic_arrow_drop_down_black_36dp"
+        android:drawableEnd="@mipmap/ic_arrow_drop_down_grey_36dp"
+        android:drawableRight="@mipmap/ic_arrow_drop_down_grey_36dp"
         android:gravity="center_vertical"
         android:paddingBottom="8dp"
         android:paddingEnd="8dp"
