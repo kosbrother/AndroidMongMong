@@ -1,4 +1,4 @@
-package com.kosbrother.mongmongwoo.facebook;
+package com.kosbrother.mongmongwoo.login;
 
 import com.kosbrother.mongmongwoo.model.User;
 
@@ -15,7 +15,7 @@ public class FacebookUtil {
     public static final String EMAIL = "email";
     public static final String FAKE_EMAIL_APPEND = "@mmwooo.fake.com";
 
-    static User getUser(JSONObject fbObject) {
+    public static User getUser(JSONObject fbObject) {
         String id = "";
         String user_name = "";
         String gender = "";
@@ -33,6 +33,6 @@ public class FacebookUtil {
         } catch (JSONException e) {
             email = id + FAKE_EMAIL_APPEND;
         }
-        return new User(user_name, gender, id, String.format(PIC_URL_FORMAT, id), email);
+        return new User(user_name, gender, id, String.format(PIC_URL_FORMAT, id), email, "facebook");
     }
 }

@@ -52,9 +52,10 @@ dependencies {
     compile 'com.google.code.gson:gson:2.6'
     compile 'com.squareup.okhttp3:okhttp:3.2.0'
 
-    compile 'com.google.android.gms:play-services-maps:9.0.2'
-    compile 'com.google.android.gms:play-services-analytics:9.0.2'
-    compile 'com.google.android.gms:play-services-appindexing:9.0.2'
+    compile 'com.google.android.gms:play-services-maps:9.2.0'
+    compile 'com.google.android.gms:play-services-analytics:9.2.0'
+    compile 'com.google.android.gms:play-services-appindexing:9.2.0'
+    compile 'com.google.android.gms:play-services-auth:9.2.0'
     // Analytics
     compile 'com.google.firebase:firebase-core:9.0.2'
     compile 'com.google.firebase:firebase-crash:9.0.2'

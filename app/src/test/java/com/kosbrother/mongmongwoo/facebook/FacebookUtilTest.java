@@ -2,6 +2,7 @@ package com.kosbrother.mongmongwoo.facebook;
 
 import android.support.annotation.NonNull;
 
+import com.kosbrother.mongmongwoo.login.FacebookUtil;
 import com.kosbrother.mongmongwoo.model.User;
 
 import junit.framework.Assert;
@@ -10,12 +11,12 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Test;
 
-import static com.kosbrother.mongmongwoo.facebook.FacebookUtil.EMAIL;
-import static com.kosbrother.mongmongwoo.facebook.FacebookUtil.FAKE_EMAIL_APPEND;
-import static com.kosbrother.mongmongwoo.facebook.FacebookUtil.GENDER;
-import static com.kosbrother.mongmongwoo.facebook.FacebookUtil.ID;
-import static com.kosbrother.mongmongwoo.facebook.FacebookUtil.NAME;
-import static com.kosbrother.mongmongwoo.facebook.FacebookUtil.PIC_URL_FORMAT;
+import static com.kosbrother.mongmongwoo.login.FacebookUtil.EMAIL;
+import static com.kosbrother.mongmongwoo.login.FacebookUtil.FAKE_EMAIL_APPEND;
+import static com.kosbrother.mongmongwoo.login.FacebookUtil.GENDER;
+import static com.kosbrother.mongmongwoo.login.FacebookUtil.ID;
+import static com.kosbrother.mongmongwoo.login.FacebookUtil.NAME;
+import static com.kosbrother.mongmongwoo.login.FacebookUtil.PIC_URL_FORMAT;
 
 public class FacebookUtilTest {
 

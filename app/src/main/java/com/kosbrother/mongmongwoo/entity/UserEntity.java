@@ -2,7 +2,9 @@ package com.kosbrother.mongmongwoo.entity;
 
 import com.google.gson.annotations.SerializedName;
 
-public class UserEntity {
+import java.io.Serializable;
+
+public class UserEntity implements Serializable{
     @SerializedName("email")
     protected String email;
     @SerializedName("provider")

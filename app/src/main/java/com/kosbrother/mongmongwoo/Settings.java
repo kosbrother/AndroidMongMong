@@ -17,6 +17,7 @@ public class Settings {
     private final static String keyUserPhone = "USER_PHONE";
     private final static String keyUserFBPic = "USER_PIC";
     private final static String keyUserFBEmail = "USER_EMAIL";
+    private final static String keyUserProvider = "USER_PROVIDER";
 
     private final static String keyFirstAddShoppingCar = "IS_FIRST_ADD_SHOPPING_CAR";
 
@@ -36,8 +37,7 @@ public class Settings {
         Settings.context = context;
     }
 
-    public static void saveUserFBData(User user) {
-        clearAllUserData();
+    public static void saveUserData(User user) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(keyUserName, user.getUserName());
@@ -45,15 +45,7 @@ public class Settings {
         editor.putString(keyUserGender, user.getGender());
         editor.putString(keyUserFBPic, user.getFbPic());
         editor.putString(keyUserFBEmail, user.getEmail());
-        editor.apply();
-    }
-
-    public static void saveMmwUserData(String emailText) {
-        clearAllUserData();
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(keyUserName, emailText);
-        editor.putString(keyUserFBEmail, emailText);
+        editor.putString(keyUserProvider, user.getProvider());
         editor.apply();
     }
 
@@ -106,12 +98,7 @@ public class Settings {
     public static void clearAllUserData() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(keyUserName, "");
-        editor.putString(keyUserFBUid, "");
-        editor.putString(keyUserGender, "");
-        editor.putString(keyUserFBPic, "");
-        editor.putString(keyUserFBEmail, "");
-        editor.apply();
+        editor.clear().apply();
     }
 
     public static boolean checkIsLogIn() {
@@ -132,12 +119,17 @@ public class Settings {
 
     public static User getSavedUser() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        String provider = prefs.getString(keyUserProvider, "");
+        if (provider.isEmpty()) {
+            clearAllUserData();
+            return new User("", "", "", "", "", "");
+        }
         String userName = prefs.getString(keyUserName, "");
         String gender = prefs.getString(keyUserGender, "");
         String fb_uid = prefs.getString(keyUserFBUid, "");
         String fb_pic = prefs.getString(keyUserFBPic, "");
         String email = prefs.getString(keyUserFBEmail, "");
-        return new User(userName, gender, fb_uid, fb_pic, email);
+        return new User(userName, gender, fb_uid, fb_pic, email, provider);
     }
 
     public static void saveAndroidVersion(String versionName, boolean upToDate) {

@@ -4,7 +4,9 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
@@ -17,6 +19,7 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,7 +38,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.facebook.login.widget.LoginButton;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.kosbrother.mongmongwoo.adpters.CategoryAdapter;
 import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
@@ -45,7 +47,6 @@ import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
 import com.kosbrother.mongmongwoo.category.CategoryActivity;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
-import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.fcm.FcmPreferences;
 import com.kosbrother.mongmongwoo.fivestars.FiveStarsActivity;
 import com.kosbrother.mongmongwoo.fivestars.FiveStartsManager;
@@ -55,6 +56,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.navigationdrawer.NavigationDrawerClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.navigationdrawer.NavigationDrawerOpenEvent;
+import com.kosbrother.mongmongwoo.login.LogOutActivity;
 import com.kosbrother.mongmongwoo.login.LoginActivity;
 import com.kosbrother.mongmongwoo.model.Category;
 import com.kosbrother.mongmongwoo.model.Product;
@@ -79,10 +81,10 @@ import java.util.List;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import rx.functions.Action1;
 
-public class MainActivity extends FbLoginActivity
+public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int REQUEST_LOGIN = 111;
+    private static final int REQUEST_LOGOUT = 222;
 
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
 
@@ -98,7 +100,6 @@ public class MainActivity extends FbLoginActivity
         setNavigationView();
         setQuickBarTextSwitcher();
         setQuickBarWithScrollView();
-        setLoginButton((LoginButton) getNavigationView().getHeaderView(0).findViewById(R.id.fb_login_btn));
         getCategories();
         getAllPopularItems();
         getNewDateItems();
@@ -115,17 +116,9 @@ public class MainActivity extends FbLoginActivity
     @Override
     protected void onResume() {
         super.onResume();
+        updateUserLayout();
         invalidateOptionsMenu();
         setNoNetLayout();
-
-        User user = Settings.getSavedUser();
-        String userName = user.getUserName();
-
-        if (userName != null && !userName.isEmpty()) {
-            setUserLoinView(userName, user.getFbPic());
-        } else {
-            setUserLogoutView();
-        }
     }
 
     @Override
@@ -135,13 +128,24 @@ public class MainActivity extends FbLoginActivity
     }
 
     @Override
-    public void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
-        setUserLoinView(user_name, picUrl);
-    }
-
-    @Override
-    public void onFbLogout() {
-        setUserLogoutView();
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case REQUEST_LOGOUT:
+                if (resultCode == RESULT_OK) {
+                    Settings.clearAllUserData();
+                    updateUserLayout();
+                    Toast.makeText(this, "帳號已登出", Toast.LENGTH_SHORT).show();
+                } else if (resultCode == RESULT_CANCELED) {
+                    if (data != null) {
+                        String errorMessage = data.getStringExtra(LogOutActivity.EXTRA_STRING_ERROR_MESSAGE);
+                        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     @Override
@@ -222,6 +226,8 @@ public class MainActivity extends FbLoginActivity
             String subject = "萌萌屋 - 走在青年流行前線";
             String text = UrlCenter.GOOGLE_PLAY_SHARE;
             ShareUtil.shareText(this, title, subject, text);
+        } else if (id == R.id.nav_log_out) {
+            showLogoutAlertDialog();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -588,8 +594,10 @@ public class MainActivity extends FbLoginActivity
                 .placeholder(R.mipmap.ic_head)
                 .into((ImageView) headerView.findViewById(R.id.user_imageview));
 
-        MenuItem ordersMenuItem = getNavigationView().getMenu().findItem(R.id.nav_orders);
+        Menu menu = getNavigationView().getMenu();
+        MenuItem ordersMenuItem = menu.findItem(R.id.nav_orders);
         ordersMenuItem.setTitle("我的訂單");
+        menu.findItem(R.id.nav_log_out).setVisible(true);
     }
 
     private void setUserLogoutView() {
@@ -598,8 +606,10 @@ public class MainActivity extends FbLoginActivity
         ((TextView) headerView.findViewById(R.id.user_name_text)).setText("");
         headerView.findViewById(R.id.login_ll).setVisibility(View.VISIBLE);
 
-        MenuItem ordersMenuItem = getNavigationView().getMenu().findItem(R.id.nav_orders);
+        Menu menu = getNavigationView().getMenu();
+        MenuItem ordersMenuItem = menu.findItem(R.id.nav_orders);
         ordersMenuItem.setTitle("查詢訂單");
+        menu.findItem(R.id.nav_log_out).setVisible(false);
     }
 
     private NavigationView getNavigationView() {
@@ -641,6 +651,38 @@ public class MainActivity extends FbLoginActivity
 
     public void onMongMongWooLoginClick(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
-        startActivityForResult(intent, REQUEST_LOGIN);
+        startActivity(intent);
+    }
+
+    private void updateUserLayout() {
+        User user = Settings.getSavedUser();
+        String userName = user.getUserName();
+        if (userName != null && !userName.isEmpty()) {
+            setUserLoinView(userName, user.getFbPic());
+        } else {
+            setUserLogoutView();
+        }
+    }
+
+    private void showLogoutAlertDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("是否確定登出");
+        alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        alertDialogBuilder.setPositiveButton("登出", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Intent intent = new Intent(MainActivity.this, LogOutActivity.class);
+                intent.putExtra(LogOutActivity.EXTRA_STRING_PROVIDER, Settings.getSavedUser().getProvider());
+                startActivityForResult(intent, REQUEST_LOGOUT);
+            }
+        });
+        AlertDialog dialog = alertDialogBuilder.create();
+        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        dialog.show();
     }
 }

@@ -1,27 +1,23 @@
 package com.kosbrother.mongmongwoo.pastorders;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.GridView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
-import com.facebook.login.widget.LoginButton;
 import com.github.siyamed.shapeimageview.CircularImageView;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.adpters.PastOrdersGridAdapter;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
-import com.kosbrother.mongmongwoo.facebook.FbLoginActivity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.User;
@@ -32,7 +28,7 @@ import java.util.List;
 import jp.wasabeef.glide.transformations.CropCircleTransformation;
 import rx.functions.Action1;
 
-public class PastOrderActivity extends FbLoginActivity implements View.OnClickListener {
+public class PastOrderActivity extends AppCompatActivity {
 
     User user;
 
@@ -67,18 +63,6 @@ public class PastOrderActivity extends FbLoginActivity implements View.OnClickLi
                 .into(userImage);
         userNameText.setText(user.getUserName());
 
-        final String fb_uid = Settings.getSavedUser().getUid();
-        LoginButton fbLoginButton = (LoginButton) findViewById(R.id.fb_login_btn);
-        View mmwLoginTextView = findViewById(R.id.mmw_login_tv);
-        if (fb_uid.isEmpty()) {
-            fbLoginButton.setVisibility(View.GONE);
-            mmwLoginTextView.setVisibility(View.VISIBLE);
-            mmwLoginTextView.setOnClickListener(this);
-        } else {
-            mmwLoginTextView.setVisibility(View.GONE);
-            fbLoginButton.setVisibility(View.VISIBLE);
-            setLoginButton(fbLoginButton);
-        }
         getOrders();
     }
 
@@ -100,23 +84,13 @@ public class PastOrderActivity extends FbLoginActivity implements View.OnClickLi
         return super.onOptionsItemSelected(menuItem);
     }
 
-    @Override
-    public void onFbRequestCompleted(String fb_uid, String user_name, String picUrl) {
-
-    }
-
-    @Override
-    public void onFbLogout() {
-        finish();
-    }
-
     private void getOrders() {
         Webservice.getOrdersByEmail(user.getEmail(),
                 new Action1<ResponseEntity<List<PastOrder>>>() {
                     @Override
                     public void call(ResponseEntity<List<PastOrder>> listResponseEntity) {
                         List<PastOrder> pastOrders = listResponseEntity.getData();
-                        if (pastOrders != null && pastOrders.size() > 0) {
+                        if (pastOrders != null && pastOrders.size() >= 0) {
                             PastOrderActivity.this.pastOrders.addAll(pastOrders);
                             onGetDataResult();
                         } else {
@@ -145,32 +119,4 @@ public class PastOrderActivity extends FbLoginActivity implements View.OnClickLi
         }
     }
 
-    @Override
-    public void onClick(View v) {
-        if (v.getId() == R.id.mmw_login_tv) {
-            showLogoutAlertDialog();
-        }
-    }
-
-    private void showLogoutAlertDialog() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-        alertDialogBuilder.setMessage("是否確定要登出");
-        alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-        alertDialogBuilder.setPositiveButton("登出", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-                Settings.clearAllUserData();
-                finish();
-            }
-        });
-        AlertDialog dialog = alertDialogBuilder.create();
-        dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        dialog.show();
-    }
 }

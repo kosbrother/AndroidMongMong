@@ -19,19 +19,46 @@
         android:textSize="14sp"
         android:textStyle="bold" />
 
-    <com.facebook.login.widget.LoginButton xmlns:facebook="http://schemas.android.com/apk/res-auto"
+    <com.google.android.gms.common.SignInButton
+        android:id="@+id/google_sign_in_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp" />
+
+    <LinearLayout
         android:id="@+id/fb_login_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        facebook:com_facebook_login_text="使用Facebook快速登入"
-        facebook:com_facebook_logout_text="登出" />
+        android:background="@drawable/com_facebook_button_background"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginBottom="1dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginStart="1dp"
+            android:layout_marginTop="1dp"
+            android:padding="8dp"
+            android:src="@drawable/com_facebook_button_icon" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:padding="8dp"
+            android:text="使用Facebook快速登入"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -74,13 +101,13 @@
 
     <Button
         android:id="@+id/login_btn"
-        android:onClick="onLoginClick"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:background="@drawable/button_green_selector"
+        android:onClick="onMmwLoginClick"
         android:text="登入"
         android:textColor="@color/white"
         android:textStyle="bold" />
@@ -95,8 +122,8 @@
         <TextView
             android:id="@+id/forget_pw_tv"
             android:layout_width="wrap_content"
-            android:onClick="onForgetPasswordClick"
             android:layout_height="wrap_content"
+            android:onClick="onForgetPasswordClick"
             android:text="忘記密碼？"
             android:textColor="@color/green_text"
             android:textSize="14sp"
@@ -106,9 +133,9 @@
             android:id="@+id/register_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:onClick="onRegisterClick"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
+            android:onClick="onRegisterClick"
             android:text="註冊新帳號"
             android:textColor="@color/green_text"
             android:textSize="14sp"

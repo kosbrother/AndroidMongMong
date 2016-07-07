@@ -13,7 +13,7 @@ import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.facebook.FacebookUtil;
+import com.kosbrother.mongmongwoo.login.FacebookUtil;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep2EnterEvent;
 import com.kosbrother.mongmongwoo.model.Store;
