@@ -15,6 +15,22 @@
       },
       "oauth_client": [
         {
+          "client_id": "455561524983-n3o7afqm660623nho0kjaq73qa6v591n.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kosbrother.mongmongwoo",
+            "certificate_hash": "28E03F20A8EDECA961D90E5CDED15B3FBFD8EC72"
+          }
+        },
+        {
+          "client_id": "455561524983-f74bqf2dd240mc52ap05lufdhc6rlukb.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kosbrother.mongmongwoo",
+            "certificate_hash": "947C044B1D5340A78B42C7844732F2611703B040"
+          }
+        },
+        {
           "client_id": "455561524983-1cvcdsnn3bog52i37hbklgablqu0tgmu.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
