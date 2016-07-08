@@ -4,7 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.view.Window;
 
-public class BaseNoTitleDialog extends Dialog{
+public class BaseNoTitleDialog extends Dialog {
     public BaseNoTitleDialog(Context context) {
         super(context);
         requestWindowFeature(Window.FEATURE_NO_TITLE);

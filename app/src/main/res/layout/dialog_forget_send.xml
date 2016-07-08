@@ -10,13 +10,13 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="48dp"
         android:background="@color/green_text"
-        android:textStyle="bold"
         android:gravity="center_horizontal"
         android:paddingBottom="12dp"
         android:paddingTop="12dp"
         android:text="重設密碼"
         android:textColor="@color/white"
-        android:textSize="14sp" />
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -34,16 +34,17 @@
         android:textColor="@color/black_text"
         android:textSize="14sp" />
 
-    <Button
+    <TextView
         android:id="@+id/finish_btn"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginBottom="24dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:textStyle="bold"
-        android:textSize="14sp"
         android:background="@drawable/button_green_selector"
+        android:gravity="center"
         android:text="完成"
-        android:textColor="@color/white" />
+        android:textColor="@color/white"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 </LinearLayout>
