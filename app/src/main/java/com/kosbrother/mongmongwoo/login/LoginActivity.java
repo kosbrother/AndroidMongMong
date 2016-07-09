@@ -3,14 +3,11 @@ package com.kosbrother.mongmongwoo.login;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.common.SignInButton;
 import com.kosbrother.mongmongwoo.R;
 
 public class LoginActivity extends BaseLoginActivity implements
@@ -30,12 +27,8 @@ public class LoginActivity extends BaseLoginActivity implements
         setContentView(R.layout.activity_login);
         initShowPasswordHelper();
 
-        findViewById(R.id.fb_login_btn).setOnClickListener(this);
-
-        SignInButton signInButton = (SignInButton) findViewById(R.id.google_sign_in_btn);
-        signInButton.setOnClickListener(this);
-        signInButton.setColorScheme(SignInButton.COLOR_DARK);
-        setGoogleSignInButtonText(signInButton, "使用Google帳戶登入");
+        setGoogleSignInButton();
+        setFacebookButton();
 
         mPresenter = new LoginPresenter(this);
     }
@@ -51,7 +44,9 @@ public class LoginActivity extends BaseLoginActivity implements
     public void onMmwLoginClick(View view) {
         EditText emailEditText = (EditText) findViewById(R.id.email_et);
         EditText passwordEditText = (EditText) findViewById(R.id.password_et);
+        assert emailEditText != null;
         String email = emailEditText.getText().toString();
+        assert passwordEditText != null;
         String password = passwordEditText.getText().toString();
         mPresenter.onMmwLoginClick(email, password);
     }
@@ -85,6 +80,12 @@ public class LoginActivity extends BaseLoginActivity implements
     @Override
     public void showRegisterDialog() {
         RegisterDialog dialog = new RegisterDialog(this);
+        dialog.setOnRegisterSuccessListener(new RegisterDialog.OnRegisterSuccessListener() {
+            @Override
+            public void onRegisterSuccess(String email) {
+                mPresenter.onSignInResultOK(email);
+            }
+        });
         dialog.show();
     }
 
@@ -137,18 +138,16 @@ public class LoginActivity extends BaseLoginActivity implements
         }
     }
 
-    private void setGoogleSignInButtonText(SignInButton signInButton, String buttonText) {
-        // Find the TextView that is inside of the SignInButton and set its text
-        for (int i = 0; i < signInButton.getChildCount(); i++) {
-            View v = signInButton.getChildAt(i);
-
-            if (v instanceof TextView) {
-                TextView tv = (TextView) v;
-                tv.setText(buttonText);
-                tv.setGravity(Gravity.START | Gravity.CENTER_VERTICAL);
-                tv.setTextSize(14);
-                return;
-            }
-        }
+    private void setGoogleSignInButton() {
+        View signInButton = findViewById(R.id.google_sign_in_btn);
+        assert signInButton != null;
+        signInButton.setOnClickListener(this);
     }
+
+    private void setFacebookButton() {
+        View fbLoginButton = findViewById(R.id.fb_login_btn);
+        assert fbLoginButton != null;
+        fbLoginButton.setOnClickListener(this);
+    }
+
 }

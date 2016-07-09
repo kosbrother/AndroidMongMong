@@ -1,5 +1,6 @@
 package com.kosbrother.mongmongwoo.login;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.view.View;
@@ -9,13 +10,24 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.R;
+import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.model.User;
 
 import rx.functions.Action1;
 
 public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickListener {
+
+    private OnRegisterSuccessListener listener = new OnRegisterSuccessListener() {
+        @Override
+        public void onRegisterSuccess(String email) {
+
+        }
+    };
+
     private Toast toast;
+    private ProgressDialog progressDialog;
 
     public RegisterDialog(Context context) {
         super(context);
@@ -43,7 +55,7 @@ public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickLis
                 (CheckBox) findViewById(R.id.show_pw_cb),
                 (EditText) findViewById(R.id.password_et));
 
-        findViewById(R.id.register_btn).setOnClickListener(this);
+        findViewById(R.id.register_tv).setOnClickListener(this);
     }
 
     @Override
@@ -51,21 +63,31 @@ public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickLis
         onRegisterClick();
     }
 
+    public void setOnRegisterSuccessListener(OnRegisterSuccessListener listener) {
+        this.listener = listener;
+    }
+
     private void onRegisterClick() {
         EditText emailEditText = (EditText) findViewById(R.id.email_et);
         EditText passwordEditText = (EditText) findViewById(R.id.password_et);
-        final String emailText = emailEditText.getText().toString().trim();
-        final String passwordText = passwordEditText.getText().toString().trim();
+        final String email = emailEditText.getText().toString().trim();
+        final String password = passwordEditText.getText().toString().trim();
 
         EmailPasswordChecker checker = new EmailPasswordChecker();
-        checker.check(emailText, passwordText, new EmailPasswordChecker.OnCheckResultListener() {
+        checker.check(email, password, new EmailPasswordChecker.OnCheckResultListener() {
             @Override
             public void onCheckValid() {
-                Webservice.register(emailText, passwordText, new Action1<ResponseEntity<String>>() {
+                progressDialog = ProgressDialog.show(getContext(), "註冊中", "請稍後...", true);
+                Webservice.register(email, password, new Action1<ResponseEntity<String>>() {
                     @Override
                     public void call(ResponseEntity<String> stringResponseEntity) {
+                        progressDialog.dismiss();
                         String data = stringResponseEntity.getData();
                         if (data != null) {
+                            User user = new User(email, "", "", "", email, "mmw");
+                            Settings.saveUserData(user);
+                            listener.onRegisterSuccess(email);
+                            listener = null;
                             showAToast("註冊成功");
                             dismiss();
                         } else {
@@ -89,5 +111,10 @@ public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickLis
         }
         toast = Toast.makeText(getContext(), message, Toast.LENGTH_SHORT);
         toast.show();
+    }
+
+    public interface OnRegisterSuccessListener {
+
+        void onRegisterSuccess(String email);
     }
 }
