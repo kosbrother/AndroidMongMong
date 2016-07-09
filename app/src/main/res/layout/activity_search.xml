@@ -1,271 +1,105 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="10dp"
-        android:background="@drawable/item_product_background"
-        android:gravity="center_vertical"
-        >
-        <EditText
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            />
-        <ImageButton
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/fb_button_selector"
-            android:src="@mipmap/icon_search_2"
-            />
-    </LinearLayout>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:orientation="vertical">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_margin="10dp"
-        >
+        android:orientation="vertical">
 
-        <TextView
+        <android.support.v7.widget.CardView
+            android:id="@+id/query_history_cv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="20dp"
-            android:text="商品分類"
-            />
+            android:layout_marginBottom="8dp"
+            android:background="@color/white">
 
-        <LinearLayout
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="12dp"
+                    android:text="搜尋紀錄"
+                    android:textColor="@color/green_text"
+                    android:textSize="12sp" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/query_history_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:overScrollMode="never" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:orientation="vertical">
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:background="#f2f2f2" />
+
+                    <TextView
+                        android:id="@+id/more_query_history_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/gray_selector"
+                        android:gravity="center"
+                        android:padding="8dp"
+                        android:text="查看更多"
+                        android:textColor="#999999"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:weightSum="3"
-            >
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/white">
 
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                card_view:cardBackgroundColor="#FFFFFF"
-                card_view:cardUseCompatPadding="true"
-                card_view:cardElevation="6dp"
-                card_view:cardCornerRadius="3dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:selectableItemBackground"
-                >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
                 <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginTop="12dp"
+                    android:text="熱門搜索"
+                    android:textColor="@color/green_text"
+                    android:textSize="12sp" />
+
+                <org.apmem.tools.layouts.FlowLayout
+                    android:id="@+id/hot_keyword_container_fl"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="新品上架"
-                    android:gravity="center"
-                    android:textSize="16dp"
-                    />
-            </android.support.v7.widget.CardView>
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:orientation="horizontal" />
+            </LinearLayout>
 
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                card_view:cardBackgroundColor="#FFFFFF"
-                card_view:cardUseCompatPadding="true"
-                card_view:cardElevation="6dp"
-                card_view:cardCornerRadius="3dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:selectableItemBackground"
-                >
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="限時優惠"
-                    android:gravity="center"
-                    android:textSize="16dp"
-                    />
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                card_view:cardBackgroundColor="#FFFFFF"
-                card_view:cardUseCompatPadding="true"
-                card_view:cardElevation="6dp"
-                card_view:cardCornerRadius="3dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:selectableItemBackground"
-                >
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="小編推薦"
-                    android:gravity="center"
-                    android:textSize="16dp"
-                    />
-            </android.support.v7.widget.CardView>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:weightSum="3"
-            >
-
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                card_view:cardBackgroundColor="#FFFFFF"
-                card_view:cardUseCompatPadding="true"
-                card_view:cardElevation="6dp"
-                card_view:cardCornerRadius="3dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:selectableItemBackground"
-                >
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="生日禮物"
-                    android:gravity="center"
-                    android:textSize="16dp"
-                    />
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                card_view:cardBackgroundColor="#FFFFFF"
-                card_view:cardUseCompatPadding="true"
-                card_view:cardElevation="6dp"
-                card_view:cardCornerRadius="3dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:selectableItemBackground"
-                >
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="日韓精選"
-                    android:gravity="center"
-                    android:textSize="16dp"
-                    />
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                card_view:cardBackgroundColor="#FFFFFF"
-                card_view:cardUseCompatPadding="true"
-                card_view:cardElevation="6dp"
-                card_view:cardCornerRadius="3dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:selectableItemBackground"
-                >
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="可愛小物"
-                    android:gravity="center"
-                    android:textSize="16dp"
-                    />
-            </android.support.v7.widget.CardView>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="60dp"
-            android:weightSum="3"
-            >
-
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                card_view:cardBackgroundColor="#FFFFFF"
-                card_view:cardUseCompatPadding="true"
-                card_view:cardElevation="6dp"
-                card_view:cardCornerRadius="3dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:selectableItemBackground"
-                >
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="文具用品"
-                    android:gravity="center"
-                    android:textSize="16dp"
-                    />
-            </android.support.v7.widget.CardView>
-
-            <android.support.v7.widget.CardView
-                xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                card_view:cardBackgroundColor="#FFFFFF"
-                card_view:cardUseCompatPadding="true"
-                card_view:cardElevation="6dp"
-                card_view:cardCornerRadius="3dp"
-                android:clickable="true"
-                android:focusable="true"
-                android:foreground="?android:selectableItemBackground"
-                >
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:text="生活用品"
-                    android:gravity="center"
-                    android:textSize="16dp"
-                    />
-            </android.support.v7.widget.CardView>
-
-
-        </LinearLayout>
-
-
+        </android.support.v7.widget.CardView>
     </LinearLayout>
-
-
-</LinearLayout>
+</ScrollView>

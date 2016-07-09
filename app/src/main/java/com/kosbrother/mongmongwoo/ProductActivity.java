@@ -30,6 +30,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductViewEvent
 import com.kosbrother.mongmongwoo.model.Photo;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectManager;
+import com.kosbrother.mongmongwoo.search.SearchActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.CustomerServiceUtil;
@@ -166,6 +167,9 @@ public class ProductActivity extends BaseActivity {
                 String title = "分享商品";
                 String subject = theProduct.getName();
                 ShareUtil.shareText(this, title, subject, text);
+                return true;
+            case R.id.search:
+                startActivity(new Intent(this, SearchActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(menuItem);

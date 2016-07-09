@@ -26,4 +26,6 @@
     <string name="submit">送出</string>
     <string name="choose_store">選擇門市</string>
 
+    <string name="search_hint">搜尋您的萌萌商品</string>
+
 </resources>

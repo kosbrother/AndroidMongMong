@@ -64,6 +64,7 @@ import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
 import com.kosbrother.mongmongwoo.pastorders.QueryPastOrdersActivity;
+import com.kosbrother.mongmongwoo.search.SearchActivity;
 import com.kosbrother.mongmongwoo.shopinfo.ShopInfoActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
@@ -194,6 +195,15 @@ public class MainActivity extends AppCompatActivity
             countTextView.setVisibility(View.VISIBLE);
         }
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.search) {
+            startActivity(new Intent(this, SearchActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @SuppressWarnings("StatementWithEmptyBody")
