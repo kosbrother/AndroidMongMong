@@ -13,10 +13,13 @@ import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.login.FacebookUtil;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep2EnterEvent;
+import com.kosbrother.mongmongwoo.login.FacebookUtil;
 import com.kosbrother.mongmongwoo.model.Store;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class PurchaseFragment2 extends Fragment {
 
@@ -56,21 +59,17 @@ public class PurchaseFragment2 extends Fragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                // save to activity order store and shipping name, phone
-                if (selectStoreButton.getText().equals(getString(R.string.choose_store))) {
-                    Toast.makeText(getActivity(), "請選擇寄件的商店", Toast.LENGTH_SHORT).show();
+                String shipName = shippingNameEditText.getText().toString().trim();
+                String shipPhone = shippingPhoneEditText.getText().toString().trim();
+                String shipEmail = getUserInputEmailOrFbEmail();
+
+                String validateResult = validate(shipName, shipPhone, shipEmail);
+                if (!validateResult.isEmpty()) {
+                    Toast.makeText(getActivity(), validateResult, Toast.LENGTH_SHORT).show();
                     return;
                 }
-                if (isLoginWithValidEmail() && nameOrPhoneEmpty()) {
-                    Toast.makeText(getActivity(), "收件人名稱跟電話不可空白", Toast.LENGTH_SHORT).show();
-                } else if (!isLoginWithValidEmail() && nameOrPhoneOrEmailEmpty()) {
-                    Toast.makeText(getActivity(), "收件人名稱、電話跟Email不可空白", Toast.LENGTH_SHORT).show();
-                } else {
-                    String shipName = shippingNameEditText.getText().toString().trim();
-                    String shipPhone = shippingPhoneEditText.getText().toString().trim();
-                    String shipEmail = getUserInputEmailOrFbEmail();
-                    mCallback.onStep2NextButtonClick(shipName, shipPhone, shipEmail);
-                }
+
+                mCallback.onStep2NextButtonClick(shipName, shipPhone, shipEmail);
             }
         });
         selectStoreButton.setOnClickListener(new View.OnClickListener() {
@@ -95,18 +94,28 @@ public class PurchaseFragment2 extends Fragment {
         GAManager.sendEvent(new CheckoutStep2EnterEvent());
     }
 
+    private String validate(String shipName, String shipPhone, String shipEmail) {
+        if (selectStoreButton.getText().equals(getString(R.string.choose_store))) {
+            return "請選擇寄件的商店";
+        }
+        if (isLoginWithValidEmail() && (shipName.isEmpty() || shipPhone.isEmpty())) {
+            return "收件人名稱跟電話不可空白";
+        } else if (!isLoginWithValidEmail() && (shipName.isEmpty() || shipPhone.isEmpty() || shipEmail.isEmpty())) {
+            return "收件人名稱、電話跟Email不可空白";
+        }
+        String pattern = "^(\\(?\\+?886\\)?(\\s|-)?9\\d{2}|09\\d{2})(\\s|-)?\\d{3}(\\s|-)?\\d{3}$";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(shipPhone);
+        if (m.matches() && shipPhone.length() == 10) {
+            return "";
+        } else {
+            return "請輸入正確的手機號碼";
+        }
+    }
+
     private boolean isLoginWithValidEmail() {
         String email = Settings.getEmail();
         return Settings.checkIsLogIn() && (!email.isEmpty() && !email.contains(FacebookUtil.FAKE_EMAIL_APPEND));
-    }
-
-    private boolean nameOrPhoneEmpty() {
-        return shippingNameEditText.getText().toString().trim().isEmpty()
-                || shippingPhoneEditText.getText().toString().trim().isEmpty();
-    }
-
-    private boolean nameOrPhoneOrEmailEmpty() {
-        return nameOrPhoneEmpty() || shippingEmailEditText.getText().toString().trim().isEmpty();
     }
 
     private String getUserInputEmailOrFbEmail() {
