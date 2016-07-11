@@ -23,6 +23,11 @@ import java.util.regex.Pattern;
 
 public class PurchaseFragment2 extends Fragment {
 
+    public static final Pattern VALID_CELL_PHONE_REGEX =
+            Pattern.compile("^(\\(?\\+?886\\)?(\\s|-)?9\\d{2}|09\\d{2})(\\s|-)?\\d{3}(\\s|-)?\\d{3}$");
+    public static final Pattern VALID_EMAIL_ADDRESS_REGEX =
+            Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
+
     private OnStep2ButtonClickListener mCallback;
 
     private Button selectStoreButton;
@@ -59,9 +64,9 @@ public class PurchaseFragment2 extends Fragment {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String shipName = shippingNameEditText.getText().toString().trim();
-                String shipPhone = shippingPhoneEditText.getText().toString().trim();
-                String shipEmail = getUserInputEmailOrFbEmail();
+                String shipName = shippingNameEditText.getText().toString().trim().replaceAll(" ", "");
+                String shipPhone = shippingPhoneEditText.getText().toString().trim().replaceAll(" ", "");
+                String shipEmail = getUserInputEmailOrFbEmail().replaceAll(" ", "");
 
                 String validateResult = validate(shipName, shipPhone, shipEmail);
                 if (!validateResult.isEmpty()) {
@@ -99,18 +104,22 @@ public class PurchaseFragment2 extends Fragment {
             return "請選擇寄件的商店";
         }
         if (isLoginWithValidEmail() && (shipName.isEmpty() || shipPhone.isEmpty())) {
-            return "收件人名稱跟電話不可空白";
+            return "收件人名稱跟手機電話不可空白";
         } else if (!isLoginWithValidEmail() && (shipName.isEmpty() || shipPhone.isEmpty() || shipEmail.isEmpty())) {
-            return "收件人名稱、電話跟Email不可空白";
+            return "收件人名稱、手機電話跟email不可空白";
         }
-        String pattern = "^(\\(?\\+?886\\)?(\\s|-)?9\\d{2}|09\\d{2})(\\s|-)?\\d{3}(\\s|-)?\\d{3}$";
-        Pattern r = Pattern.compile(pattern);
-        Matcher m = r.matcher(shipPhone);
-        if (m.matches() && shipPhone.length() == 10) {
-            return "";
-        } else {
-            return "請輸入正確的手機號碼";
+
+        Matcher cellPhoneMatcher = VALID_CELL_PHONE_REGEX.matcher(shipPhone);
+        if (!cellPhoneMatcher.matches()) {
+            return "請輸入正確的手機電話";
         }
+
+        Matcher emailMatcher = VALID_EMAIL_ADDRESS_REGEX.matcher(shipEmail);
+        if (!emailMatcher.matches()) {
+            return "請輸入正確的email";
+        }
+
+        return "";
     }
 
     private boolean isLoginWithValidEmail() {
