@@ -103,7 +103,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
-                    android:text="電        話"
+                    android:text="@string/cell_phone"
                     android:textColor="@color/black_text"
                     android:textSize="14sp" />
 

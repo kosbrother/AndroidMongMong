@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            android:text="@string/phone"
+            android:text="@string/cell_phone"
             android:textColor="@color/black_text"
             android:textSize="16sp" />
 
@@ -45,7 +45,7 @@
             android:layout_width="match_parent"
             android:layout_height="32dp"
             android:background="@drawable/edittext_selector"
-            android:hint="@string/phone_hint"
+            android:hint="@string/cell_phone_hint"
             android:inputType="phone"
             android:paddingEnd="12dp"
             android:paddingLeft="12dp"
