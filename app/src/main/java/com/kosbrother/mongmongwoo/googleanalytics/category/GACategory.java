@@ -15,4 +15,5 @@ public interface GACategory {
     String CUSTOMER_SERVICE = "Customer_service";
     String EXCEPTION = "Exception";
     String ERROR = "error";
+    String SEARCH = "Search";
 }

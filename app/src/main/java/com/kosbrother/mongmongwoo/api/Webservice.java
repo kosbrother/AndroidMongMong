@@ -654,6 +654,133 @@ public class Webservice {
                 });
     }
 
+    public static void getSearchItems(
+            final String query, final int page,
+            Action1<? super List<Product>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(SearchApi.getSearchItems(query, page));
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .map(new Func1<String, ResponseEntity<List<Product>>>() {
+                    @Override
+                    public ResponseEntity<List<Product>> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<List<Product>>>() {
+                        }.getType();
+                        return new Gson().fromJson(json, listType);
+                    }
+                })
+                .map(new Func1<ResponseEntity<List<Product>>, List<Product>>() {
+                    @Override
+                    public List<Product> call(ResponseEntity<List<Product>> listResponseEntity) {
+                        List<Product> data = listResponseEntity.getData();
+                        if (data == null) {
+                            handleError(listResponseEntity.getError(), "getSearchItemsError");
+                        }
+                        return data;
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        handleThrowable(throwable, "getSearchItemsException");
+                    }
+                });
+    }
+
+    public static void getSuggestions(
+            Action1<? super List<String>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(SearchApi.getSuggestions());
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .map(new Func1<String, ResponseEntity<List<String>>>() {
+                    @Override
+                    public ResponseEntity<List<String>> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<List<String>>>() {
+                        }.getType();
+                        return new Gson().fromJson(json, listType);
+                    }
+                })
+                .map(new Func1<ResponseEntity<List<String>>, List<String>>() {
+                    @Override
+                    public List<String> call(ResponseEntity<List<String>> listResponseEntity) {
+                        List<String> data = listResponseEntity.getData();
+                        if (data == null) {
+                            handleError(listResponseEntity.getError(), "getSuggestionsError");
+                        }
+                        return data;
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        handleThrowable(throwable, "getSuggestionsException");
+                    }
+                });
+    }
+
+    public static void getHotKeywords(
+            Action1<? super List<String>> onNextAction) {
+        Observable.create(new Observable.OnSubscribe<String>() {
+            @Override
+            public void call(Subscriber<? super String> subscriber) {
+                try {
+                    subscriber.onNext(SearchApi.getHotKeywords());
+                    subscriber.onCompleted();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    subscriber.onError(e);
+                }
+            }
+        })
+                .map(new Func1<String, ResponseEntity<List<String>>>() {
+                    @Override
+                    public ResponseEntity<List<String>> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<List<String>>>() {
+                        }.getType();
+                        return new Gson().fromJson(json, listType);
+                    }
+                })
+                .map(new Func1<ResponseEntity<List<String>>, List<String>>() {
+                    @Override
+                    public List<String> call(ResponseEntity<List<String>> listResponseEntity) {
+                        List<String> data = listResponseEntity.getData();
+                        if (data == null) {
+                            handleError(listResponseEntity.getError(), "getHotKeywordsError");
+                        }
+                        return data;
+                    }
+                })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(onNextAction, new Action1<Throwable>() {
+                    @Override
+                    public void call(Throwable throwable) {
+                        handleThrowable(throwable, "getHotKeywordsException");
+                    }
+                });
+    }
+
     private static void handleThrowable(Throwable throwable, String exceptionTitle) {
         throwable.printStackTrace();
         GAManager.sendException(new ExceptionEvent(exceptionTitle, throwable.getMessage()));

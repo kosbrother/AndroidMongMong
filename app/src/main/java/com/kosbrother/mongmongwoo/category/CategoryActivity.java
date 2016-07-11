@@ -36,6 +36,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.indexgridcart.IndexGridCartAddToCartEvent;
 import com.kosbrother.mongmongwoo.model.Category;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.search.SearchActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.EndlessScrollListener;
@@ -104,6 +105,15 @@ public class CategoryActivity extends BaseActivity {
             countTextView.setVisibility(View.VISIBLE);
         }
         return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == R.id.search) {
+            startActivity(new Intent(this, SearchActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setViewPagerWithTabLayout(String categoryName, int categoryId, int sortIndex) {

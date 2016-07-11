@@ -27,9 +27,11 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.notification.Notificatio
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductAddToCartEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductAddToCollectionEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductViewEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.search.SearchEnterEvent;
 import com.kosbrother.mongmongwoo.model.Photo;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectManager;
+import com.kosbrother.mongmongwoo.search.SearchActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.CustomerServiceUtil;
@@ -50,6 +52,7 @@ public class ProductActivity extends BaseActivity {
     public static final String EXTRA_STRING_CATEGORY_NAME = "EXTRA_STRING_CATEGORY_NAME";
     public static final String EXTRA_STRING_SLUG = "EXTRA_STRING_SLUG";
     public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
+    public static final String EXTRA_BOOLEAN_FROM_SEARCH = "EXTRA_BOOLEAN_FROM_SEARCH";
 
     private Button addCarButton;
 
@@ -166,6 +169,9 @@ public class ProductActivity extends BaseActivity {
                 String title = "分享商品";
                 String subject = theProduct.getName();
                 ShareUtil.shareText(this, title, subject, text);
+                return true;
+            case R.id.search:
+                startActivity(new Intent(this, SearchActivity.class));
                 return true;
             default:
                 return super.onOptionsItemSelected(menuItem);
@@ -289,9 +295,12 @@ public class ProductActivity extends BaseActivity {
 
     @SuppressWarnings("ConstantConditions")
     private void onGetProductResult() {
-        GAManager.sendEvent(new ProductViewEvent(theProduct.getName()));
         startAppIndexIfCategoryNameValid();
+
+        GAManager.sendEvent(new ProductViewEvent(theProduct.getName()));
         sendPromoOpenedEventIfFromNotification();
+        sendSearchEnterEventIfFromSearch();
+
         setProductView();
         setViewPagerAndPageControl();
         setAddCartButton();
@@ -311,6 +320,12 @@ public class ProductActivity extends BaseActivity {
     private void sendPromoOpenedEventIfFromNotification() {
         if (isFromNotification()) {
             GAManager.sendEvent(new NotificationPromoOpenedEvent(theProduct.getName()));
+        }
+    }
+
+    private void sendSearchEnterEventIfFromSearch() {
+        if (getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_SEARCH, false)) {
+            GAManager.sendEvent(new SearchEnterEvent(theProduct.getName()));
         }
     }
 

@@ -27,6 +27,7 @@
 
     <color name="fab_blue">#03a9f4</color>
     <color name="fab_yellow">#ffc400</color>
+    <color name="orange">#f5a623</color>
 
     <color name="google_button_background_color">#4284f3</color>
     <color name="google_button_background_color_focus">#4284f3</color>

@@ -2,7 +2,6 @@ package com.kosbrother.mongmongwoo.shoppingcart;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,7 +13,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -39,6 +37,7 @@ import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.PostProduct;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Store;
+import com.kosbrother.mongmongwoo.utils.KeyboardUtil;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -193,8 +192,7 @@ public class ShoppingCarActivity extends BaseActivity implements
 
         View view = getCurrentFocus();
         if (view != null) {
-            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            KeyboardUtil.hide(this, view);
         }
 
         startStep3();
