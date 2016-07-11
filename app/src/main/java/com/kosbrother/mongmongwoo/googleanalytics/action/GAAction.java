@@ -10,4 +10,5 @@ public interface GAAction {
     String CLICK = "click";
     String ENTER = "enter";
     String CONFIRM = "confirm";
+    String SUBMIT = "submit";
 }

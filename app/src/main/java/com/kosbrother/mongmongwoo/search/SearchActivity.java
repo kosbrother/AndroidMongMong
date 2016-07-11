@@ -27,6 +27,8 @@ import com.kosbrother.mongmongwoo.ProductActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
 import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.search.SearchSubmitQueryEvent;
 import com.kosbrother.mongmongwoo.model.Category;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
@@ -184,6 +186,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         this.products = new ArrayList<>();
         queryHelper.saveRecentQuery(query);
         searchView.setQuery(query, false);
+        GAManager.sendEvent(new SearchSubmitQueryEvent(query));
         KeyboardUtil.hide(this, searchView);
 
         setContentView(R.layout.loading_no_toolbar);
@@ -249,6 +252,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
                 intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, Category.Type.ALL.getId());
                 intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, Category.Type.ALL.getName());
+                intent.putExtra(ProductActivity.EXTRA_BOOLEAN_FROM_SEARCH, true);
 
                 Pair<View, String> p1 = Pair.create(view, "view");
                 Pair<View, String> p2 = Pair.create(view.findViewById(R.id.item_name_text), "name");
