@@ -14,13 +14,11 @@ import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.PastOrderListAdapter;
 import com.kosbrother.mongmongwoo.api.Webservice;
-import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPickUpOpenedEvent;
-import com.kosbrother.mongmongwoo.model.PastOrder;
-import com.kosbrother.mongmongwoo.model.PostProduct;
+import com.kosbrother.mongmongwoo.model.QueryOrder;
 
 import java.util.List;
 
@@ -51,14 +49,11 @@ public class PastOrderDetailActivity extends BaseActivity {
         setToolbar();
 
         int orderId = getIntent().getIntExtra(EXTRA_INT_ORDER_ID, 0);
-        Webservice.getPastOrderByOrderId(orderId, new Action1<ResponseEntity<PastOrder>>() {
+        Webservice.getPastOrderByOrderId(orderId, new Action1<QueryOrder>() {
             @Override
-            public void call(ResponseEntity<PastOrder> pastOrderResponseEntity) {
-                PastOrder result = pastOrderResponseEntity.getData();
-                if (result == null) {
-                    GAManager.sendError("getPastOrderByOrderIdError", pastOrderResponseEntity.getError());
-                } else {
-                    onGetPostOrderResult(result);
+            public void call(QueryOrder data) {
+                if (data != null) {
+                    onGetPostOrderResult(data);
                 }
             }
         });
@@ -77,7 +72,7 @@ public class PastOrderDetailActivity extends BaseActivity {
         super.onBackPressed();
     }
 
-    private void onGetPostOrderResult(PastOrder pastOrder) {
+    private void onGetPostOrderResult(QueryOrder pastOrder) {
         setContentView(R.layout.activity_order_detail);
         setToolbar();
         initCsBottomSheet();
@@ -107,10 +102,11 @@ public class PastOrderDetailActivity extends BaseActivity {
 
     private void setOrderStatusLayout(String status) {
         FrameLayout container = (FrameLayout) findViewById(R.id.order_status_container);
+        assert container != null;
         container.addView(OrderStatusLayoutFactory.create(this, status));
     }
 
-    private void setRecyclerView(List<PostProduct> pastOrderProducts) {
+    private void setRecyclerView(List<QueryOrder.PastItemEntity> pastOrderProducts) {
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(PastOrderDetailActivity.this);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -119,7 +115,7 @@ public class PastOrderDetailActivity extends BaseActivity {
         recyclerView.setAdapter(adapter);
     }
 
-    private void setPastOrderData(PastOrder pastOrder) {
+    private void setPastOrderData(QueryOrder pastOrder) {
         String shipFeeString = Integer.toString(pastOrder.getShipFee());
         shippingPriceText.setText(shipFeeString);
 

@@ -10,6 +10,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.exception.ExceptionEvent
 import com.kosbrother.mongmongwoo.model.Category;
 import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.model.QueryOrder;
 import com.kosbrother.mongmongwoo.model.Road;
 import com.kosbrother.mongmongwoo.model.Store;
 import com.kosbrother.mongmongwoo.model.Town;
@@ -268,7 +269,7 @@ public class Webservice {
 
     public static void getPastOrderByOrderId(
             final int orderId,
-            Action1<? super ResponseEntity<PastOrder>> onNextAction) {
+            Action1<? super QueryOrder> onNextAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -281,12 +282,22 @@ public class Webservice {
                 }
             }
         })
-                .map(new Func1<String, ResponseEntity<PastOrder>>() {
+                .map(new Func1<String, ResponseEntity<QueryOrder>>() {
                     @Override
-                    public ResponseEntity<PastOrder> call(String json) {
-                        Type listType = new TypeToken<ResponseEntity<PastOrder>>() {
+                    public ResponseEntity<QueryOrder> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<QueryOrder>>() {
                         }.getType();
                         return new Gson().fromJson(json, listType);
+                    }
+                })
+                .map(new Func1<ResponseEntity<QueryOrder>, QueryOrder>() {
+                    @Override
+                    public QueryOrder call(ResponseEntity<QueryOrder> queryOrderEntityResponseEntity) {
+                        QueryOrder data = queryOrderEntityResponseEntity.getData();
+                        if (data == null) {
+                            handleError(queryOrderEntityResponseEntity.getError(), "getPastOrderByOrderIdError");
+                        }
+                        return data;
                     }
                 })
                 .subscribeOn(Schedulers.newThread())

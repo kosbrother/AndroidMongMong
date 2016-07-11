@@ -7,15 +7,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.model.PostProduct;
+import com.kosbrother.mongmongwoo.model.QueryOrder;
 
 import java.util.List;
 
 public class PastOrderListAdapter extends RecyclerView.Adapter<PastOrderListAdapter.ViewHolder> {
 
-    private final List<PostProduct> productList;
+    private final List<QueryOrder.PastItemEntity> productList;
 
-    public PastOrderListAdapter(List<PostProduct> productList) {
+    public PastOrderListAdapter(List<QueryOrder.PastItemEntity> productList) {
         this.productList = productList;
     }
 
@@ -28,7 +28,7 @@ public class PastOrderListAdapter extends RecyclerView.Adapter<PastOrderListAdap
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        PostProduct product = productList.get(position);
+        QueryOrder.PastItemEntity product = productList.get(position);
 
         holder.productNameTextView.setText(product.getName());
         holder.productPriceTextView.setText(getProductPrice(product));
@@ -39,7 +39,7 @@ public class PastOrderListAdapter extends RecyclerView.Adapter<PastOrderListAdap
         return productList.size();
     }
 
-    private String getProductPrice(PostProduct postProduct) {
+    private String getProductPrice(QueryOrder.PastItemEntity postProduct) {
         return "$" + postProduct.getPrice() + " x " + postProduct.getQuantity();
     }
 
