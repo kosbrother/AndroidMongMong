@@ -7,13 +7,15 @@ function getAndroidSDK {
   DEPS="$ANDROID_HOME/installed-dependencies"
 
   if [ ! -e $DEPS ]; then
-    echo y | android update sdk -u -a -t android-19 &&
-    echo y | android update sdk -u -a -t platform-tools &&
-    echo y | android update sdk -u -a -t "tools" &&
-    echo y | android update sdk -u -a -t "build-tools-23.0.3" &&
-    echo y | android update sdk -u -a -t "extra-android-m2repository" &&
-    echo y | android update sdk -u -a -t "extra-android-support" &&
-    echo y | android update sdk -u -a -t "extra-google-m2repository" &&
+    echo y | android update sdk --no-ui --all --filter tools &&
+    echo y | android update sdk --no-ui --all --filter android-24 &&
+    echo y | android update sdk --no-ui --all --filter platform-tools &&
+    echo y | android update sdk --no-ui --all --filter build-tools-24.0.0 &&
+    echo y | android update sdk --no-ui --all --filter extra-android-m2repository &&
+    echo y | android update sdk --no-ui --all --filter "extra-android-support" &&
+    echo y | android update sdk --no-ui --all --filter extra-google-m2repository &&
+    echo y | android update sdk --no-ui --all --filter sys-img-x86-android-24 &&
+    echo y | android update sdk --no-ui --all --filter extra-google-google_play_services &&
     echo no | android create avd -n testAVD -f -t android-19 --abi default/armeabi-v7a &&
     touch $DEPS
   fi
