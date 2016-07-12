@@ -23,6 +23,7 @@ import com.kosbrother.mongmongwoo.SelectDeliverStoreActivity;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.entity.postorder.PostOrder;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment1;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment2;
 import com.kosbrother.mongmongwoo.fragments.PurchaseFragment3;
@@ -33,7 +34,6 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3Cl
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.login.LoginActivity;
 import com.kosbrother.mongmongwoo.model.Order;
-import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.PostProduct;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Store;
@@ -397,11 +397,11 @@ public class ShoppingCarActivity extends BaseActivity implements
 
     private void requestPostOrder() {
         String json = new Gson().toJson(theOrder);
-        Webservice.postOrder(json, new Action1<ResponseEntity<PastOrder>>() {
+        Webservice.postOrder(json, new Action1<ResponseEntity<PostOrder>>() {
             @Override
-            public void call(ResponseEntity<PastOrder> stringResponseEntity) {
+            public void call(ResponseEntity<PostOrder> stringResponseEntity) {
                 hideProgressDialog();
-                PastOrder data = stringResponseEntity.getData();
+                PostOrder data = stringResponseEntity.getData();
                 if (data == null) {
                     GAManager.sendError("postOrderError", stringResponseEntity.getError());
                     Toast.makeText(ShoppingCarActivity.this, "訂單未成功送出，資料異常", Toast.LENGTH_SHORT).show();

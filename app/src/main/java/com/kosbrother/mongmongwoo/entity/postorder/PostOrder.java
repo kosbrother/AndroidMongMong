@@ -1,8 +1,6 @@
-package com.kosbrother.mongmongwoo.model;
+package com.kosbrother.mongmongwoo.entity.postorder;
 
-import com.kosbrother.mongmongwoo.entity.PastOrderEntity;
-
-public class PastOrder extends PastOrderEntity {
+public class PostOrder extends PostOrderEntity {
 
     @Override
     public String getStatus() {

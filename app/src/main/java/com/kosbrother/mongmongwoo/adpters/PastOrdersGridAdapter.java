@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.TextView;
 
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.model.PastOrder;
+import com.kosbrother.mongmongwoo.entity.postorder.PostOrder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,21 +17,21 @@ import java.util.List;
 public class PastOrdersGridAdapter extends BaseAdapter {
 
     private final LayoutInflater layoutInflater;
-    private final List<PastOrder> pastOrderList;
+    private final List<PostOrder> postOrderList;
 
-    public PastOrdersGridAdapter(Context context, List<PastOrder> pastOrderList) {
+    public PastOrdersGridAdapter(Context context, List<PostOrder> postOrderList) {
         layoutInflater = LayoutInflater.from(context);
-        this.pastOrderList = pastOrderList;
+        this.postOrderList = postOrderList;
     }
 
     @Override
     public int getCount() {
-        return pastOrderList.size();
+        return postOrderList.size();
     }
 
     @Override
-    public PastOrder getItem(int position) {
-        return pastOrderList.get(position);
+    public PostOrder getItem(int position) {
+        return postOrderList.get(position);
     }
 
     @Override
@@ -56,21 +56,21 @@ public class PastOrdersGridAdapter extends BaseAdapter {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        PastOrder pastOrder = pastOrderList.get(position);
+        PostOrder postOrder = postOrderList.get(position);
 
-        viewHolder.dateTextView.setText(pastOrder.getCreatedOn());
-        viewHolder.totalPriceTextView.setText(getPrice(pastOrder));
-        viewHolder.statusTextView.setText(pastOrder.getStatus());
+        viewHolder.dateTextView.setText(postOrder.getCreatedOn());
+        viewHolder.totalPriceTextView.setText(getPrice(postOrder));
+        viewHolder.statusTextView.setText(postOrder.getStatus());
         return convertView;
     }
 
-    public void updateOrders(ArrayList<PastOrder> orders) {
-        pastOrderList.clear();
-        pastOrderList.addAll(orders);
+    public void updateOrders(ArrayList<PostOrder> orders) {
+        postOrderList.clear();
+        postOrderList.addAll(orders);
     }
 
-    private String getPrice(PastOrder pastOrder) {
-        return "總花費：NT$ " + pastOrder.getTotal();
+    private String getPrice(PostOrder postOrder) {
+        return "總花費：NT$ " + postOrder.getTotal();
     }
 
     static class ViewHolder {
