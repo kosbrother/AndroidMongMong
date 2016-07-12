@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
+import android.text.Spanned;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -329,7 +330,7 @@ public class ProductActivity extends BaseActivity {
         }
     }
 
-    @SuppressWarnings("ConstantConditions")
+    @SuppressWarnings({"ConstantConditions", "deprecation"})
     private void setProductView() {
         TextView nameText = (TextView) findViewById(R.id.product_name_text);
         nameText.setText(theProduct.getName());
@@ -345,7 +346,13 @@ public class ProductActivity extends BaseActivity {
         }
 
         TextView infoTextView = (TextView) findViewById(R.id.product_information_text);
-        infoTextView.setText(Html.fromHtml(theProduct.getDescription()));
+        Spanned infoText;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            infoText = Html.fromHtml(theProduct.getDescription(), Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            infoText = Html.fromHtml(theProduct.getDescription());
+        }
+        infoTextView.setText(infoText);
     }
 
     @SuppressWarnings("ConstantConditions")
