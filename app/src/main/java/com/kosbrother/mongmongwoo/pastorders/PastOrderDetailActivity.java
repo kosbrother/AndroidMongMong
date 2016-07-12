@@ -129,7 +129,7 @@ public class PastOrderDetailActivity extends BaseActivity {
         String shipNameString = "收件人：" + pastOrder.getInfo().getShipName();
         shippingNameText.setText(shipNameString);
 
-        String phoneString = "電話：" + pastOrder.getInfo().getShipPhone();
+        String phoneString = "手機電話：" + pastOrder.getInfo().getShipPhone();
         shippingPhoneText.setText(phoneString);
 
         String orderIdString = "訂單編號：" + pastOrder.getId();

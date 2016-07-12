@@ -19,8 +19,8 @@
     <string name="my_collect_activity_title">我的收藏</string>
 
     <string name="order_info">訂單資訊</string>
-    <string name="phone">電\u0020\u0020\u0020\u0020\u0020\u0020\u0020\u0020話</string>
-    <string name="phone_hint">請輸入訂購人手機電話</string>
+    <string name="cell_phone">手機電話</string>
+    <string name="cell_phone_hint">請輸入訂購人手機電話</string>
     <string name="email">電子信箱</string>
     <string name="email_hint">請輸入訂購人電子信箱</string>
     <string name="submit">送出</string>
