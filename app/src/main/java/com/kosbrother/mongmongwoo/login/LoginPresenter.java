@@ -39,8 +39,7 @@ public class LoginPresenter implements
 
     @Override
     public void onMmwLoginClick() {
-        EmailPasswordChecker checker = new EmailPasswordChecker();
-        checker.check(model.getEmail(), model.getPassword(), this);
+        model.checkLoginData(this);
     }
 
     @Override

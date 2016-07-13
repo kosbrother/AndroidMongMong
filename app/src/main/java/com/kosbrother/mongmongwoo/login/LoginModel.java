@@ -31,4 +31,9 @@ public class LoginModel {
         User user = new User(email, "", "", "", email, "mmw");
         Settings.saveUserData(user);
     }
+
+    public void checkLoginData(EmailPasswordChecker.OnCheckResultListener listener) {
+        EmailPasswordChecker checker = new EmailPasswordChecker();
+        checker.check(getEmail(), getPassword(), listener);
+    }
 }
