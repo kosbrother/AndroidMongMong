@@ -4,9 +4,9 @@ public interface LoginContract {
 
     interface View {
 
-        void startGoogleSignInActivityForResult(int requestCode);
+        void startGoogleSignInActivityForResult();
 
-        void startFacebookLoginActivityForResult(int requestCode);
+        void startFacebookLoginActivityForResult();
 
         void showRegisterDialog();
 
@@ -14,9 +14,11 @@ public interface LoginContract {
 
         void showToast(String message);
 
-        void resultOkThenFinish(String email);
+        void showProgressDialog();
 
-        void resultCancelThenFinish(String errorMessage);
+        void hideProgressDialog();
+
+        void resultOkThenFinish(String email);
     }
 
     interface Presenter {
@@ -25,7 +27,7 @@ public interface LoginContract {
 
         void onForgetPasswordClick();
 
-        void onMmwLoginClick(String email, String password);
+        void onMmwLoginClick();
 
         void onGoogleSignInClick();
 
