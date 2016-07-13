@@ -228,15 +228,17 @@ public class ProductActivity extends BaseActivity {
                 @Override
                 public void onFirstAddShoppingCart() {
                     ViewStub viewStub = (ViewStub) findViewById(R.id.shopping_car_spotlight_vs);
-                    final View spotLightShoppingCarLayout = viewStub.inflate();
-                    Button spotLightConfirmButton =
-                            (Button) spotLightShoppingCarLayout.findViewById(R.id.confirm_button);
-                    spotLightConfirmButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
-                        }
-                    });
+                    if (viewStub != null) {
+                        final View spotLightShoppingCarLayout = viewStub.inflate();
+                        Button spotLightConfirmButton =
+                                (Button) spotLightShoppingCarLayout.findViewById(R.id.confirm_button);
+                        spotLightConfirmButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
+                            }
+                        });
+                    }
                 }
 
                 @Override

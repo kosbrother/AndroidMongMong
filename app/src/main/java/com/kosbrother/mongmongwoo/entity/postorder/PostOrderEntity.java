@@ -1,4 +1,4 @@
-package com.kosbrother.mongmongwoo.entity;
+package com.kosbrother.mongmongwoo.entity.postorder;
 
 import com.google.gson.annotations.SerializedName;
 import com.kosbrother.mongmongwoo.model.PostProduct;
@@ -6,7 +6,7 @@ import com.kosbrother.mongmongwoo.model.PostProduct;
 import java.io.Serializable;
 import java.util.List;
 
-public class PastOrderEntity implements Serializable {
+class PostOrderEntity implements Serializable {
     @SerializedName("id")
     private int id;
     @SerializedName("items_price")

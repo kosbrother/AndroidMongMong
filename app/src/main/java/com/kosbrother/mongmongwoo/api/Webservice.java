@@ -5,10 +5,11 @@ import com.google.gson.reflect.TypeToken;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.entity.ShopInfoEntity;
+import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
+import com.kosbrother.mongmongwoo.entity.postorder.PostOrder;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.exception.ExceptionEvent;
 import com.kosbrother.mongmongwoo.model.Category;
-import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Road;
 import com.kosbrother.mongmongwoo.model.Store;
@@ -202,7 +203,7 @@ public class Webservice {
 
     public static void getOrdersByEmailAndPhone(
             final String email, final String phone,
-            Action1<? super ResponseEntity<List<PastOrder>>> onNextAction) {
+            Action1<? super ResponseEntity<List<PostOrder>>> onNextAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -215,10 +216,10 @@ public class Webservice {
                 }
             }
         })
-                .map(new Func1<String, ResponseEntity<List<PastOrder>>>() {
+                .map(new Func1<String, ResponseEntity<List<PostOrder>>>() {
                     @Override
-                    public ResponseEntity<List<PastOrder>> call(String json) {
-                        Type listType = new TypeToken<ResponseEntity<List<PastOrder>>>() {
+                    public ResponseEntity<List<PostOrder>> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<List<PostOrder>>>() {
                         }.getType();
                         return new Gson().fromJson(json, listType);
                     }
@@ -235,7 +236,7 @@ public class Webservice {
 
     public static void getOrdersByEmail(
             final String email,
-            Action1<? super ResponseEntity<List<PastOrder>>> onNextAction) {
+            Action1<? super ResponseEntity<List<PostOrder>>> onNextAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -248,10 +249,10 @@ public class Webservice {
                 }
             }
         })
-                .map(new Func1<String, ResponseEntity<List<PastOrder>>>() {
+                .map(new Func1<String, ResponseEntity<List<PostOrder>>>() {
                     @Override
-                    public ResponseEntity<List<PastOrder>> call(String json) {
-                        Type listType = new TypeToken<ResponseEntity<List<PastOrder>>>() {
+                    public ResponseEntity<List<PostOrder>> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<List<PostOrder>>>() {
                         }.getType();
                         return new Gson().fromJson(json, listType);
                     }
@@ -268,7 +269,7 @@ public class Webservice {
 
     public static void getPastOrderByOrderId(
             final int orderId,
-            Action1<? super ResponseEntity<PastOrder>> onNextAction) {
+            Action1<? super PastOrder> onNextAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -287,6 +288,16 @@ public class Webservice {
                         Type listType = new TypeToken<ResponseEntity<PastOrder>>() {
                         }.getType();
                         return new Gson().fromJson(json, listType);
+                    }
+                })
+                .map(new Func1<ResponseEntity<PastOrder>, PastOrder>() {
+                    @Override
+                    public PastOrder call(ResponseEntity<PastOrder> queryOrderEntityResponseEntity) {
+                        PastOrder data = queryOrderEntityResponseEntity.getData();
+                        if (data == null) {
+                            handleError(queryOrderEntityResponseEntity.getError(), "getPastOrderByOrderIdError");
+                        }
+                        return data;
                     }
                 })
                 .subscribeOn(Schedulers.newThread())
@@ -519,7 +530,7 @@ public class Webservice {
 
     public static void postOrder(
             final String orderJsonString,
-            Action1<? super ResponseEntity<PastOrder>> onNextAction,
+            Action1<? super ResponseEntity<PostOrder>> onNextAction,
             final Action1<IOException> onWebserviceExceptionAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
@@ -533,10 +544,10 @@ public class Webservice {
                 }
             }
         })
-                .map(new Func1<String, ResponseEntity<PastOrder>>() {
+                .map(new Func1<String, ResponseEntity<PostOrder>>() {
                     @Override
-                    public ResponseEntity<PastOrder> call(String json) {
-                        Type listType = new TypeToken<ResponseEntity<PastOrder>>() {
+                    public ResponseEntity<PostOrder> call(String json) {
+                        Type listType = new TypeToken<ResponseEntity<PostOrder>>() {
                         }.getType();
                         return new Gson().fromJson(json, listType);
                     }

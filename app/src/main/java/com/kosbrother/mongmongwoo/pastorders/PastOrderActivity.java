@@ -18,8 +18,8 @@ import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.adpters.PastOrdersGridAdapter;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.entity.postorder.PostOrder;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
-import com.kosbrother.mongmongwoo.model.PastOrder;
 import com.kosbrother.mongmongwoo.model.User;
 
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class PastOrderActivity extends AppCompatActivity {
     String TAG = "PastOrderActivity";
 
     GridView mGridView;
-    List<PastOrder> pastOrders = new ArrayList<>();
+    List<PostOrder> postOrders = new ArrayList<>();
     PastOrdersGridAdapter pastOrdersAdapter;
 
     CircularImageView userImage;
@@ -86,12 +86,12 @@ public class PastOrderActivity extends AppCompatActivity {
 
     private void getOrders() {
         Webservice.getOrdersByEmail(user.getEmail(),
-                new Action1<ResponseEntity<List<PastOrder>>>() {
+                new Action1<ResponseEntity<List<PostOrder>>>() {
                     @Override
-                    public void call(ResponseEntity<List<PastOrder>> listResponseEntity) {
-                        List<PastOrder> pastOrders = listResponseEntity.getData();
-                        if (pastOrders != null && pastOrders.size() >= 0) {
-                            PastOrderActivity.this.pastOrders.addAll(pastOrders);
+                    public void call(ResponseEntity<List<PostOrder>> listResponseEntity) {
+                        List<PostOrder> postOrders = listResponseEntity.getData();
+                        if (postOrders != null && postOrders.size() >= 0) {
+                            PastOrderActivity.this.postOrders.addAll(postOrders);
                             onGetDataResult();
                         } else {
                             GAManager.sendError("getOrdersByEmailError", listResponseEntity.getError());
@@ -102,7 +102,7 @@ public class PastOrderActivity extends AppCompatActivity {
 
     private void onGetDataResult() {
         if (pastOrdersAdapter == null) {
-            pastOrdersAdapter = new PastOrdersGridAdapter(PastOrderActivity.this, pastOrders);
+            pastOrdersAdapter = new PastOrdersGridAdapter(PastOrderActivity.this, postOrders);
             mGridView = (GridView) findViewById(R.id.fragment_gridview);
             mGridView.setAdapter(pastOrdersAdapter);
             mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -110,7 +110,7 @@ public class PastOrderActivity extends AppCompatActivity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent intent = new Intent(PastOrderActivity.this, PastOrderDetailActivity.class);
                     intent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID,
-                            PastOrderActivity.this.pastOrders.get(position).getId());
+                            PastOrderActivity.this.postOrders.get(position).getId());
                     startActivity(intent);
                 }
             });

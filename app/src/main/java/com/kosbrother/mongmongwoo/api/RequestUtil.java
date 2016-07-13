@@ -26,6 +26,8 @@ public class RequestUtil {
 
         Response response = client.newCall(request).execute();
         if (!response.isSuccessful()) {
+            String responseString = response.body().string();
+            logRequestInfoIfDebug(url, response.headers(), responseString);
             throw new IOException("Unexpected code " + response);
         }
         String responseString = response.body().string();

@@ -12,15 +12,15 @@ import android.widget.TextView;
 import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.adpters.PastOrderListAdapter;
+import com.kosbrother.mongmongwoo.adpters.PastItemAdapter;
 import com.kosbrother.mongmongwoo.api.Webservice;
-import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.entity.pastorder.Info;
+import com.kosbrother.mongmongwoo.entity.pastorder.PastItem;
+import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPickUpOpenedEvent;
-import com.kosbrother.mongmongwoo.model.PastOrder;
-import com.kosbrother.mongmongwoo.model.PostProduct;
 
 import java.util.List;
 
@@ -33,17 +33,6 @@ public class PastOrderDetailActivity extends BaseActivity {
 
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
 
-    private RecyclerView recyclerView;
-    private TextView shippingPriceText;
-    private TextView totalPriceText;
-    private TextView shippingNameText;
-    private TextView shippingPhoneText;
-    private TextView shippingStoreNameText;
-
-    private TextView order_id_text;
-    private TextView order_ship_way;
-    private ViewStub noteViewStub;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,14 +40,11 @@ public class PastOrderDetailActivity extends BaseActivity {
         setToolbar();
 
         int orderId = getIntent().getIntExtra(EXTRA_INT_ORDER_ID, 0);
-        Webservice.getPastOrderByOrderId(orderId, new Action1<ResponseEntity<PastOrder>>() {
+        Webservice.getPastOrderByOrderId(orderId, new Action1<PastOrder>() {
             @Override
-            public void call(ResponseEntity<PastOrder> pastOrderResponseEntity) {
-                PastOrder result = pastOrderResponseEntity.getData();
-                if (result == null) {
-                    GAManager.sendError("getPastOrderByOrderIdError", pastOrderResponseEntity.getError());
-                } else {
-                    onGetPostOrderResult(result);
+            public void call(PastOrder data) {
+                if (data != null) {
+                    onGetPostOrderResult(data);
                 }
             }
         });
@@ -78,14 +64,14 @@ public class PastOrderDetailActivity extends BaseActivity {
     }
 
     private void onGetPostOrderResult(PastOrder pastOrder) {
-        setContentView(R.layout.activity_order_detail);
+        setContentView(R.layout.activity_past_order_detail);
         setToolbar();
         initCsBottomSheet();
         if (pastOrder != null) {
-            findViews();
             setOrderStatusLayout(pastOrder.getStatus());
             setRecyclerView(pastOrder.getItems());
-            setPastOrderData(pastOrder);
+            setPastOrder(pastOrder);
+            setInfo(pastOrder.getInfo());
         }
     }
 
@@ -93,58 +79,66 @@ public class PastOrderDetailActivity extends BaseActivity {
         csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
     }
 
-    private void findViews() {
-        shippingPriceText = (TextView) findViewById(R.id.fragment3_shipping_price_text);
-        totalPriceText = (TextView) findViewById(R.id.fragment3_total_price_text);
-        shippingNameText = (TextView) findViewById(R.id.fragment3_shipping_name_text);
-        shippingPhoneText = (TextView) findViewById(R.id.fragment3_shipping_phone_text);
-        shippingStoreNameText = (TextView) findViewById(R.id.fragment3_shipping_store_name_text);
-        order_id_text = (TextView) findViewById(R.id.order_detail_num_text);
-        order_ship_way = (TextView) findViewById(R.id.order_detail_ship_way);
-        recyclerView = (RecyclerView) findViewById(R.id.recycler_buy_goods);
-        noteViewStub = (ViewStub) findViewById(R.id.note_vs);
-    }
-
     private void setOrderStatusLayout(String status) {
         FrameLayout container = (FrameLayout) findViewById(R.id.order_status_container);
+        assert container != null;
         container.addView(OrderStatusLayoutFactory.create(this, status));
     }
 
-    private void setRecyclerView(List<PostProduct> pastOrderProducts) {
+    private void setRecyclerView(List<PastItem> pastOrderProducts) {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.order_detail_items_rv);
+        assert recyclerView != null;
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager mLayoutManager = new LinearLayoutManager(PastOrderDetailActivity.this);
         mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerView.setLayoutManager(mLayoutManager);
-        PastOrderListAdapter adapter = new PastOrderListAdapter(pastOrderProducts);
+        PastItemAdapter adapter = new PastItemAdapter(pastOrderProducts);
         recyclerView.setAdapter(adapter);
     }
 
-    private void setPastOrderData(PastOrder pastOrder) {
-        String shipFeeString = Integer.toString(pastOrder.getShipFee());
-        shippingPriceText.setText(shipFeeString);
+    @SuppressWarnings("ConstantConditions")
+    private void setPastOrder(PastOrder pastOrder) {
+        TextView idTextView = (TextView) findViewById(R.id.order_detail_id_tv);
+        idTextView.setText(pastOrder.getIdText());
 
-        String totalPriceString = Integer.toString(pastOrder.getTotal());
-        totalPriceText.setText(totalPriceString);
+        TextView itemsPriceTextView = (TextView) findViewById(R.id.order_detail_items_price_tv);
+        itemsPriceTextView.setText(pastOrder.getItemsPriceText());
 
-        String shipNameString = "收件人：" + pastOrder.getInfo().getShipName();
-        shippingNameText.setText(shipNameString);
+        TextView shipPriceTextView = (TextView) findViewById(R.id.order_detail_ship_price_tv);
+        shipPriceTextView.setText(pastOrder.getShipFeeText());
 
-        String phoneString = "手機電話：" + pastOrder.getInfo().getShipPhone();
-        shippingPhoneText.setText(phoneString);
-
-        String orderIdString = "訂單編號：" + pastOrder.getId();
-        order_id_text.setText(orderIdString);
-
-        shippingStoreNameText.setText(pastOrder.getInfo().getShipStoreName());
-
-        order_ship_way.setText("運送方式：超商取貨");
+        TextView totalPriceTextView = (TextView) findViewById(R.id.order_detail_total_price_tv);
+        totalPriceTextView.setText(pastOrder.getTotalText());
 
         String note = pastOrder.getNote();
         if (note != null && !note.isEmpty()) {
-            TextView noteTextView = (TextView) noteViewStub.inflate();
-            String noteString = "備註：" + note;
-            noteTextView.setText(noteString);
+            ViewStub noteViewStub = (ViewStub) findViewById(R.id.note_vs);
+            View viewStub = noteViewStub.inflate();
+
+            TextView noteTextView = (TextView) viewStub.findViewById(R.id.note_tv);
+            noteTextView.setText(note);
         }
+    }
+
+    @SuppressWarnings("ConstantConditions")
+    private void setInfo(Info info) {
+        TextView shipStoreNameTextView = (TextView) findViewById(R.id.order_detail_ship_store_name_tv);
+        shipStoreNameTextView.setText(info.getShipStoreName());
+
+        TextView shipStoreAddressTextView = (TextView) findViewById(R.id.order_detail_store_address_tv);
+        shipStoreAddressTextView.setText(info.getShipStoreAddress());
+
+        TextView shipStorePhoneTextView = (TextView) findViewById(R.id.order_detail_store_phone_tv);
+        shipStorePhoneTextView.setText(info.getShipStorePhone());
+
+        TextView shipNameTextView = (TextView) findViewById(R.id.order_detail_ship_name_tv);
+        shipNameTextView.setText(info.getShipName());
+
+        TextView shipPhoneTextView = (TextView) findViewById(R.id.order_detail_ship_phone_tv);
+        shipPhoneTextView.setText(info.getShipPhone());
+
+        TextView shipEmailTextView = (TextView) findViewById(R.id.order_detail_ship_email_tv);
+        shipEmailTextView.setText(info.getShipEmail());
     }
 
     public void onCustomerServiceFabClick(View view) {
