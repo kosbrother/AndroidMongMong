@@ -12,6 +12,7 @@ android {
         targetSdkVersion 24
         versionCode 30
         versionName "2.0.0"
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -76,6 +77,8 @@ dependencies {
 
     compile 'com.inthecheesefactory.thecheeselibrary:adjustable-imageview:1.0.1'
     compile 'org.apmem.tools:layouts:1.10@aar'
+
+    compile 'com.android.support:multidex:1.0.1'
 }
 
 apply plugin: 'com.google.gms.google-services'
