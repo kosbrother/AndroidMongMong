@@ -6,8 +6,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import com.androidpagecontrol.PageControl;
 import com.kosbrother.mongmongwoo.adpters.ZoomImageFragmentPagerAdapter;
+import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.ArrayList;
 
@@ -30,7 +30,7 @@ public class ZoomImageActivity extends AppCompatActivity implements View.OnClick
                 getSupportFragmentManager(), urls));
         viewPager.setCurrentItem(index);
 
-        PageControl pageControl = (PageControl) findViewById(R.id.page_control);
+        CirclePageIndicator pageControl = (CirclePageIndicator) findViewById(R.id.page_control);
         pageControl.setViewPager(viewPager);
 
         View container = findViewById(R.id.activity_container);
