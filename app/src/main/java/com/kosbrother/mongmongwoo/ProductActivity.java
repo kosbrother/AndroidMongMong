@@ -186,7 +186,7 @@ public class ProductActivity extends BaseActivity {
             startActivity(intent);
             finish();
         } else {
-            supportFinishAfterTransition();
+            super.onBackPressed();
         }
     }
 
