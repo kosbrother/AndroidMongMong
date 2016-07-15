@@ -171,11 +171,13 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
 
     private List<String> getDisplaySuggestionList(String query) {
         List<String> list = new ArrayList<>();
-        int length = suggestionList.size();
-        for (int i = 0; i < length && list.size() < SUGGESTION_LIMIT; i++) {
-            String product = suggestionList.get(i);
-            if (product.contains(query)) {
-                list.add(product);
+        if (suggestionList != null) {
+            int length = suggestionList.size();
+            for (int i = 0; i < length && list.size() < SUGGESTION_LIMIT; i++) {
+                String product = suggestionList.get(i);
+                if (product.contains(query)) {
+                    list.add(product);
+                }
             }
         }
         return list;
