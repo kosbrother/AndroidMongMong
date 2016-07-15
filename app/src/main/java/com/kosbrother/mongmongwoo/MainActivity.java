@@ -9,12 +9,9 @@ import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -537,17 +534,7 @@ public class MainActivity extends AppCompatActivity
                 intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, Category.Type.ALL.getId());
                 intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, Category.Type.ALL.getName());
 
-                Pair<View, String> p1 = Pair.create(view, "view");
-                Pair<View, String> p2 = Pair.create(view.findViewById(R.id.item_name_text), "name");
-                Pair<View, String> p3 = Pair.create(view.findViewById(R.id.add_shopping_car_ll), "button");
-                Pair<View, String> p4 = Pair.create(view.findViewById(R.id.item_imageview), "image");
-                ActivityOptionsCompat options = ActivityOptionsCompat.
-                        makeSceneTransitionAnimation(MainActivity.this, p1, p2, p3, p4);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    startActivity(intent, options.toBundle());
-                } else {
-                    startActivity(intent);
-                }
+                startActivity(intent);
             }
         });
     }
