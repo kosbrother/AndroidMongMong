@@ -10,7 +10,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
-import com.androidpagecontrol.PageControl;
 import com.crashlytics.android.Crashlytics;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
@@ -20,8 +19,8 @@ import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
-
 import io.fabric.sdk.android.Fabric;
+import com.viewpagerindicator.CirclePageIndicator;
 
 public class LaunchActivity extends FragmentActivity {
 
@@ -48,7 +47,7 @@ public class LaunchActivity extends FragmentActivity {
             mPager.setOffscreenPageLimit(3);
             PagerAdapter launchPagerAdapter = new LaunchPagerAdapter(getSupportFragmentManager());
             mPager.setAdapter(launchPagerAdapter);
-            PageControl pageControl = (PageControl) findViewById(R.id.page_control);
+            CirclePageIndicator pageControl = (CirclePageIndicator) findViewById(R.id.page_control);
             pageControl.setViewPager(mPager);
             mRootView.setVisibility(View.VISIBLE);
         } else {

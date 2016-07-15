@@ -17,7 +17,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.androidpagecontrol.PageControl;
 import com.kosbrother.mongmongwoo.adpters.ProductImageFragmentPagerAdapter;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
@@ -40,6 +39,7 @@ import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
 import com.kosbrother.mongmongwoo.utils.ShareUtil;
 import com.kosbrother.mongmongwoo.utils.TextViewUtil;
+import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -366,7 +366,7 @@ public class ProductActivity extends BaseActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.image_pager);
         viewPager.setAdapter(adapter);
 
-        PageControl pageControl = (PageControl) findViewById(R.id.page_control);
+        CirclePageIndicator pageControl = (CirclePageIndicator) findViewById(R.id.page_control);
         pageControl.setViewPager(viewPager);
     }
 

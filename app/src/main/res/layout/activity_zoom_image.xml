@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/activity_container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,11 +12,14 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true" />
 
-    <com.androidpagecontrol.PageControl
+    <com.viewpagerindicator.CirclePageIndicator
         android:id="@+id/page_control"
         android:layout_width="match_parent"
-        android:layout_height="15dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="10dp" />
+        android:layout_marginBottom="10dp"
+        app:fillColor="#1de9b6"
+        app:pageColor="#2d867c"
+        app:strokeColor="@android:color/transparent" />
 
 </RelativeLayout>

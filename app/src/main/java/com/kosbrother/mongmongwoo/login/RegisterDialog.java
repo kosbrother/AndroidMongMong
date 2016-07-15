@@ -2,7 +2,9 @@ package com.kosbrother.mongmongwoo.login;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
@@ -12,6 +14,7 @@ import android.widget.Toast;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.databinding.DialogRegisterBinding;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.model.User;
 
@@ -28,6 +31,7 @@ public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickLis
 
     private Toast toast;
     private ProgressDialog progressDialog;
+    private LoginUser loginUser;
 
     public RegisterDialog(Context context) {
         super(context);
@@ -44,7 +48,12 @@ public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickLis
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.dialog_register);
+        DialogRegisterBinding binding = DataBindingUtil.inflate(
+                LayoutInflater.from(getContext()), R.layout.dialog_register, null, false);
+        setContentView(binding.getRoot());
+        loginUser = new LoginUser("", "");
+        binding.setLoginUser(loginUser);
+
         // Fix dialog size problem
         getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.WRAP_CONTENT);
@@ -68,10 +77,8 @@ public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickLis
     }
 
     private void onRegisterClick() {
-        EditText emailEditText = (EditText) findViewById(R.id.email_et);
-        EditText passwordEditText = (EditText) findViewById(R.id.password_et);
-        final String email = emailEditText.getText().toString().trim();
-        final String password = passwordEditText.getText().toString().trim();
+        final String email = loginUser.getEmail();
+        final String password = loginUser.getPassword();
 
         EmailPasswordChecker checker = new EmailPasswordChecker();
         checker.check(email, password, new EmailPasswordChecker.OnCheckResultListener() {

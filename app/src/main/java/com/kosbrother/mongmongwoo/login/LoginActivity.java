@@ -1,7 +1,9 @@
 package com.kosbrother.mongmongwoo.login;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.CheckBox;
@@ -9,10 +11,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.R;
+import com.kosbrother.mongmongwoo.databinding.ActivityLoginBinding;
 
-public class LoginActivity extends BaseLoginActivity implements
-        LoginContract.View,
-        View.OnClickListener {
+public class LoginActivity extends BaseLoginActivity implements LoginContract.View {
 
     private static final int REQUEST_GOOGLE_SIGN_IN = 9001;
     private static final int REQUEST_FACEBOOK_SIGN_IN = REQUEST_GOOGLE_SIGN_IN + 1;
@@ -20,17 +21,34 @@ public class LoginActivity extends BaseLoginActivity implements
     private LoginPresenter mPresenter;
 
     private Toast toast;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
-        initShowPasswordHelper();
+        ActivityLoginBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_login);
+        LoginUser loginUser = new LoginUser("", "");
+        binding.setLoginUser(loginUser);
 
-        setGoogleSignInButton();
-        setFacebookButton();
+        ShowPasswordHelper helper = new ShowPasswordHelper();
+        helper.setShowPasswordBehavior(
+                findViewById(R.id.show_pw_ll),
+                (CheckBox) findViewById(R.id.show_pw_cb),
+                (EditText) findViewById(R.id.password_et));
 
-        mPresenter = new LoginPresenter(this);
+        mPresenter = new LoginPresenter(this, new LoginModel(loginUser));
+    }
+
+    public void onGoogleSignInClick(View view) {
+        mPresenter.onGoogleSignInClick();
+    }
+
+    public void onFbLoginClick(View view) {
+        mPresenter.onFacebookLoginClick();
+    }
+
+    public void onMmwLoginClick(View view) {
+        mPresenter.onMmwLoginClick();
     }
 
     public void onRegisterClick(View view) {
@@ -41,40 +59,16 @@ public class LoginActivity extends BaseLoginActivity implements
         mPresenter.onForgetPasswordClick();
     }
 
-    public void onMmwLoginClick(View view) {
-        EditText emailEditText = (EditText) findViewById(R.id.email_et);
-        EditText passwordEditText = (EditText) findViewById(R.id.password_et);
-        assert emailEditText != null;
-        String email = emailEditText.getText().toString();
-        assert passwordEditText != null;
-        String password = passwordEditText.getText().toString();
-        mPresenter.onMmwLoginClick(email, password);
-    }
-
     @Override
-    public void onClick(View v) {
-        switch (v.getId()) {
-            case R.id.google_sign_in_btn:
-                mPresenter.onGoogleSignInClick();
-                break;
-            case R.id.fb_login_btn:
-                mPresenter.onFacebookLoginClick();
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    public void startGoogleSignInActivityForResult(int requestCode) {
+    public void startGoogleSignInActivityForResult() {
         Intent intent = new Intent(this, GoogleSignInActivity.class);
-        startActivityForResult(intent, requestCode);
+        startActivityForResult(intent, REQUEST_GOOGLE_SIGN_IN);
     }
 
     @Override
-    public void startFacebookLoginActivityForResult(int requestCode) {
+    public void startFacebookLoginActivityForResult() {
         Intent intent = new Intent(this, FacebookLogInActivity.class);
-        startActivityForResult(intent, requestCode);
+        startActivityForResult(intent, REQUEST_FACEBOOK_SIGN_IN);
     }
 
     @Override
@@ -105,6 +99,19 @@ public class LoginActivity extends BaseLoginActivity implements
     }
 
     @Override
+    public void showProgressDialog() {
+        progressDialog = ProgressDialog.show(this, "登入中", "請稍後...", true);
+    }
+
+    @Override
+    public void hideProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
+    }
+
+    @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         switch (requestCode) {
@@ -117,37 +124,17 @@ public class LoginActivity extends BaseLoginActivity implements
         }
     }
 
-    private void initShowPasswordHelper() {
-        ShowPasswordHelper helper = new ShowPasswordHelper();
-        helper.setShowPasswordBehavior(
-                findViewById(R.id.show_pw_ll),
-                (CheckBox) findViewById(R.id.show_pw_cb),
-                (EditText) findViewById(R.id.password_et));
-    }
-
     private void handleSignInResult(int resultCode, Intent data) {
         if (resultCode == Activity.RESULT_OK) {
-            String email = data.getStringExtra(GoogleSignInActivity.EXTRA_STRING_EMAIL);
+            String email = data.getStringExtra(BaseLoginActivity.EXTRA_STRING_EMAIL);
             mPresenter.onSignInResultOK(email);
         } else {
             if (data != null) {
                 String errorMessage =
-                        data.getStringExtra(GoogleSignInActivity.EXTRA_STRING_ERROR_MESSAGE);
+                        data.getStringExtra(BaseLoginActivity.EXTRA_STRING_ERROR_MESSAGE);
                 mPresenter.onSignInResultError(errorMessage);
             }
         }
-    }
-
-    private void setGoogleSignInButton() {
-        View signInButton = findViewById(R.id.google_sign_in_btn);
-        assert signInButton != null;
-        signInButton.setOnClickListener(this);
-    }
-
-    private void setFacebookButton() {
-        View fbLoginButton = findViewById(R.id.fb_login_btn);
-        assert fbLoginButton != null;
-        fbLoginButton.setOnClickListener(this);
     }
 
 }
