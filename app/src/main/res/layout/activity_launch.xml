@@ -17,6 +17,6 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="16dp"
         app:fillColor="#1de9b6"
-        app:pageColor="#4db6ac"
+        app:pageColor="#2d867c"
         app:strokeColor="@android:color/transparent" />
 </RelativeLayout>
