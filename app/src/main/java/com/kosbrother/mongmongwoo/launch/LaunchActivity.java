@@ -11,24 +11,40 @@ import android.support.v4.view.ViewPager;
 import android.view.View;
 
 import com.androidpagecontrol.PageControl;
+import com.crashlytics.android.Crashlytics;
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
+import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
+
+import io.fabric.sdk.android.Fabric;
 
 public class LaunchActivity extends FragmentActivity {
 
     private static final int NUM_PAGES = 4;
-    private ViewPager mPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Settings.init(getApplicationContext());
+        GAManager.init(getApplicationContext());
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(getApplication());
+        ShoppingCartManager.init(this);
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(getApplicationContext(), new Crashlytics());
+        }
+
         if (isNewUser()) {
             setContentView(R.layout.activity_launch);
             View mRootView = findViewById(R.id.root_rl);
             mRootView.setVisibility(View.INVISIBLE);
 
-            mPager = (ViewPager) findViewById(R.id.launch_pager);
+            ViewPager mPager = (ViewPager) findViewById(R.id.launch_pager);
             mPager.setOffscreenPageLimit(3);
             PagerAdapter launchPagerAdapter = new LaunchPagerAdapter(getSupportFragmentManager());
             mPager.setAdapter(launchPagerAdapter);
@@ -41,25 +57,21 @@ public class LaunchActivity extends FragmentActivity {
     }
 
     @Override
-    public void  onBackPressed() {
-        if (mPager == null || mPager.getCurrentItem() == 0) {
-            startMainActivityThenFinish();
-        } else {
-            mPager.setCurrentItem(mPager.getCurrentItem() - 1);
-        }
+    public void onBackPressed() {
+        startMainActivityThenFinish();
     }
 
     public void onStartButtonClick(View view) {
         startMainActivityThenFinish();
     }
 
-    private boolean isNewUser() {
-        return Settings.getVersionName().isEmpty();
-    }
-
     private void startMainActivityThenFinish() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
+    }
+
+    private boolean isNewUser() {
+        return Settings.getVersionName().isEmpty();
     }
 
     private class LaunchPagerAdapter extends FragmentPagerAdapter {
