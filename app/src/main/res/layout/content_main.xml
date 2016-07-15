@@ -36,94 +36,7 @@
         <android.support.v7.widget.CardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_marginBottom="8dp"
-            card_view:cardCornerRadius="2dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/white"
-                android:orientation="vertical">
-
-                <RelativeLayout
-                    android:id="@+id/popular_title_rl"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/gray_selector"
-                    android:clickable="true"
-                    android:onClick="onMorePopularItemsClick"
-                    android:padding="8dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginStart="8dp"
-                        android:text="熱銷商品"
-                        android:textColor="@color/green_text"
-                        android:textSize="12sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:layout_centerVertical="true"
-                        android:layout_marginEnd="8dp"
-                        android:layout_marginRight="8dp"
-                        android:drawableEnd="@mipmap/ic_keyboard_arrow_right_black_18dp"
-                        android:drawableRight="@mipmap/ic_keyboard_arrow_right_black_18dp"
-                        android:gravity="center_vertical"
-                        android:text="逛更多"
-                        android:textColor="@color/black_text"
-                        android:textSize="11sp" />
-                </RelativeLayout>
-
-                <com.kosbrother.mongmongwoo.utils.ExpandableHeightGridView
-                    android:id="@+id/popular_items_gv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:clipToPadding="false"
-                    android:columnWidth="8dp"
-                    android:drawSelectorOnTop="true"
-                    android:gravity="center"
-                    android:horizontalSpacing="8dp"
-                    android:listSelector="@drawable/grid_view_list_selector_corner3"
-                    android:numColumns="2"
-                    android:paddingBottom="8dp"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:scrollbarStyle="outsideOverlay"
-                    android:stretchMode="columnWidth"
-                    android:verticalSpacing="8dp" />
-
-                <Button
-                    android:id="@+id/popular_more_btn"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="32dp"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:background="@drawable/bg_green_border_white_button"
-                    android:onClick="onMorePopularItemsClick"
-                    android:text="瀏覽更多熱銷商品"
-                    android:textColor="@color/green_text"
-                    android:textSize="14sp" />
-            </LinearLayout>
-
-        </android.support.v7.widget.CardView>
-
-        <android.support.v7.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="24dp"
             card_view:cardCornerRadius="2dp">
 
             <LinearLayout
@@ -199,6 +112,91 @@
                     android:background="@drawable/bg_green_border_white_button"
                     android:onClick="onMoreLatestItemsClick"
                     android:text="瀏覽更多最新商品"
+                    android:textColor="@color/green_text"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
+
+        <android.support.v7.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            card_view:cardCornerRadius="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/white"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/popular_title_rl"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/gray_selector"
+                    android:clickable="true"
+                    android:onClick="onMorePopularItemsClick"
+                    android:padding="8dp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="8dp"
+                        android:layout_marginStart="8dp"
+                        android:text="熱銷商品"
+                        android:textColor="@color/green_text"
+                        android:textSize="12sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_alignParentRight="true"
+                        android:layout_centerVertical="true"
+                        android:layout_marginEnd="8dp"
+                        android:layout_marginRight="8dp"
+                        android:drawableEnd="@mipmap/ic_keyboard_arrow_right_black_18dp"
+                        android:drawableRight="@mipmap/ic_keyboard_arrow_right_black_18dp"
+                        android:gravity="center_vertical"
+                        android:text="逛更多"
+                        android:textColor="@color/black_text"
+                        android:textSize="11sp" />
+                </RelativeLayout>
+
+                <com.kosbrother.mongmongwoo.utils.ExpandableHeightGridView
+                    android:id="@+id/popular_items_gv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:columnWidth="8dp"
+                    android:drawSelectorOnTop="true"
+                    android:gravity="center"
+                    android:horizontalSpacing="8dp"
+                    android:listSelector="@drawable/grid_view_list_selector_corner3"
+                    android:numColumns="2"
+                    android:paddingBottom="8dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:scrollbarStyle="outsideOverlay"
+                    android:stretchMode="columnWidth"
+                    android:verticalSpacing="8dp" />
+
+                <Button
+                    android:id="@+id/popular_more_btn"
+                    style="?android:attr/borderlessButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="32dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/bg_green_border_white_button"
+                    android:onClick="onMorePopularItemsClick"
+                    android:text="瀏覽更多熱銷商品"
                     android:textColor="@color/green_text"
                     android:textSize="14sp" />
             </LinearLayout>

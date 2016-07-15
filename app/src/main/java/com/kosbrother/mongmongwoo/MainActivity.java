@@ -99,8 +99,8 @@ public class MainActivity extends AppCompatActivity
         setQuickBarTextSwitcher();
         setQuickBarWithScrollView();
         getCategories();
-        getAllPopularItems();
         getNewDateItems();
+        getAllPopularItems();
         checkAndroidVersion();
         postFcmTokenIfServerNotReceived();
     }
@@ -268,7 +268,7 @@ public class MainActivity extends AppCompatActivity
         getQuickBarContent().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onMorePopularItemsClick(v);
+                onMoreLatestItemsClick(v);
             }
         });
         InteractiveNestedScrollView scrollView = (InteractiveNestedScrollView) findViewById(R.id.scrollView);
@@ -348,12 +348,14 @@ public class MainActivity extends AppCompatActivity
 
     private void setQuickBarTextSwitcher() {
         TextSwitcher switcher = getTextSwitcher();
-        TextView popularTextView = (TextView) getLayoutInflater().inflate(R.layout.green_title_text_view, null);
-        popularTextView.setText("熱銷商品");
+
         TextView newTextView = (TextView) getLayoutInflater().inflate(R.layout.green_title_text_view, null);
         newTextView.setText("最新商品");
-        switcher.addView(popularTextView);
         switcher.addView(newTextView);
+
+        TextView popularTextView = (TextView) getLayoutInflater().inflate(R.layout.green_title_text_view, null);
+        popularTextView.setText("熱銷商品");
+        switcher.addView(popularTextView);
     }
 
     private void getCategories() {
