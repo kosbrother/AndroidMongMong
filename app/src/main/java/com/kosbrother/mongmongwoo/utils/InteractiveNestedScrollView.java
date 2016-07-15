@@ -35,7 +35,7 @@ public class InteractiveNestedScrollView extends NestedScrollView {
     };
     private float quickBarHeight = 0;
     private boolean showQuickBar = false;
-    private boolean switchNewQuickBar = false;
+    private boolean switchPopularQuickBar = false;
 
     private View popularTitleView;
     private View newItemTitleView;
@@ -76,18 +76,18 @@ public class InteractiveNestedScrollView extends NestedScrollView {
         Point newItemPoint = new Point();
         getDeepChildOffset(newItemTitleView.getParent(), newItemTitleView, newItemPoint);
 
-        if (t > popularItemPoint.y && !showQuickBar) {
+        if (t > newItemPoint.y && !showQuickBar) {
             showQuickBar = true;
             mListener.onShowQuickBar();
-        } else if (t < popularItemPoint.y && showQuickBar) {
+        } else if (t < newItemPoint.y && showQuickBar) {
             showQuickBar = false;
             mListener.onHideQuickBar();
-        } else if (t + quickBarHeight > newItemPoint.y && !switchNewQuickBar) {
-            switchNewQuickBar = true;
-            mListener.onSwitchNewQuickBar();
-        } else if (t + quickBarHeight < newItemPoint.y && switchNewQuickBar) {
-            switchNewQuickBar = false;
+        } else if (t + quickBarHeight > popularItemPoint.y && !switchPopularQuickBar) {
+            switchPopularQuickBar = true;
             mListener.onSwitchPopularQuickBar();
+        } else if (t + quickBarHeight < popularItemPoint.y && switchPopularQuickBar) {
+            switchPopularQuickBar = false;
+            mListener.onSwitchNewQuickBar();
         }
         super.onScrollChanged(l, t, oldl, oldt);
     }
