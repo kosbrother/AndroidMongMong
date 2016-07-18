@@ -2,7 +2,9 @@ package com.kosbrother.mongmongwoo.model;
 
 import com.google.gson.annotations.SerializedName;
 
-public class PostProduct {
+import java.io.Serializable;
+
+public class PostProduct implements Serializable {
     @SerializedName("name")
     private String name;
     @SerializedName("product_id")
@@ -36,19 +38,8 @@ public class PostProduct {
         this.quantity = quantity;
     }
 
-    public int getQuantity() {
-        return quantity;
-    }
-
     public void setPrice(int price) {
         this.price = price;
     }
 
-    public int getPrice() {
-        return price;
-    }
-
-    public String getName() {
-        return name;
-    }
 }
