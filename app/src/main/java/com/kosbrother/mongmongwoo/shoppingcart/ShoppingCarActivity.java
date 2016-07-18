@@ -75,7 +75,7 @@ public class ShoppingCarActivity extends BaseActivity implements
         setToolbarWithoutNavIcon("結帳");
 
         products = ShoppingCartManager.getInstance().loadShoppingItems();
-        if (products.size() == 0) {
+        if (products == null || products.size() == 0) {
             onNoShoppingItem();
             return;
         }
