@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.R;
@@ -23,6 +24,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1Cl
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1EnterEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.model.Spec;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
@@ -266,6 +268,11 @@ public class PurchaseFragment1 extends Fragment {
     }
 
     private void onSelectStyleButtonClick(final int productPosition, Product product) {
+        List<Spec> specs = product.getSpecs();
+        if (specs == null || specs.size() == 0) {
+            Toast.makeText(getActivity(), "商品樣式讀取錯誤，如要更改樣式，請移除商品，重新加入購物車", Toast.LENGTH_SHORT).show();
+            return;
+        }
         ProductStyleDialog styleDialog = new ProductStyleDialog(getContext(), product, new ProductStyleDialog.ProductStyleDialogListener() {
             @Override
             public void onFirstAddShoppingCart() {
