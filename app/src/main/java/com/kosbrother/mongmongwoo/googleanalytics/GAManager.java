@@ -67,6 +67,7 @@ public class GAManager {
         mTracker.setSessionTimeout(300);
         mTracker.enableExceptionReporting(true);
         mTracker.enableAutoActivityTracking(true);
+        mTracker.enableAdvertisingIdCollection(true);
     }
 
     private static void initFA(Context context) {
