@@ -30,6 +30,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductViewEvent
 import com.kosbrother.mongmongwoo.googleanalytics.event.search.SearchEnterEvent;
 import com.kosbrother.mongmongwoo.model.Photo;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.model.Spec;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectManager;
 import com.kosbrother.mongmongwoo.search.SearchActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
@@ -371,7 +372,8 @@ public class ProductActivity extends BaseActivity {
     }
 
     private void setAddCartButton() {
-        if (theProduct.isOnShelf()) {
+        List<Spec> specs = theProduct.getSpecs();
+        if (theProduct.isOnShelf() && specs != null && specs.size() > 0) {
             addCarButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
