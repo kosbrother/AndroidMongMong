@@ -1,5 +1,6 @@
 package com.kosbrother.mongmongwoo.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -70,6 +71,10 @@ public class PurchaseFragment1 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        if (shoppingCarProducts == null || shoppingCarProducts.size() == 0) {
+            return inflater.inflate(R.layout.view_stub_empty_shopping_car, container, false);
+        }
+
         View view = inflater.inflate(R.layout.fragment_purchase1, container, false);
         findView(view);
 
@@ -141,6 +146,7 @@ public class PurchaseFragment1 extends Fragment {
         goodsContainerLinearLayout = (LinearLayout) view.findViewById(R.id.goods_container_ll);
     }
 
+    @SuppressLint("InflateParams")
     private void addGoodsViewToLinearLayout() {
         for (int i = 0; i < shoppingCarProducts.size(); i++) {
             final Product product = shoppingCarProducts.get(i);
@@ -283,6 +289,7 @@ public class PurchaseFragment1 extends Fragment {
         getAlertDialog(position, dialogView).show();
     }
 
+    @SuppressLint("InflateParams")
     private View getDialogView() {
         View view = LayoutInflater.from(getContext())
                 .inflate(R.layout.dialog_select_item_counts, null, false);
