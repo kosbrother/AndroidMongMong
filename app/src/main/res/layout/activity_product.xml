@@ -303,7 +303,7 @@
                     android:drawableLeft="@mipmap/ic_star_red"
                     android:drawablePadding="8dp"
                     android:drawableStart="@mipmap/ic_star_red"
-                    android:text="10天到貨："
+                    android:text="3天到貨："
                     android:textColor="@android:color/black"
                     android:textSize="14sp" />
 
@@ -313,7 +313,7 @@
                     android:layout_marginLeft="35dp"
                     android:layout_marginStart="35dp"
                     android:layout_marginTop="4dp"
-                    android:text="商品購買後，10個工作天內會送到指定寄送地址。"
+                    android:text="商品購買後，3個工作天內會送到指定寄送地址。"
                     android:textColor="@color/black_text"
                     android:textSize="14sp" />
 
