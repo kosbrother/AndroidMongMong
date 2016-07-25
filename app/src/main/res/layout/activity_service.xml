@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="20dp"
-        android:text="聯繫萌萌屋客服,請透過我們的 LINE@ 帳號與我們聯絡： \n\n客服時間：星一~星五 10:00~21:00 \n\nLINE@ ID: @kya5456n \n(直接點擊下方icon可開啟LINE加入 ^^)"
+        android:text="聯繫萌萌屋客服,請透過我們的 LINE@ 帳號與我們聯絡： \n\n客服時間：星一~星五 10:00~17:00 \n\nLINE@ ID: @kya5456n \n(直接點擊下方icon可開啟LINE加入 ^^)"
         android:textSize="18dp" />
 
     <LinearLayout
