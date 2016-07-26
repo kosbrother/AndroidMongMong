@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
             android:adjustViewBounds="true"
-            android:src="@mipmap/img_banner" />
+            android:src="@mipmap/img_banner_stop_supply_goods" />
 
         <com.kosbrother.mongmongwoo.utils.ExpandableHeightGridView
             android:id="@+id/category_gv"
