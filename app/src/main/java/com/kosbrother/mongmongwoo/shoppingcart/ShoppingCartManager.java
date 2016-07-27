@@ -50,8 +50,7 @@ public class ShoppingCartManager {
         }
 
         List<Product> productList;
-        // amount is json key only in old version
-        if (shoppingCartString.contains("amount")) {
+        if (ProductUtil.isOldProduct(shoppingCartString)) {
             removeAllShoppingItems();
             productList = ProductUtil.getNewProductListFromOldProductString(shoppingCartString);
             storeShoppingItems(productList);
