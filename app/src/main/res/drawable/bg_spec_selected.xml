@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<shape xmlns:android="http://schemas.android.com/apk/res/android">
-    <solid android:color="#00a378" />
-    <corners android:radius="1dp" />
-</shape>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <layer-list>
+            <item>
+                <shape>
+                    <solid android:color="#00a378" />
+                    <corners android:radius="1dp" />
+                </shape>
+            </item>
+            <item>
+                <shape>
+                    <solid android:color="@color/dark_color_control_highlight" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
+
+    <item>
+        <shape>
+            <solid android:color="#00a378" />
+            <corners android:radius="1dp" />
+        </shape>
+    </item>
+
+</selector>
+
