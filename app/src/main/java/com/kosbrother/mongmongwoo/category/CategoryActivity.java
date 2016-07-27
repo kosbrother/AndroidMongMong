@@ -242,7 +242,7 @@ public class CategoryActivity extends BaseActivity {
                     getActivity().invalidateOptionsMenu();
                     Toast.makeText(getContext(), "成功加入購物車", Toast.LENGTH_SHORT).show();
                 }
-            }).showWithInitState(product);
+            }).showWithInitState();
         }
 
         private void getCategorySortItems(int page) {
