@@ -427,12 +427,12 @@ public class MainActivity extends AppCompatActivity
 
     private void getMyNotificationsIfLogin() {
         if (Settings.checkIsLogIn()) {
-            int userId = Settings.getSavedUser().getUserId();
+            final int userId = Settings.getSavedUser().getUserId();
             DataManager.getInstance().getMyNotificationList(userId, new Action1<List<MyNotification>>() {
                 @Override
                 public void call(List<MyNotification> myNotifications) {
                     MyNotificationManager myNotificationManager = MyNotificationManager.
-                            getInstance(getApplicationContext());
+                            getInstance(getApplicationContext(), userId);
                     myNotificationManager.setMyNotificationsTmp(myNotifications);
                     updateMyNotification(true, myNotificationManager.getNumberOfNewNotifications());
                 }
@@ -709,8 +709,9 @@ public class MainActivity extends AppCompatActivity
 
     private void updateMyNotificationLayout() {
         if (Settings.checkIsLogIn()) {
-            updateMyNotification(true, MyNotificationManager.getInstance(getApplicationContext())
-                    .getNumberOfNewNotifications());
+            updateMyNotification(true, MyNotificationManager.getInstance(
+                    getApplicationContext(),
+                    Settings.getSavedUser().getUserId()).getNumberOfNewNotifications());
         } else {
             updateMyNotification(false, 0);
         }

@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 
 import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.R;
+import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.DataManager;
 
 import java.util.List;
@@ -23,8 +24,10 @@ public class MyNotificationListActivity extends BaseActivity implements
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
+        int userId = Settings.getSavedUser().getUserId();
         MyNotificationListModel model = new MyNotificationListModel(
-                DataManager.getInstance(),MyNotificationManager.getInstance(getApplicationContext()));
+                DataManager.getInstance(),
+                MyNotificationManager.getInstance(getApplicationContext(), userId));
         presenter = new MyNotificationListPresenter(this, model);
         presenter.onCreate();
     }

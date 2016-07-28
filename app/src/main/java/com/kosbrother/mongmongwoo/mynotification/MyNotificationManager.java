@@ -4,8 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.VisibleForTesting;
 
-import com.kosbrother.mongmongwoo.Settings;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -14,7 +12,7 @@ import java.util.Set;
 public class MyNotificationManager {
 
     private static final String PREFS_MY_READ_NOTIFICATIONS = "PREFS_MY_READ_NOTIFICATIONS";
-    private String keyOfMyReadNotifications = String.valueOf(Settings.getSavedUser().getUserId());
+    private static String keyOfMyReadNotifications;
 
     private static MyNotificationManager instance;
     private final SharedPreferences sharedPreferences;
@@ -25,10 +23,11 @@ public class MyNotificationManager {
         sharedPreferences = context.getSharedPreferences(PREFS_MY_READ_NOTIFICATIONS, Context.MODE_PRIVATE);
     }
 
-    public static MyNotificationManager getInstance(Context context) {
+    public static MyNotificationManager getInstance(Context context, int userId) {
         if (instance == null) {
             instance = new MyNotificationManager(context);
         }
+        keyOfMyReadNotifications = String.valueOf(userId);
         return instance;
     }
 
