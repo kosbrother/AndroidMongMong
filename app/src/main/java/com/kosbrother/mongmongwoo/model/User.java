@@ -6,6 +6,7 @@ import com.kosbrother.mongmongwoo.entity.UserEntity;
 public class User extends UserEntity {
 
     private String fbPic;
+    private int userId;
 
     public User(String userName, String gender, String uid, String fbPic, String email, String provider) {
         this.userName = userName;
@@ -50,4 +51,12 @@ public class User extends UserEntity {
         return new Gson().toJson(postEntity);
     }
 
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
 }

@@ -3,6 +3,7 @@ package com.kosbrother.mongmongwoo.login;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.entity.user.UserIdEntity;
 import com.kosbrother.mongmongwoo.model.User;
 
 import rx.functions.Action1;
@@ -22,13 +23,14 @@ public class LoginModel {
         return loginUser.getPassword();
     }
 
-    public void requestMmwLogin(Action1<? super ResponseEntity<String>> onLoginNextAction) {
+    public void requestMmwLogin(Action1<? super ResponseEntity<UserIdEntity>> onLoginNextAction) {
         Webservice.login(getEmail(), getPassword(), onLoginNextAction);
     }
 
-    public void saveMmwUserData() {
+    public void saveMmwUserData(int userId) {
         String email = getEmail();
         User user = new User(email, "", "", "", email, "mmw");
+        user.setUserId(userId);
         Settings.saveUserData(user);
     }
 

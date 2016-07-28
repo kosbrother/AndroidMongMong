@@ -18,6 +18,7 @@ public class Settings {
     private final static String keyUserFBPic = "USER_PIC";
     private final static String keyUserFBEmail = "USER_EMAIL";
     private final static String keyUserProvider = "USER_PROVIDER";
+    private final static String keyUserId = "USER_ID";
 
     private final static String keyFirstAddShoppingCar = "IS_FIRST_ADD_SHOPPING_CAR";
 
@@ -46,6 +47,7 @@ public class Settings {
         editor.putString(keyUserFBPic, user.getFbPic());
         editor.putString(keyUserFBEmail, user.getEmail());
         editor.putString(keyUserProvider, user.getProvider());
+        editor.putInt(keyUserId, user.getUserId());
         editor.apply();
     }
 
@@ -103,8 +105,13 @@ public class Settings {
 
     public static boolean checkIsLogIn() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        String savedUserName = prefs.getString(keyUserName, "");
-        return !savedUserName.equals("");
+        int userId = prefs.getInt(keyUserId, 0);
+        String provider = prefs.getString(keyUserProvider, "");
+        if (userId == 0 || provider.equals("")) {
+            clearAllUserData();
+            return false;
+        }
+        return true;
     }
 
     public static boolean checkIsFirstAddShoppingCar() {
@@ -120,16 +127,16 @@ public class Settings {
     public static User getSavedUser() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String provider = prefs.getString(keyUserProvider, "");
-        if (provider.isEmpty()) {
-            clearAllUserData();
-            return new User("", "", "", "", "", "");
-        }
+        int userId = prefs.getInt(keyUserId, 0);
         String userName = prefs.getString(keyUserName, "");
         String gender = prefs.getString(keyUserGender, "");
         String fb_uid = prefs.getString(keyUserFBUid, "");
         String fb_pic = prefs.getString(keyUserFBPic, "");
         String email = prefs.getString(keyUserFBEmail, "");
-        return new User(userName, gender, fb_uid, fb_pic, email, provider);
+
+        User user = new User(userName, gender, fb_uid, fb_pic, email, provider);
+        user.setUserId(userId);
+        return user;
     }
 
     public static void saveAndroidVersion(String versionName, boolean upToDate) {

@@ -1,13 +1,14 @@
 package com.kosbrother.mongmongwoo.login;
 
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.entity.user.UserIdEntity;
 
 import rx.functions.Action1;
 
 public class LoginPresenter implements
         LoginContract.Presenter,
         EmailPasswordChecker.OnCheckResultListener,
-        Action1<ResponseEntity<String>> {
+        Action1<ResponseEntity<UserIdEntity>> {
 
     private final LoginContract.View view;
     private final LoginModel model;
@@ -64,11 +65,11 @@ public class LoginPresenter implements
     }
 
     @Override
-    public void call(ResponseEntity<String> stringResponseEntity) {
+    public void call(ResponseEntity<UserIdEntity> stringResponseEntity) {
         view.hideProgressDialog();
-        String data = stringResponseEntity.getData();
+        UserIdEntity data = stringResponseEntity.getData();
         if (data != null) {
-            model.saveMmwUserData();
+            model.saveMmwUserData(data.getUserId());
             view.resultOkThenFinish(model.getEmail());
         } else {
             String errorMessage = stringResponseEntity.getError().getMessage();

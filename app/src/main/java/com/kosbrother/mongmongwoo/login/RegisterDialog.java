@@ -16,6 +16,7 @@ import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.databinding.DialogRegisterBinding;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.entity.user.UserIdEntity;
 import com.kosbrother.mongmongwoo.model.User;
 
 import rx.functions.Action1;
@@ -85,13 +86,14 @@ public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickLis
             @Override
             public void onCheckValid() {
                 progressDialog = ProgressDialog.show(getContext(), "註冊中", "請稍後...", true);
-                Webservice.register(email, password, new Action1<ResponseEntity<String>>() {
+                Webservice.register(email, password, new Action1<ResponseEntity<UserIdEntity>>() {
                     @Override
-                    public void call(ResponseEntity<String> stringResponseEntity) {
+                    public void call(ResponseEntity<UserIdEntity> stringResponseEntity) {
                         progressDialog.dismiss();
-                        String data = stringResponseEntity.getData();
+                        UserIdEntity data = stringResponseEntity.getData();
                         if (data != null) {
                             User user = new User(email, "", "", "", email, "mmw");
+                            user.setUserId(data.getUserId());
                             Settings.saveUserData(user);
                             listener.onRegisterSuccess(email);
                             listener = null;

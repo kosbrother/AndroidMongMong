@@ -1,6 +1,7 @@
 package com.kosbrother.mongmongwoo.login;
 
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.entity.user.UserIdEntity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class LoginPresenterTest {
     private LoginModel model;
 
     @Mock
-    private ResponseEntity<String> stringResponseEntity;
+    private ResponseEntity<UserIdEntity> userIdEntityResponseEntity;
 
     private LoginPresenter presenter;
 
@@ -103,24 +104,24 @@ public class LoginPresenterTest {
 
     @Test
     public void testCall_loginSuccess() throws Exception {
-        when(stringResponseEntity.getData()).thenReturn("");
+        when(userIdEntityResponseEntity.getData()).thenReturn(new UserIdEntity());
 
-        presenter.call(stringResponseEntity);
+        presenter.call(userIdEntityResponseEntity);
 
         verify(view).hideProgressDialog();
-        verify(model).saveMmwUserData();
+        verify(model).saveMmwUserData(userIdEntityResponseEntity.getData().getUserId());
         verify(view).resultOkThenFinish(model.getEmail());
     }
 
     @Test
     public void testCall_loginError() throws Exception {
-        when(stringResponseEntity.getData()).thenReturn(null);
+        when(userIdEntityResponseEntity.getData()).thenReturn(null);
         String errorMessage = "errorMessage";
         ResponseEntity.Error error = mock(ResponseEntity.Error.class);
         when(error.getMessage()).thenReturn(errorMessage);
-        when(stringResponseEntity.getError()).thenReturn(error);
+        when(userIdEntityResponseEntity.getError()).thenReturn(error);
 
-        presenter.call(stringResponseEntity);
+        presenter.call(userIdEntityResponseEntity);
 
         verify(view).hideProgressDialog();
         verify(view).showToast(errorMessage);

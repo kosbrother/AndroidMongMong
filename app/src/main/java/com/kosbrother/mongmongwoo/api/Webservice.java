@@ -7,6 +7,7 @@ import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.entity.ShopInfoEntity;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrder;
+import com.kosbrother.mongmongwoo.entity.user.UserIdEntity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.exception.ExceptionEvent;
 import com.kosbrother.mongmongwoo.model.Category;
@@ -495,7 +496,7 @@ public class Webservice {
 
     public static void postUser(
             final String userJsonString,
-            Action1<? super ResponseEntity<String>> onNextAction,
+            Action1<? super ResponseEntity<UserIdEntity>> onNextAction,
             final Action1<? super Throwable> onExceptionAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
@@ -509,12 +510,12 @@ public class Webservice {
                 }
             }
         })
-                .map(new Func1<String, ResponseEntity<String>>() {
+                .map(new Func1<String, ResponseEntity<UserIdEntity>>() {
                     @Override
-                    public ResponseEntity<String> call(String json) {
-                        Type listType = new TypeToken<ResponseEntity<String>>() {
+                    public ResponseEntity<UserIdEntity> call(String json) {
+                        Type type = new TypeToken<ResponseEntity<UserIdEntity>>() {
                         }.getType();
-                        return new Gson().fromJson(json, listType);
+                        return new Gson().fromJson(json, type);
                     }
                 })
                 .subscribeOn(Schedulers.newThread())
@@ -568,7 +569,7 @@ public class Webservice {
 
     public static void register(
             final String email, final String password,
-            Action1<? super ResponseEntity<String>> onNextAction) {
+            Action1<? super ResponseEntity<UserIdEntity>> onNextAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -581,12 +582,12 @@ public class Webservice {
                 }
             }
         })
-                .map(new Func1<String, ResponseEntity<String>>() {
+                .map(new Func1<String, ResponseEntity<UserIdEntity>>() {
                     @Override
-                    public ResponseEntity<String> call(String json) {
-                        Type listType = new TypeToken<ResponseEntity<String>>() {
+                    public ResponseEntity<UserIdEntity> call(String json) {
+                        Type type = new TypeToken<ResponseEntity<UserIdEntity>>() {
                         }.getType();
-                        return new Gson().fromJson(json, listType);
+                        return new Gson().fromJson(json, type);
                     }
                 })
                 .subscribeOn(Schedulers.newThread())
@@ -601,7 +602,7 @@ public class Webservice {
 
     public static void login(
             final String email, final String password,
-            Action1<? super ResponseEntity<String>> onNextAction) {
+            Action1<? super ResponseEntity<UserIdEntity>> onNextAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -614,12 +615,12 @@ public class Webservice {
                 }
             }
         })
-                .map(new Func1<String, ResponseEntity<String>>() {
+                .map(new Func1<String, ResponseEntity<UserIdEntity>>() {
                     @Override
-                    public ResponseEntity<String> call(String json) {
-                        Type listType = new TypeToken<ResponseEntity<String>>() {
+                    public ResponseEntity<UserIdEntity> call(String json) {
+                        Type type = new TypeToken<ResponseEntity<UserIdEntity>>() {
                         }.getType();
-                        return new Gson().fromJson(json, listType);
+                        return new Gson().fromJson(json, type);
                     }
                 })
                 .subscribeOn(Schedulers.newThread())
