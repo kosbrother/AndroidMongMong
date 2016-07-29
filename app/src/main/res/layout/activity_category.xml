@@ -24,6 +24,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
+                android:elevation="4dp"
                 app:popupTheme="@style/AppTheme.PopupOverlay"
                 app:titleTextColor="@color/white" />
 
@@ -32,6 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/gray_tab_background"
+                android:elevation="2dp"
                 app:layout_scrollFlags="scroll|enterAlways"
                 app:tabGravity="fill"
                 app:tabIndicatorColor="@color/green_text"
