@@ -16,7 +16,6 @@ import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
-import com.kosbrother.mongmongwoo.entity.user.UserIdEntity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.model.User;
 
@@ -100,17 +99,17 @@ public class GoogleSignInActivity extends BaseLoginActivity implements
     }
 
     public void onSignInSuccess(final User user) {
-        Webservice.postUser(user.getUserJsonString(), new Action1<ResponseEntity<UserIdEntity>>() {
+        Webservice.postUser(user.getUserJsonString(), new Action1<ResponseEntity<Integer>>() {
             @Override
-            public void call(ResponseEntity<UserIdEntity> stringResponseEntity) {
-                UserIdEntity data = stringResponseEntity.getData();
-                if (data == null) {
+            public void call(ResponseEntity<Integer> stringResponseEntity) {
+                int data = stringResponseEntity.getData();
+                if (data == 0) {
                     signOut();
                     ResponseEntity.Error error = stringResponseEntity.getError();
                     GAManager.sendError("postUserError", error);
                     resultCancelThenFinish(error.getMessage());
                 } else {
-                    user.setUserId(data.getUserId());
+                    user.setUserId(data);
                     Settings.saveUserData(user);
                     String email = user.getEmail();
                     resultOkThenFinish(email);

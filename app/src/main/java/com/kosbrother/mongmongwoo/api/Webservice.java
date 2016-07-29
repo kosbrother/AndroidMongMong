@@ -2,12 +2,10 @@ package com.kosbrother.mongmongwoo.api;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.entity.ShopInfoEntity;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrder;
-import com.kosbrother.mongmongwoo.entity.user.UserIdEntity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.exception.ExceptionEvent;
 import com.kosbrother.mongmongwoo.model.Category;
@@ -29,36 +27,6 @@ import rx.schedulers.Schedulers;
 
 public class Webservice {
     public static final String TAG = "Webservice";
-
-    public static void getAndroidVersion(
-            Action1<? super AndroidVersionEntity> onNextAction) {
-        Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                try {
-                    subscriber.onNext(AndroidVersionApi.getVersion());
-                    subscriber.onCompleted();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    subscriber.onError(e);
-                }
-            }
-        })
-                .map(new Func1<String, AndroidVersionEntity>() {
-                    @Override
-                    public AndroidVersionEntity call(String json) {
-                        return new Gson().fromJson(json, AndroidVersionEntity.class);
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onNextAction, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        handleThrowable(throwable, "checkAndroidVersionException");
-                    }
-                });
-    }
 
     public static void getCategories(
             Action1<? super ResponseEntity<List<Category>>> onNextAction) {
@@ -496,7 +464,7 @@ public class Webservice {
 
     public static void postUser(
             final String userJsonString,
-            Action1<? super ResponseEntity<UserIdEntity>> onNextAction,
+            Action1<? super ResponseEntity<Integer>> onNextAction,
             final Action1<? super Throwable> onExceptionAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
@@ -510,10 +478,10 @@ public class Webservice {
                 }
             }
         })
-                .map(new Func1<String, ResponseEntity<UserIdEntity>>() {
+                .map(new Func1<String, ResponseEntity<Integer>>() {
                     @Override
-                    public ResponseEntity<UserIdEntity> call(String json) {
-                        Type type = new TypeToken<ResponseEntity<UserIdEntity>>() {
+                    public ResponseEntity<Integer> call(String json) {
+                        Type type = new TypeToken<ResponseEntity<Integer>>() {
                         }.getType();
                         return new Gson().fromJson(json, type);
                     }
@@ -569,7 +537,7 @@ public class Webservice {
 
     public static void register(
             final String email, final String password,
-            Action1<? super ResponseEntity<UserIdEntity>> onNextAction) {
+            Action1<? super ResponseEntity<Integer>> onNextAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -582,10 +550,10 @@ public class Webservice {
                 }
             }
         })
-                .map(new Func1<String, ResponseEntity<UserIdEntity>>() {
+                .map(new Func1<String, ResponseEntity<Integer>>() {
                     @Override
-                    public ResponseEntity<UserIdEntity> call(String json) {
-                        Type type = new TypeToken<ResponseEntity<UserIdEntity>>() {
+                    public ResponseEntity<Integer> call(String json) {
+                        Type type = new TypeToken<ResponseEntity<Integer>>() {
                         }.getType();
                         return new Gson().fromJson(json, type);
                     }
@@ -602,7 +570,7 @@ public class Webservice {
 
     public static void login(
             final String email, final String password,
-            Action1<? super ResponseEntity<UserIdEntity>> onNextAction) {
+            Action1<? super ResponseEntity<Integer>> onNextAction) {
         Observable.create(new Observable.OnSubscribe<String>() {
             @Override
             public void call(Subscriber<? super String> subscriber) {
@@ -615,10 +583,10 @@ public class Webservice {
                 }
             }
         })
-                .map(new Func1<String, ResponseEntity<UserIdEntity>>() {
+                .map(new Func1<String, ResponseEntity<Integer>>() {
                     @Override
-                    public ResponseEntity<UserIdEntity> call(String json) {
-                        Type type = new TypeToken<ResponseEntity<UserIdEntity>>() {
+                    public ResponseEntity<Integer> call(String json) {
+                        Type type = new TypeToken<ResponseEntity<Integer>>() {
                         }.getType();
                         return new Gson().fromJson(json, type);
                     }

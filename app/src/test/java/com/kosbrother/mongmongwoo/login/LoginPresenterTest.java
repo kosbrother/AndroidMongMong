@@ -1,7 +1,6 @@
 package com.kosbrother.mongmongwoo.login;
 
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
-import com.kosbrother.mongmongwoo.entity.user.UserIdEntity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,7 +21,7 @@ public class LoginPresenterTest {
     private LoginModel model;
 
     @Mock
-    private ResponseEntity<UserIdEntity> userIdEntityResponseEntity;
+    private ResponseEntity<Integer> userIdEntityResponseEntity;
 
     private LoginPresenter presenter;
 
@@ -104,18 +103,18 @@ public class LoginPresenterTest {
 
     @Test
     public void testCall_loginSuccess() throws Exception {
-        when(userIdEntityResponseEntity.getData()).thenReturn(new UserIdEntity());
+        when(userIdEntityResponseEntity.getData()).thenReturn(1111);
 
         presenter.call(userIdEntityResponseEntity);
 
         verify(view).hideProgressDialog();
-        verify(model).saveMmwUserData(userIdEntityResponseEntity.getData().getUserId());
+        verify(model).saveMmwUserData(userIdEntityResponseEntity.getData());
         verify(view).resultOkThenFinish(model.getEmail());
     }
 
     @Test
     public void testCall_loginError() throws Exception {
-        when(userIdEntityResponseEntity.getData()).thenReturn(null);
+        when(userIdEntityResponseEntity.getData()).thenReturn(0);
         String errorMessage = "errorMessage";
         ResponseEntity.Error error = mock(ResponseEntity.Error.class);
         when(error.getMessage()).thenReturn(errorMessage);
