@@ -7,6 +7,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 
 import com.kosbrother.mongmongwoo.BaseActivity;
+import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.DataManager;
@@ -15,6 +16,9 @@ import java.util.List;
 
 public class MyNotificationListActivity extends BaseActivity implements
         MyNotificationAdapter.OnMyNotificationClickListener, MyNotificationListContract.View {
+
+    public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
+    public static final String EXTRA_STRING_NOTIFICATION_TITLE = "EXTRA_STRING_NOTIFICATION_TITLE";
 
     private MyNotificationAdapter adapter;
     private MyNotificationListPresenter presenter;
@@ -27,9 +31,16 @@ public class MyNotificationListActivity extends BaseActivity implements
         int userId = Settings.getSavedUser().getUserId();
         MyNotificationListModel model = new MyNotificationListModel(
                 DataManager.getInstance(),
-                MyNotificationManager.getInstance(getApplicationContext(), userId));
+                MyNotificationManager.getInstance(getApplicationContext(), userId),
+                getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false),
+                getIntent().getStringExtra(EXTRA_STRING_NOTIFICATION_TITLE));
         presenter = new MyNotificationListPresenter(this, model);
         presenter.onCreate();
+    }
+
+    @Override
+    public void onBackPressed() {
+        presenter.onBackPressed();
     }
 
     @Override
@@ -69,6 +80,17 @@ public class MyNotificationListActivity extends BaseActivity implements
         intent.putExtra(MyNotificationDetailActivity.EXTRA_SERIALIZABLE_NOTIFICATION_DETAIL,
                 notificationDetail);
         startActivity(intent);
+    }
+
+    @Override
+    public void startMainActivityThenFinish() {
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
+    }
+
+    @Override
+    public void superOnBackPressed() {
+        super.onBackPressed();
     }
 
 

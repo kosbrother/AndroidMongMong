@@ -15,11 +15,16 @@ public interface MyNotificationListContract {
 
         void startMyNotificationDetailActivity(MyNotification.NotificationDetail notificationDetail);
 
+        void startMainActivityThenFinish();
+
+        void superOnBackPressed();
     }
 
     interface Presenter {
         void onCreate();
 
         void onMyNotificationClick(int adapterPosition);
+
+        void onBackPressed();
     }
 }

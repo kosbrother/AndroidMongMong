@@ -17,6 +17,9 @@ public class MyNotificationListPresenter implements MyNotificationListContract.P
 
     @Override
     public void onCreate() {
+        if(model.isFromNotification()){
+            model.sendNotificationMyMessageOpenedEvent();
+        }
         view.showLoading();
         model.getMyNotificationList(this);
     }
@@ -26,6 +29,15 @@ public class MyNotificationListPresenter implements MyNotificationListContract.P
         model.saveReadNotification(adapterPosition);
         view.setMyNotificationRead(adapterPosition);
         view.startMyNotificationDetailActivity(model.getMyNotificationDetail(adapterPosition));
+    }
+
+    @Override
+    public void onBackPressed() {
+        if(model.isFromNotification()){
+            view.startMainActivityThenFinish();
+        }else {
+            view.superOnBackPressed();
+        }
     }
 
     @Override

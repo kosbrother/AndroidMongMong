@@ -54,6 +54,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.navigationdrawer.NavigationDrawerClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.navigationdrawer.NavigationDrawerOpenEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationMyMessageOpenedEvent;
 import com.kosbrother.mongmongwoo.login.LogOutActivity;
 import com.kosbrother.mongmongwoo.login.LoginActivity;
 import com.kosbrother.mongmongwoo.model.Category;
@@ -88,6 +89,8 @@ public class MainActivity extends AppCompatActivity
 
     private static final int REQUEST_LOGOUT = 222;
     private static final int REQUEST_LOGIN = REQUEST_LOGOUT + 1;
+    public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
+    public static final String EXTRA_STRING_NOTIFICATION_TITLE = "EXTRA_STRING_NOTIFICATION_TITLE";
 
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
 
@@ -109,6 +112,7 @@ public class MainActivity extends AppCompatActivity
         checkAndroidVersion();
         getMyNotificationsIfLogin();
         postFcmTokenIfServerNotReceived();
+        sendGaEventIfFromNotification();
     }
 
     @Override
@@ -459,6 +463,12 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+    }
+
+    private void sendGaEventIfFromNotification() {
+        if (getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false)) {
+            GAManager.sendEvent(new NotificationMyMessageOpenedEvent(getIntent().getStringExtra(EXTRA_STRING_NOTIFICATION_TITLE)));
+        }
     }
 
     private void onGetVersionResult(AndroidVersionEntity version) {

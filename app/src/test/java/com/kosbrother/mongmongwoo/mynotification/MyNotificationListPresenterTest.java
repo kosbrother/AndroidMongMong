@@ -7,6 +7,7 @@ import org.mockito.MockitoAnnotations;
 
 import java.util.List;
 
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,11 +31,43 @@ public class MyNotificationListPresenterTest {
     }
 
     @Test
-    public void testOnCreate() throws Exception {
+    public void testOnCreate_notFromNotification() throws Exception {
+        when(model.isFromNotification()).thenReturn(false);
+
         presenter.onCreate();
 
         verify(view).showLoading();
         verify(model).getMyNotificationList(presenter);
+        verify(model, never()).sendNotificationMyMessageOpenedEvent();
+    }
+
+    @Test
+    public void testOnCreate_fromNotification() throws Exception {
+        when(model.isFromNotification()).thenReturn(true);
+
+        presenter.onCreate();
+
+        verify(view).showLoading();
+        verify(model).getMyNotificationList(presenter);
+        verify(model).sendNotificationMyMessageOpenedEvent();
+    }
+
+    @Test
+    public void testOnBackPressed_notFromNotification() throws Exception {
+        when(model.isFromNotification()).thenReturn(false);
+
+        presenter.onBackPressed();
+
+        verify(view).superOnBackPressed();
+    }
+
+    @Test
+    public void testOnBackPressed_fromNotification() throws Exception {
+        when(model.isFromNotification()).thenReturn(true);
+
+        presenter.onBackPressed();
+
+        verify(view).startMainActivityThenFinish();
     }
 
     @Test

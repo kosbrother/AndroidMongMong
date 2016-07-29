@@ -2,6 +2,8 @@ package com.kosbrother.mongmongwoo.mynotification;
 
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.DataManager;
+import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationMyMessageOpenedEvent;
 
 import java.util.List;
 
@@ -10,10 +12,17 @@ import rx.functions.Action1;
 public class MyNotificationListModel {
     private DataManager dataManager;
     private MyNotificationManager myNotificationManager;
+    private boolean fromNotification;
+    private String notificationTitle;
 
-    public MyNotificationListModel(DataManager dataManager, MyNotificationManager myNotificationManager) {
+    public MyNotificationListModel(DataManager dataManager,
+                                   MyNotificationManager myNotificationManager,
+                                   boolean fromNotification,
+                                   String notificationTitle) {
         this.dataManager = dataManager;
         this.myNotificationManager = myNotificationManager;
+        this.fromNotification = fromNotification;
+        this.notificationTitle = notificationTitle;
     }
 
     public void getMyNotificationList(Action1<List<MyNotification>> action1) {
@@ -34,5 +43,13 @@ public class MyNotificationListModel {
 
     public List<MyNotification> getDisplayNotificationList() {
         return myNotificationManager.getDisplayNotifications();
+    }
+
+    public boolean isFromNotification() {
+        return fromNotification;
+    }
+
+    public void sendNotificationMyMessageOpenedEvent() {
+        GAManager.sendEvent(new NotificationMyMessageOpenedEvent(notificationTitle));
     }
 }
