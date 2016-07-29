@@ -30,7 +30,7 @@ public class MyNotificationListPresenter implements MyNotificationListContract.P
 
     @Override
     public void call(List<MyNotification> myNotifications) {
-        model.setMyNotificationList(myNotifications);
+        model.saveMyNotificationList(myNotifications);
         if (myNotifications.size() == 0) {
             view.showMyNotificationListEmpty();
         } else {

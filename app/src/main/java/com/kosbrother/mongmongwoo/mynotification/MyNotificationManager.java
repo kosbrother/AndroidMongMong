@@ -4,10 +4,12 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.VisibleForTesting;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class MyNotificationManager {
 
@@ -16,8 +18,6 @@ public class MyNotificationManager {
 
     private static MyNotificationManager instance;
     private final SharedPreferences sharedPreferences;
-
-    private List<MyNotification> myNotificationsTmp = new ArrayList<>();
 
     private MyNotificationManager(Context context) {
         sharedPreferences = context.getSharedPreferences(PREFS_MY_READ_NOTIFICATIONS, Context.MODE_PRIVATE);
@@ -31,65 +31,58 @@ public class MyNotificationManager {
         return instance;
     }
 
-    public int getNumberOfNewNotifications() {
-        Set<String> myReadNotifications = getMyReadNotifications();
-        if (myReadNotifications.size() == 0) {
-            return myNotificationsTmp.size();
-        }
-        return getNumberOfNewNotification(myNotificationsTmp, myReadNotifications);
-    }
-
     public void saveReadNotification(int position) {
-        Set<String> tmpSet = new HashSet<>();
-        tmpSet.addAll(getMyReadNotifications());
-        tmpSet.add(String.valueOf(myNotificationsTmp.get(position).getId()));
+        List<MyNotification> myReadNotifications = getMySavedNotifications();
+        myReadNotifications.get(position).setNew(false);
 
-        sharedPreferences
-                .edit()
-                .putStringSet(keyOfMyReadNotifications, tmpSet)
+        sharedPreferences.edit()
+                .putString(keyOfMyReadNotifications, new Gson().toJson(myReadNotifications))
                 .apply();
     }
 
-    public List<MyNotification> getDisplayNotificationList() {
-        Set<String> myReadNotifications = getMyReadNotifications();
-        if (myReadNotifications.size() == 0) {
-            return myNotificationsTmp;
-        }
-
-        for (String id : myReadNotifications) {
-            for (MyNotification myNotification : myNotificationsTmp) {
-                if (myNotification.getId() == Integer.parseInt(id)) {
-                    myNotification.setNew(false);
-                    break;
-                }
+    public int getNumberOfNewNotifications() {
+        int numberOfNewNotifications = 0;
+        List<MyNotification> myReadNotifications = getMySavedNotifications();
+        for (MyNotification myNotification : myReadNotifications) {
+            if (myNotification.isNew()) {
+                numberOfNewNotifications++;
             }
         }
-        return myNotificationsTmp;
+        return numberOfNewNotifications;
     }
 
-    @VisibleForTesting
-    protected int getNumberOfNewNotification(List<MyNotification> myNotifications, Set<String> myReadNotifications) {
-        for (String id : myReadNotifications) {
-            for (int i = 0; i < myNotifications.size(); i++) {
-                MyNotification myNotification = myNotifications.get(i);
-                if (myNotification.getId() == Integer.parseInt(id)) {
-                    myNotifications.remove(myNotification);
-                    break;
-                }
-            }
+    public List<MyNotification> getDisplayNotifications() {
+        return getMySavedNotifications();
+    }
+
+    private List<MyNotification> getMySavedNotifications() {
+        String jsonString = sharedPreferences.getString(keyOfMyReadNotifications, new Gson().toJson(new ArrayList<MyNotification>()));
+        Type typeToken = new TypeToken<List<MyNotification>>() {
+        }.getType();
+        return new Gson().fromJson(jsonString, typeToken);
+    }
+
+    public void saveNewMyNotifications(List<MyNotification> newMyNotifications) {
+        List<MyNotification> mySavedNotifications = getMySavedNotifications();
+        int sizeOfNewNotifications = newMyNotifications.size();
+        int sizeOfSavedNotifications = mySavedNotifications.size();
+        for (int i = sizeOfSavedNotifications; i < sizeOfNewNotifications; i++) {
+                mySavedNotifications.add(newMyNotifications.get(i));
         }
-        return myNotifications.size();
-    }
 
-    private Set<String> getMyReadNotifications() {
-        return sharedPreferences.getStringSet(keyOfMyReadNotifications, new HashSet<String>());
-    }
-
-    public void setMyNotificationsTmp(List<MyNotification> myNotificationsTmp) {
-        this.myNotificationsTmp = myNotificationsTmp;
+        sharedPreferences.edit()
+                .putString(keyOfMyReadNotifications, new Gson().toJson(mySavedNotifications))
+                .apply();
     }
 
     public MyNotification.NotificationDetail getMyNotificationDetail(int index) {
-        return myNotificationsTmp.get(index).getNotificationDetail();
+        return getMySavedNotifications().get(index).getNotificationDetail();
+    }
+
+    @VisibleForTesting
+    protected void clearMySavedNotifications(){
+        sharedPreferences.edit()
+                .clear()
+                .apply();
     }
 }

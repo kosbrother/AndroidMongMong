@@ -20,8 +20,8 @@ public class MyNotificationListModel {
         dataManager.getMyNotificationList(Settings.getSavedUser().getUserId(), action1);
     }
 
-    public void setMyNotificationList(List<MyNotification> myNotificationList) {
-        myNotificationManager.setMyNotificationsTmp(myNotificationList);
+    public void saveMyNotificationList(List<MyNotification> myNotificationList) {
+        myNotificationManager.saveNewMyNotifications(myNotificationList);
     }
 
     public MyNotification.NotificationDetail getMyNotificationDetail(int index) {
@@ -33,6 +33,6 @@ public class MyNotificationListModel {
     }
 
     public List<MyNotification> getDisplayNotificationList() {
-        return myNotificationManager.getDisplayNotificationList();
+        return myNotificationManager.getDisplayNotifications();
     }
 }

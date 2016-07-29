@@ -433,7 +433,7 @@ public class MainActivity extends AppCompatActivity
                 public void call(List<MyNotification> myNotifications) {
                     MyNotificationManager myNotificationManager = MyNotificationManager.
                             getInstance(getApplicationContext(), userId);
-                    myNotificationManager.setMyNotificationsTmp(myNotifications);
+                    myNotificationManager.saveNewMyNotifications(myNotifications);
                     updateMyNotification(true, myNotificationManager.getNumberOfNewNotifications());
                 }
             });
