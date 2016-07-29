@@ -35,6 +35,9 @@ public class Spec implements Serializable {
     }
 
     public String getStockText() {
+        if (stockAmount >= 10) {
+            return "庫存充分";
+        }
         return String.format("剩下%s件", StringUtil.transToFullWidth(String.valueOf(stockAmount)));
     }
 
