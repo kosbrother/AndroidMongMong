@@ -5,6 +5,7 @@ public interface GACategory {
     String NOTIFICATION_PICK_UP = "Notification_Pick_up";
     String PRODUCT = "Product";
     String PRODUCT_SELECT_DIALOG = "Product_select_dialog";
+    String SHOPPING_CART_PRODUCT = "Shopping_cart_product";
     String INDEX_GRID_CART = "Index_grid_cart";
     String CART = "Cart";
     String NAVIGATION_DRAWER = "Navigation_drawer";

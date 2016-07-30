@@ -12,6 +12,8 @@ import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.googleanalytics.event.GAEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.error.ErrorEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.shoppingcartproduct.ShoppingCartProductEvent;
+import com.kosbrother.mongmongwoo.model.Product;
 
 public class GAManager {
 
@@ -125,5 +127,17 @@ public class GAManager {
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, id);
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, name);
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SHARE, bundle);
+    }
+
+    public static void sendShoppingCartProductEvent(Product product) {
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, product.getCategoryName());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(product.getId()));
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, product.getName());
+        bundle.putString(FirebaseAnalytics.Param.QUANTITY, String.valueOf(product.getBuy_count()));
+        bundle.putString(FirebaseAnalytics.Param.PRICE, String.valueOf(product.getFinalPrice()));
+        mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.ADD_TO_CART, bundle);
+
+        sendEvent(new ShoppingCartProductEvent(product));
     }
 }

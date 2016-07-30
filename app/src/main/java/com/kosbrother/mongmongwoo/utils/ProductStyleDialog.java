@@ -147,8 +147,9 @@ public class ProductStyleDialog {
         styleConfirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GAManager.sendEvent(new ProductSelectDialogConfirmEvent(product.getName()));
                 updateConfirmProduct();
+                GAManager.sendEvent(new ProductSelectDialogConfirmEvent(product.getName()));
+                GAManager.sendShoppingCartProductEvent(product);
                 checkFirstAddAndNotifyListener(listener);
                 alertDialog.dismiss();
             }
