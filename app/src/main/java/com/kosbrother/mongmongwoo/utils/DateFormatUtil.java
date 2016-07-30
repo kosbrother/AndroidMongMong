@@ -7,7 +7,7 @@ import java.util.Locale;
 
 public class DateFormatUtil {
 
-    public static final String API_CREATED_AT_PATTERN = "yyyy-MM-dd'T'hh:mm:ss.sss";
+    public static final String API_CREATED_AT_PATTERN = "yyyy-MM-dd'T'kk:mm:ss.sss";
 
     public static String parseToMonthAndDay(String createdAt) {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat(API_CREATED_AT_PATTERN, Locale.getDefault());
