@@ -7,8 +7,8 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 
-import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.ProductActivity;
+import com.kosbrother.mongmongwoo.launch.LaunchActivity;
 
 public class IndexActivity extends AppCompatActivity {
 
@@ -44,7 +44,7 @@ public class IndexActivity extends AppCompatActivity {
                             ProductActivity.EXTRA_STRING_SLUG, itemsData);
                 }
             } else {
-                indexIntent = new Intent(this, MainActivity.class);
+                indexIntent = new Intent(this, LaunchActivity.class);
             }
             startActivity(indexIntent);
             finish();
