@@ -40,7 +40,7 @@ public class MyFcmListenerService extends FirebaseMessagingService {
 
         if (orderMessage(data)) {
             onReceivedOrder(data);
-        } else if (data.containsKey("message_type")) {
+        } else if (data.containsKey("m_type")) {
             onReceivedMyNotification(data);
         } else if (data.containsKey("content_pic")) {
             onReceivedProduct(data);
