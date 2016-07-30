@@ -5,7 +5,7 @@ import org.junit.Test;
 
 public class DateFormatUtilTest {
 
-    private static final String CREATED_AT = "2016-07-26T12:01:01.000+08:00";
+    private String CREATED_AT = "2016-07-26T12:01:01.000+08:00";
 
     @Test
     public void testGetMonthAndDay() throws Exception {
@@ -15,7 +15,16 @@ public class DateFormatUtilTest {
 
     @Test
     public void testGetDateAndTime() throws Exception {
-        String result = DateFormatUtil.parseToDateAndTime(CREATED_AT);
-        Assert.assertEquals("2016/07/26 12:01", result);
+        Assert.assertEquals("2016/07/26 12:01", DateFormatUtil.parseToDateAndTime(CREATED_AT));
+
+        CREATED_AT = "2016-07-26T23:59:01.000+08:00";
+        Assert.assertEquals("2016/07/26 23:59", DateFormatUtil.parseToDateAndTime(CREATED_AT));
+
+        CREATED_AT = "2016-07-26T00:01:01.000+08:00";
+        Assert.assertEquals("2016/07/26 00:01", DateFormatUtil.parseToDateAndTime(CREATED_AT));
+
+        CREATED_AT = "2016-07-26T24:01:01.000+08:00";
+        Assert.assertEquals("2016/07/26 00:01", DateFormatUtil.parseToDateAndTime(CREATED_AT));
+
     }
 }
