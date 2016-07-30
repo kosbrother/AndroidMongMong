@@ -36,13 +36,16 @@ public class MyNotificationManagerTest {
         manager.saveNewMyNotifications(myNotifications);
 
         List<MyNotification> newMyNotifications = new ArrayList<>();
-        newMyNotifications.add(createNewNotification(1));
+        newMyNotifications.add(createNewNotification(3));
         newMyNotifications.add(createNewNotification(2));
+        newMyNotifications.add(createNewNotification(1));
         manager.saveNewMyNotifications(newMyNotifications);
 
         int expected = newMyNotifications.size();
         int actual = manager.getDisplayNotifications().size();
         assertEquals(expected, actual);
+        assertEquals(newMyNotifications.get(2).getId(),
+                manager.getDisplayNotifications().get(2).getId());
     }
 
     @Test

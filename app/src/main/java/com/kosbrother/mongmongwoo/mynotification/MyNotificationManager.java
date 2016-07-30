@@ -66,8 +66,8 @@ public class MyNotificationManager {
         List<MyNotification> mySavedNotifications = getMySavedNotifications();
         int sizeOfNewNotifications = newMyNotifications.size();
         int sizeOfSavedNotifications = mySavedNotifications.size();
-        for (int i = sizeOfSavedNotifications; i < sizeOfNewNotifications; i++) {
-                mySavedNotifications.add(newMyNotifications.get(i));
+        for (int i = 0; i < sizeOfNewNotifications - sizeOfSavedNotifications; i++) {
+            mySavedNotifications.add(i, newMyNotifications.get(i));
         }
 
         sharedPreferences.edit()
@@ -80,7 +80,7 @@ public class MyNotificationManager {
     }
 
     @VisibleForTesting
-    protected void clearMySavedNotifications(){
+    protected void clearMySavedNotifications() {
         sharedPreferences.edit()
                 .clear()
                 .apply();
