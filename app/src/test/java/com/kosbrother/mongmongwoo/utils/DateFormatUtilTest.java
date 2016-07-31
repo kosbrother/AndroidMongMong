@@ -24,7 +24,7 @@ public class DateFormatUtilTest {
         Assert.assertEquals("2016/07/26 00:01", DateFormatUtil.parseToDateAndTime(CREATED_AT));
 
         CREATED_AT = "2016-07-26T24:01:01.000+08:00";
-        Assert.assertEquals("2016/07/26 00:01", DateFormatUtil.parseToDateAndTime(CREATED_AT));
+        Assert.assertEquals("2016/07/27 00:01", DateFormatUtil.parseToDateAndTime(CREATED_AT));
 
     }
 }
