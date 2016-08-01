@@ -151,6 +151,18 @@
             android:theme="@style/CustomTheme" />
 
         <activity
+            android:name=".mynotification.MyNotificationListActivity"
+            android:label="@string/my_notification"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+
+        <activity
+            android:name=".mynotification.MyNotificationDetailActivity"
+            android:label="@string/my_notification"
+            android:screenOrientation="portrait"
+            android:theme="@style/AppTheme" />
+
+        <activity
             android:name=".login.LoginActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.AppCompat.NoTitleDialog" />

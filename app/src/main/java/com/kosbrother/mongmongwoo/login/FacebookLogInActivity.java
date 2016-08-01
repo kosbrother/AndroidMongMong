@@ -84,16 +84,17 @@ public class FacebookLogInActivity extends BaseLoginActivity {
     }
 
     public void onLoginSuccess(final User user) {
-        Webservice.postUser(user.getUserJsonString(), new Action1<ResponseEntity<String>>() {
+        Webservice.postUser(user.getUserJsonString(), new Action1<ResponseEntity<Integer>>() {
             @Override
-            public void call(ResponseEntity<String> stringResponseEntity) {
-                String data = stringResponseEntity.getData();
-                if (data == null) {
+            public void call(ResponseEntity<Integer> stringResponseEntity) {
+                int data = stringResponseEntity.getData();
+                if (data == 0) {
                     loginManager.logOut();
                     ResponseEntity.Error error = stringResponseEntity.getError();
                     GAManager.sendError("postUserError", error);
                     resultCancelThenFinish(error.getMessage());
                 } else {
+                    user.setUserId(data);
                     Settings.saveUserData(user);
                     resultOkThenFinish(user.getEmail());
                 }

@@ -85,13 +85,14 @@ public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickLis
             @Override
             public void onCheckValid() {
                 progressDialog = ProgressDialog.show(getContext(), "註冊中", "請稍後...", true);
-                Webservice.register(email, password, new Action1<ResponseEntity<String>>() {
+                Webservice.register(email, password, new Action1<ResponseEntity<Integer>>() {
                     @Override
-                    public void call(ResponseEntity<String> stringResponseEntity) {
+                    public void call(ResponseEntity<Integer> stringResponseEntity) {
                         progressDialog.dismiss();
-                        String data = stringResponseEntity.getData();
-                        if (data != null) {
+                        int data = stringResponseEntity.getData();
+                        if (data != 0) {
                             User user = new User(email, "", "", "", email, "mmw");
+                            user.setUserId(data);
                             Settings.saveUserData(user);
                             listener.onRegisterSuccess(email);
                             listener = null;

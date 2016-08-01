@@ -7,7 +7,7 @@ import rx.functions.Action1;
 public class LoginPresenter implements
         LoginContract.Presenter,
         EmailPasswordChecker.OnCheckResultListener,
-        Action1<ResponseEntity<String>> {
+        Action1<ResponseEntity<Integer>> {
 
     private final LoginContract.View view;
     private final LoginModel model;
@@ -64,11 +64,11 @@ public class LoginPresenter implements
     }
 
     @Override
-    public void call(ResponseEntity<String> stringResponseEntity) {
+    public void call(ResponseEntity<Integer> stringResponseEntity) {
         view.hideProgressDialog();
-        String data = stringResponseEntity.getData();
-        if (data != null) {
-            model.saveMmwUserData();
+        int data = stringResponseEntity.getData();
+        if (data != 0) {
+            model.saveMmwUserData(data);
             view.resultOkThenFinish(model.getEmail());
         } else {
             String errorMessage = stringResponseEntity.getError().getMessage();

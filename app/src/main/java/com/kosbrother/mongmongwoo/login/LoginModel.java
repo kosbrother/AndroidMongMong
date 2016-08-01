@@ -22,13 +22,14 @@ public class LoginModel {
         return loginUser.getPassword();
     }
 
-    public void requestMmwLogin(Action1<? super ResponseEntity<String>> onLoginNextAction) {
+    public void requestMmwLogin(Action1<? super ResponseEntity<Integer>> onLoginNextAction) {
         Webservice.login(getEmail(), getPassword(), onLoginNextAction);
     }
 
-    public void saveMmwUserData() {
+    public void saveMmwUserData(int userId) {
         String email = getEmail();
         User user = new User(email, "", "", "", email, "mmw");
+        user.setUserId(userId);
         Settings.saveUserData(user);
     }
 

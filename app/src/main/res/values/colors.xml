@@ -11,9 +11,10 @@
 
     <color name="green_text">#00a378</color>
     <color name="black_text">#4a4a4a</color>
+    <color name="grey_text_999999">#999999</color>
     <color name="red_text">#ff001f</color>
     <color name="gray_tab_background">#f5f5f5</color>
-    <color name="bg_shop_info">#f2f2f2</color>
+    <color name="grey_bg_f2f2f2">#f2f2f2</color>
 
     <color name="dark_color_control_highlight">#40000000</color>
     <color name="default_background">#FFF9F9F9</color>
@@ -23,6 +24,7 @@
     <color name="product_bg">#fdfdfe</color>
     <color name="bg_gray_checkout_bottom">#f1f1f1</color>
     <color name="bg_divider">#9b9b9b</color>
+    <color name="bg_divider_f2f2f2">#f2f2f2</color>
     <color name="bg_dark_transparent">#99000000</color>
 
     <color name="fab_blue">#03a9f4</color>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/gray_selector"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/my_notification_date_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"
+        android:textColor="@color/grey_text_999999"
+        android:textSize="14sp"
+        tools:text="7月28日" />
+
+
+    <TextView
+        android:id="@+id/my_notification_title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="16dp"
+        android:layout_toLeftOf="@id/my_notification_date_tv"
+        android:layout_toStartOf="@id/my_notification_date_tv"
+        android:textColor="@color/green_text"
+        android:textSize="14sp"
+        tools:text="貨品已到店，請儘速取貨請儘速取貨請儘速取貨請儘速取貨請儘速取貨請儘速取貨請儘速取貨請儘速取貨！" />
+
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/my_notification_title_tv"
+        android:background="@color/bg_divider_f2f2f2" />
+
+</RelativeLayout>

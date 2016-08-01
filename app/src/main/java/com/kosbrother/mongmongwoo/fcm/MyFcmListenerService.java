@@ -12,12 +12,16 @@ import android.support.v4.app.NotificationCompat.BigPictureStyle;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.ProductActivity;
 import com.kosbrother.mongmongwoo.R;
+import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationMyMessageSendEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPickUpSendEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPromoSendEvent;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.mynotification.MyNotificationListActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderDetailActivity;
 
 import java.io.IOException;
@@ -32,12 +36,13 @@ public class MyFcmListenerService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage message) {
-//        String from = message.getFrom();
         Map data = message.getData();
 
         if (orderMessage(data)) {
             onReceivedOrder(data);
-        } else {
+        } else if (data.containsKey("m_type")) {
+            onReceivedMyNotification(data);
+        } else if (data.containsKey("content_pic")) {
             onReceivedProduct(data);
         }
     }
@@ -58,6 +63,25 @@ public class MyFcmListenerService extends FirebaseMessagingService {
 
         sendNotification(notificationBuilder);
         GAManager.sendEvent(new NotificationPickUpSendEvent(data.get("order_id").toString()));
+    }
+
+    private void onReceivedMyNotification(Map data) {
+        String contentTitle = data.get("content_title").toString();
+        String contentText = data.get("content_text").toString();
+
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
+                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon9))
+                .setSmallIcon(R.mipmap.ic_mhouse)
+                .setContentTitle(contentTitle)
+                .setContentText(contentText)
+                .setStyle(new NotificationCompat.BigTextStyle()
+                        .bigText(contentText))
+                .setContentIntent(getMyNotificationPendingIntent(data))
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                .setAutoCancel(true);
+
+        sendNotification(notificationBuilder);
+        GAManager.sendEvent(new NotificationMyMessageSendEvent(contentTitle));
     }
 
     private void onReceivedProduct(Map data) {
@@ -121,6 +145,21 @@ public class MyFcmListenerService extends FirebaseMessagingService {
                 pastOrderIntent,
                 PendingIntent.FLAG_ONE_SHOT
         );
+    }
+
+    private PendingIntent getMyNotificationPendingIntent(Map data) {
+        Intent intent;
+        if (Settings.checkIsLogIn()) {
+            intent = new Intent(this, MyNotificationListActivity.class);
+            intent.putExtra(MyNotificationListActivity.EXTRA_BOOLEAN_FROM_NOTIFICATION, true);
+            intent.putExtra(MyNotificationListActivity.EXTRA_STRING_NOTIFICATION_TITLE, data.get("content_title").toString());
+        } else {
+            intent = new Intent(this, MainActivity.class);
+            intent.putExtra(MainActivity.EXTRA_BOOLEAN_FROM_NOTIFICATION, true);
+            intent.putExtra(MainActivity.EXTRA_STRING_NOTIFICATION_TITLE, data.get("content_title").toString());
+        }
+        return PendingIntent.getActivity(this, 0 /* Request code */, intent,
+                PendingIntent.FLAG_ONE_SHOT);
     }
 
     private PendingIntent getProductPendingIntent(Map data) {

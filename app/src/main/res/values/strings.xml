@@ -28,4 +28,8 @@
 
     <string name="search_hint">搜尋您的萌萌商品</string>
 
+    <string name="my_notification">我的通知</string>
+    <string name="notification_empty_title">暫無通知</string>
+    <string name="notification_empty_content">有重要訊息我們會立刻讓您知道！</string>
+
 </resources>

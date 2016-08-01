@@ -99,16 +99,17 @@ public class GoogleSignInActivity extends BaseLoginActivity implements
     }
 
     public void onSignInSuccess(final User user) {
-        Webservice.postUser(user.getUserJsonString(), new Action1<ResponseEntity<String>>() {
+        Webservice.postUser(user.getUserJsonString(), new Action1<ResponseEntity<Integer>>() {
             @Override
-            public void call(ResponseEntity<String> stringResponseEntity) {
-                String data = stringResponseEntity.getData();
-                if (data == null) {
+            public void call(ResponseEntity<Integer> stringResponseEntity) {
+                int data = stringResponseEntity.getData();
+                if (data == 0) {
                     signOut();
                     ResponseEntity.Error error = stringResponseEntity.getError();
                     GAManager.sendError("postUserError", error);
                     resultCancelThenFinish(error.getMessage());
                 } else {
+                    user.setUserId(data);
                     Settings.saveUserData(user);
                     String email = user.getEmail();
                     resultOkThenFinish(email);

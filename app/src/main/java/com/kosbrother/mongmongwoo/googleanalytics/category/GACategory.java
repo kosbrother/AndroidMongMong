@@ -3,6 +3,7 @@ package com.kosbrother.mongmongwoo.googleanalytics.category;
 public interface GACategory {
     String NOTIFICATION_PROMO = "Notification_Promo";
     String NOTIFICATION_PICK_UP = "Notification_Pick_up";
+    String NOTIFICATION_MY_MESSAGE = "Notification_my_message";
     String PRODUCT = "Product";
     String PRODUCT_SELECT_DIALOG = "Product_select_dialog";
     String SHOPPING_CART_PRODUCT = "Shopping_cart_product";

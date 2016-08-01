@@ -15,7 +15,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -38,6 +38,7 @@ import com.bumptech.glide.Glide;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.kosbrother.mongmongwoo.adpters.CategoryAdapter;
 import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
+import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.api.UrlCenter;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
@@ -53,12 +54,16 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.navigationdrawer.NavigationDrawerClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.navigationdrawer.NavigationDrawerOpenEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationMyMessageOpenedEvent;
 import com.kosbrother.mongmongwoo.login.LogOutActivity;
 import com.kosbrother.mongmongwoo.login.LoginActivity;
 import com.kosbrother.mongmongwoo.model.Category;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.User;
 import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
+import com.kosbrother.mongmongwoo.mynotification.MyNotification;
+import com.kosbrother.mongmongwoo.mynotification.MyNotificationListActivity;
+import com.kosbrother.mongmongwoo.mynotification.MyNotificationManager;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
 import com.kosbrother.mongmongwoo.pastorders.QueryPastOrdersActivity;
 import com.kosbrother.mongmongwoo.search.SearchActivity;
@@ -83,6 +88,9 @@ public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final int REQUEST_LOGOUT = 222;
+    private static final int REQUEST_LOGIN = REQUEST_LOGOUT + 1;
+    public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
+    public static final String EXTRA_STRING_NOTIFICATION_TITLE = "EXTRA_STRING_NOTIFICATION_TITLE";
 
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
 
@@ -102,7 +110,9 @@ public class MainActivity extends AppCompatActivity
         getNewDateItems();
         getAllPopularItems();
         checkAndroidVersion();
+        getMyNotificationsIfLogin();
         postFcmTokenIfServerNotReceived();
+        sendGaEventIfFromNotification();
     }
 
     @Override
@@ -115,6 +125,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         updateUserLayout();
+        updateMyNotificationLayout();
         invalidateOptionsMenu();
         setNoNetLayout();
     }
@@ -132,7 +143,6 @@ public class MainActivity extends AppCompatActivity
             case REQUEST_LOGOUT:
                 if (resultCode == RESULT_OK) {
                     Settings.clearAllUserData();
-                    updateUserLayout();
                     Toast.makeText(this, "帳號已登出", Toast.LENGTH_SHORT).show();
                 } else if (resultCode == RESULT_CANCELED) {
                     if (data != null) {
@@ -141,6 +151,10 @@ public class MainActivity extends AppCompatActivity
                     }
                 }
                 break;
+            case REQUEST_LOGIN:
+                if (resultCode == RESULT_OK) {
+                    getMyNotificationsIfLogin();
+                }
             default:
                 break;
         }
@@ -148,7 +162,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = getDrawer();
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -159,6 +173,7 @@ public class MainActivity extends AppCompatActivity
             }
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -199,6 +214,13 @@ public class MainActivity extends AppCompatActivity
         if (item.getItemId() == R.id.search) {
             startActivity(new Intent(this, SearchActivity.class));
             return true;
+        } else if (item.getItemId() == android.R.id.home) {
+            DrawerLayout drawer = getDrawer();
+            if (drawer.isDrawerOpen(GravityCompat.START)) {
+                drawer.closeDrawer(GravityCompat.START);
+            } else {
+                drawer.openDrawer(GravityCompat.START);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
@@ -220,6 +242,8 @@ public class MainActivity extends AppCompatActivity
             } else {
                 startActivity(new Intent(this, QueryPastOrdersActivity.class));
             }
+        } else if (id == R.id.nav_my_notification) {
+            startActivity(new Intent(this, MyNotificationListActivity.class));
         } else if (id == R.id.nav_service) {
             startActivity(new Intent(this, ServiceActivity.class));
         } else if (id == R.id.nav_shop_infos) {
@@ -237,7 +261,7 @@ public class MainActivity extends AppCompatActivity
             showLogoutAlertDialog();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = getDrawer();
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -397,12 +421,27 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void checkAndroidVersion() {
-        Webservice.getAndroidVersion(new Action1<AndroidVersionEntity>() {
+        DataManager.getInstance().getAndroidVersion(new Action1<AndroidVersionEntity>() {
             @Override
             public void call(AndroidVersionEntity version) {
                 onGetVersionResult(version);
             }
         });
+    }
+
+    private void getMyNotificationsIfLogin() {
+        if (Settings.checkIsLogIn()) {
+            final int userId = Settings.getSavedUser().getUserId();
+            DataManager.getInstance().getMyNotificationList(userId, new Action1<List<MyNotification>>() {
+                @Override
+                public void call(List<MyNotification> myNotifications) {
+                    MyNotificationManager myNotificationManager = MyNotificationManager.
+                            getInstance(getApplicationContext(), userId);
+                    myNotificationManager.saveNewMyNotifications(myNotifications);
+                    updateMyNotification(true, myNotificationManager.getNumberOfNewNotifications());
+                }
+            });
+        }
     }
 
     private void postFcmTokenIfServerNotReceived() {
@@ -424,6 +463,12 @@ public class MainActivity extends AppCompatActivity
                 }
             }
         });
+    }
+
+    private void sendGaEventIfFromNotification() {
+        if (getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false)) {
+            GAManager.sendEvent(new NotificationMyMessageOpenedEvent(getIntent().getStringExtra(EXTRA_STRING_NOTIFICATION_TITLE)));
+        }
     }
 
     private void onGetVersionResult(AndroidVersionEntity version) {
@@ -453,12 +498,16 @@ public class MainActivity extends AppCompatActivity
 
     private void setToolbarAndDrawer() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.app_icon9);
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeAsUpIndicator(R.mipmap.ic_menu_white_no_notification_24dp);
+
         TextView titleText = (TextView) toolbar.findViewById(R.id.toolbar_title);
         titleText.setText("萌萌屋");
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = getDrawer();
         drawer.addDrawerListener(new DrawerLayout.DrawerListener() {
             @Override
             public void onDrawerSlide(View drawerView, float slideOffset) {
@@ -480,10 +529,6 @@ public class MainActivity extends AppCompatActivity
 
             }
         });
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
     }
 
     private void setNavigationView() {
@@ -547,6 +592,10 @@ public class MainActivity extends AppCompatActivity
             displayProducts.add(products.get(i));
         }
         return displayProducts;
+    }
+
+    private DrawerLayout getDrawer() {
+        return (DrawerLayout) findViewById(R.id.drawer_layout);
     }
 
     private void showProductStyleDialog(Product product) {
@@ -617,6 +666,10 @@ public class MainActivity extends AppCompatActivity
         return (NavigationView) findViewById(R.id.nav_view);
     }
 
+    private MenuItem getMyNotificationMenuItem() {
+        return getNavigationView().getMenu().findItem(R.id.nav_my_notification);
+    }
+
     private View getQuickBarCardContainer() {
         return findViewById(R.id.quick_bar_container_cv);
     }
@@ -652,17 +705,47 @@ public class MainActivity extends AppCompatActivity
 
     public void onMongMongWooLoginClick(View view) {
         Intent intent = new Intent(this, LoginActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_LOGIN);
     }
 
     private void updateUserLayout() {
-        User user = Settings.getSavedUser();
-        String userName = user.getUserName();
-        if (userName != null && !userName.isEmpty()) {
-            setUserLoinView(userName, user.getFbPic());
+        if (Settings.checkIsLogIn()) {
+            User user = Settings.getSavedUser();
+            setUserLoinView(user.getUserName(), user.getFbPic());
         } else {
             setUserLogoutView();
         }
+    }
+
+    private void updateMyNotificationLayout() {
+        if (Settings.checkIsLogIn()) {
+            updateMyNotification(true, MyNotificationManager.getInstance(
+                    getApplicationContext(),
+                    Settings.getSavedUser().getUserId()).getNumberOfNewNotifications());
+        } else {
+            updateMyNotification(false, 0);
+        }
+    }
+
+    private void updateMyNotification(boolean isLogin, int numOfNewNotification) {
+        MenuItem item = getMyNotificationMenuItem();
+        item.setVisible(isLogin);
+
+        ActionBar supportActionBar = getSupportActionBar();
+        assert supportActionBar != null;
+
+        if (isLogin) {
+            TextView textView = (TextView) item.getActionView().findViewById(R.id.new_my_notification_number_tv);
+            textView.setText(String.valueOf(numOfNewNotification));
+
+            boolean hasNewNotification = numOfNewNotification > 0;
+            textView.setVisibility(hasNewNotification ? View.VISIBLE : View.GONE);
+            supportActionBar.setHomeAsUpIndicator(hasNewNotification ?
+                    R.mipmap.ic_menu_white_with_notification_24dp : R.mipmap.ic_menu_white_no_notification_24dp);
+        } else {
+            supportActionBar.setHomeAsUpIndicator(R.mipmap.ic_menu_white_no_notification_24dp);
+        }
+
     }
 
     private void showLogoutAlertDialog() {
