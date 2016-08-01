@@ -3,6 +3,7 @@ package com.kosbrother.mongmongwoo.utils;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
@@ -39,6 +40,28 @@ public class ProductStyleDialog {
     private final TextView itemStockTextView;
 
     private int tempCount = 1;
+    private View.OnTouchListener onImageViewTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            switch (motionEvent.getAction()) {
+                case MotionEvent.ACTION_DOWN: {
+                    ImageView imageView = (ImageView) view;
+                    imageView.getDrawable().setColorFilter(
+                            ContextCompat.getColor(context, R.color.bg_green_color_filter), PorterDuff.Mode.SRC_ATOP);
+                    imageView.invalidate();
+                    break;
+                }
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL: {
+                    ImageView imageView = (ImageView) view;
+                    imageView.getDrawable().clearColorFilter();
+                    view.invalidate();
+                    break;
+                }
+            }
+            return false;
+        }
+    };
 
     @SuppressLint("InflateParams")
     public ProductStyleDialog(Context context,
@@ -157,6 +180,7 @@ public class ProductStyleDialog {
 
     private void initMinusButton(View view) {
         View minusButton = view.findViewById(R.id.minus_button);
+        minusButton.setOnTouchListener(onImageViewTouchListener);
         minusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -170,6 +194,7 @@ public class ProductStyleDialog {
 
     private void initPlusButton(View view) {
         View plusButton = view.findViewById(R.id.plus_button);
+        plusButton.setOnTouchListener(onImageViewTouchListener);
         plusButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
