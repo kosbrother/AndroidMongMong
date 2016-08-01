@@ -92,7 +92,8 @@ public class ProductStyleDialog {
             @Override
             public void onLayoutCompleted(RecyclerView.State state) {
                 super.onLayoutCompleted(state);
-                if (product.getSpecs().size() > 3) {
+                int specSize = product.getSpecs().size();
+                if (specSize > 3) {
                     View child1 = recyclerView.getChildAt(0);
                     View child4 = recyclerView.getChildAt(4);
                     RecyclerView.LayoutManager manager = recyclerView.getLayoutManager();
@@ -100,6 +101,9 @@ public class ProductStyleDialog {
                     ViewGroup.LayoutParams params = recyclerView.getLayoutParams();
                     params.height = manager.getDecoratedMeasuredHeight(child1) +
                             manager.getDecoratedMeasuredHeight(child4);
+                    if (specSize > 6) {
+                        params.height += (int) DensityApi.convertDpToPixel(10, context);
+                    }
                     recyclerView.setLayoutParams(params);
                 }
             }
