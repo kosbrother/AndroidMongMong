@@ -1,6 +1,7 @@
 package com.kosbrother.mongmongwoo.model;
 
 import com.google.gson.annotations.SerializedName;
+import com.kosbrother.mongmongwoo.utils.StringUtil;
 
 import java.io.Serializable;
 
@@ -12,6 +13,8 @@ public class Spec implements Serializable {
     private String style;
     @SerializedName("style_pic")
     private StylePic stylePic;
+    @SerializedName("stock_amount")
+    private int stockAmount;
 
     public Spec(int id, String style, StylePic stylePic) {
         this.id = id;
@@ -31,7 +34,14 @@ public class Spec implements Serializable {
         return stylePic;
     }
 
-    public static class StylePic implements Serializable{
+    public String getStockText() {
+        if (stockAmount >= 10) {
+            return "庫存充分";
+        }
+        return String.format("剩下%s件", StringUtil.transToFullWidth(String.valueOf(stockAmount)));
+    }
+
+    public static class StylePic implements Serializable {
         @SerializedName("url")
         private String url;
 

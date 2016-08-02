@@ -27,8 +27,7 @@ public class MyCollectManager {
             return new ArrayList<>();
         }
         List<Product> productList;
-        // amount is json key only in old version
-        if (myCollectedJsonString.contains("amount")) {
+        if (ProductUtil.isOldProduct(myCollectedJsonString)) {
             removeAllCollectList(context);
             productList = ProductUtil.getNewProductListFromOldProductString(myCollectedJsonString);
             storeCollectList(context, productList);

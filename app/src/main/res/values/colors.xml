@@ -34,4 +34,6 @@
     <color name="google_button_background_color">#4284f3</color>
     <color name="google_button_background_color_focus">#4284f3</color>
     <color name="google_button_background_color_press">#3367d5</color>
+
+    <color name="bg_green_color_filter">#40159D75</color>
 </resources>

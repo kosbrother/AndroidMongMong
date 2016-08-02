@@ -39,4 +39,10 @@ public class ProductUtil {
         }
         return productList;
     }
+
+    // amount is json key only in old version
+    // stock_amount is new version json key
+    public static boolean isOldProduct(String shoppingCartString) {
+        return shoppingCartString.contains("amount") && !shoppingCartString.contains("stock_amount");
+    }
 }
