@@ -125,7 +125,7 @@ public class ProductStyleDialog {
                     params.height = manager.getDecoratedMeasuredHeight(child1) +
                             manager.getDecoratedMeasuredHeight(child4);
                     if (specSize > 6) {
-                        params.height += (int) DensityApi.convertDpToPixel(10, context);
+                        params.height += (int) DensityApi.convertDpToPixel(40, context);
                     }
                     recyclerView.setLayoutParams(params);
                 }
