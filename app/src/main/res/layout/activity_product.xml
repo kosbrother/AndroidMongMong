@@ -98,7 +98,7 @@
                         app:strokeColor="@android:color/transparent" />
 
                     <ImageView
-                        android:id="@+id/collect_iv"
+                        android:id="@+id/item_favorite_collect_iv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"

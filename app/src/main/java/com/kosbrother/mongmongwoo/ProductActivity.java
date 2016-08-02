@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.adpters.ProductImageFragmentPagerAdapter;
+import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
@@ -28,10 +29,11 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductAddToCart
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductAddToCollectionEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductViewEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.search.SearchEnterEvent;
+import com.kosbrother.mongmongwoo.login.LoginActivity;
 import com.kosbrother.mongmongwoo.model.Photo;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Spec;
-import com.kosbrother.mongmongwoo.mycollect.MyCollectManager;
+import com.kosbrother.mongmongwoo.mycollect.FavoriteManager;
 import com.kosbrother.mongmongwoo.search.SearchActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
@@ -56,6 +58,8 @@ public class ProductActivity extends BaseActivity {
     public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
     public static final String EXTRA_BOOLEAN_FROM_SEARCH = "EXTRA_BOOLEAN_FROM_SEARCH";
 
+    private static final int REQUEST_LOGIN = 222;
+
     private Button addCarButton;
 
     private Product theProduct;
@@ -72,6 +76,16 @@ public class ProductActivity extends BaseActivity {
         initAddCartButton();
         initCollectImageView();
         getProduct();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_LOGIN) {
+            if (resultCode == RESULT_OK) {
+                initCollectImageView();
+            }
+        }
     }
 
     private void getProduct() {
@@ -248,6 +262,7 @@ public class ProductActivity extends BaseActivity {
                     invalidateOptionsMenu();
                     showAToast("成功加入購物車");
                 }
+
             });
         }
         dialog.showWithInitState();
@@ -255,25 +270,36 @@ public class ProductActivity extends BaseActivity {
 
     @SuppressWarnings("ConstantConditions")
     private void initCollectImageView() {
-        List<Product> collectList = MyCollectManager.getCollectedList(this);
-        boolean collected = checkCollected(collectList);
+        final ImageView collectImageView = getCollectImageView();
+        collectImageView.setVisibility(View.GONE);
 
-        ImageView collectImageView = getCollectImageView();
-        collectImageView.setTag(collected);
-        setCollectImageViewRes(collectImageView);
-    }
+        if (Settings.checkIsLogIn()) {
+            int userId = Settings.getSavedUser().getUserId();
+            FavoriteManager manager = FavoriteManager.getInstance(userId, getApplicationContext());
+            manager.isProductCollected(getProductId(), new DataManager.ApiCallBack() {
+                @Override
+                public void onError(String errorMessage) {
+                    showAToast(errorMessage);
+                }
 
-    private boolean checkCollected(List<Product> collectList) {
-        int productId = getProductId();
-        for (Product p : collectList) {
-            if (p.getId() == productId) {
-                return true;
-            }
+                @Override
+                public void onSuccess(Object data) {
+                    if (data instanceof Boolean) {
+                        boolean collected = (boolean) data;
+                        collectImageView.setTag(collected);
+                        setCollectImageViewRes(collectImageView);
+                        collectImageView.setVisibility(View.VISIBLE);
+                    }
+                }
+            });
+        } else {
+            collectImageView.setTag(false);
+            setCollectImageViewRes(collectImageView);
+            collectImageView.setVisibility(View.VISIBLE);
         }
-        return false;
     }
 
-    private void onCollectImageViewClick(ImageView v) {
+    private void onCollectImageViewClick(final ImageView v) {
         // prevent add null product
         if (theProduct == null) {
             return;
@@ -281,20 +307,44 @@ public class ProductActivity extends BaseActivity {
 
         boolean collected = (boolean) v.getTag();
 
-        if (collected) {
-            collected = false;
-            MyCollectManager.removeProductFromCollectedList(this, theProduct);
-            showAToast("取消收藏");
-        } else {
-            collected = true;
-            MyCollectManager.addProductToCollectedList(this, theProduct);
-            showAToast("成功收藏");
-
-            GAManager.sendEvent(new ProductAddToCollectionEvent(theProduct.getName()));
+        if (!Settings.checkIsLogIn()) {
+            startActivityForResult(new Intent(this, LoginActivity.class), REQUEST_LOGIN);
+            return;
         }
 
-        v.setTag(collected);
-        setCollectImageViewRes(v);
+        FavoriteManager manager = FavoriteManager.getInstance(Settings.getSavedUser().getUserId(), getApplicationContext());
+        if (collected) {
+            manager.deleteFavoriteItems(getProductId(), new DataManager.ApiCallBack() {
+                @Override
+                public void onError(String errorMessage) {
+                    showAToast(errorMessage);
+                }
+
+                @Override
+                public void onSuccess(Object data) {
+                    showAToast("取消收藏");
+                    v.setTag(false);
+                    setCollectImageViewRes(v);
+                }
+            });
+        } else {
+            GAManager.sendEvent(new ProductAddToCollectionEvent(theProduct.getName()));
+
+            manager.addFavoriteItems(theProduct, new DataManager.ApiCallBack() {
+                @Override
+                public void onError(String errorMessage) {
+                    showAToast(errorMessage);
+                }
+
+                @Override
+                public void onSuccess(Object data) {
+                    showAToast("成功收藏");
+                    v.setTag(true);
+                    setCollectImageViewRes(v);
+                }
+            });
+        }
+
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -419,7 +469,7 @@ public class ProductActivity extends BaseActivity {
     }
 
     private ImageView getCollectImageView() {
-        return (ImageView) findViewById(R.id.collect_iv);
+        return (ImageView) findViewById(R.id.item_favorite_collect_iv);
     }
 
     private void showAToast(String message) {

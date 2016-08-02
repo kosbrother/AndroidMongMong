@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/gray_selector">
+
+    <ImageView
+        android:id="@+id/item_favorite_product_iv"
+        android:layout_width="68dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="8dp"
+        tools:src="@drawable/app_icon9" />
+
+    <ImageView
+        android:id="@+id/item_favorite_collect_iv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
+        android:background="@drawable/bg_circle_selector_24dp"
+        android:padding="8dp"
+        android:src="@mipmap/ic_favorite_pink_24dp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_toEndOf="@id/item_favorite_product_iv"
+        android:layout_toLeftOf="@id/item_favorite_collect_iv"
+        android:layout_toRightOf="@id/item_favorite_product_iv"
+        android:layout_toStartOf="@id/item_favorite_collect_iv"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/item_favorite_product_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:textColor="@color/black_text"
+            android:textSize="12sp"
+            tools:text="超萌卡通悠遊卡立體卡套超萌卡通悠遊卡立體卡套" />
+
+        <TextView
+            android:id="@+id/item_favorite_special_price_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black_text"
+            android:textSize="11sp"
+            tools:text="-優惠價-" />
+
+        <TextView
+            android:id="@+id/item_favorite_product_price_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/green_text"
+            android:textSize="11sp"
+            tools:text="NT$89" />
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@color/light_gray" />
+</RelativeLayout>

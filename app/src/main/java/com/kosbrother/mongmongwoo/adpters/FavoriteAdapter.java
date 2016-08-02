@@ -15,12 +15,12 @@ import com.kosbrother.mongmongwoo.utils.TextViewUtil;
 
 import java.util.List;
 
-public class MyCollectAdapter extends RecyclerView.Adapter<MyCollectAdapter.ViewHolder> {
+public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHolder> {
     private final List<Product> productList;
     private final MyCollectListener listener;
     private Context context;
 
-    public MyCollectAdapter(List<Product> productList, MyCollectListener listener) {
+    public FavoriteAdapter(List<Product> productList, MyCollectListener listener) {
         this.productList = productList;
         this.listener = listener;
     }
@@ -29,11 +29,11 @@ public class MyCollectAdapter extends RecyclerView.Adapter<MyCollectAdapter.View
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         context = parent.getContext();
         return new ViewHolder(LayoutInflater.from(context)
-                .inflate(R.layout.item_my_collect, parent, false), listener);
+                .inflate(R.layout.item_favorite, parent, false), listener);
     }
 
     @Override
-    public void onBindViewHolder(MyCollectAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(FavoriteAdapter.ViewHolder holder, int position) {
         Product product = productList.get(position);
 
         holder.productNameTextView.setText(product.getName());
@@ -56,11 +56,6 @@ public class MyCollectAdapter extends RecyclerView.Adapter<MyCollectAdapter.View
     @Override
     public int getItemCount() {
         return productList.size();
-    }
-
-    public void update(List<Product> productList) {
-        this.productList.clear();
-        this.productList.addAll(productList);
     }
 
     public interface MyCollectListener {
@@ -86,17 +81,17 @@ public class MyCollectAdapter extends RecyclerView.Adapter<MyCollectAdapter.View
                 }
             });
 
-            productImageView = (ImageView) itemView.findViewById(R.id.product_iv);
-            collectImageView = (ImageView) itemView.findViewById(R.id.collect_iv);
+            productImageView = (ImageView) itemView.findViewById(R.id.item_favorite_product_iv);
+            collectImageView = (ImageView) itemView.findViewById(R.id.item_favorite_collect_iv);
             collectImageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     listener.onCancelCollectClick(getAdapterPosition());
                 }
             });
-            productNameTextView = (TextView) itemView.findViewById(R.id.product_name_tv);
-            productPriceTextView = (TextView) itemView.findViewById(R.id.product_price_tv);
-            specialPriceTextView = (TextView) itemView.findViewById(R.id.special_price_tv);
+            productNameTextView = (TextView) itemView.findViewById(R.id.item_favorite_product_name_tv);
+            productPriceTextView = (TextView) itemView.findViewById(R.id.item_favorite_product_price_tv);
+            specialPriceTextView = (TextView) itemView.findViewById(R.id.item_favorite_special_price_tv);
         }
     }
 }
