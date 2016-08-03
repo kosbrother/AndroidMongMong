@@ -3,6 +3,7 @@ package com.kosbrother.mongmongwoo.utils;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.Rect;
 import android.support.v4.content.ContextCompat;
@@ -16,28 +17,37 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
+import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.api.DensityApi;
+import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductSelectDialogConfirmEvent;
+import com.kosbrother.mongmongwoo.login.LoginActivity;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Spec;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import rx.functions.Action1;
 
 public class ProductStyleDialog {
 
     private final Context context;
     private Product product;
+    private ProductStyleDialogListener listener;
 
     private final AlertDialog alertDialog;
     private final RecyclerView recyclerView;
     private final View countLinearLayout;
     private final TextView countTextView;
     private final TextView itemStockTextView;
+    private final Button confirmButton;
 
     private int tempCount = 1;
     private View.OnTouchListener onImageViewTouchListener = new View.OnTouchListener() {
@@ -62,6 +72,29 @@ public class ProductStyleDialog {
             return false;
         }
     };
+    private View.OnClickListener onConfirmClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            updateConfirmProduct();
+            GAManager.sendEvent(new ProductSelectDialogConfirmEvent(product.getName()));
+            GAManager.sendShoppingCartProductEvent(product);
+            checkFirstAddAndNotifyListener();
+            alertDialog.dismiss();
+        }
+    };
+
+    private View.OnClickListener onAddToWishClickListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (Settings.checkIsLogIn()) {
+                updateConfirmProduct();
+                GAManager.sendEvent(new ProductSelectDialogConfirmEvent(product.getName()));
+                addToWishList();
+            } else {
+                context.startActivity(new Intent(context, LoginActivity.class));
+            }
+        }
+    };
 
     @SuppressLint("InflateParams")
     public ProductStyleDialog(Context context,
@@ -69,6 +102,7 @@ public class ProductStyleDialog {
                               final ProductStyleDialogListener listener) {
         this.context = context;
         this.product = product;
+        this.listener = listener;
 
         View view = LayoutInflater.from(context)
                 .inflate(R.layout.dialog_add_shopping_car_item, null, false);
@@ -76,6 +110,7 @@ public class ProductStyleDialog {
         countLinearLayout = view.findViewById(R.id.count_ll);
         countTextView = (TextView) view.findViewById(R.id.count_text_view);
         itemStockTextView = (TextView) view.findViewById(R.id.item_stock_tv);
+        confirmButton = (Button) view.findViewById(R.id.dialog_style_confirm_button);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setView(view);
@@ -83,7 +118,6 @@ public class ProductStyleDialog {
 
         initMinusButton(view);
         initPlusButton(view);
-        initConfirmButton(view, listener);
     }
 
     public void showWithInitState() {
@@ -91,6 +125,7 @@ public class ProductStyleDialog {
         initCountTextView();
         updateSelectedStyle(0);
         updateStyleStock(product.getSpecs().get(0).getStockText());
+        updateConfirmButton(product.getSpecs().get(0).getStockAmount());
         alertDialog.show();
     }
 
@@ -103,6 +138,7 @@ public class ProductStyleDialog {
         Spec selectedSpec = product.getSelectedSpec();
         updateSelectedStyle(getSelectedSpecPosition(product, selectedSpec));
         updateStyleStock(selectedSpec.getStockText());
+        updateConfirmButton(selectedSpec.getStockAmount());
         alertDialog.show();
     }
 
@@ -152,7 +188,9 @@ public class ProductStyleDialog {
                 if (child != null && position != -1 && mGestureDetector.onTouchEvent(e)) {
                     if (position < product.getSpecs().size()) {
                         updateSelectedStyle(position);
-                        updateStyleStock(product.getSpecs().get(position).getStockText());
+                        Spec spec = product.getSpecs().get(position);
+                        updateStyleStock(spec.getStockText());
+                        updateConfirmButton(spec.getStockAmount());
                     }
                     return true;
                 }
@@ -171,6 +209,37 @@ public class ProductStyleDialog {
         });
         SpecsAdapter adapter = new SpecsAdapter(product.getSpecs());
         recyclerView.setAdapter(adapter);
+    }
+
+    private void updateConfirmButton(int stockAmount) {
+        if (stockAmount == 0) {
+            confirmButton.setText("加入收藏，貨到通知我");
+            confirmButton.setOnClickListener(onAddToWishClickListener);
+        } else {
+            confirmButton.setText("確定");
+            confirmButton.setOnClickListener(onConfirmClickListener);
+        }
+    }
+
+    private void addToWishList() {
+        int userId = Settings.getSavedUser().getUserId();
+        ArrayList<PostWishListsEntity.WishItemEntity> wishLists = new ArrayList<>();
+        wishLists.add(new PostWishListsEntity.WishItemEntity(product.getId(), product.getSelectedSpec().getId()));
+        PostWishListsEntity entity = new PostWishListsEntity(wishLists);
+        DataManager.getInstance().postWishLists(userId, entity,
+                new Action1<String>() {
+                    @Override
+                    public void call(String result) {
+                        Toast.makeText(context, "成功加入補貨清單", Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss();
+                    }
+                }, new Action1<String>() {
+                    @Override
+                    public void call(String errorMessage) {
+                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
+                        alertDialog.dismiss();
+                    }
+                });
     }
 
     private void initCountTextView() {
@@ -200,20 +269,6 @@ public class ProductStyleDialog {
             public void onClick(View v) {
                 tempCount = tempCount + 1;
                 updateCountTextView();
-            }
-        });
-    }
-
-    private void initConfirmButton(View view, final ProductStyleDialogListener listener) {
-        Button styleConfirmButton = (Button) view.findViewById(R.id.dialog_style_confirm_button);
-        styleConfirmButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                updateConfirmProduct();
-                GAManager.sendEvent(new ProductSelectDialogConfirmEvent(product.getName()));
-                GAManager.sendShoppingCartProductEvent(product);
-                checkFirstAddAndNotifyListener(listener);
-                alertDialog.dismiss();
             }
         });
     }
@@ -249,7 +304,7 @@ public class ProductStyleDialog {
         product.setBuy_count(tempCount);
     }
 
-    private void checkFirstAddAndNotifyListener(ProductStyleDialogListener listener) {
+    private void checkFirstAddAndNotifyListener() {
         if (Settings.checkIsFirstAddShoppingCar()) {
             Settings.setKownShoppingCar();
             listener.onFirstAddShoppingCart();
@@ -262,6 +317,7 @@ public class ProductStyleDialog {
         void onFirstAddShoppingCart();
 
         void onConfirmButtonClick(Product product);
+
     }
 
     private static class SpecsAdapter extends RecyclerView.Adapter<SpecsAdapter.ViewHolder> {

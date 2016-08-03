@@ -34,11 +34,22 @@ public class Spec implements Serializable {
         return stylePic;
     }
 
+    public int getStockAmount() {
+        return stockAmount;
+    }
+
     public String getStockText() {
         if (stockAmount >= 10) {
             return "庫存充分";
         }
         return String.format("剩下%s件", StringUtil.transToFullWidth(String.valueOf(stockAmount)));
+    }
+
+    public String getCurrentStockText() {
+        if (stockAmount >= 10) {
+            return "現貨數：庫存充分";
+        }
+        return "現貨數：" + stockAmount;
     }
 
     public static class StylePic implements Serializable {

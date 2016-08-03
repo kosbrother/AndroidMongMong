@@ -3,6 +3,10 @@ package com.kosbrother.mongmongwoo.api;
 import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.entity.mycollect.FavoriteItemEntity;
+import com.kosbrother.mongmongwoo.entity.mycollect.PostFavoriteItemsEntity;
+import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
+import com.kosbrother.mongmongwoo.entity.mycollect.WishListEntity;
 import com.kosbrother.mongmongwoo.mynotification.MyNotification;
 
 import java.util.List;
@@ -12,10 +16,14 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.Path;
 import rx.Observable;
 import rx.Observer;
+import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
@@ -109,11 +117,214 @@ public class DataManager {
 
     }
 
+    public void getFavoriteItems(int userId, final ApiCallBack callBack) {
+        Observable<ResponseEntity<List<FavoriteItemEntity>>> observable = networkAPI.getFavoriteItems(userId)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        observable.subscribe(new Observer<ResponseEntity<List<FavoriteItemEntity>>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(e.getMessage());
+            }
+
+            @Override
+            public void onNext(ResponseEntity<List<FavoriteItemEntity>> myCollectEntities) {
+                List<FavoriteItemEntity> data = myCollectEntities.getData();
+                if (data == null) {
+                    onError(new Throwable(myCollectEntities.getError().getMessage()));
+                } else {
+                    callBack.onSuccess(data);
+                }
+            }
+        });
+    }
+
+    public void postFavoriteItems(int userId, PostFavoriteItemsEntity postFavoriteItemsEntity
+            , final ApiCallBack callBack) {
+        Observable<ResponseEntity<String>> observable =
+                networkAPI.postFavoriteItems(userId, postFavoriteItemsEntity)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        observable.subscribe(new Observer<ResponseEntity<String>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(e.getMessage());
+            }
+
+            @Override
+            public void onNext(ResponseEntity<String> listResponseEntity) {
+                String result = listResponseEntity.getData();
+                if (result == null) {
+                    onError(new Throwable(listResponseEntity.getError().getMessage()));
+                } else {
+                    callBack.onSuccess(result);
+                }
+            }
+        });
+    }
+
+    public void deleteFavoriteItems(int userId, int itemId, final ApiCallBack callBack) {
+        Observable<ResponseEntity<String>> observable =
+                networkAPI.deleteFavoriteItems(userId, itemId)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        observable.subscribe(new Observer<ResponseEntity<String>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(e.getMessage());
+            }
+
+            @Override
+            public void onNext(ResponseEntity<String> listResponseEntity) {
+                String result = listResponseEntity.getData();
+                if (result == null) {
+                    onError(new Throwable(listResponseEntity.getError().getMessage()));
+                } else {
+                    callBack.onSuccess(result);
+                }
+            }
+        });
+    }
+
+    public void getWishLists(int userId, final ApiCallBack callBack) {
+        Observable<ResponseEntity<List<WishListEntity>>> observable = networkAPI.getWishLists(userId)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        observable.subscribe(new Observer<ResponseEntity<List<WishListEntity>>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(e.getMessage());
+            }
+
+            @Override
+            public void onNext(ResponseEntity<List<WishListEntity>> myCollectEntities) {
+                List<WishListEntity> data = myCollectEntities.getData();
+                if (data == null) {
+                    onError(new Throwable(myCollectEntities.getError().getMessage()));
+                } else {
+                    callBack.onSuccess(data);
+                }
+            }
+        });
+    }
+
+    public void postWishLists(int userId, PostWishListsEntity entity,
+                              final Action1<String> onNextAction,
+                              final Action1<String> onErrorAction) {
+        Observable<ResponseEntity<String>> observable =
+                networkAPI.postWishLists(userId, entity)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        observable.subscribe(new Subscriber<ResponseEntity<String>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                onErrorAction.call(e.getMessage());
+            }
+
+            @Override
+            public void onNext(ResponseEntity<String> listResponseEntity) {
+                String data = listResponseEntity.getData();
+                if (data == null) {
+                    onError(new Throwable(listResponseEntity.getError().getMessage()));
+                } else {
+                    onNextAction.call(data);
+                }
+            }
+        });
+    }
+
+    public void deleteWishListsItemSpecs(int userId, int itemSpecId, final ApiCallBack callBack) {
+        Observable<ResponseEntity<String>> observable =
+                networkAPI.deleteWishListsItemSpecs(userId, itemSpecId)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        observable.subscribe(new Observer<ResponseEntity<String>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(e.getMessage());
+            }
+
+            @Override
+            public void onNext(ResponseEntity<String> listResponseEntity) {
+                String result = listResponseEntity.getData();
+                if (result == null) {
+                    onError(new Throwable(listResponseEntity.getError().getMessage()));
+                } else {
+                    callBack.onSuccess(result);
+                }
+            }
+        });
+    }
+
+    public interface ApiCallBack {
+        void onError(String errorMessage);
+
+        void onSuccess(Object data);
+    }
+
     public interface NetworkAPI {
         @GET(UrlCenter.API + "/android_version")
         Observable<AndroidVersionEntity> getAndroidVersionObservable();
 
         @GET(UrlCenter.API_V3 + "/users/{userId}/my_messages")
         Observable<ResponseEntity<List<MyNotification>>> getMyMessages(@Path("userId") int userId);
+
+        @GET(UrlCenter.API_V3 + "/users/{userId}/favorite_items")
+        Observable<ResponseEntity<List<FavoriteItemEntity>>> getFavoriteItems(@Path("userId") int userId);
+
+        @POST(UrlCenter.API_V3 + "/users/{userId}/favorite_items")
+        Observable<ResponseEntity<String>> postFavoriteItems(
+                @Path("userId") int userId, @Body PostFavoriteItemsEntity postFavoriteItemsEntity);
+
+        @DELETE(UrlCenter.API_V3 + "/users/{userId}/favorite_items/items/{itemId}")
+        Observable<ResponseEntity<String>> deleteFavoriteItems(
+                @Path("userId") int userId, @Path("itemId") int itemId);
+
+        @GET(UrlCenter.API_V3 + "/users/{userId}/wish_lists")
+        Observable<ResponseEntity<List<WishListEntity>>> getWishLists(@Path("userId") int userId);
+
+        @POST(UrlCenter.API_V3 + "/users/{userId}/wish_lists")
+        Observable<ResponseEntity<String>> postWishLists(
+                @Path("userId") int userId, @Body PostWishListsEntity postWishListsEntity);
+
+        @DELETE(UrlCenter.API_V3 + "/users/{userId}/wish_lists/item_specs/{itemSpecId}")
+        Observable<ResponseEntity<String>> deleteWishListsItemSpecs(
+                @Path("userId") int userId, @Path("itemSpecId") int itemSpecId);
     }
 }
