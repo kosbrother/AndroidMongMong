@@ -382,7 +382,8 @@ public class ShoppingCarActivity extends BaseActivity implements
 
         alertDialogBuilder
                 .setTitle("購買金額低於運費")
-                .setMessage("提醒您，您所購買的金額低於運費60元，是否確認購買")
+                .setMessage(String.format("提醒您，您所購買的金額低於運費%s元，是否確認購買",
+                        PurchaseFragment1.SHIP_FEE))
                 .setCancelable(false)
                 .setPositiveButton("確認", onConfirmClickListener)
                 .setNegativeButton("再逛逛", new DialogInterface.OnClickListener() {

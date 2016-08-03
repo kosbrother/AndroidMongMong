@@ -34,7 +34,7 @@ import java.util.List;
 
 public class PurchaseFragment1 extends Fragment {
 
-    private static final int SHIP_FEE = 90;
+    public static final int SHIP_FEE = 90;
     private static final int FREE_SHIP_REQUIRED_PRICE = 490;
 
     private LinearLayout noLoginLayout;
@@ -51,7 +51,7 @@ public class PurchaseFragment1 extends Fragment {
 
     private List<Product> shoppingCarProducts;
     private int totalGoodsPrice;
-    private int shippingPrice = 60;
+    private int shippingPrice;
 
     private int tempCount;
     private OnStep1ButtonClickListener mCallback;
