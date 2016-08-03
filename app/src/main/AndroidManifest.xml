@@ -109,7 +109,7 @@
             android:name=".pastorders.PastOrderActivity"
             android:label="我的訂單"
             android:screenOrientation="portrait"
-            android:theme="@style/CustomTheme" />
+            android:theme="@style/AppTheme" />
 
         <activity
             android:name=".pastorders.PastOrderDetailActivity"

@@ -1,36 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<GridView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/fragment_gridview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:popupTheme="@style/AppTheme.PopupOverlay" />
-
-    </android.support.design.widget.AppBarLayout>
-
-    <GridView
-        android:id="@+id/fragment_gridview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        android:drawSelectorOnTop="true"
-        android:gravity="center"
-        android:listSelector="@drawable/gray_selector"
-        android:paddingTop="8dp"
-        android:stretchMode="columnWidth"
-        android:verticalSpacing="1dp" />
-
-</LinearLayout>
+    android:background="@color/white"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:drawSelectorOnTop="true"
+    android:gravity="center"
+    android:listSelector="@drawable/gray_selector"
+    android:paddingTop="8dp"
+    android:stretchMode="columnWidth"
+    android:verticalSpacing="1dp" />
