@@ -314,7 +314,7 @@ public class ProductActivity extends BaseActivity {
 
         FavoriteManager manager = FavoriteManager.getInstance(Settings.getSavedUser().getUserId(), getApplicationContext());
         if (collected) {
-            manager.deleteFavoriteItems(getProductId(), new DataManager.ApiCallBack() {
+            manager.deleteFavoriteItemsFromId(getProductId(), new DataManager.ApiCallBack() {
                 @Override
                 public void onError(String errorMessage) {
                     showAToast(errorMessage);

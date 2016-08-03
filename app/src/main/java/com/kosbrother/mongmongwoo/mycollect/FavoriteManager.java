@@ -86,7 +86,12 @@ public class FavoriteManager {
         }
     }
 
-    public void deleteFavoriteItems(final int productId, final DataManager.ApiCallBack callBack) {
+    public void deleteFavoriteItemsFromPosition(final int position, final DataManager.ApiCallBack callBack) {
+        final int productId = tmpProductList.get(position).getId();
+        deleteFavoriteItemsFromId(productId, callBack);
+    }
+
+    public void deleteFavoriteItemsFromId(final int productId, final DataManager.ApiCallBack callBack) {
         DataManager.getInstance().deleteFavoriteItems(userId, productId,
                 new DataManager.ApiCallBack() {
                     @Override

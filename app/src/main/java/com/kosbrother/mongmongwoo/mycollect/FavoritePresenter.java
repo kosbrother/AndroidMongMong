@@ -25,7 +25,7 @@ public class FavoritePresenter implements DataManager.ApiCallBack {
 
     public void onCancelCollectConfirmClick(int position) {
         view.showProgressDialog();
-        favoriteManager.deleteFavoriteItems(position, this);
+        favoriteManager.deleteFavoriteItemsFromPosition(position, this);
     }
 
     @Override
