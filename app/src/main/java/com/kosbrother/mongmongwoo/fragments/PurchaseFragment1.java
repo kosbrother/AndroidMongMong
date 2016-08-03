@@ -34,6 +34,9 @@ import java.util.List;
 
 public class PurchaseFragment1 extends Fragment {
 
+    private static final int SHIP_FEE = 90;
+    private static final int FREE_SHIP_REQUIRED_PRICE = 490;
+
     private LinearLayout noLoginLayout;
     private Button loginButton;
     private Button guestCheckoutButton;
@@ -108,7 +111,7 @@ public class PurchaseFragment1 extends Fragment {
 
     private void updatePricesText() {
         totalGoodsPrice = CalculateUtil.calculateTotalGoodsPrice(shoppingCarProducts);
-        shippingPrice = totalGoodsPrice >= 490 ? 0 : 60;
+        shippingPrice = totalGoodsPrice >= FREE_SHIP_REQUIRED_PRICE ? 0 : SHIP_FEE;
 
         String totalGoodsPriceString = "$" + totalGoodsPrice;
         totalGoodsPriceText.setText(totalGoodsPriceString);
@@ -120,7 +123,7 @@ public class PurchaseFragment1 extends Fragment {
             freeShippingPriceRemainString = "NT$ " + 0;
         } else {
             shippingPriceString = "$" + shippingPrice;
-            freeShippingPriceRemainString = "NT$ " + (490 - totalGoodsPrice);
+            freeShippingPriceRemainString = "NT$ " + (FREE_SHIP_REQUIRED_PRICE - totalGoodsPrice);
         }
         freeShippingPriceRemainTextView.setText(freeShippingPriceRemainString);
         shippingPriceText.setText(shippingPriceString);
