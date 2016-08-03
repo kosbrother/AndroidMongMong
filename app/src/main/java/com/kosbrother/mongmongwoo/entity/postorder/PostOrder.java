@@ -10,4 +10,13 @@ public class PostOrder extends PostOrderEntity {
         }
         return status;
     }
+
+    public String getIdText() {
+        return "訂單編號：" + getId();
+    }
+
+    public String getTotalPriceText() {
+        return "消費金額：NT$ " + getTotal();
+    }
+
 }

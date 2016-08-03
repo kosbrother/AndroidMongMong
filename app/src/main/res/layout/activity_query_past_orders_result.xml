@@ -21,35 +21,34 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:text="@string/order_info"
-            android:textColor="@color/black_text"
-            android:textSize="16sp" />
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:text="@string/activity_query_post_orders_result_subtitle"
+            android:textColor="@color/green_text"
+            android:textSize="12sp" />
 
         <GridView
             android:id="@+id/orders_gv"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="@color/white"
+            android:clipChildren="false"
             android:clipToPadding="false"
-            android:columnWidth="8dp"
             android:drawSelectorOnTop="true"
             android:gravity="center"
-            android:horizontalSpacing="8dp"
-            android:listSelector="@drawable/grid_view_list_selector_corner3"
-            android:numColumns="1"
-            android:paddingBottom="144dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:scrollbars="none"
+            android:listSelector="@drawable/gray_selector"
             android:stretchMode="columnWidth"
-            android:verticalSpacing="8dp" />
+            android:verticalSpacing="1dp" />
     </LinearLayout>
 
     <android.support.design.widget.FloatingActionButton

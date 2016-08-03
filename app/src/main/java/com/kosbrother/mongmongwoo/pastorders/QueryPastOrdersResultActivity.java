@@ -11,7 +11,7 @@ import android.widget.AdapterView;
 import android.widget.GridView;
 
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.adpters.PastOrdersGridAdapter;
+import com.kosbrother.mongmongwoo.adpters.PastOrdersAdapter;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrder;
@@ -95,7 +95,7 @@ public class QueryPastOrdersResultActivity extends AppCompatActivity {
     private void setGridView(final List<PostOrder> postOrders) {
         GridView ordersGridView = (GridView) findViewById(R.id.orders_gv);
         assert ordersGridView != null;
-        ordersGridView.setAdapter(new PastOrdersGridAdapter(this, postOrders));
+        ordersGridView.setAdapter(new PastOrdersAdapter(this, postOrders));
         ordersGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
