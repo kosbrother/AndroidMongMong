@@ -193,6 +193,10 @@ public class FavoriteManager {
         return tmpProductList;
     }
 
+    public int getProductId(int position) {
+        return tmpProductList.get(position).getId();
+    }
+
     private boolean checkCollected(int productId) {
         for (Product p : tmpProductList) {
             if (p.getId() == productId) {

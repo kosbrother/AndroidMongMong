@@ -36,7 +36,7 @@ public class FavoriteFragment extends Fragment implements FavoriteView,
         super.onCreate(savedInstanceState);
         int userId = Settings.getSavedUser().getUserId();
         FavoriteManager favoriteManager = FavoriteManager.getInstance(userId, getActivity().getApplicationContext());
-        presenter = new FavoritePresenter(this, new FavoriteModel(favoriteManager));
+        presenter = new FavoritePresenter(this, favoriteManager);
     }
 
     @Nullable

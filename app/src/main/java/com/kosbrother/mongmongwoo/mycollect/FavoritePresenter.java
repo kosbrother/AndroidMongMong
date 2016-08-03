@@ -7,25 +7,25 @@ import java.util.List;
 
 public class FavoritePresenter implements DataManager.ApiCallBack {
     private FavoriteView view;
-    private FavoriteModel model;
+    private FavoriteManager favoriteManager;
 
-    public FavoritePresenter(FavoriteView view, FavoriteModel model) {
+    public FavoritePresenter(FavoriteView view, FavoriteManager favoriteManager) {
         this.view = view;
-        this.model = model;
+        this.favoriteManager = favoriteManager;
     }
 
     public void onResume() {
         view.showLoadingView();
-        model.getMyCollectList(this);
+        favoriteManager.getMyCollectList(this);
     }
 
     public void onCollectItemClick(int position) {
-        view.startProductActivity(model.getProductId(position));
+        view.startProductActivity(favoriteManager.getProductId(position));
     }
 
     public void onCancelCollectConfirmClick(int position) {
         view.showProgressDialog();
-        model.cancelCollect(position, this);
+        favoriteManager.deleteFavoriteItems(position, this);
     }
 
     @Override
@@ -42,7 +42,7 @@ public class FavoritePresenter implements DataManager.ApiCallBack {
             if (myCollectEntities.size() == 0) {
                 view.showEmptyView();
             } else {
-                view.showMyCollectList(model.getProductList());
+                view.showMyCollectList(favoriteManager.getProductList());
             }
         } else if (data instanceof String) {
             onResume();
