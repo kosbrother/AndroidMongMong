@@ -94,6 +94,7 @@ public class MainActivity extends AppCompatActivity
 
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
     private View spotLightShoppingCarLayout;
+    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -169,14 +170,21 @@ public class MainActivity extends AppCompatActivity
         } else if (spotLightShoppingCarLayout != null && spotLightShoppingCarLayout.isShown()) {
             spotLightShoppingCarLayout.setVisibility(View.GONE);
         } else {
-            if (FiveStartsManager.getInstance(this).showFiveStarsRecommend()) {
-                startActivity(new Intent(this, FiveStarsActivity.class));
+            if (toast != null && toast.getView().isShown()) {
+                if (FiveStartsManager.getInstance(this).showFiveStarsRecommend()) {
+                    startActivity(new Intent(this, FiveStarsActivity.class));
+                } else {
+                    toast.cancel();
+                    super.onBackPressed();
+                }
             } else {
-                super.onBackPressed();
+                if (toast == null) {
+                    toast = Toast.makeText(this, "再按一次返回鍵退出萌萌屋", Toast.LENGTH_SHORT);
+                }
+                toast.show();
             }
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
