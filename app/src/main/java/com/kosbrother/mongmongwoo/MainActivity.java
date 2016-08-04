@@ -260,7 +260,11 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_shop_infos) {
             startActivity(new Intent(this, ShopInfoActivity.class));
         } else if (id == R.id.nav_collect) {
-            startActivity(new Intent(this, MyCollectActivity.class));
+            if (Settings.checkIsLogIn()) {
+                startActivity(new Intent(this, MyCollectActivity.class));
+            } else {
+                startActivity(new Intent(this, LoginActivity.class));
+            }
         } else if (id == R.id.nav_about) {
             startActivity(new Intent(this, AboutActivity.class));
         } else if (id == R.id.nav_share) {
