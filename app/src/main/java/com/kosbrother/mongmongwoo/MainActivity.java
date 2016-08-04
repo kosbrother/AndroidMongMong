@@ -93,6 +93,8 @@ public class MainActivity extends AppCompatActivity
     public static final String EXTRA_STRING_NOTIFICATION_TITLE = "EXTRA_STRING_NOTIFICATION_TITLE";
 
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
+    private View spotLightShoppingCarLayout;
+    private Toast toast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,15 +167,24 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = getDrawer();
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if (spotLightShoppingCarLayout != null && spotLightShoppingCarLayout.isShown()) {
+            spotLightShoppingCarLayout.setVisibility(View.GONE);
         } else {
-            if (FiveStartsManager.getInstance(this).showFiveStarsRecommend()) {
-                startActivity(new Intent(this, FiveStarsActivity.class));
+            if (toast != null && toast.getView().isShown()) {
+                if (FiveStartsManager.getInstance(this).showFiveStarsRecommend()) {
+                    startActivity(new Intent(this, FiveStarsActivity.class));
+                } else {
+                    toast.cancel();
+                    super.onBackPressed();
+                }
             } else {
-                super.onBackPressed();
+                if (toast == null) {
+                    toast = Toast.makeText(this, "再按一次返回鍵退出萌萌屋", Toast.LENGTH_SHORT);
+                }
+                toast.show();
             }
         }
     }
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -604,13 +615,13 @@ public class MainActivity extends AppCompatActivity
             public void onFirstAddShoppingCart() {
                 ViewStub viewStub = (ViewStub) findViewById(R.id.shopping_car_spotlight_vs);
                 if (viewStub != null) {
-                    final View spotLightShoppingCarLayout = viewStub.inflate();
+                    spotLightShoppingCarLayout = viewStub.inflate();
                     Button spotLightConfirmButton =
                             (Button) spotLightShoppingCarLayout.findViewById(R.id.confirm_button);
                     spotLightConfirmButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            spotLightShoppingCarLayout.setVisibility(View.INVISIBLE);
+                            spotLightShoppingCarLayout.setVisibility(View.GONE);
                         }
                     });
                 }
