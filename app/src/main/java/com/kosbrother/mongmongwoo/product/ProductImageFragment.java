@@ -1,4 +1,4 @@
-package com.kosbrother.mongmongwoo.fragments;
+package com.kosbrother.mongmongwoo.product;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.bumptech.glide.Glide;
-import com.kosbrother.mongmongwoo.ProductActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.ZoomImageActivity;
 

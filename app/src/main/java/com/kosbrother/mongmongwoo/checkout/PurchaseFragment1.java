@@ -1,4 +1,4 @@
-package com.kosbrother.mongmongwoo.fragments;
+package com.kosbrother.mongmongwoo.checkout;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
