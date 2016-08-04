@@ -1,26 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
-    android:orientation="vertical">
+    android:background="#fafafa"
+    android:clickable="true">
 
-    <ImageView
-        android:id="@+id/item_spec_iv"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:scaleType="centerInside"
-        android:src="@mipmap/img_pre_load_square" />
-
-    <TextView
-        android:id="@+id/item_spec_tv"
+    <!--Remove this layout may cause DiagonalView display problem-->
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:gravity="center"
-        android:text="粉紅色"
-        android:textSize="11dp" />
+        android:layout_height="wrap_content">
 
-</LinearLayout>
+        <LinearLayout
+            android:layout_gravity="center"
+            android:id="@+id/item_spec_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/item_spec_iv"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:scaleType="centerInside"
+                android:src="@mipmap/img_pre_load_square" />
+
+            <TextView
+                android:id="@+id/item_spec_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="8dp"
+                android:gravity="center"
+                android:text="粉紅色"
+                android:textSize="11dp" />
+
+        </LinearLayout>
+
+        <com.kosbrother.mongmongwoo.widget.DiagonalView
+            android:id="@+id/item_spec_no_stock_diagonal_view"
+            android:layout_width="match_parent"
+            android:background="#80e0e0e0"
+            android:layout_height="match_parent" />
+
+    </FrameLayout>
+
+</RelativeLayout>

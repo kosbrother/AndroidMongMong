@@ -357,11 +357,13 @@ public class ProductStyleDialog {
             View itemView = holder.itemView;
             TextView storeText = holder.storeText;
             ImageView imageView = holder.imageView;
+            View noStockDiagonalView = holder.noStockDiagonalView;
 
-            // If position >= specs size, add black view
+            // If position >= specs size, set empty view
             if (position >= specs.size()) {
                 storeText.setText("");
                 imageView.setImageResource(0);
+                noStockDiagonalView.setVisibility(View.GONE);
             } else {
                 Spec spec = specs.get(position);
                 storeText.setText(spec.getStyle());
@@ -370,20 +372,23 @@ public class ProductStyleDialog {
                         .centerCrop()
                         .placeholder(R.mipmap.img_pre_load_square)
                         .into(imageView);
-            }
 
-            if (position == selectedPosition) {
-                itemView.setBackgroundResource(R.drawable.bg_spec_selected);
-                storeText.setTextColor(ContextCompat.getColor(context, R.color.white));
-            } else {
-                itemView.setBackgroundResource(R.drawable.bg_spec_non_selected);
-                storeText.setTextColor(ContextCompat.getColor(context, R.color.black_text));
+                if (position == selectedPosition) {
+                    itemView.setBackgroundResource(R.drawable.bg_spec_selected);
+                    storeText.setTextColor(ContextCompat.getColor(context, R.color.white));
+                } else {
+                    itemView.setBackgroundResource(R.drawable.bg_spec_non_selected);
+                    storeText.setTextColor(ContextCompat.getColor(context, R.color.black_text));
+                }
+
+                int stockAmount = spec.getStockAmount();
+                noStockDiagonalView.setVisibility(stockAmount == 0 ? View.VISIBLE : View.GONE);
             }
         }
 
         @Override
         public int getItemCount() {
-            // If size % 3 != 0, add blank item to fill recyclerView
+            // If size % 3 != 0, add empty view to fill recyclerView
             int size = specs.size();
             if (size % 3 == 0) {
                 return size;
@@ -395,11 +400,13 @@ public class ProductStyleDialog {
 
             private final TextView storeText;
             private final ImageView imageView;
+            private final View noStockDiagonalView;
 
             public ViewHolder(View itemView) {
                 super(itemView);
                 this.storeText = (TextView) itemView.findViewById(R.id.item_spec_tv);
                 this.imageView = (ImageView) itemView.findViewById(R.id.item_spec_iv);
+                this.noStockDiagonalView = itemView.findViewById(R.id.item_spec_no_stock_diagonal_view);
             }
 
         }
