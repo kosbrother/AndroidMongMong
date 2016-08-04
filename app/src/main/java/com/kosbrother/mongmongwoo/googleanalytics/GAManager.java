@@ -131,11 +131,13 @@ public class GAManager {
 
     public static void sendShoppingCartProductEvent(Product product) {
         Bundle bundle = new Bundle();
+        bundle.putLong(FirebaseAnalytics.Param.QUANTITY, product.getBuy_count());
         bundle.putString(FirebaseAnalytics.Param.ITEM_CATEGORY, product.getCategoryName());
-        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(product.getId()));
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, product.getName());
-        bundle.putString(FirebaseAnalytics.Param.QUANTITY, String.valueOf(product.getBuy_count()));
-        bundle.putString(FirebaseAnalytics.Param.PRICE, String.valueOf(product.getFinalPrice()));
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(product.getId()));
+        bundle.putDouble(FirebaseAnalytics.Param.VALUE, product.getFinalPrice());
+        bundle.putDouble(FirebaseAnalytics.Param.PRICE, product.getFinalPrice());
+        bundle.putString(FirebaseAnalytics.Param.CURRENCY, "TWD");
         mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.ADD_TO_CART, bundle);
 
         sendEvent(new ShoppingCartProductEvent(product));

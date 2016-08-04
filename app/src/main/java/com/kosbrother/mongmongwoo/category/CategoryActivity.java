@@ -30,6 +30,7 @@ import com.kosbrother.mongmongwoo.api.DensityApi;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
+import com.kosbrother.mongmongwoo.googleanalytics.event.category.CategoryEnterEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.indexgridcart.IndexGridCartAddToCartEvent;
 import com.kosbrother.mongmongwoo.model.Category;
 import com.kosbrother.mongmongwoo.model.Product;
@@ -62,6 +63,7 @@ public class CategoryActivity extends BaseActivity {
 
         setToolbar(categoryName);
         setViewPagerWithTabLayout(categoryName, categoryId, sortIndex);
+        GAManager.sendEvent(new CategoryEnterEvent(categoryName));
     }
 
     @Override
