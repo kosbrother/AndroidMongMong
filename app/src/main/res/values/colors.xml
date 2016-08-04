@@ -36,4 +36,6 @@
     <color name="google_button_background_color_press">#3367d5</color>
 
     <color name="bg_green_color_filter">#40159D75</color>
+    <color name="diagonal_line">#4dffffff</color>
+
 </resources>
