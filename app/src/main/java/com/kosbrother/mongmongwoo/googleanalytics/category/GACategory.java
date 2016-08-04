@@ -18,4 +18,5 @@ public interface GACategory {
     String EXCEPTION = "Exception";
     String ERROR = "error";
     String SEARCH = "Search";
+    String CATEGORY = "Category";
 }
