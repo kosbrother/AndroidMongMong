@@ -48,6 +48,7 @@ public class ProductStyleDialog {
     private final TextView countTextView;
     private final TextView itemStockTextView;
     private final Button confirmButton;
+    private SpacesItemDecoration decoration;
 
     private int tempCount = 1;
     private View.OnTouchListener onImageViewTouchListener = new View.OnTouchListener() {
@@ -144,7 +145,10 @@ public class ProductStyleDialog {
 
     private void initGridView() {
         final int space = (int) DensityApi.convertDpToPixel(1, context);
-        recyclerView.addItemDecoration(new SpacesItemDecoration(space));
+        if (decoration == null) {
+            decoration = new SpacesItemDecoration(space);
+            recyclerView.addItemDecoration(decoration);
+        }
         recyclerView.setHasFixedSize(true);
 
         GridLayoutManager layoutManager = new GridLayoutManager(context, 3, GridLayoutManager.VERTICAL, false) {
