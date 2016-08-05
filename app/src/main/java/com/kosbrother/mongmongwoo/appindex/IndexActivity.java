@@ -45,6 +45,7 @@ public class IndexActivity extends AppCompatActivity {
                     indexIntent.putExtra(
                             ProductActivity.EXTRA_STRING_SLUG, itemsData);
                 }
+                indexIntent.putExtra(ProductActivity.EXTRA_BOOLEAN_FROM_APP_INDEX, true);
             } else {
                 indexIntent = new Intent(this, LaunchActivity.class);
             }
