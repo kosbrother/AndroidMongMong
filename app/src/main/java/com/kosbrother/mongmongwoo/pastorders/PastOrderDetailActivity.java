@@ -196,6 +196,8 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
     public void onError(String errorMessage) {
         if (progressDialog != null) {
             progressDialog.dismiss();
+            progressDialog = null;
+            onResume();
         }
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
     }
@@ -206,6 +208,7 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
             onGetPostOrderResult((PastOrder) data);
         } else if (data instanceof String) {
             progressDialog.dismiss();
+            progressDialog = null;
             onResume();
         }
     }
