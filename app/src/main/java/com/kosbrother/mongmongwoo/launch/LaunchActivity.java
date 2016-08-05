@@ -10,16 +10,10 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
-import com.crashlytics.android.Crashlytics;
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
-import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
-import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
-import io.fabric.sdk.android.Fabric;
+import com.kosbrother.mongmongwoo.utils.InitUtil;
 import com.viewpagerindicator.CirclePageIndicator;
 
 public class LaunchActivity extends FragmentActivity {
@@ -29,14 +23,7 @@ public class LaunchActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Settings.init(getApplicationContext());
-        GAManager.init(getApplicationContext());
-        FacebookSdk.sdkInitialize(getApplicationContext());
-        AppEventsLogger.activateApp(getApplication());
-        ShoppingCartManager.init(this);
-        if (!BuildConfig.DEBUG) {
-            Fabric.with(getApplicationContext(), new Crashlytics());
-        }
+        InitUtil.initApp(getApplicationContext(), getApplication());
 
         if (isNewUser()) {
             setContentView(R.layout.activity_launch);

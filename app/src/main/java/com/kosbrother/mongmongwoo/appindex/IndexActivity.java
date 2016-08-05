@@ -9,12 +9,14 @@ import android.text.TextUtils;
 
 import com.kosbrother.mongmongwoo.ProductActivity;
 import com.kosbrother.mongmongwoo.launch.LaunchActivity;
+import com.kosbrother.mongmongwoo.utils.InitUtil;
 
 public class IndexActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        InitUtil.initApp(getApplicationContext(), getApplication());
         onNewIntent(getIntent());
     }
 
@@ -43,6 +45,7 @@ public class IndexActivity extends AppCompatActivity {
                     indexIntent.putExtra(
                             ProductActivity.EXTRA_STRING_SLUG, itemsData);
                 }
+                indexIntent.putExtra(ProductActivity.EXTRA_BOOLEAN_FROM_APP_INDEX, true);
             } else {
                 indexIntent = new Intent(this, LaunchActivity.class);
             }

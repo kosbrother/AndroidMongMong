@@ -57,6 +57,7 @@ public class ProductActivity extends BaseActivity {
     public static final String EXTRA_STRING_SLUG = "EXTRA_STRING_SLUG";
     public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
     public static final String EXTRA_BOOLEAN_FROM_SEARCH = "EXTRA_BOOLEAN_FROM_SEARCH";
+    public static final String EXTRA_BOOLEAN_FROM_APP_INDEX = "EXTRA_BOOLEAN_FROM_APP_INDEX";
 
     private static final int REQUEST_LOGIN = 222;
 
@@ -196,7 +197,8 @@ public class ProductActivity extends BaseActivity {
 
     @Override
     public void onBackPressed() {
-        if (isFromNotification()) {
+        boolean fromAppIndex = getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_APP_INDEX, false);
+        if (isFromNotification() || fromAppIndex) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
             finish();
@@ -483,4 +485,5 @@ public class ProductActivity extends BaseActivity {
     private boolean isFromNotification() {
         return getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
     }
+
 }
