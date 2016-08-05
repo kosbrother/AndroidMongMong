@@ -21,7 +21,6 @@ import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.adpters.PastItemAdapter;
 import com.kosbrother.mongmongwoo.api.DataManager;
-import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.pastorder.Info;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastItem;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
@@ -32,8 +31,6 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.notification.Notificatio
 import com.kosbrother.mongmongwoo.widget.CenterProgressDialog;
 
 import java.util.List;
-
-import rx.functions.Action1;
 
 public class PastOrderDetailActivity extends BaseActivity implements DataManager.ApiCallBack {
 
@@ -57,14 +54,13 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
         super.onResume();
         setContentView(R.layout.loading);
         setToolbar();
-        Webservice.getPastOrderByOrderId(getOrderId(), new Action1<PastOrder>() {
-            @Override
-            public void call(PastOrder data) {
-                if (data != null) {
-                    onGetPostOrderResult(data);
-                }
-            }
-        });
+        DataManager.getInstance().getOrder(getOrderId(), this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        DataManager.getInstance().unSubscribe(this);
+        super.onDestroy();
     }
 
     @Override
@@ -195,14 +191,20 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
 
     @Override
     public void onError(String errorMessage) {
-        progressDialog.dismiss();
-        Toast.makeText(PastOrderDetailActivity.this,errorMessage,Toast.LENGTH_SHORT).show();
+        if (progressDialog != null) {
+            progressDialog.dismiss();
+        }
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onSuccess(Object data) {
-        progressDialog.dismiss();
-        onResume();
+        if (data instanceof PastOrder) {
+            onGetPostOrderResult((PastOrder) data);
+        } else if (data instanceof String) {
+            progressDialog.dismiss();
+            onResume();
+        }
     }
 
     private void onCancelOrderClick() {
@@ -227,7 +229,7 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
             }
         });
         int userId = Settings.getSavedUser().getUserId();
-        DataManager.getInstance().cancelOrder(userId, pastOrder.getId(),this);
+        DataManager.getInstance().cancelOrder(userId, pastOrder.getId(), this);
     }
 
     private void onAbortCancelOrder() {

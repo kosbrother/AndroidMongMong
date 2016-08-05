@@ -7,6 +7,7 @@ import com.kosbrother.mongmongwoo.entity.mycollect.FavoriteItemEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostFavoriteItemsEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.WishListEntity;
+import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
 import com.kosbrother.mongmongwoo.mynotification.MyNotification;
 
 import java.util.LinkedHashMap;
@@ -34,6 +35,11 @@ import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
 public class DataManager {
+
+    private static final String DEBUG_URL = "http://104.199.129.36/";
+    private static final String PRD_URL = "https://www.mmwooo.com/";
+    private static final String BASE_URL = BuildConfig.DEBUG ? DEBUG_URL : PRD_URL;
+
     private static DataManager instance;
     private final NetworkAPI networkAPI;
     private final Map<String, Subscription> subscriptionMap;
@@ -49,7 +55,7 @@ public class DataManager {
         }
 
         Retrofit.Builder builder = new Retrofit.Builder();
-        Retrofit retrofit = builder.baseUrl(UrlCenter.HOST)
+        Retrofit retrofit = builder.baseUrl(BASE_URL)
                 .client(client)
                 .addConverterFactory(GsonConverterFactory.create())
                 .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
@@ -298,6 +304,38 @@ public class DataManager {
         });
     }
 
+    public void getOrder(
+            final int orderId, final ApiCallBack callBack) {
+        Observable<ResponseEntity<PastOrder>> observable = networkAPI.getOrders(orderId)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<PastOrder>>() {
+            @Override
+            public void onCompleted() {
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(e.getMessage());
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<PastOrder> pastOrderResponseEntity) {
+                PastOrder data = pastOrderResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(pastOrderResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void cancelOrder(int userId, int pastOrderId, final ApiCallBack callBack) {
         Observable<ResponseEntity<String>> observable = networkAPI.cancelOrders(userId, pastOrderId)
                 .subscribeOn(Schedulers.newThread())
@@ -351,35 +389,38 @@ public class DataManager {
     }
 
     public interface NetworkAPI {
-        @GET(UrlCenter.API + "/android_version")
+        @GET("api/android_version")
         Observable<AndroidVersionEntity> getAndroidVersionObservable();
 
-        @GET(UrlCenter.API_V3 + "/users/{userId}/my_messages")
+        @GET("api/v3/users/{userId}/my_messages")
         Observable<ResponseEntity<List<MyNotification>>> getMyMessages(@Path("userId") int userId);
 
-        @GET(UrlCenter.API_V3 + "/users/{userId}/favorite_items")
+        @GET("api/v3/users/{userId}/favorite_items")
         Observable<ResponseEntity<List<FavoriteItemEntity>>> getFavoriteItems(@Path("userId") int userId);
 
-        @POST(UrlCenter.API_V3 + "/users/{userId}/favorite_items")
+        @POST("api/v3/users/{userId}/favorite_items")
         Observable<ResponseEntity<String>> postFavoriteItems(
                 @Path("userId") int userId, @Body PostFavoriteItemsEntity postFavoriteItemsEntity);
 
-        @DELETE(UrlCenter.API_V3 + "/users/{userId}/favorite_items/items/{itemId}")
+        @DELETE("api/v3/users/{userId}/favorite_items/items/{itemId}")
         Observable<ResponseEntity<String>> deleteFavoriteItems(
                 @Path("userId") int userId, @Path("itemId") int itemId);
 
-        @GET(UrlCenter.API_V3 + "/users/{userId}/wish_lists")
+        @GET("api/v3/users/{userId}/wish_lists")
         Observable<ResponseEntity<List<WishListEntity>>> getWishLists(@Path("userId") int userId);
 
-        @POST(UrlCenter.API_V3 + "/users/{userId}/wish_lists")
+        @POST("api/v3/users/{userId}/wish_lists")
         Observable<ResponseEntity<String>> postWishLists(
                 @Path("userId") int userId, @Body PostWishListsEntity postWishListsEntity);
 
-        @DELETE(UrlCenter.API_V3 + "/users/{userId}/wish_lists/item_specs/{itemSpecId}")
+        @DELETE("api/v3/users/{userId}/wish_lists/item_specs/{itemSpecId}")
         Observable<ResponseEntity<String>> deleteWishListsItemSpecs(
                 @Path("userId") int userId, @Path("itemSpecId") int itemSpecId);
 
-        @PATCH(UrlCenter.API_V3 + "/users/{userId}/orders/{orderId}/cancel")
+        @GET("api/v3/orders/{orderId}")
+        Observable<ResponseEntity<PastOrder>> getOrders(@Path("orderId") int orderId);
+
+        @PATCH("api/v3/users/{userId}/orders/{orderId}/cancel")
         Observable<ResponseEntity<String>> cancelOrders(
                 @Path("userId") int userId, @Path("orderId") int orderId);
     }
