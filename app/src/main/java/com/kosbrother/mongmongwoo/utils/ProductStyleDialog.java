@@ -437,7 +437,7 @@ public class ProductStyleDialog {
         @Override
         public void getItemOffsets(Rect outRect, View view,
                                    RecyclerView parent, RecyclerView.State state) {
-            if (parent.getChildAdapterPosition(view) < 4) {
+            if (parent.getChildAdapterPosition(view) < 3) {
                 outRect.top = space;
             }
             outRect.right = space;
