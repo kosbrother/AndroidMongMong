@@ -32,4 +32,6 @@
     <string name="notification_empty_title">暫無通知</string>
     <string name="notification_empty_content">有重要訊息我們會立刻讓您知道！</string>
 
+    <string name="product_style_dialog_no_stock_hint">請至\"我的收藏\"裡的\"補貨清單\"查看．</string>
+
 </resources>

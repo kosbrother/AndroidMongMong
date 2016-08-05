@@ -48,6 +48,7 @@ public class ProductStyleDialog {
     private final TextView countTextView;
     private final TextView itemStockTextView;
     private final Button confirmButton;
+    private final View noStockHintTextView;
     private SpacesItemDecoration decoration;
 
     private int tempCount = 1;
@@ -106,12 +107,13 @@ public class ProductStyleDialog {
         this.listener = listener;
 
         View view = LayoutInflater.from(context)
-                .inflate(R.layout.dialog_add_shopping_car_item, null, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.dialog_styles_rv);
-        countLinearLayout = view.findViewById(R.id.count_ll);
-        countTextView = (TextView) view.findViewById(R.id.count_text_view);
-        itemStockTextView = (TextView) view.findViewById(R.id.item_stock_tv);
-        confirmButton = (Button) view.findViewById(R.id.dialog_style_confirm_button);
+                .inflate(R.layout.dialog_product_style, null, false);
+        recyclerView = (RecyclerView) view.findViewById(R.id.dialog_product_style_rv);
+        countLinearLayout = view.findViewById(R.id.dialog_product_style_count_ll);
+        countTextView = (TextView) view.findViewById(R.id.dialog_product_style_count_tv);
+        itemStockTextView = (TextView) view.findViewById(R.id.dialog_product_style_stock_tv);
+        confirmButton = (Button) view.findViewById(R.id.dialog_product_style_confirm_btn);
+        noStockHintTextView = view.findViewById(R.id.dialog_product_style_no_stock_hint_tv);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setView(view);
@@ -127,7 +129,7 @@ public class ProductStyleDialog {
 
         initGridView(initSelectedPosition);
         updateStock(specs.get(initSelectedPosition).getStockText());
-        updateConfirmButtonText(specs.get(initSelectedPosition).getStockAmount());
+        updateConfirmButtonAndNoStockHint(specs.get(initSelectedPosition).getStockAmount());
         initCountTextView();
 
         alertDialog.show();
@@ -141,7 +143,7 @@ public class ProductStyleDialog {
         Spec selectedSpec = product.getSelectedSpec();
         initGridView(getSelectedSpecPosition(product, selectedSpec));
         updateStock(selectedSpec.getStockText());
-        updateConfirmButtonText(selectedSpec.getStockAmount());
+        updateConfirmButtonAndNoStockHint(selectedSpec.getStockAmount());
 
         alertDialog.show();
     }
@@ -197,7 +199,7 @@ public class ProductStyleDialog {
                         updateSelectedStyle(position);
                         Spec spec = product.getSpecs().get(position);
                         updateStock(spec.getStockText());
-                        updateConfirmButtonText(spec.getStockAmount());
+                        updateConfirmButtonAndNoStockHint(spec.getStockAmount());
                     }
                     return true;
                 }
@@ -218,13 +220,15 @@ public class ProductStyleDialog {
         recyclerView.setAdapter(adapter);
     }
 
-    private void updateConfirmButtonText(int stockAmount) {
+    private void updateConfirmButtonAndNoStockHint(int stockAmount) {
         if (stockAmount == 0) {
             confirmButton.setText("加入收藏，貨到通知我");
             confirmButton.setOnClickListener(onAddToWishClickListener);
+            noStockHintTextView.setVisibility(View.VISIBLE);
         } else {
             confirmButton.setText("確定");
             confirmButton.setOnClickListener(onConfirmClickListener);
+            noStockHintTextView.setVisibility(View.GONE);
         }
     }
 
@@ -255,7 +259,7 @@ public class ProductStyleDialog {
     }
 
     private void initMinusButton(View view) {
-        View minusButton = view.findViewById(R.id.minus_button);
+        View minusButton = view.findViewById(R.id.dialog_product_style_minus_button);
         minusButton.setOnTouchListener(onImageViewTouchListener);
         minusButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -269,7 +273,7 @@ public class ProductStyleDialog {
     }
 
     private void initPlusButton(View view) {
-        View plusButton = view.findViewById(R.id.plus_button);
+        View plusButton = view.findViewById(R.id.dialog_product_style_plus_button);
         plusButton.setOnTouchListener(onImageViewTouchListener);
         plusButton.setOnClickListener(new View.OnClickListener() {
             @Override

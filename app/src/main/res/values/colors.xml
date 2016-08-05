@@ -11,6 +11,7 @@
 
     <color name="green_text">#00a378</color>
     <color name="black_text">#4a4a4a</color>
+    <color name="black_262626">#4a4a4a</color>
     <color name="grey_text_999999">#999999</color>
     <color name="red_text">#ff001f</color>
     <color name="gray_tab_background">#f5f5f5</color>
