@@ -48,6 +48,7 @@ public class ProductStyleDialog {
     private final TextView countTextView;
     private final TextView itemStockTextView;
     private final Button confirmButton;
+    private final View noStockHintTextView;
     private SpacesItemDecoration decoration;
 
     private int tempCount = 1;
@@ -106,12 +107,13 @@ public class ProductStyleDialog {
         this.listener = listener;
 
         View view = LayoutInflater.from(context)
-                .inflate(R.layout.dialog_add_shopping_car_item, null, false);
-        recyclerView = (RecyclerView) view.findViewById(R.id.dialog_styles_rv);
-        countLinearLayout = view.findViewById(R.id.count_ll);
-        countTextView = (TextView) view.findViewById(R.id.count_text_view);
-        itemStockTextView = (TextView) view.findViewById(R.id.item_stock_tv);
-        confirmButton = (Button) view.findViewById(R.id.dialog_style_confirm_button);
+                .inflate(R.layout.dialog_product_style, null, false);
+        recyclerView = (RecyclerView) view.findViewById(R.id.dialog_product_style_rv);
+        countLinearLayout = view.findViewById(R.id.dialog_product_style_count_ll);
+        countTextView = (TextView) view.findViewById(R.id.dialog_product_style_count_tv);
+        itemStockTextView = (TextView) view.findViewById(R.id.dialog_product_style_stock_tv);
+        confirmButton = (Button) view.findViewById(R.id.dialog_product_style_confirm_btn);
+        noStockHintTextView = view.findViewById(R.id.dialog_product_style_no_stock_hint_tv);
 
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(context);
         alertDialogBuilder.setView(view);
@@ -122,11 +124,14 @@ public class ProductStyleDialog {
     }
 
     public void showWithInitState() {
-        initGridView();
+        List<Spec> specs = product.getSpecs();
+        int initSelectedPosition = getInitSelectedPosition(specs);
+
+        initGridView(initSelectedPosition);
+        updateStock(specs.get(initSelectedPosition).getStockText());
+        updateConfirmButtonAndNoStockHint(specs.get(initSelectedPosition).getStockAmount());
         initCountTextView();
-        updateSelectedStyle(0);
-        updateStyleStock(product.getSpecs().get(0).getStockText());
-        updateConfirmButton(product.getSpecs().get(0).getStockAmount());
+
         alertDialog.show();
     }
 
@@ -134,16 +139,16 @@ public class ProductStyleDialog {
         this.product = product;
         tempCount = product.getBuy_count();
         countLinearLayout.setVisibility(View.GONE);
-        initGridView();
 
         Spec selectedSpec = product.getSelectedSpec();
-        updateSelectedStyle(getSelectedSpecPosition(product, selectedSpec));
-        updateStyleStock(selectedSpec.getStockText());
-        updateConfirmButton(selectedSpec.getStockAmount());
+        initGridView(getSelectedSpecPosition(product, selectedSpec));
+        updateStock(selectedSpec.getStockText());
+        updateConfirmButtonAndNoStockHint(selectedSpec.getStockAmount());
+
         alertDialog.show();
     }
 
-    private void initGridView() {
+    private void initGridView(int selectedPosition) {
         final int space = (int) DensityApi.convertDpToPixel(1, context);
         if (decoration == null) {
             decoration = new SpacesItemDecoration(space);
@@ -193,8 +198,8 @@ public class ProductStyleDialog {
                     if (position < product.getSpecs().size()) {
                         updateSelectedStyle(position);
                         Spec spec = product.getSpecs().get(position);
-                        updateStyleStock(spec.getStockText());
-                        updateConfirmButton(spec.getStockAmount());
+                        updateStock(spec.getStockText());
+                        updateConfirmButtonAndNoStockHint(spec.getStockAmount());
                     }
                     return true;
                 }
@@ -211,17 +216,19 @@ public class ProductStyleDialog {
 
             }
         });
-        SpecsAdapter adapter = new SpecsAdapter(product.getSpecs());
+        SpecsAdapter adapter = new SpecsAdapter(product.getSpecs(), selectedPosition);
         recyclerView.setAdapter(adapter);
     }
 
-    private void updateConfirmButton(int stockAmount) {
+    private void updateConfirmButtonAndNoStockHint(int stockAmount) {
         if (stockAmount == 0) {
             confirmButton.setText("加入收藏，貨到通知我");
             confirmButton.setOnClickListener(onAddToWishClickListener);
+            noStockHintTextView.setVisibility(View.VISIBLE);
         } else {
             confirmButton.setText("確定");
             confirmButton.setOnClickListener(onConfirmClickListener);
+            noStockHintTextView.setVisibility(View.GONE);
         }
     }
 
@@ -252,7 +259,7 @@ public class ProductStyleDialog {
     }
 
     private void initMinusButton(View view) {
-        View minusButton = view.findViewById(R.id.minus_button);
+        View minusButton = view.findViewById(R.id.dialog_product_style_minus_button);
         minusButton.setOnTouchListener(onImageViewTouchListener);
         minusButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -266,7 +273,7 @@ public class ProductStyleDialog {
     }
 
     private void initPlusButton(View view) {
-        View plusButton = view.findViewById(R.id.plus_button);
+        View plusButton = view.findViewById(R.id.dialog_product_style_plus_button);
         plusButton.setOnTouchListener(onImageViewTouchListener);
         plusButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -275,6 +282,18 @@ public class ProductStyleDialog {
                 updateCountTextView();
             }
         });
+    }
+
+    private int getInitSelectedPosition(List<Spec> specs) {
+        int selectedPosition = 0;
+        for (int i = 0; i < specs.size(); i++) {
+            Spec spec = specs.get(i);
+            if (spec.getStockAmount() > 0) {
+                selectedPosition = i;
+                break;
+            }
+        }
+        return selectedPosition;
     }
 
     private int getSelectedSpecPosition(Product product, Spec selectedSpec) {
@@ -293,7 +312,7 @@ public class ProductStyleDialog {
         adapter.updateSelectedPosition(position);
     }
 
-    private void updateStyleStock(String stock) {
+    private void updateStock(String stock) {
         itemStockTextView.setText(stock);
     }
 
@@ -330,9 +349,9 @@ public class ProductStyleDialog {
 
         private Context context;
 
-        public SpecsAdapter(List<Spec> specs) {
+        public SpecsAdapter(List<Spec> specs, int selectedPosition) {
             this.specs = specs;
-            selectedPosition = 0;
+            this.selectedPosition = selectedPosition;
         }
 
         public void updateSelectedPosition(int position) {
@@ -422,7 +441,7 @@ public class ProductStyleDialog {
         @Override
         public void getItemOffsets(Rect outRect, View view,
                                    RecyclerView parent, RecyclerView.State state) {
-            if (parent.getChildAdapterPosition(view) < 4) {
+            if (parent.getChildAdapterPosition(view) < 3) {
                 outRect.top = space;
             }
             outRect.right = space;

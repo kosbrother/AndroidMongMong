@@ -15,15 +15,15 @@
         android:textStyle="bold" />
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/dialog_styles_rv"
+        android:id="@+id/dialog_product_style_rv"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:background="#f2f2f2"
+        android:background="#9b9b9b"
         android:clipToPadding="false" />
 
     <LinearLayout
-        android:id="@+id/count_ll"
+        android:id="@+id/dialog_product_style_count_ll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
@@ -42,14 +42,14 @@
             android:textStyle="bold" />
 
         <ImageView
-            android:id="@+id/minus_button"
+            android:id="@+id/dialog_product_style_minus_button"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:gravity="center"
             android:src="@mipmap/ic_minus" />
 
         <TextView
-            android:id="@+id/count_text_view"
+            android:id="@+id/dialog_product_style_count_tv"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_gravity="center_vertical"
@@ -59,7 +59,7 @@
             android:text="1" />
 
         <ImageView
-            android:id="@+id/plus_button"
+            android:id="@+id/dialog_product_style_plus_button"
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:gravity="center"
@@ -85,7 +85,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/item_stock_tv"
+            android:id="@+id/dialog_product_style_stock_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="剩下５件"
@@ -94,7 +94,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/dialog_style_confirm_button"
+        android:id="@+id/dialog_product_style_confirm_btn"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginBottom="8dp"
@@ -104,5 +104,16 @@
         android:text="確定"
         android:textColor="@color/white"
         android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/dialog_product_style_no_stock_hint_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="12dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:text="@string/product_style_dialog_no_stock_hint"
+        android:textColor="@color/black_262626"
+        android:textSize="8sp" />
 
 </LinearLayout>
