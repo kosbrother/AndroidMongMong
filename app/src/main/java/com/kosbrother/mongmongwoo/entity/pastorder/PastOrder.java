@@ -31,4 +31,8 @@ public class PastOrder extends PastOrderEntity {
         return status;
     }
 
+    public boolean isCancelable() {
+        String status = getStatus();
+        return status.equals("訂單成立")||status.equals("處理中");
+    }
 }

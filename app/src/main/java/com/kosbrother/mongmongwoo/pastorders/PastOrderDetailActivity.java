@@ -1,18 +1,26 @@
 package com.kosbrother.mongmongwoo.pastorders;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewStub;
 import android.widget.FrameLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
+import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.adpters.PastItemAdapter;
+import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.entity.pastorder.Info;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastItem;
@@ -21,26 +29,35 @@ import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.CustomerServiceClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPickUpOpenedEvent;
+import com.kosbrother.mongmongwoo.widget.CenterProgressDialog;
 
 import java.util.List;
 
 import rx.functions.Action1;
 
-public class PastOrderDetailActivity extends BaseActivity {
+public class PastOrderDetailActivity extends BaseActivity implements DataManager.ApiCallBack {
 
     public static final String EXTRA_INT_ORDER_ID = "EXTRA_INT_ORDER_ID";
     public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
 
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
+    private PastOrder pastOrder;
+    private CenterProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (isFromNotification()) {
+            GAManager.sendEvent(new NotificationPickUpOpenedEvent("" + getOrderId()));
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         setContentView(R.layout.loading);
         setToolbar();
-
-        int orderId = getIntent().getIntExtra(EXTRA_INT_ORDER_ID, 0);
-        Webservice.getPastOrderByOrderId(orderId, new Action1<PastOrder>() {
+        Webservice.getPastOrderByOrderId(getOrderId(), new Action1<PastOrder>() {
             @Override
             public void call(PastOrder data) {
                 if (data != null) {
@@ -48,10 +65,32 @@ public class PastOrderDetailActivity extends BaseActivity {
                 }
             }
         });
+    }
 
-        if (isFromNotification()) {
-            GAManager.sendEvent(new NotificationPickUpOpenedEvent("" + orderId));
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.past_order_detail, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        if (pastOrder != null) {
+            MenuItem cancelOrderItem = menu.findItem(R.id.past_order_detail_cancel_order_item);
+            cancelOrderItem.setVisible(pastOrder.isCancelable());
+            return true;
         }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == R.id.past_order_detail_cancel_order_item) {
+            onCancelOrderClick();
+            return true;
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 
     @Override
@@ -59,20 +98,23 @@ public class PastOrderDetailActivity extends BaseActivity {
         if (isFromNotification()) {
             Intent intent = new Intent(this, MainActivity.class);
             startActivity(intent);
+            finish();
+        } else {
+            super.onBackPressed();
         }
-        super.onBackPressed();
     }
 
     private void onGetPostOrderResult(PastOrder pastOrder) {
+        this.pastOrder = pastOrder;
         setContentView(R.layout.activity_past_order_detail);
         setToolbar();
         initCsBottomSheet();
-        if (pastOrder != null) {
-            setOrderStatusLayout(pastOrder.getStatus());
-            setRecyclerView(pastOrder.getItems());
-            setPastOrder(pastOrder);
-            setInfo(pastOrder.getInfo());
-        }
+        setOrderStatusLayout(pastOrder.getStatus());
+        setRecyclerView(pastOrder.getItems());
+        setPastOrder(pastOrder);
+        setInfo(pastOrder.getInfo());
+        invalidateOptionsMenu();
+
     }
 
     private void initCsBottomSheet() {
@@ -151,7 +193,53 @@ public class PastOrderDetailActivity extends BaseActivity {
         finish();
     }
 
+    @Override
+    public void onError(String errorMessage) {
+        progressDialog.dismiss();
+        Toast.makeText(PastOrderDetailActivity.this,errorMessage,Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSuccess(Object data) {
+        progressDialog.dismiss();
+        onResume();
+    }
+
+    private void onCancelOrderClick() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setTitle("取消訂單");
+        alertDialogBuilder.setMessage("是否確定要取消這次的訂單？");
+        alertDialogBuilder.setNegativeButton("取消", null);
+        alertDialogBuilder.setPositiveButton("確認", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                onConfirmCancelOrderClick();
+            }
+        });
+        alertDialogBuilder.show();
+    }
+
+    private void onConfirmCancelOrderClick() {
+        progressDialog = CenterProgressDialog.show(this, new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                onAbortCancelOrder();
+            }
+        });
+        int userId = Settings.getSavedUser().getUserId();
+        DataManager.getInstance().cancelOrder(userId, pastOrder.getId(),this);
+    }
+
+    private void onAbortCancelOrder() {
+        DataManager.getInstance().unSubscribe(this);
+        onResume();
+    }
+
     private boolean isFromNotification() {
         return getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
+    }
+
+    private int getOrderId() {
+        return getIntent().getIntExtra(EXTRA_INT_ORDER_ID, 0);
     }
 }

@@ -36,4 +36,6 @@
     <string name="activity_past_orders_empty_title">尚無訂單資訊！</string>
     <string name="activity_past_orders_empty_content">趕快在萌萌屋尋找屬於您的萌萌商品吧！！</string>
 
+    <string name="past_order_detail_cancel_order_item_title">取消訂單</string>
+
 </resources>
