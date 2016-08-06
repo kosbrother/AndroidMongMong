@@ -10,12 +10,14 @@ import com.kosbrother.mongmongwoo.entity.mycollect.WishListEntity;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
 import com.kosbrother.mongmongwoo.mynotification.MyNotification;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
+import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -337,12 +339,12 @@ public class DataManager {
     }
 
     public void cancelOrder(int userId, int pastOrderId, final ApiCallBack callBack) {
-        Observable<ResponseEntity<String>> observable = networkAPI.cancelOrders(userId, pastOrderId)
+        Observable<Response<ResponseEntity<String>>> observable = networkAPI.cancelOrders(userId, pastOrderId)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
 
         final String key = String.valueOf(callBack.hashCode());
-        Subscription subscription = observable.subscribe(new Observer<ResponseEntity<String>>() {
+        Subscription subscription = observable.subscribe(new Observer<Response<ResponseEntity<String>>>() {
             @Override
             public void onCompleted() {
                 removeSubscription(key);
@@ -350,17 +352,23 @@ public class DataManager {
 
             @Override
             public void onError(Throwable e) {
-                removeSubscription(key);
                 callBack.onError(e.getMessage());
+                removeSubscription(key);
             }
 
             @Override
-            public void onNext(ResponseEntity<String> stringResponseEntity) {
-                String result = stringResponseEntity.getData();
-                if (result == null) {
-                    onError(new Throwable(stringResponseEntity.getError().getMessage()));
-                } else {
-                    callBack.onSuccess(result);
+            public void onNext(Response<ResponseEntity<String>> responseEntityResponse) {
+                int code = responseEntityResponse.code();
+                if (code >= 400 && code < 500) {
+                    String errorMessage = "";
+                    try {
+                        errorMessage = responseEntityResponse.errorBody().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    callBack.onError(errorMessage);
+                } else if (responseEntityResponse.isSuccessful()) {
+                    callBack.onSuccess(responseEntityResponse.body().getData());
                 }
             }
         });
@@ -421,7 +429,7 @@ public class DataManager {
         Observable<ResponseEntity<PastOrder>> getOrders(@Path("orderId") int orderId);
 
         @PATCH("api/v3/users/{userId}/orders/{orderId}/cancel")
-        Observable<ResponseEntity<String>> cancelOrders(
+        Observable<Response<ResponseEntity<String>>> cancelOrders(
                 @Path("userId") int userId, @Path("orderId") int orderId);
     }
 }
