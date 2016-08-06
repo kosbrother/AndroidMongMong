@@ -37,6 +37,7 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
 
     public static final String EXTRA_INT_ORDER_ID = "EXTRA_INT_ORDER_ID";
     public static final String EXTRA_BOOLEAN_FROM_NOTIFICATION = "EXTRA_BOOLEAN_FROM_NOTIFICATION";
+    public static final String EXTRA_BOOLEAN_FROM_MY_ORDERS = "EXTRA_BOOLEAN_FROM_MY_ORDERS";
 
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
     private PastOrder pastOrder;
@@ -76,7 +77,7 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (pastOrder != null) {
+        if (pastOrder != null && fromMyOrders()) {
             MenuItem cancelOrderItem = menu.findItem(R.id.past_order_detail_cancel_order_item);
             cancelOrderItem.setVisible(pastOrder.isCancelable());
             return true;
@@ -245,6 +246,10 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
 
     private boolean isFromNotification() {
         return getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_NOTIFICATION, false);
+    }
+
+    private boolean fromMyOrders() {
+        return getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_MY_ORDERS, false);
     }
 
     private int getOrderId() {

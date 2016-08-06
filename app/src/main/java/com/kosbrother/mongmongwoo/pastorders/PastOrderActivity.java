@@ -85,6 +85,7 @@ public class PastOrderActivity extends BaseActivity {
                     Intent intent = new Intent(PastOrderActivity.this, PastOrderDetailActivity.class);
                     intent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID,
                             postOrders.get(position).getId());
+                    intent.putExtra(PastOrderDetailActivity.EXTRA_BOOLEAN_FROM_MY_ORDERS, true);
                     startActivity(intent);
                 }
             });
