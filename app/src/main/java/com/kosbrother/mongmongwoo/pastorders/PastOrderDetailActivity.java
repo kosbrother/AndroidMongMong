@@ -210,6 +210,7 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
         } else if (data instanceof String) {
             progressDialog.dismiss();
             progressDialog = null;
+            Toast.makeText(this, (String) data, Toast.LENGTH_SHORT).show();
             onResume();
         }
     }
