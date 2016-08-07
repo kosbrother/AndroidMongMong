@@ -17,8 +17,8 @@ import java.util.Map;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
-import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.HttpException;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
@@ -144,7 +144,7 @@ public class DataManager {
 
             @Override
             public void onError(Throwable e) {
-                callBack.onError(e.getMessage());
+                callBack.onError(getErrorMessage(e));
             }
 
             @Override
@@ -174,7 +174,7 @@ public class DataManager {
 
             @Override
             public void onError(Throwable e) {
-                callBack.onError(e.getMessage());
+                callBack.onError(getErrorMessage(e));
             }
 
             @Override
@@ -203,7 +203,7 @@ public class DataManager {
 
             @Override
             public void onError(Throwable e) {
-                callBack.onError(e.getMessage());
+                callBack.onError(getErrorMessage(e));
             }
 
             @Override
@@ -231,7 +231,7 @@ public class DataManager {
 
             @Override
             public void onError(Throwable e) {
-                callBack.onError(e.getMessage());
+                callBack.onError(getErrorMessage(e));
             }
 
             @Override
@@ -262,7 +262,7 @@ public class DataManager {
 
             @Override
             public void onError(Throwable e) {
-                onErrorAction.call(e.getMessage());
+                onErrorAction.call(getErrorMessage(e));
             }
 
             @Override
@@ -291,7 +291,7 @@ public class DataManager {
 
             @Override
             public void onError(Throwable e) {
-                callBack.onError(e.getMessage());
+                callBack.onError(getErrorMessage(e));
             }
 
             @Override
@@ -321,7 +321,7 @@ public class DataManager {
 
             @Override
             public void onError(Throwable e) {
-                callBack.onError(e.getMessage());
+                callBack.onError(getErrorMessage(e));
                 removeSubscription(key);
             }
 
@@ -339,12 +339,12 @@ public class DataManager {
     }
 
     public void cancelOrder(int userId, int pastOrderId, final ApiCallBack callBack) {
-        Observable<Response<ResponseEntity<String>>> observable = networkAPI.cancelOrders(userId, pastOrderId)
+        Observable<ResponseEntity<String>> observable = networkAPI.cancelOrders(userId, pastOrderId)
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
 
         final String key = String.valueOf(callBack.hashCode());
-        Subscription subscription = observable.subscribe(new Observer<Response<ResponseEntity<String>>>() {
+        Subscription subscription = observable.subscribe(new Observer<ResponseEntity<String>>() {
             @Override
             public void onCompleted() {
                 removeSubscription(key);
@@ -352,24 +352,13 @@ public class DataManager {
 
             @Override
             public void onError(Throwable e) {
-                callBack.onError(e.getMessage());
+                callBack.onError(getErrorMessage(e));
                 removeSubscription(key);
             }
 
             @Override
-            public void onNext(Response<ResponseEntity<String>> responseEntityResponse) {
-                int code = responseEntityResponse.code();
-                if (code >= 400 && code < 500) {
-                    String errorMessage = "";
-                    try {
-                        errorMessage = responseEntityResponse.errorBody().string();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    callBack.onError(errorMessage);
-                } else if (responseEntityResponse.isSuccessful()) {
-                    callBack.onSuccess(responseEntityResponse.body().getData());
-                }
+            public void onNext(ResponseEntity<String> stringResponseEntity) {
+                callBack.onSuccess(stringResponseEntity.getData());
             }
         });
         subscriptionMap.put(key, subscription);
@@ -388,6 +377,22 @@ public class DataManager {
 
     private synchronized void removeSubscription(String key) {
         subscriptionMap.remove(key);
+    }
+
+    private String getErrorMessage(Throwable e) {
+        String errorMessage = e.getMessage();
+        if (e instanceof HttpException) {
+            HttpException httpException = (HttpException) e;
+            int code = httpException.code();
+            if (code >= 400 && code < 500) {
+                try {
+                    errorMessage = ((HttpException) e).response().errorBody().string();
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+        }
+        return errorMessage;
     }
 
     public interface ApiCallBack {
@@ -429,7 +434,7 @@ public class DataManager {
         Observable<ResponseEntity<PastOrder>> getOrders(@Path("orderId") int orderId);
 
         @PATCH("api/v3/users/{userId}/orders/{orderId}/cancel")
-        Observable<Response<ResponseEntity<String>>> cancelOrders(
+        Observable<ResponseEntity<String>> cancelOrders(
                 @Path("userId") int userId, @Path("orderId") int orderId);
     }
 }
