@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.entity.ShopInfoEntity;
-import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrder;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.exception.ExceptionEvent;
@@ -232,49 +231,6 @@ public class Webservice {
                     @Override
                     public void call(Throwable throwable) {
                         handleThrowable(throwable, "getOrdersByEmailException");
-                    }
-                });
-    }
-
-    public static void getPastOrderByOrderId(
-            final int orderId,
-            Action1<? super PastOrder> onNextAction) {
-        Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                try {
-                    subscriber.onNext(OrderApi.getPastOrderByOrderId(orderId));
-                    subscriber.onCompleted();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    subscriber.onError(e);
-                }
-            }
-        })
-                .map(new Func1<String, ResponseEntity<PastOrder>>() {
-                    @Override
-                    public ResponseEntity<PastOrder> call(String json) {
-                        Type listType = new TypeToken<ResponseEntity<PastOrder>>() {
-                        }.getType();
-                        return new Gson().fromJson(json, listType);
-                    }
-                })
-                .map(new Func1<ResponseEntity<PastOrder>, PastOrder>() {
-                    @Override
-                    public PastOrder call(ResponseEntity<PastOrder> queryOrderEntityResponseEntity) {
-                        PastOrder data = queryOrderEntityResponseEntity.getData();
-                        if (data == null) {
-                            handleError(queryOrderEntityResponseEntity.getError(), "getPastOrderByOrderIdError");
-                        }
-                        return data;
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onNextAction, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        handleThrowable(throwable, "getPastOrderByOrderIdException");
                     }
                 });
     }

@@ -18,7 +18,7 @@
 
     <string name="my_collect_activity_title">我的收藏</string>
 
-    <string name="order_info">訂單資訊</string>
+    <string name="activity_query_post_orders_result_subtitle">查詢結果</string>
     <string name="cell_phone">手機電話</string>
     <string name="cell_phone_hint">請輸入訂購人手機電話</string>
     <string name="email">電子信箱</string>
@@ -33,5 +33,9 @@
     <string name="notification_empty_content">有重要訊息我們會立刻讓您知道！</string>
 
     <string name="product_style_dialog_no_stock_hint">請至\"我的收藏\"裡的\"補貨清單\"查看．</string>
+    <string name="activity_past_orders_empty_title">尚無訂單資訊！</string>
+    <string name="activity_past_orders_empty_content">趕快在萌萌屋尋找屬於您的萌萌商品吧！！</string>
+
+    <string name="past_order_detail_cancel_order_item_title">取消訂單</string>
 
 </resources>

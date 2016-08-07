@@ -8,10 +8,6 @@ public class OrderApi {
         return RequestUtil.get(UrlCenter.getOrdersByEmail(email));
     }
 
-    public static String getPastOrderByOrderId(int orderId) throws IOException {
-        return RequestUtil.get(UrlCenter.getPastOrderByOrderId(orderId));
-    }
-
     public static String getOrdersByEmailAndPhone(String email, String phone) throws IOException {
         return RequestUtil.get(UrlCenter.getOrdersByEmailAndPhone(email, phone));
     }

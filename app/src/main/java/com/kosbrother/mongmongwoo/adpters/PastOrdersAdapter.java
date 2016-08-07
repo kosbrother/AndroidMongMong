@@ -10,17 +10,18 @@ import android.widget.TextView;
 
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrder;
+import com.kosbrother.mongmongwoo.utils.ResourceUtil;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class PastOrdersGridAdapter extends BaseAdapter {
+public class PastOrdersAdapter extends BaseAdapter {
 
-    private final LayoutInflater layoutInflater;
     private final List<PostOrder> postOrderList;
+    private Context context;
 
-    public PastOrdersGridAdapter(Context context, List<PostOrder> postOrderList) {
-        layoutInflater = LayoutInflater.from(context);
+    public PastOrdersAdapter(Context context, List<PostOrder> postOrderList) {
+        this.context = context;
         this.postOrderList = postOrderList;
     }
 
@@ -44,9 +45,10 @@ public class PastOrdersGridAdapter extends BaseAdapter {
     public View getView(final int position, View convertView, ViewGroup parent) {
         ViewHolder viewHolder;
         if (convertView == null) {
-            convertView = layoutInflater.inflate(R.layout.item_past_order, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_past_order, null);
 
             viewHolder = new ViewHolder();
+            viewHolder.idTextView = (TextView) convertView.findViewById(R.id.item_past_order_id_tv);
             viewHolder.dateTextView = (TextView) convertView.findViewById(R.id.past_order_date_tv);
             viewHolder.totalPriceTextView = (TextView) convertView.findViewById(R.id.past_order_total_price_tv);
             viewHolder.statusTextView = (TextView) convertView.findViewById(R.id.past_order_status_tv);
@@ -58,9 +60,15 @@ public class PastOrdersGridAdapter extends BaseAdapter {
 
         PostOrder postOrder = postOrderList.get(position);
 
+        viewHolder.idTextView.setText(postOrder.getIdText());
         viewHolder.dateTextView.setText(postOrder.getCreatedOn());
-        viewHolder.totalPriceTextView.setText(getPrice(postOrder));
-        viewHolder.statusTextView.setText(postOrder.getStatus());
+        viewHolder.totalPriceTextView.setText(postOrder.getTotalPriceText());
+
+        TextView statusTextView = viewHolder.statusTextView;
+        String status = postOrder.getStatus();
+        statusTextView.setText(status);
+        statusTextView.setTextColor(ResourceUtil.getStatusColorRes(context, status));
+
         return convertView;
     }
 
@@ -69,11 +77,8 @@ public class PastOrdersGridAdapter extends BaseAdapter {
         postOrderList.addAll(orders);
     }
 
-    private String getPrice(PostOrder postOrder) {
-        return "總花費：NT$ " + postOrder.getTotal();
-    }
-
     static class ViewHolder {
+        TextView idTextView;
         TextView dateTextView;
         TextView totalPriceTextView;
         TextView statusTextView;

@@ -13,6 +13,10 @@ public class CenterProgressDialog extends Dialog {
         return show(context, null, null, true, true);
     }
 
+    public static CenterProgressDialog show(Context context, OnCancelListener cancelListener) {
+        return show(context, null, null, true, true, cancelListener);
+    }
+
     public static CenterProgressDialog show(Context context, CharSequence title,
                                             CharSequence message) {
         return show(context, title, message, false);

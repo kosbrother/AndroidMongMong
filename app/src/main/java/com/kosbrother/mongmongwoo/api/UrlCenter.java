@@ -78,11 +78,6 @@ public class UrlCenter {
                 + "?email=" + email;
     }
 
-    static String getPastOrderByOrderId(int orderId) {
-        return HOST + API_V3
-                + "/orders/" + orderId;
-    }
-
     static String postRegistrationId() {
         return HOST + API_V3 + "/device_registrations";
     }
