@@ -6,6 +6,7 @@ import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
 import android.text.Html;
 import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -407,6 +408,7 @@ public class ProductActivity extends BaseActivity {
         } else {
             infoText = Html.fromHtml(theProduct.getDescription());
         }
+        infoTextView.setMovementMethod(LinkMovementMethod.getInstance());
         infoTextView.setText(infoText);
     }
 
