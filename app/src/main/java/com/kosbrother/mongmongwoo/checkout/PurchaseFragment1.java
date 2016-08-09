@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,14 +67,9 @@ public class PurchaseFragment1 extends Fragment {
     }
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        shoppingCarProducts = ((ShoppingCarActivity) getActivity()).getProducts();
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        shoppingCarProducts = ((ShoppingCarActivity) getActivity()).getProducts();
         if (shoppingCarProducts == null || shoppingCarProducts.size() == 0) {
             return inflater.inflate(R.layout.view_stub_empty_shopping_car, container, false);
         }

@@ -15,6 +15,8 @@ public class Spec implements Serializable {
     private StylePic stylePic;
     @SerializedName("stock_amount")
     private int stockAmount;
+    @SerializedName("status")
+    private String status;
 
     public Spec(int id, String style, StylePic stylePic) {
         this.id = id;
@@ -50,6 +52,10 @@ public class Spec implements Serializable {
             return "現貨數：庫存充分";
         }
         return "現貨數：" + stockAmount;
+    }
+
+    public String getStatus() {
+        return status;
     }
 
     public static class StylePic implements Serializable {

@@ -16,18 +16,18 @@ import android.view.ViewStub;
 import android.widget.Toast;
 
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.gson.Gson;
 import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.SelectDeliverStoreActivity;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.checkout.PurchaseFragment1;
 import com.kosbrother.mongmongwoo.checkout.PurchaseFragment2;
 import com.kosbrother.mongmongwoo.checkout.PurchaseFragment3;
 import com.kosbrother.mongmongwoo.checkout.PurchaseFragment4;
-import com.kosbrother.mongmongwoo.entity.ResponseEntity;
-import com.kosbrother.mongmongwoo.entity.postorder.PostOrder;
+import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
+import com.kosbrother.mongmongwoo.entity.postorder.PostOrderResultEntity;
+import com.kosbrother.mongmongwoo.entity.postorder.UnableToBuyModel;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep2ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3ClickEvent;
@@ -39,7 +39,6 @@ import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Store;
 import com.kosbrother.mongmongwoo.utils.KeyboardUtil;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -397,27 +396,79 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     private void requestPostOrder() {
-        String json = new Gson().toJson(theOrder);
-        Webservice.postOrder(json, new Action1<ResponseEntity<PostOrder>>() {
+        DataManager.getInstance().postOrders(theOrder, new DataManager.ApiCallBack() {
             @Override
-            public void call(ResponseEntity<PostOrder> stringResponseEntity) {
+            public void onError(String errorMessage) {
                 hideProgressDialog();
-                PostOrder data = stringResponseEntity.getData();
-                if (data == null) {
-                    GAManager.sendError("postOrderError", stringResponseEntity.getError());
-                    Toast.makeText(ShoppingCarActivity.this, "訂單未成功送出，資料異常", Toast.LENGTH_SHORT).show();
-                } else {
-                    ShoppingCartManager.getInstance().removeAllShoppingItems();
-                    startStep4(data.getId());
+                Toast.makeText(ShoppingCarActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSuccess(Object data) {
+                hideProgressDialog();
+                if (data instanceof PostOrderResultEntity) {
+                    PostOrderResultEntity result = (PostOrderResultEntity) data;
+                    onPostOrderSuccess(result);
                 }
             }
-        }, new Action1<IOException>() {
-            @Override
-            public void call(IOException e) {
-                hideProgressDialog();
-                Toast.makeText(ShoppingCarActivity.this, "網路發生異常，請檢查網路是否連線", Toast.LENGTH_SHORT).show();
-            }
         });
+    }
+
+    private void onPostOrderSuccess(PostOrderResultEntity result) {
+        int orderId = result.getId();
+        if (orderId != 0) {
+            ShoppingCartManager.getInstance().removeAllShoppingItems();
+            startStep4(orderId);
+        } else {
+            StockShortageDialog dialog = new StockShortageDialog(
+                    this, result.getUnableToBuyModels(), new Action1<List<UnableToBuyModel>>() {
+                @Override
+                public void call(List<UnableToBuyModel> unableToBuyModels) {
+                    onStockShortageConfirmClick(unableToBuyModels);
+                }
+            });
+            dialog.show();
+        }
+    }
+
+    private void onStockShortageConfirmClick(List<UnableToBuyModel> unableToBuyModels) {
+        List<Product> unableToBuyProduct = ShoppingCartManager.getInstance().
+                removeUnableToBuyFromShoppingCart(unableToBuyModels);
+        postWishListsIfLogin(unableToBuyProduct);
+
+        products = ShoppingCartManager.getInstance().loadShoppingItems();
+        FragmentManager supportFragmentManager = getSupportFragmentManager();
+        if (products.size() == 0) {
+            supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+            onNoShoppingItem();
+        } else {
+            theOrder.setProducts(getPostProducts());
+            supportFragmentManager.popBackStack();
+            startStep3();
+        }
+    }
+
+    private void postWishListsIfLogin(List<Product> unableToBuyProducts) {
+        if (Settings.checkIsLogIn()) {
+            ArrayList<PostWishListsEntity.WishItemEntity> wishLists = new ArrayList<>();
+            for (Product removeProduct : unableToBuyProducts) {
+                wishLists.add(new PostWishListsEntity.WishItemEntity(
+                        removeProduct.getId(), removeProduct.getSelectedSpec().getId()));
+            }
+            PostWishListsEntity entity = new PostWishListsEntity(wishLists);
+            int userId = Settings.getSavedUser().getUserId();
+            DataManager.getInstance().postWishLists(userId, entity, new Action1<String>() {
+                @Override
+                public void call(String s) {
+
+                }
+            }, new Action1<String>() {
+                @Override
+                public void call(String s) {
+
+                }
+            });
+        }
     }
 
     private void setStepBar1() {

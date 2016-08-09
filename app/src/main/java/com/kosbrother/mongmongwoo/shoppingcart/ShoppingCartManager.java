@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.kosbrother.mongmongwoo.entity.postorder.UnableToBuyModel;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.utils.ProductUtil;
 
@@ -88,4 +89,33 @@ public class ShoppingCartManager {
         return arrayList.size();
     }
 
+    public List<Product> removeUnableToBuyFromShoppingCart(List<UnableToBuyModel> unableToBuyModels) {
+        List<Product> wishProducts = new ArrayList<>();
+        List<Product> shoppingItems = loadShoppingItems();
+        for (UnableToBuyModel unableToBuy : unableToBuyModels) {
+            int stockAmount = unableToBuy.getSpecStockAmount();
+            boolean offShelf = unableToBuy.isOffShelf();
+            if (offShelf || stockAmount == 0) {
+                int specId = unableToBuy.getSpecId();
+                for (int i = 0; i < shoppingItems.size(); i++) {
+                    if (shoppingItems.get(i).getSelectedSpec().getId() == specId) {
+                        wishProducts.add(shoppingItems.remove(i));
+                        break;
+                    }
+                }
+            } else {
+                int specId = unableToBuy.getSpecId();
+                for (int i = 0; i < shoppingItems.size(); i++) {
+                    Product product = shoppingItems.get(i);
+                    if (product.getSelectedSpec().getId() == specId) {
+                        product.setBuy_count(stockAmount);
+                        wishProducts.add(product);
+                        break;
+                    }
+                }
+            }
+        }
+        storeShoppingItems(shoppingItems);
+        return wishProducts;
+    }
 }
