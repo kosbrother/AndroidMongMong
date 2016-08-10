@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -13,6 +14,7 @@ import android.widget.Button;
 import android.widget.GridView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
-import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.kosbrother.mongmongwoo.adpters.StoreGridAdapter;
 import com.kosbrother.mongmongwoo.api.DensityApi;
@@ -40,9 +42,12 @@ import java.util.List;
 
 import rx.functions.Action1;
 
-public class SelectDeliverStoreActivity extends AppCompatActivity implements OnMapReadyCallback {
+public class SelectDeliverStoreActivity extends AppCompatActivity implements
+        OnMapReadyCallback,
+        GoogleMap.OnCameraIdleListener {
 
     public static final String EXTRA_SELECTED_STORE = "EXTRA_SELECTED_STORE";
+    private ScrollView scrollView;
     private GoogleMap mMap;
 
     private Spinner townSpinners;
@@ -57,14 +62,17 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
     private List<County> counties;
     private List<Town> townArray;
     private List<Road> roadArray;
+    private Marker marker = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         counties = StoreApi.getCounties();
         setContentView(R.layout.activity_select_deliver_store);
+        scrollView = (ScrollView) findViewById(R.id.activity_select_deliver_store_sv);
         setToolBar();
         setMapFragment();
+        setMapTouchView();
         setCountySpinner();
         setTownSpinner();
         setRoadSpinner();
@@ -74,6 +82,7 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
+        mMap.setOnCameraIdleListener(this);
     }
 
     public void updateStoreInfo(Store theStore) {
@@ -88,19 +97,12 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         selectStoreButton.setVisibility(View.VISIBLE);
 
         if (mMap != null) {
-            mMap.clear();
+            if (marker != null) {
+                marker.remove();
+                marker = null;
+            }
             mMap.moveCamera(CameraUpdateFactory.newLatLng(theStore.getLatLng()));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
-            mMap.setOnCameraChangeListener(new GoogleMap.OnCameraChangeListener() {
-                @Override
-                public void onCameraChange(CameraPosition cameraPosition) {
-                    mMap.addMarker(new MarkerOptions()
-                            .title(selectedStore.getName())
-                            .position(cameraPosition.target)
-                            .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_7_11)));
-                    mMap.setOnCameraChangeListener(null);
-                }
-            });
         }
     }
 
@@ -117,6 +119,29 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+    }
+
+    private void setMapTouchView() {
+        View view = findViewById(R.id.activity_select_deliver_store_map_touch_view);
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                int action = motionEvent.getAction();
+                switch (action) {
+                    case MotionEvent.ACTION_DOWN:
+                        scrollView.requestDisallowInterceptTouchEvent(true);
+                        return false;
+                    case MotionEvent.ACTION_UP:
+                        scrollView.requestDisallowInterceptTouchEvent(false);
+                        return true;
+                    case MotionEvent.ACTION_MOVE:
+                        scrollView.requestDisallowInterceptTouchEvent(true);
+                        return false;
+                    default:
+                        return true;
+                }
+            }
+        });
     }
 
     private void setCountySpinner() {
@@ -280,6 +305,20 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements OnM
         }
         params.height = (int) DensityApi.convertDpToPixel(42 * height_size, this);
         storeGridView.setLayoutParams(params);
+    }
+
+    @Override
+    public void onCameraIdle() {
+        if (marker != null) {
+            return;
+        }
+        if (mMap != null && selectedStore != null) {
+            marker = mMap.addMarker(new MarkerOptions()
+                    .title(selectedStore.getName())
+                    .position(selectedStore.getLatLng())
+                    .icon(BitmapDescriptorFactory.fromResource(R.mipmap.ic_7_11)));
+
+        }
     }
 
 }
