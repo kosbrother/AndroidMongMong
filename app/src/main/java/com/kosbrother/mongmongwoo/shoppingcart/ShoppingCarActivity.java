@@ -1,7 +1,6 @@
 package com.kosbrother.mongmongwoo.shoppingcart;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -38,6 +37,7 @@ import com.kosbrother.mongmongwoo.model.PostProduct;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Store;
 import com.kosbrother.mongmongwoo.utils.KeyboardUtil;
+import com.kosbrother.mongmongwoo.widget.CenterProgressDialog;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -65,7 +65,24 @@ public class ShoppingCarActivity extends BaseActivity implements
     private List<Product> products;
     private int totalGoodsPrice;
     private int shippingPrice;
-    private ProgressDialog progressDialog;
+    private CenterProgressDialog progressDialog;
+
+    private DataManager.ApiCallBack postOrderCallBack = new DataManager.ApiCallBack() {
+        @Override
+        public void onError(String errorMessage) {
+            hideProgressDialog();
+            Toast.makeText(ShoppingCarActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onSuccess(Object data) {
+            hideProgressDialog();
+            if (data instanceof PostOrderResultEntity) {
+                PostOrderResultEntity result = (PostOrderResultEntity) data;
+                onPostOrderSuccess(result);
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -207,7 +224,7 @@ public class ShoppingCarActivity extends BaseActivity implements
 
         showProgressDialog();
         GAManager.sendEvent(new CheckoutStep3ClickEvent(GALabel.SEND_ORDER));
-        requestPostOrder();
+        DataManager.getInstance().postOrders(theOrder, postOrderCallBack);
     }
 
     public List<Product> getProducts() {
@@ -395,25 +412,6 @@ public class ShoppingCarActivity extends BaseActivity implements
         alertDialog.show();
     }
 
-    private void requestPostOrder() {
-        DataManager.getInstance().postOrders(theOrder, new DataManager.ApiCallBack() {
-            @Override
-            public void onError(String errorMessage) {
-                hideProgressDialog();
-                Toast.makeText(ShoppingCarActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
-            }
-
-            @Override
-            public void onSuccess(Object data) {
-                hideProgressDialog();
-                if (data instanceof PostOrderResultEntity) {
-                    PostOrderResultEntity result = (PostOrderResultEntity) data;
-                    onPostOrderSuccess(result);
-                }
-            }
-        });
-    }
-
     private void onPostOrderSuccess(PostOrderResultEntity result) {
         int orderId = result.getId();
         if (orderId != 0) {
@@ -500,11 +498,12 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     private void showProgressDialog() {
-        if (progressDialog == null) {
-            progressDialog = new ProgressDialog(this);
-            progressDialog.setMessage("送出訂單...");
-        }
-        progressDialog.show();
+        progressDialog = CenterProgressDialog.show(this, new DialogInterface.OnCancelListener() {
+            @Override
+            public void onCancel(DialogInterface dialogInterface) {
+                DataManager.getInstance().unSubscribe(postOrderCallBack);
+            }
+        });
     }
 
     private void hideProgressDialog() {
