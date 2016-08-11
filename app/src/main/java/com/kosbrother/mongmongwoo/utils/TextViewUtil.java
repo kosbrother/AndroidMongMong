@@ -7,4 +7,8 @@ public class TextViewUtil {
     public static void paintLineThroughTextView(TextView textView) {
         textView.setPaintFlags(textView.getPaintFlags() | Paint.STRIKE_THRU_TEXT_FLAG);
     }
+
+    public static void removeLineThroughTextView(TextView textView) {
+        textView.setPaintFlags(textView.getPaintFlags() & (~Paint.STRIKE_THRU_TEXT_FLAG));
+    }
 }
