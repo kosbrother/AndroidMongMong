@@ -142,6 +142,10 @@ public class Product implements Serializable {
         return price;
     }
 
+    public String getFinalPriceText() {
+        return "NT$" + getFinalPrice();
+    }
+
     public String getSpecialPriceText() {
         String specialPriceText;
         if (isSpecial()) {

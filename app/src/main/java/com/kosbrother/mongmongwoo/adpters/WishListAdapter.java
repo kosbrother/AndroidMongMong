@@ -41,8 +41,7 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.ViewHo
 
         holder.productNameTextView.setText(product.getName());
 
-        String priceString = "NT$" + product.getFinalPrice();
-        holder.finalPriceTextView.setText(priceString);
+        holder.finalPriceTextView.setText(product.getFinalPriceText());
 
         holder.specialPriceTextView.setText(product.getSpecialPriceText());
         if (product.isSpecial()) {

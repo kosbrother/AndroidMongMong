@@ -38,8 +38,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
 
         holder.productNameTextView.setText(product.getName());
 
-        String priceString = "NT$" + product.getFinalPrice();
-        holder.productPriceTextView.setText(priceString);
+        holder.productPriceTextView.setText(product.getFinalPriceText());
 
         holder.specialPriceTextView.setText(product.getSpecialPriceText());
         if (product.isSpecial()) {

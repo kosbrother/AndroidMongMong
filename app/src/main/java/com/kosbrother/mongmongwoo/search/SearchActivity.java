@@ -4,10 +4,7 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.ActivityOptionsCompat;
-import android.support.v4.util.Pair;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -255,18 +252,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
                 intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, Category.Type.ALL.getId());
                 intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, Category.Type.ALL.getName());
                 intent.putExtra(ProductActivity.EXTRA_BOOLEAN_FROM_SEARCH, true);
-
-                Pair<View, String> p1 = Pair.create(view, "view");
-                Pair<View, String> p2 = Pair.create(view.findViewById(R.id.item_name_text), "name");
-                Pair<View, String> p3 = Pair.create(view.findViewById(R.id.add_shopping_car_ll), "button");
-                Pair<View, String> p4 = Pair.create(view.findViewById(R.id.item_imageview), "image");
-                ActivityOptionsCompat options = ActivityOptionsCompat.
-                        makeSceneTransitionAnimation(SearchActivity.this, p1, p2, p3, p4);
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    startActivity(intent, options.toBundle());
-                } else {
-                    startActivity(intent);
-                }
+                startActivity(intent);
             }
         });
     }
