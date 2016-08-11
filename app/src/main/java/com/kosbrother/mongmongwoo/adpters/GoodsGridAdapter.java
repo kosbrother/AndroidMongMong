@@ -52,13 +52,14 @@ public class GoodsGridAdapter extends BaseAdapter {
             convertView = LayoutInflater.from(context).inflate(R.layout.item_goods, null);
 
             viewHolder = new ViewHolder();
-            viewHolder.imageView = (ImageView) convertView.findViewById(R.id.item_imageview);
-            viewHolder.nameTextView = (TextView) convertView.findViewById(R.id.item_name_text);
-            viewHolder.priceTextView = (TextView) convertView.findViewById(R.id.item_price_text);
+            viewHolder.goodsImageView = (ImageView) convertView.findViewById(R.id.item_goods_iv);
+            viewHolder.specialPriceImageView = (ImageView) convertView.findViewById(R.id.item_goods_special_price_iv);
+            viewHolder.nameTextView = (TextView) convertView.findViewById(R.id.item_goods_name_tv);
+            viewHolder.priceTextView = (TextView) convertView.findViewById(R.id.item_goods_price_tv);
             viewHolder.specialPriceTextView =
-                    (TextView) convertView.findViewById(R.id.item_special_price_tv);
-            viewHolder.addShoppingCarButton =
-                    (LinearLayout) convertView.findViewById(R.id.add_shopping_car_ll);
+                    (TextView) convertView.findViewById(R.id.item_goods_special_price_tv);
+            viewHolder.addToShoppingCarButton =
+                    (LinearLayout) convertView.findViewById(R.id.item_goods_add_to_shopping_car_ll);
 
             convertView.setTag(viewHolder);
         } else {
@@ -71,19 +72,22 @@ public class GoodsGridAdapter extends BaseAdapter {
                 .load(theProduct.getCover().getUrl())
                 .centerCrop()
                 .placeholder(R.mipmap.img_pre_load_rectangle)
-                .into(viewHolder.imageView);
+                .into(viewHolder.goodsImageView);
 
         viewHolder.nameTextView.setText(theProduct.getName());
 
-        String priceText = "NT$" + theProduct.getFinalPrice();
-        viewHolder.priceTextView.setText(priceText);
+        viewHolder.priceTextView.setText(theProduct.getFinalPriceText());
 
         viewHolder.specialPriceTextView.setText(theProduct.getSpecialPriceText());
         if (theProduct.isSpecial()) {
+            viewHolder.specialPriceImageView.setVisibility(View.VISIBLE);
             TextViewUtil.paintLineThroughTextView(viewHolder.specialPriceTextView);
+        } else {
+            viewHolder.specialPriceImageView.setVisibility(View.GONE);
+            TextViewUtil.removeLineThroughTextView(viewHolder.specialPriceTextView);
         }
 
-        viewHolder.addShoppingCarButton.setOnClickListener(new View.OnClickListener() {
+        viewHolder.addToShoppingCarButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 listener.onAddShoppingCartButtonClick(theProduct.getId(), position);
@@ -94,11 +98,12 @@ public class GoodsGridAdapter extends BaseAdapter {
     }
 
     static class ViewHolder {
-        ImageView imageView;
+        ImageView goodsImageView;
+        ImageView specialPriceImageView;
         TextView nameTextView;
         TextView priceTextView;
         TextView specialPriceTextView;
-        LinearLayout addShoppingCarButton;
+        LinearLayout addToShoppingCarButton;
     }
 
     public interface GoodsGridAdapterListener {
