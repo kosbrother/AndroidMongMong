@@ -1,4 +1,4 @@
-package com.kosbrother.mongmongwoo.fragments;
+package com.kosbrother.mongmongwoo.checkout;
 
 import android.content.Context;
 import android.os.Bundle;

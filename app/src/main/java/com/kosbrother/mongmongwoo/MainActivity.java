@@ -66,6 +66,7 @@ import com.kosbrother.mongmongwoo.mynotification.MyNotificationListActivity;
 import com.kosbrother.mongmongwoo.mynotification.MyNotificationManager;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
 import com.kosbrother.mongmongwoo.pastorders.QueryPastOrdersActivity;
+import com.kosbrother.mongmongwoo.product.ProductActivity;
 import com.kosbrother.mongmongwoo.search.SearchActivity;
 import com.kosbrother.mongmongwoo.shopinfo.ShopInfoActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;

@@ -23,7 +23,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.BaseActivity;
-import com.kosbrother.mongmongwoo.ProductActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
 import com.kosbrother.mongmongwoo.api.DensityApi;
@@ -34,6 +33,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.category.CategoryEnterEv
 import com.kosbrother.mongmongwoo.googleanalytics.event.indexgridcart.IndexGridCartAddToCartEvent;
 import com.kosbrother.mongmongwoo.model.Category;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.product.ProductActivity;
 import com.kosbrother.mongmongwoo.search.SearchActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;

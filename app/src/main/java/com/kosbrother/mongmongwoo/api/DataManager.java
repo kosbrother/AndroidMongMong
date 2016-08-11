@@ -8,6 +8,8 @@ import com.kosbrother.mongmongwoo.entity.mycollect.PostFavoriteItemsEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.WishListEntity;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
+import com.kosbrother.mongmongwoo.entity.postorder.PostOrderResultEntity;
+import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.mynotification.MyNotification;
 
 import java.io.IOException;
@@ -364,6 +366,37 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void postOrders(Order order, final ApiCallBack callBack) {
+        Observable<ResponseEntity<PostOrderResultEntity>> observable = networkAPI.postOrders(order)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<PostOrderResultEntity>>() {
+            @Override
+            public void onCompleted() {
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<PostOrderResultEntity> postOrderResultEntityResponseEntity) {
+                PostOrderResultEntity data = postOrderResultEntityResponseEntity.getData();
+                if (data == null) {
+                    onError(new Throwable("資料異常，請稍後再試．"));
+                } else {
+                    callBack.onSuccess(data);
+                }
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void unSubscribe(ApiCallBack callBack) {
         String key = String.valueOf(callBack.hashCode());
         synchronized (subscriptionMap) {
@@ -436,5 +469,8 @@ public class DataManager {
         @PATCH("api/v3/users/{userId}/orders/{orderId}/cancel")
         Observable<ResponseEntity<String>> cancelOrders(
                 @Path("userId") int userId, @Path("orderId") int orderId);
+
+        @POST("api/v4/orders")
+        Observable<ResponseEntity<PostOrderResultEntity>> postOrders(@Body Order order);
     }
 }

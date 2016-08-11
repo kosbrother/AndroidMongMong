@@ -1,4 +1,4 @@
-package com.kosbrother.mongmongwoo;
+package com.kosbrother.mongmongwoo.product;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +18,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.kosbrother.mongmongwoo.BaseActivity;
+import com.kosbrother.mongmongwoo.MainActivity;
+import com.kosbrother.mongmongwoo.R;
+import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.adpters.ProductImageFragmentPagerAdapter;
 import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.api.Webservice;

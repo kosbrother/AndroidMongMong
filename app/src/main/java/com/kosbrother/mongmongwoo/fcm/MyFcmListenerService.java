@@ -13,7 +13,6 @@ import android.support.v4.app.NotificationCompat.BigPictureStyle;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.kosbrother.mongmongwoo.MainActivity;
-import com.kosbrother.mongmongwoo.ProductActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
@@ -24,6 +23,7 @@ import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.mynotification.MyNotificationListActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderDetailActivity;
 import com.kosbrother.mongmongwoo.utils.InitUtil;
+import com.kosbrother.mongmongwoo.product.ProductActivity;
 
 import java.io.IOException;
 import java.io.InputStream;

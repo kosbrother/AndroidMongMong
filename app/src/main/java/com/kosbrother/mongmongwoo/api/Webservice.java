@@ -453,44 +453,6 @@ public class Webservice {
                 });
     }
 
-    public static void postOrder(
-            final String orderJsonString,
-            Action1<? super ResponseEntity<PostOrder>> onNextAction,
-            final Action1<IOException> onWebserviceExceptionAction) {
-        Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                try {
-                    subscriber.onNext(OrderApi.postOrder(orderJsonString));
-                    subscriber.onCompleted();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    subscriber.onError(e);
-                }
-            }
-        })
-                .map(new Func1<String, ResponseEntity<PostOrder>>() {
-                    @Override
-                    public ResponseEntity<PostOrder> call(String json) {
-                        Type listType = new TypeToken<ResponseEntity<PostOrder>>() {
-                        }.getType();
-                        return new Gson().fromJson(json, listType);
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onNextAction, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        if (throwable instanceof IOException) {
-                            onWebserviceExceptionAction.call((IOException) throwable);
-                        } else {
-                            handleThrowable(throwable, "postOrderException");
-                        }
-                    }
-                });
-    }
-
     public static void register(
             final String email, final String password,
             Action1<? super ResponseEntity<Integer>> onNextAction) {
