@@ -36,6 +36,7 @@ import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.PostProduct;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Store;
+import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 import com.kosbrother.mongmongwoo.utils.KeyboardUtil;
 import com.kosbrother.mongmongwoo.widget.CenterProgressDialog;
 
@@ -440,7 +441,9 @@ public class ShoppingCarActivity extends BaseActivity implements
             supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             onNoShoppingItem();
         } else {
-            theOrder.setProducts(getPostProducts());
+            totalGoodsPrice = CalculateUtil.calculateTotalGoodsPrice(products);
+            shippingPrice = totalGoodsPrice >= 490 ? 0 : 90;
+            savePostProductsAndPrice();
             supportFragmentManager.popBackStack();
             startStep3();
         }
