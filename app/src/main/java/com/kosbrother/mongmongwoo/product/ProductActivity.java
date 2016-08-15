@@ -27,6 +27,7 @@ import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.facebookevent.FacebookLogger;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPromoOpenedEvent;
@@ -345,6 +346,11 @@ public class ProductActivity extends BaseActivity {
 
                 @Override
                 public void onSuccess(Object data) {
+                    FacebookLogger.getInstance().logAddedToWishlistEvent(
+                            getCategoryName(),
+                            String.valueOf(getCategoryId()),
+                            theProduct.getName(),
+                            theProduct.getFinalPrice());
                     showAToast("成功收藏");
                     v.setTag(true);
                     setCollectImageViewRes(v);
@@ -359,6 +365,11 @@ public class ProductActivity extends BaseActivity {
         startAppIndexIfCategoryNameValid();
 
         GAManager.sendEvent(new ProductViewEvent(theProduct.getName()));
+        FacebookLogger.getInstance().logViewedContentEvent(
+                getCategoryName(),
+                String.valueOf(getCategoryId()),
+                theProduct.getName(),
+                theProduct.getFinalPrice());
         sendPromoOpenedEventIfFromNotification();
         sendSearchEnterEventIfFromSearch();
 

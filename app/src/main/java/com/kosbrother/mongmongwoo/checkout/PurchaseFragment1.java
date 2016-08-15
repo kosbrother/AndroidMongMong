@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
+import com.kosbrother.mongmongwoo.facebookevent.FacebookLogger;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1EnterEvent;
@@ -74,6 +75,7 @@ public class PurchaseFragment1 extends Fragment {
             return inflater.inflate(R.layout.view_stub_empty_shopping_car, container, false);
         }
 
+        logInitiatedCheckoutEvent();
         View view = inflater.inflate(R.layout.fragment_purchase1, container, false);
         findView(view);
 
@@ -100,6 +102,19 @@ public class PurchaseFragment1 extends Fragment {
         } else {
             noLoginLayout.setVisibility(View.GONE);
             confirmButton.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void logInitiatedCheckoutEvent() {
+        for (Product product : shoppingCarProducts) {
+            FacebookLogger.getInstance().logInitiatedCheckoutEvent(
+                    String.valueOf(product.getCategoryId()),
+                    product.getCategoryName(),
+                    product.getName(),
+                    product.getBuy_count(),
+                    true,
+                    product.getFinalPrice() * product.getBuy_count()
+            );
         }
     }
 

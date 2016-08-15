@@ -27,6 +27,7 @@ import com.kosbrother.mongmongwoo.checkout.PurchaseFragment4;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrderResultEntity;
 import com.kosbrother.mongmongwoo.entity.postorder.UnableToBuyModel;
+import com.kosbrother.mongmongwoo.facebookevent.FacebookLogger;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep2ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3ClickEvent;
@@ -204,6 +205,7 @@ public class ShoppingCarActivity extends BaseActivity implements
 
     @Override
     public void onStep2NextButtonClick(String shipName, String shipPhone, String shipEmail) {
+        FacebookLogger.getInstance().logAddedPaymentInfoEvent(true);
         saveShippingInfo(shipName, shipPhone, shipEmail);
         Settings.saveUserShippingNameAndPhone(shipName, shipPhone);
 
@@ -416,6 +418,7 @@ public class ShoppingCarActivity extends BaseActivity implements
     private void onPostOrderSuccess(PostOrderResultEntity result) {
         int orderId = result.getId();
         if (orderId != 0) {
+            logPurchasedEvent();
             ShoppingCartManager.getInstance().removeAllShoppingItems();
             startStep4(orderId);
         } else {
@@ -427,6 +430,18 @@ public class ShoppingCarActivity extends BaseActivity implements
                 }
             });
             dialog.show();
+        }
+    }
+
+    private void logPurchasedEvent() {
+        for (Product product : products) {
+            FacebookLogger.getInstance().logPurchasedEvent(
+                    product.getBuy_count(),
+                    product.getCategoryName(),
+                    String.valueOf(product.getCategoryId()),
+                    product.getName(),
+                    product.getFinalPrice() * product.getBuy_count()
+            );
         }
     }
 

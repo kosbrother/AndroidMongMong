@@ -25,6 +25,7 @@ import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.api.DensityApi;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
+import com.kosbrother.mongmongwoo.facebookevent.FacebookLogger;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductSelectDialogConfirmEvent;
 import com.kosbrother.mongmongwoo.login.LoginActivity;
@@ -80,6 +81,12 @@ public class ProductStyleDialog {
             updateConfirmProduct();
             GAManager.sendEvent(new ProductSelectDialogConfirmEvent(product.getName()));
             GAManager.sendShoppingCartProductEvent(product);
+            FacebookLogger.getInstance().logAddedToCartEvent(
+                    String.valueOf(product.getCategoryId()),
+                    product.getCategoryName(),
+                    product.getName(),
+                    product.getFinalPrice()
+            );
             checkFirstAddAndNotifyListener();
             alertDialog.dismiss();
         }
