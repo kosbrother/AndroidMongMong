@@ -56,8 +56,8 @@ public class GoodsGridAdapter extends BaseAdapter {
             viewHolder.specialPriceImageView = (ImageView) convertView.findViewById(R.id.item_goods_special_price_iv);
             viewHolder.nameTextView = (TextView) convertView.findViewById(R.id.item_goods_name_tv);
             viewHolder.priceTextView = (TextView) convertView.findViewById(R.id.item_goods_price_tv);
-            viewHolder.specialPriceTextView =
-                    (TextView) convertView.findViewById(R.id.item_goods_special_price_tv);
+            viewHolder.originalPriceTextView =
+                    (TextView) convertView.findViewById(R.id.item_goods_original_price_tv);
             viewHolder.addToShoppingCarButton =
                     (LinearLayout) convertView.findViewById(R.id.item_goods_add_to_shopping_car_ll);
 
@@ -78,13 +78,14 @@ public class GoodsGridAdapter extends BaseAdapter {
 
         viewHolder.priceTextView.setText(theProduct.getFinalPriceText());
 
-        viewHolder.specialPriceTextView.setText(theProduct.getSpecialPriceText());
+        TextView originalPriceTextView = viewHolder.originalPriceTextView;
+        originalPriceTextView.setText(theProduct.getOriginalPriceText());
         if (theProduct.isSpecial()) {
             viewHolder.specialPriceImageView.setVisibility(View.VISIBLE);
-            TextViewUtil.paintLineThroughTextView(viewHolder.specialPriceTextView);
+            TextViewUtil.paintLineThroughTextView(originalPriceTextView);
         } else {
             viewHolder.specialPriceImageView.setVisibility(View.GONE);
-            TextViewUtil.removeLineThroughTextView(viewHolder.specialPriceTextView);
+            TextViewUtil.removeLineThroughTextView(originalPriceTextView);
         }
 
         viewHolder.addToShoppingCarButton.setOnClickListener(new View.OnClickListener() {
@@ -102,7 +103,7 @@ public class GoodsGridAdapter extends BaseAdapter {
         ImageView specialPriceImageView;
         TextView nameTextView;
         TextView priceTextView;
-        TextView specialPriceTextView;
+        TextView originalPriceTextView;
         LinearLayout addToShoppingCarButton;
     }
 

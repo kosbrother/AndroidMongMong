@@ -128,13 +128,13 @@
                         android:orientation="vertical">
 
                         <TextView
-                            android:id="@+id/product_special_price_tv"
+                            android:id="@+id/product_original_price_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
                             android:textColor="@color/black_text"
                             android:textSize="11sp"
-                            tools:text="-優惠價-" />
+                            tools:text="原價$NT 100" />
 
                         <TextView
                             android:id="@+id/product_price_text"

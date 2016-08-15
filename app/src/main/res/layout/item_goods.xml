@@ -38,16 +38,16 @@
             android:id="@+id/item_goods_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:layout_marginEnd="16dp"
+            android:layout_marginEnd="4dp"
             android:layout_marginLeft="4dp"
-            android:layout_marginRight="16dp"
+            android:layout_marginRight="4dp"
             android:layout_marginStart="4dp"
             android:ellipsize="end"
             android:gravity="center_vertical"
             android:maxLines="1"
             android:textColor="@color/black_text"
-            android:textSize="14sp"
+            android:textSize="16sp"
+            android:textStyle="bold"
             tools:text="Tsum Tsum 手機螢幕擦 多款可選" />
 
         <RelativeLayout
@@ -58,31 +58,31 @@
             android:paddingRight="4dp">
 
             <TextView
+                android:id="@+id/item_goods_original_price_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:textColor="@color/black_text"
+                android:textSize="11sp"
+                tools:text="原價NT$ 100" />
+
+            <TextView
                 android:id="@+id/item_goods_price_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@id/item_goods_original_price_tv"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
                 android:textColor="@color/red_text"
                 android:textSize="14sp"
                 tools:text="NT$99" />
 
-            <TextView
-                android:id="@+id/item_goods_special_price_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/item_goods_price_tv"
-                android:layout_marginEnd="16dp"
-                android:layout_marginRight="16dp"
-                android:textColor="@color/black_text"
-                android:textSize="10sp"
-                tools:text="-優惠價-" />
-
             <LinearLayout
                 android:id="@+id/item_goods_add_to_shopping_car_ll"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
-                android:layout_alignBottom="@id/item_goods_special_price_tv"
+                android:layout_alignBottom="@id/item_goods_price_tv"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/button_green_selector"

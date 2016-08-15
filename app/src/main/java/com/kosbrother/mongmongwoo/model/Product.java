@@ -146,12 +146,12 @@ public class Product implements Serializable {
         return "NT$" + getFinalPrice();
     }
 
-    public String getSpecialPriceText() {
+    public String getOriginalPriceText() {
         String specialPriceText;
         if (isSpecial()) {
-            specialPriceText = "優惠價NT$ " + price;
+            specialPriceText = "原價NT$ " + price;
         } else {
-            specialPriceText = "-優惠價-";
+            specialPriceText = "";
         }
         return specialPriceText;
     }

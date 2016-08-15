@@ -43,9 +43,11 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.ViewHo
 
         holder.finalPriceTextView.setText(product.getFinalPriceText());
 
-        holder.specialPriceTextView.setText(product.getSpecialPriceText());
+        holder.originalPriceTextView.setText(product.getOriginalPriceText());
         if (product.isSpecial()) {
-            TextViewUtil.paintLineThroughTextView(holder.specialPriceTextView);
+            TextViewUtil.paintLineThroughTextView(holder.originalPriceTextView);
+        } else {
+            TextViewUtil.removeLineThroughTextView(holder.originalPriceTextView);
         }
 
         Spec spec = specs.get(position);
@@ -77,7 +79,7 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.ViewHo
         private final ImageView notifyImageView;
         private final TextView productNameTextView;
         private final TextView finalPriceTextView;
-        private final TextView specialPriceTextView;
+        private final TextView originalPriceTextView;
         private final TextView specTextView;
         private final TextView stockAmountTextView;
         private final View goShoppingTextView;
@@ -101,10 +103,10 @@ public class WishListAdapter extends RecyclerView.Adapter<WishListAdapter.ViewHo
             });
             productNameTextView = (TextView) itemView.findViewById(R.id.item_wish_list_product_name_tv);
             finalPriceTextView = (TextView) itemView.findViewById(R.id.item_wish_list_final_price_tv);
-            specialPriceTextView = (TextView) itemView.findViewById(R.id.item_wish_list_special_price_tv);
+            originalPriceTextView = (TextView) itemView.findViewById(R.id.item_wish_list_original_price_tv);
             specTextView = (TextView) itemView.findViewById(R.id.item_wish_list_spec_tv);
             stockAmountTextView = (TextView) itemView.findViewById(R.id.item_wish_list_stock_amount_tv);
-            goShoppingTextView= itemView.findViewById(R.id.item_wish_list_go_shopping_tv);
+            goShoppingTextView = itemView.findViewById(R.id.item_wish_list_go_shopping_tv);
         }
     }
 }
