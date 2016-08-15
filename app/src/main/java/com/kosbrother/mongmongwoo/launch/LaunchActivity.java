@@ -20,7 +20,7 @@ import com.viewpagerindicator.CirclePageIndicator;
 
 public class LaunchActivity extends FragmentActivity implements AppLinkData.CompletionHandler {
 
-    private static final int NUM_PAGES = 4;
+    private static final int NUM_PAGES = 3;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,20 +53,29 @@ public class LaunchActivity extends FragmentActivity implements AppLinkData.Comp
     @Override
     public void onDeferredAppLinkDataFetched(AppLinkData appLinkData) {
         if (appLinkData == null) {
-            setContentView(R.layout.activity_launch);
-            View mRootView = findViewById(R.id.root_rl);
-            mRootView.setVisibility(View.INVISIBLE);
-
-            ViewPager mPager = (ViewPager) findViewById(R.id.launch_pager);
-            mPager.setOffscreenPageLimit(3);
-            PagerAdapter launchPagerAdapter = new LaunchPagerAdapter(getSupportFragmentManager());
-            mPager.setAdapter(launchPagerAdapter);
-            CirclePageIndicator pageControl = (CirclePageIndicator) findViewById(R.id.page_control);
-            pageControl.setViewPager(mPager);
-            mRootView.setVisibility(View.VISIBLE);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    setLaunchContentView();
+                }
+            });
         } else {
             intentToUriThenFinish(appLinkData.getTargetUri());
         }
+    }
+
+    private void setLaunchContentView() {
+        setContentView(R.layout.activity_launch);
+        View mRootView = findViewById(R.id.root_rl);
+        mRootView.setVisibility(View.INVISIBLE);
+
+        ViewPager mPager = (ViewPager) findViewById(R.id.launch_pager);
+        mPager.setOffscreenPageLimit(2);
+        PagerAdapter launchPagerAdapter = new LaunchPagerAdapter(getSupportFragmentManager());
+        mPager.setAdapter(launchPagerAdapter);
+        CirclePageIndicator pageControl = (CirclePageIndicator) findViewById(R.id.page_control);
+        pageControl.setViewPager(mPager);
+        mRootView.setVisibility(View.VISIBLE);
     }
 
     private void intentToUriThenFinish(Uri targetUri) {
