@@ -4,6 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import com.kosbrother.mongmongwoo.api.UrlCenter;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Product implements Serializable {
@@ -28,9 +29,9 @@ public class Product implements Serializable {
     @SerializedName("special_price")
     private int specialPrice;
     @SerializedName("specs")
-    private List<Spec> specs;
+    private ArrayList<Spec> specs;
     @SerializedName("photos")
-    private List<Photo> photos;
+    private ArrayList<Photo> photos;
     @SerializedName("final_price")
     private int finalPrice;
 
