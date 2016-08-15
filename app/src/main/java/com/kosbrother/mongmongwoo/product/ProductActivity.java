@@ -399,10 +399,10 @@ public class ProductActivity extends BaseActivity {
         String priceText = "NT$ " + theProduct.getFinalPrice();
         priceTextView.setText(priceText);
 
-        TextView specialPriceTextView = (TextView) findViewById(R.id.product_special_price_tv);
-        specialPriceTextView.setText(theProduct.getSpecialPriceText());
+        TextView originalPriceTextView = (TextView) findViewById(R.id.product_original_price_tv);
+        originalPriceTextView.setText(theProduct.getOriginalPriceText());
         if (theProduct.isSpecial()) {
-            TextViewUtil.paintLineThroughTextView(specialPriceTextView);
+            TextViewUtil.paintLineThroughTextView(originalPriceTextView);
         }
 
         TextView infoTextView = (TextView) findViewById(R.id.product_information_text);

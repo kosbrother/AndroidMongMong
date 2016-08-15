@@ -54,12 +54,12 @@
             tools:text="超萌卡通悠遊卡立體卡套超萌卡通悠遊卡立體卡套" />
 
         <TextView
-            android:id="@+id/item_favorite_special_price_tv"
+            android:id="@+id/item_favorite_original_price_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black_text"
             android:textSize="11sp"
-            tools:text="-優惠價-" />
+            tools:text="原價NT$ 100" />
 
         <TextView
             android:id="@+id/item_favorite_product_price_tv"

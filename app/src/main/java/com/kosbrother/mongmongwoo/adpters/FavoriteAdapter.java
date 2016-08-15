@@ -40,9 +40,12 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
 
         holder.productPriceTextView.setText(product.getFinalPriceText());
 
-        holder.specialPriceTextView.setText(product.getSpecialPriceText());
+        TextView originalPriceTextView = holder.originalPriceTextView;
+        originalPriceTextView.setText(product.getOriginalPriceText());
         if (product.isSpecial()) {
-            TextViewUtil.paintLineThroughTextView(holder.specialPriceTextView);
+            TextViewUtil.paintLineThroughTextView(originalPriceTextView);
+        } else {
+            TextViewUtil.removeLineThroughTextView(originalPriceTextView);
         }
 
         Glide.with(context)
@@ -69,7 +72,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
         private final ImageView collectImageView;
         private final TextView productNameTextView;
         private final TextView productPriceTextView;
-        private final TextView specialPriceTextView;
+        private final TextView originalPriceTextView;
 
         public ViewHolder(View itemView, final MyCollectListener listener) {
             super(itemView);
@@ -90,7 +93,7 @@ public class FavoriteAdapter extends RecyclerView.Adapter<FavoriteAdapter.ViewHo
             });
             productNameTextView = (TextView) itemView.findViewById(R.id.item_favorite_product_name_tv);
             productPriceTextView = (TextView) itemView.findViewById(R.id.item_favorite_product_price_tv);
-            specialPriceTextView = (TextView) itemView.findViewById(R.id.item_favorite_special_price_tv);
+            originalPriceTextView = (TextView) itemView.findViewById(R.id.item_favorite_original_price_tv);
         }
     }
 }
