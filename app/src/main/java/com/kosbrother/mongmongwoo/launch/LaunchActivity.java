@@ -1,6 +1,7 @@
 package com.kosbrother.mongmongwoo.launch;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -10,13 +11,14 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.View;
 
+import com.facebook.applinks.AppLinkData;
 import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.utils.InitUtil;
 import com.viewpagerindicator.CirclePageIndicator;
 
-public class LaunchActivity extends FragmentActivity {
+public class LaunchActivity extends FragmentActivity implements AppLinkData.CompletionHandler {
 
     private static final int NUM_PAGES = 4;
 
@@ -25,18 +27,15 @@ public class LaunchActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         InitUtil.initApp(getApplicationContext(), getApplication());
 
-        if (isNewUser()) {
-            setContentView(R.layout.activity_launch);
-            View mRootView = findViewById(R.id.root_rl);
-            mRootView.setVisibility(View.INVISIBLE);
+        // From facebook deep link
+        AppLinkData appLinkData = AppLinkData.createFromActivity(this);
+        if (appLinkData != null) {
+            intentToUriThenFinish(appLinkData.getTargetUri());
+            return;
+        }
 
-            ViewPager mPager = (ViewPager) findViewById(R.id.launch_pager);
-            mPager.setOffscreenPageLimit(3);
-            PagerAdapter launchPagerAdapter = new LaunchPagerAdapter(getSupportFragmentManager());
-            mPager.setAdapter(launchPagerAdapter);
-            CirclePageIndicator pageControl = (CirclePageIndicator) findViewById(R.id.page_control);
-            pageControl.setViewPager(mPager);
-            mRootView.setVisibility(View.VISIBLE);
+        if (isNewUser()) {
+            AppLinkData.fetchDeferredAppLinkData(this, this);
         } else {
             startMainActivityThenFinish();
         }
@@ -49,6 +48,33 @@ public class LaunchActivity extends FragmentActivity {
 
     public void onStartButtonClick(View view) {
         startMainActivityThenFinish();
+    }
+
+    @Override
+    public void onDeferredAppLinkDataFetched(AppLinkData appLinkData) {
+        if (appLinkData == null) {
+            setContentView(R.layout.activity_launch);
+            View mRootView = findViewById(R.id.root_rl);
+            mRootView.setVisibility(View.INVISIBLE);
+
+            ViewPager mPager = (ViewPager) findViewById(R.id.launch_pager);
+            mPager.setOffscreenPageLimit(3);
+            PagerAdapter launchPagerAdapter = new LaunchPagerAdapter(getSupportFragmentManager());
+            mPager.setAdapter(launchPagerAdapter);
+            CirclePageIndicator pageControl = (CirclePageIndicator) findViewById(R.id.page_control);
+            pageControl.setViewPager(mPager);
+            mRootView.setVisibility(View.VISIBLE);
+        } else {
+            intentToUriThenFinish(appLinkData.getTargetUri());
+        }
+    }
+
+    private void intentToUriThenFinish(Uri targetUri) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(targetUri);
+        startActivity(intent);
+        finish();
     }
 
     private void startMainActivityThenFinish() {
