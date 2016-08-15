@@ -53,9 +53,6 @@ public class LaunchPageFragment extends Fragment {
             case 2:
                 backgroundRes = R.mipmap.img_landingpage_3;
                 break;
-            case 3:
-                backgroundRes = R.mipmap.img_landingpage_4;
-                break;
             default:
                 backgroundRes = R.mipmap.img_landingpage_1;
                 break;
@@ -64,6 +61,6 @@ public class LaunchPageFragment extends Fragment {
     }
 
     private boolean lastPage() {
-        return position == 3;
+        return position == 2;
     }
 }
