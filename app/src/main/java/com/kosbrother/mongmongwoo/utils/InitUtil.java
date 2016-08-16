@@ -8,6 +8,7 @@ import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.Settings;
+import com.kosbrother.mongmongwoo.facebookevent.FacebookLogger;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 
@@ -20,6 +21,7 @@ public class InitUtil {
         GAManager.init(applicationContext);
         FacebookSdk.sdkInitialize(applicationContext);
         AppEventsLogger.activateApp(application);
+        FacebookLogger.init(applicationContext);
         ShoppingCartManager.init(applicationContext);
         if (!BuildConfig.DEBUG) {
             Fabric.with(applicationContext, new Crashlytics());

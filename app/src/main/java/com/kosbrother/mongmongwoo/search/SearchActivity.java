@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
 import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.facebookevent.FacebookLogger;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.search.SearchSubmitQueryEvent;
 import com.kosbrother.mongmongwoo.model.Category;
@@ -186,6 +187,7 @@ public class SearchActivity extends AppCompatActivity implements View.OnClickLis
         queryHelper.saveRecentQuery(query);
         searchView.setQuery(query, false);
         GAManager.sendEvent(new SearchSubmitQueryEvent(query));
+        FacebookLogger.getInstance().logSearchedEvent(null, query, true);
         KeyboardUtil.hide(this, searchView);
 
         setContentView(R.layout.loading_no_toolbar);
