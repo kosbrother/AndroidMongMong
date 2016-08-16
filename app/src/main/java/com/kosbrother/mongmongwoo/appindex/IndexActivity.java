@@ -9,14 +9,12 @@ import android.text.TextUtils;
 
 import com.kosbrother.mongmongwoo.launch.LaunchActivity;
 import com.kosbrother.mongmongwoo.product.ProductActivity;
-import com.kosbrother.mongmongwoo.utils.InitUtil;
 
 public class IndexActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        InitUtil.initApp(getApplicationContext(), getApplication());
         onNewIntent(getIntent());
     }
 

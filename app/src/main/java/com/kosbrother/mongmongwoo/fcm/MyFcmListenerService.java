@@ -22,7 +22,6 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.notification.Notificatio
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.mynotification.MyNotificationListActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderDetailActivity;
-import com.kosbrother.mongmongwoo.utils.InitUtil;
 import com.kosbrother.mongmongwoo.product.ProductActivity;
 
 import java.io.IOException;
@@ -37,7 +36,6 @@ public class MyFcmListenerService extends FirebaseMessagingService {
 
     @Override
     public void onMessageReceived(RemoteMessage message) {
-        InitUtil.initApp(getApplicationContext(), getApplication());
         Map data = message.getData();
 
         if (orderMessage(data)) {

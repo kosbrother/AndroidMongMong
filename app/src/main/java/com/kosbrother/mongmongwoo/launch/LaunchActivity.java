@@ -15,7 +15,6 @@ import com.facebook.applinks.AppLinkData;
 import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.utils.InitUtil;
 import com.viewpagerindicator.CirclePageIndicator;
 
 public class LaunchActivity extends FragmentActivity implements AppLinkData.CompletionHandler {
@@ -25,8 +24,6 @@ public class LaunchActivity extends FragmentActivity implements AppLinkData.Comp
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        InitUtil.initApp(getApplicationContext(), getApplication());
-
         // From facebook deep link
         AppLinkData appLinkData = AppLinkData.createFromActivity(this);
         if (appLinkData != null) {
