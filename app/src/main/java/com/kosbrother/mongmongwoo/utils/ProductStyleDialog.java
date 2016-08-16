@@ -82,7 +82,7 @@ public class ProductStyleDialog {
             GAManager.sendEvent(new ProductSelectDialogConfirmEvent(product.getName()));
             GAManager.sendShoppingCartProductEvent(product);
             FacebookLogger.getInstance().logAddedToCartEvent(
-                    String.valueOf(product.getCategoryId()),
+                    String.valueOf(product.getId()),
                     product.getCategoryName(),
                     product.getName(),
                     product.getFinalPrice()

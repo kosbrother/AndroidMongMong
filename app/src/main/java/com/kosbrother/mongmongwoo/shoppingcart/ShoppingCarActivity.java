@@ -438,7 +438,7 @@ public class ShoppingCarActivity extends BaseActivity implements
             FacebookLogger.getInstance().logPurchasedEvent(
                     product.getBuy_count(),
                     product.getCategoryName(),
-                    String.valueOf(product.getCategoryId()),
+                    String.valueOf(product.getId()),
                     product.getName(),
                     product.getFinalPrice() * product.getBuy_count()
             );

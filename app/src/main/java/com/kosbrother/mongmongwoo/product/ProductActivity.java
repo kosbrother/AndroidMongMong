@@ -347,8 +347,8 @@ public class ProductActivity extends BaseActivity {
                 @Override
                 public void onSuccess(Object data) {
                     FacebookLogger.getInstance().logAddedToWishlistEvent(
+                            String.valueOf(theProduct.getId()),
                             getCategoryName(),
-                            String.valueOf(getCategoryId()),
                             theProduct.getName(),
                             theProduct.getFinalPrice());
                     showAToast("成功收藏");
@@ -367,7 +367,7 @@ public class ProductActivity extends BaseActivity {
         GAManager.sendEvent(new ProductViewEvent(theProduct.getName()));
         FacebookLogger.getInstance().logViewedContentEvent(
                 getCategoryName(),
-                String.valueOf(getCategoryId()),
+                String.valueOf(theProduct.getId()),
                 theProduct.getName(),
                 theProduct.getFinalPrice());
         sendPromoOpenedEventIfFromNotification();

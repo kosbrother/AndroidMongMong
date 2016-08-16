@@ -108,7 +108,7 @@ public class PurchaseFragment1 extends Fragment {
     private void logInitiatedCheckoutEvent() {
         for (Product product : shoppingCarProducts) {
             FacebookLogger.getInstance().logInitiatedCheckoutEvent(
-                    String.valueOf(product.getCategoryId()),
+                    String.valueOf(product.getId()),
                     product.getCategoryName(),
                     product.getName(),
                     product.getBuy_count(),
