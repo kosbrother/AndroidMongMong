@@ -26,7 +26,7 @@ public class LaunchActivity extends FragmentActivity implements AppLinkData.Comp
         super.onCreate(savedInstanceState);
         // From facebook deep link
         AppLinkData appLinkData = AppLinkData.createFromActivity(this);
-        if (appLinkData != null) {
+        if (appLinkUriValid(appLinkData)) {
             intentToUriThenFinish(appLinkData.getTargetUri());
             return;
         }
@@ -49,16 +49,20 @@ public class LaunchActivity extends FragmentActivity implements AppLinkData.Comp
 
     @Override
     public void onDeferredAppLinkDataFetched(AppLinkData appLinkData) {
-        if (appLinkData == null) {
+        if (appLinkUriValid(appLinkData)) {
+            intentToUriThenFinish(appLinkData.getTargetUri());
+        } else {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     setLaunchContentView();
                 }
             });
-        } else {
-            intentToUriThenFinish(appLinkData.getTargetUri());
         }
+    }
+
+    private boolean appLinkUriValid(AppLinkData appLinkData) {
+        return appLinkData != null && appLinkData.getTargetUri().toString().startsWith("android-app");
     }
 
     private void setLaunchContentView() {
