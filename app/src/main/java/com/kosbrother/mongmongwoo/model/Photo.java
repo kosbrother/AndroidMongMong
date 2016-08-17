@@ -13,7 +13,7 @@ public class Photo implements Serializable {
         return image;
     }
 
-    public class Image {
+    public class Image implements Serializable {
         @SerializedName("url")
         private String url;
         @SerializedName("thumb")
