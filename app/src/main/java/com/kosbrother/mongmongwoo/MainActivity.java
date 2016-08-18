@@ -16,7 +16,6 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -84,6 +83,7 @@ import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
 import com.kosbrother.mongmongwoo.utils.ShareUtil;
 import com.kosbrother.mongmongwoo.utils.VersionUtil;
+import com.kosbrother.mongmongwoo.widget.WrapContentViewPager;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.ArrayList;
@@ -572,7 +572,7 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void setBannerViewPager() {
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.content_main_banner_vp);
+        final WrapContentViewPager viewPager = (WrapContentViewPager) findViewById(R.id.content_main_banner_vp);
         PagerAdapter adapter = new BannerPagerAdapter(this);
         viewPager.setAdapter(adapter);
 
@@ -867,11 +867,10 @@ public class MainActivity extends AppCompatActivity
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
             AdjustableImageView imageView = new AdjustableImageView(context);
-            imageView.setImageResource(bannerRes[position]);
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
             imageView.setAdjustViewBounds(true);
-            LayoutParams params = new LayoutParams(
-                    LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
-            imageView.setLayoutParams(params);
+            imageView.setImageResource(bannerRes[position]);
+            imageView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
             container.addView(imageView);
             return imageView;
         }
