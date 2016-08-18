@@ -13,12 +13,24 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <com.inthecheesefactory.thecheeselibrary.widget.AdjustableImageView
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:adjustViewBounds="true"
-            android:src="@mipmap/img_banner" />
+            android:layout_marginBottom="8dp">
+
+            <com.kosbrother.mongmongwoo.widget.WrapContentViewPager
+                android:id="@+id/content_main_banner_vp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+            <include
+                layout="@layout/indicator"
+                android:layout_width="match_parent"
+                android:layout_alignBottom="@id/content_main_banner_vp"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="5dp" />
+
+        </RelativeLayout>
 
         <com.kosbrother.mongmongwoo.utils.ExpandableHeightGridView
             android:id="@+id/category_gv"

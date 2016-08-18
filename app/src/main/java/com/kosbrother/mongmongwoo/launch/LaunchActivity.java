@@ -74,8 +74,10 @@ public class LaunchActivity extends FragmentActivity implements AppLinkData.Comp
         mPager.setOffscreenPageLimit(2);
         PagerAdapter launchPagerAdapter = new LaunchPagerAdapter(getSupportFragmentManager());
         mPager.setAdapter(launchPagerAdapter);
-        CirclePageIndicator pageControl = (CirclePageIndicator) findViewById(R.id.page_control);
-        pageControl.setViewPager(mPager);
+
+        CirclePageIndicator indicator = (CirclePageIndicator) findViewById(R.id.indicator);
+        indicator.setViewPager(mPager);
+
         mRootView.setVisibility(View.VISIBLE);
     }
 

@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -14,6 +15,7 @@ import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +24,8 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewGroup.LayoutParams;
 import android.view.ViewStub;
 import android.view.Window;
 import android.view.animation.Animation;
@@ -36,6 +40,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.iid.FirebaseInstanceId;
+import com.inthecheesefactory.thecheeselibrary.widget.AdjustableImageView;
 import com.kosbrother.mongmongwoo.adpters.CategoryAdapter;
 import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
 import com.kosbrother.mongmongwoo.api.DataManager;
@@ -78,6 +83,8 @@ import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
 import com.kosbrother.mongmongwoo.utils.ShareUtil;
 import com.kosbrother.mongmongwoo.utils.VersionUtil;
+import com.kosbrother.mongmongwoo.widget.WrapContentViewPager;
+import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -96,6 +103,7 @@ public class MainActivity extends AppCompatActivity
     private CsBottomSheetDialogFragment csBottomSheetDialogFragment;
     private View spotLightShoppingCarLayout;
     private Toast toast;
+    private boolean destroying = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -106,6 +114,7 @@ public class MainActivity extends AppCompatActivity
         csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
 
         setToolbarAndDrawer();
+        setBannerViewPager();
         setNavigationView();
         setQuickBarTextSwitcher();
         setQuickBarWithScrollView();
@@ -146,6 +155,12 @@ public class MainActivity extends AppCompatActivity
         } catch (Exception e) {
             // Just prevent onRestoreInstanceState crash
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        destroying = true;
+        super.onDestroy();
     }
 
     @Override
@@ -556,6 +571,39 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
+    private void setBannerViewPager() {
+        final WrapContentViewPager viewPager = (WrapContentViewPager) findViewById(R.id.content_main_banner_vp);
+        PagerAdapter adapter = new BannerPagerAdapter(this);
+        viewPager.setAdapter(adapter);
+
+        CirclePageIndicator indicator = (CirclePageIndicator) findViewById(R.id.indicator);
+        indicator.setViewPager(viewPager);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (!destroying) {
+                    try {
+                        Thread.sleep(3000);
+                        final int currentItem = viewPager.getCurrentItem();
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (currentItem < viewPager.getAdapter().getCount() - 1) {
+                                    viewPager.setCurrentItem(currentItem + 1, true);
+                                } else {
+                                    viewPager.setCurrentItem(0, false);
+                                }
+                            }
+                        });
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }).start();
+    }
+
     private void setNavigationView() {
         NavigationView navigationView = getNavigationView();
         navigationView.setNavigationItemSelectedListener(this);
@@ -793,5 +841,39 @@ public class MainActivity extends AppCompatActivity
         AlertDialog dialog = alertDialogBuilder.create();
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.show();
+    }
+
+    private class BannerPagerAdapter extends PagerAdapter {
+
+        private Context context;
+        private int[] bannerRes = {
+                R.mipmap.img_banner1,
+                R.mipmap.img_banner2};
+
+        private BannerPagerAdapter(Context context) {
+            this.context = context;
+        }
+
+        @Override
+        public int getCount() {
+            return bannerRes.length;
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object object) {
+            return view == object;
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            AdjustableImageView imageView = new AdjustableImageView(context);
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            imageView.setAdjustViewBounds(true);
+            imageView.setImageResource(bannerRes[position]);
+            imageView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            container.addView(imageView);
+            return imageView;
+        }
+
     }
 }
