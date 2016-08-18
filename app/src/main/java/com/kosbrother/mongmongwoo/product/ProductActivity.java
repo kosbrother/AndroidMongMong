@@ -436,8 +436,8 @@ public class ProductActivity extends BaseActivity {
         ViewPager viewPager = (ViewPager) findViewById(R.id.image_pager);
         viewPager.setAdapter(adapter);
 
-        CirclePageIndicator pageControl = (CirclePageIndicator) findViewById(R.id.page_control);
-        pageControl.setViewPager(viewPager);
+        CirclePageIndicator indicator = (CirclePageIndicator) findViewById(R.id.indicator);
+        indicator.setViewPager(viewPager);
     }
 
     private void setAddCartButton() {

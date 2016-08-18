@@ -576,8 +576,8 @@ public class MainActivity extends AppCompatActivity
         PagerAdapter adapter = new BannerPagerAdapter(this);
         viewPager.setAdapter(adapter);
 
-        CirclePageIndicator pageControl = (CirclePageIndicator) findViewById(R.id.page_control);
-        pageControl.setViewPager(viewPager);
+        CirclePageIndicator indicator = (CirclePageIndicator) findViewById(R.id.indicator);
+        indicator.setViewPager(viewPager);
 
         new Thread(new Runnable() {
             @Override

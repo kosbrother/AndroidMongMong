@@ -30,8 +30,8 @@ public class ZoomImageActivity extends AppCompatActivity implements View.OnClick
                 getSupportFragmentManager(), urls));
         viewPager.setCurrentItem(index);
 
-        CirclePageIndicator pageControl = (CirclePageIndicator) findViewById(R.id.page_control);
-        pageControl.setViewPager(viewPager);
+        CirclePageIndicator indicator = (CirclePageIndicator) findViewById(R.id.indicator);
+        indicator.setViewPager(viewPager);
 
         View container = findViewById(R.id.activity_container);
         container.setOnClickListener(this);
