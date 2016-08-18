@@ -25,7 +25,7 @@ public class Photo implements Serializable {
             return url;
         }
 
-        private class Thumb {
+        private class Thumb implements Serializable {
             @SerializedName("url")
             private String url;
         }
