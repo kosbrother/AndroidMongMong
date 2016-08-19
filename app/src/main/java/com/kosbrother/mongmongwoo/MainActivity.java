@@ -314,9 +314,9 @@ public class MainActivity extends AppCompatActivity
 
     public void onMoreLatestItemsClick(View view) {
         Intent intent = new Intent(this, CategoryActivity.class);
-        intent.putExtra(CategoryActivity.EXTRA_INT_CATEGORY_ID, Category.Type.ALL.getId());
-        intent.putExtra(CategoryActivity.EXTRA_STRING_CATEGORY_NAME, Category.Type.ALL.getName());
-        intent.putExtra(CategoryActivity.EXTRA_INT_SORT_INDEX, Category.SortName.date.ordinal());
+        intent.putExtra(CategoryActivity.EXTRA_INT_CATEGORY_ID, Category.Type.NEW.getId());
+        intent.putExtra(CategoryActivity.EXTRA_STRING_CATEGORY_NAME, Category.Type.NEW.getName());
+        intent.putExtra(CategoryActivity.EXTRA_INT_SORT_INDEX, Category.SortName.popular.ordinal());
         startActivity(intent);
     }
 
@@ -450,7 +450,7 @@ public class MainActivity extends AppCompatActivity
 
     private void getNewDateItems() {
         Webservice.getCategorySortItems(
-                Category.Type.NEW.getId(), Category.SortName.date.name(), 1, new Action1<List<Product>>() {
+                Category.Type.NEW.getId(), Category.SortName.popular.name(), 1, new Action1<List<Product>>() {
                     @Override
                     public void call(List<Product> products) {
                         if (products != null) {
@@ -626,17 +626,32 @@ public class MainActivity extends AppCompatActivity
 
     private void setLatestItemsGridView(List<Product> products) {
         ExpandableHeightGridView gridView = (ExpandableHeightGridView) findViewById(R.id.latest_items_gv);
-        List<Product> displayProducts = getDisplayProducts(products);
-        setDisplayGridView(displayProducts, gridView);
+        final List<Product> displayProducts = getDisplayProducts(products);
+        GoodsGridAdapter adapter = new GoodsGridAdapter(this, displayProducts,
+                new GoodsGridAdapter.GoodsGridAdapterListener() {
+                    @Override
+                    public void onAddShoppingCartButtonClick(int productId, int position) {
+                        showProductStyleDialog(displayProducts.get(position));
+                    }
+                });
+        gridView.setAdapter(adapter);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Product product = (Product) parent.getAdapter().getItem(position);
+                Intent intent = new Intent(MainActivity.this, ProductActivity.class);
+                intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
+                intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, Category.Type.NEW.getId());
+                intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, Category.Type.NEW.getName());
+
+                startActivity(intent);
+            }
+        });
     }
 
     private void setPopularItemsGridView(List<Product> products) {
         ExpandableHeightGridView gridView = (ExpandableHeightGridView) findViewById(R.id.popular_items_gv);
-        List<Product> displayProducts = getDisplayProducts(products);
-        setDisplayGridView(displayProducts, gridView);
-    }
-
-    private void setDisplayGridView(final List<Product> displayProducts, ExpandableHeightGridView gridView) {
+        final List<Product> displayProducts = getDisplayProducts(products);
         GoodsGridAdapter adapter = new GoodsGridAdapter(this, displayProducts,
                 new GoodsGridAdapter.GoodsGridAdapterListener() {
                     @Override
