@@ -676,7 +676,7 @@ public class MainActivity extends AppCompatActivity
 
     private List<Product> getDisplayProducts(List<Product> products) {
         final List<Product> displayProducts = new ArrayList<>();
-        for (int i = 0; i < 18; i++) {
+        for (int i = 0; i < products.size(); i++) {
             displayProducts.add(products.get(i));
         }
         return displayProducts;
