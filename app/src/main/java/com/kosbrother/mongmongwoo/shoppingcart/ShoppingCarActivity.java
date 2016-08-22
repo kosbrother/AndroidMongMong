@@ -473,14 +473,14 @@ public class ShoppingCarActivity extends BaseActivity implements
             }
             PostWishListsEntity entity = new PostWishListsEntity(wishLists);
             int userId = Settings.getSavedUser().getUserId();
-            DataManager.getInstance().postWishLists(userId, entity, new Action1<String>() {
+            DataManager.getInstance().postWishLists(userId, entity, new DataManager.ApiCallBack() {
                 @Override
-                public void call(String s) {
+                public void onError(String errorMessage) {
 
                 }
-            }, new Action1<String>() {
+
                 @Override
-                public void call(String s) {
+                public void onSuccess(Object data) {
 
                 }
             });

@@ -252,34 +252,36 @@ public class DataManager {
     }
 
     public void postWishLists(int userId, PostWishListsEntity entity,
-                              final Action1<String> onNextAction,
-                              final Action1<String> onErrorAction) {
+                              final ApiCallBack callBack) {
         Observable<ResponseEntity<String>> observable =
                 networkAPI.postWishLists(userId, entity)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread());
 
-        observable.subscribe(new Subscriber<ResponseEntity<String>>() {
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<String>>() {
             @Override
             public void onCompleted() {
-
+                removeSubscription(key);
             }
 
             @Override
             public void onError(Throwable e) {
-                onErrorAction.call(getErrorMessage(e));
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
             }
 
             @Override
             public void onNext(ResponseEntity<String> stringResponseEntity) {
                 String data = stringResponseEntity.getData();
                 if (data == null) {
-                    onError(new Throwable(stringResponseEntity.getError().getMessage()));
+                    callBack.onError(stringResponseEntity.getError().getMessage());
                 } else {
-                    onNextAction.call(data);
+                    callBack.onSuccess(data);
                 }
             }
         });
+        subscriptionMap.put(key, subscription);
     }
 
     public void deleteWishListsItemSpecs(int userId, int itemSpecId, final ApiCallBack callBack) {
