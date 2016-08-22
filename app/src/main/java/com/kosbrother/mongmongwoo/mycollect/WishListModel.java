@@ -52,4 +52,8 @@ public class WishListModel {
         int itemSpecId = wishListItemEntities.get(position).getItemSpec().getId();
         dataManager.deleteWishListsItemSpecs(userId, itemSpecId, callBack);
     }
+
+    public void cancelRequest(DataManager.ApiCallBack callBack) {
+        dataManager.unSubscribe(callBack);
+    }
 }

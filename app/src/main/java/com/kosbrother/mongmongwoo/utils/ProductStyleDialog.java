@@ -244,20 +244,19 @@ public class ProductStyleDialog {
         ArrayList<PostWishListsEntity.WishItemEntity> wishLists = new ArrayList<>();
         wishLists.add(new PostWishListsEntity.WishItemEntity(product.getId(), product.getSelectedSpec().getId()));
         PostWishListsEntity entity = new PostWishListsEntity(wishLists);
-        DataManager.getInstance().postWishLists(userId, entity,
-                new Action1<String>() {
-                    @Override
-                    public void call(String result) {
-                        Toast.makeText(context, "成功加入補貨清單", Toast.LENGTH_SHORT).show();
-                        alertDialog.dismiss();
-                    }
-                }, new Action1<String>() {
-                    @Override
-                    public void call(String errorMessage) {
-                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
-                        alertDialog.dismiss();
-                    }
-                });
+        DataManager.getInstance().postWishLists(userId, entity, new DataManager.ApiCallBack() {
+            @Override
+            public void onError(String errorMessage) {
+                Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show();
+                alertDialog.dismiss();
+            }
+
+            @Override
+            public void onSuccess(Object data) {
+                Toast.makeText(context, "成功加入補貨清單", Toast.LENGTH_SHORT).show();
+                alertDialog.dismiss();
+            }
+        });
     }
 
     private void initCountTextView() {
