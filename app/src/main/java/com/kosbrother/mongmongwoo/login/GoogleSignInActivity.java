@@ -125,7 +125,9 @@ public class GoogleSignInActivity extends BaseLoginActivity implements
     }
 
     private void signOut() {
-        Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+        if (mGoogleApiClient != null && mGoogleApiClient.isConnected()) {
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient);
+        }
     }
 
     private User getUser(GoogleSignInAccount acct) {
