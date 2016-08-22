@@ -59,14 +59,6 @@ public class UrlCenter {
         return HOST + API_V3 + "/categories";
     }
 
-    static String getCategorySortItems(int categoryId, String sortName, int page) {
-        return HOST + API_V3
-                + "/categories/" + categoryId
-                + "/items"
-                + "?sort=" + sortName
-                + "&page=" + page;
-    }
-
     static String postOrder() {
         return HOST + API_V3 + "/orders";
     }
