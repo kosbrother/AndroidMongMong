@@ -31,6 +31,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.product.ProductSelectDia
 import com.kosbrother.mongmongwoo.login.LoginActivity;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Spec;
+import com.kosbrother.mongmongwoo.widget.RecyclerViewOnItemTouchListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -184,45 +185,18 @@ public class ProductStyleDialog {
             }
         };
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.addOnItemTouchListener(new RecyclerView.OnItemTouchListener() {
-            GestureDetector mGestureDetector = new GestureDetector(context,
-                    new GestureDetector.SimpleOnGestureListener() {
-                        @Override
-                        public boolean onSingleTapUp(MotionEvent e) {
-                            return true;
+        recyclerView.addOnItemTouchListener(new RecyclerViewOnItemTouchListener(context,
+                new Action1<Integer>() {
+                    @Override
+                    public void call(Integer position) {
+                        if (position < product.getSpecs().size()) {
+                            updateSelectedStyle(position);
+                            Spec spec = product.getSpecs().get(position);
+                            updateStock(spec.getStockText());
+                            updateConfirmButtonAndNoStockHint(spec.getStockAmount());
                         }
-
-                        @Override
-                        public void onLongPress(MotionEvent e) {
-                        }
-                    });
-
-            @Override
-            public boolean onInterceptTouchEvent(RecyclerView rv, MotionEvent e) {
-                View child = rv.findChildViewUnder(e.getX(), e.getY());
-                int position = rv.getChildAdapterPosition(child);
-                if (child != null && position != -1 && mGestureDetector.onTouchEvent(e)) {
-                    if (position < product.getSpecs().size()) {
-                        updateSelectedStyle(position);
-                        Spec spec = product.getSpecs().get(position);
-                        updateStock(spec.getStockText());
-                        updateConfirmButtonAndNoStockHint(spec.getStockAmount());
                     }
-                    return true;
-                }
-                return false;
-            }
-
-            @Override
-            public void onTouchEvent(RecyclerView rv, MotionEvent e) {
-
-            }
-
-            @Override
-            public void onRequestDisallowInterceptTouchEvent(boolean disallowIntercept) {
-
-            }
-        });
+                }));
         SpecsAdapter adapter = new SpecsAdapter(product.getSpecs(), selectedPosition);
         recyclerView.setAdapter(adapter);
     }
