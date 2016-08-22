@@ -255,4 +255,8 @@ public class FavoriteManager {
                 .remove(PREF_STRING_COLLECT_LIST)
                 .apply();
     }
+
+    public void cancelRequest(DataManager.ApiCallBack callBack) {
+        DataManager.getInstance().unSubscribe(callBack);
+    }
 }

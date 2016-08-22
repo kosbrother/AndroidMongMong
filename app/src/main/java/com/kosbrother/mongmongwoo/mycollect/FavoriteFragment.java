@@ -51,11 +51,16 @@ public class FavoriteFragment extends Fragment implements FavoriteView,
         container = (FrameLayout) view.findViewById(R.id.fragment_favorite_container_fl);
     }
 
-
     @Override
     public void onResume() {
         super.onResume();
         presenter.onResume();
+    }
+
+    @Override
+    public void onDestroy() {
+        presenter.onDestroy();
+        super.onDestroy();
     }
 
     @Override
