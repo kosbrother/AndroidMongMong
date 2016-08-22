@@ -138,15 +138,17 @@ public class DataManager {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        observable.subscribe(new Observer<ResponseEntity<List<FavoriteItemEntity>>>() {
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Observer<ResponseEntity<List<FavoriteItemEntity>>>() {
             @Override
             public void onCompleted() {
-
+                removeSubscription(key);
             }
 
             @Override
             public void onError(Throwable e) {
                 callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
             }
 
             @Override
@@ -159,6 +161,7 @@ public class DataManager {
                 }
             }
         });
+        subscriptionMap.put(key, subscription);
     }
 
     public void postFavoriteItems(int userId, PostFavoriteItemsEntity postFavoriteItemsEntity
@@ -168,15 +171,17 @@ public class DataManager {
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread());
 
-        observable.subscribe(new Observer<ResponseEntity<String>>() {
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Observer<ResponseEntity<String>>() {
             @Override
             public void onCompleted() {
-
+                removeSubscription(key);
             }
 
             @Override
             public void onError(Throwable e) {
                 callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
             }
 
             @Override
@@ -189,6 +194,7 @@ public class DataManager {
                 }
             }
         });
+        subscriptionMap.put(key, subscription);
     }
 
     public void deleteFavoriteItems(int userId, int itemId, final ApiCallBack callBack) {
@@ -197,15 +203,17 @@ public class DataManager {
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread());
 
-        observable.subscribe(new Observer<ResponseEntity<String>>() {
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Observer<ResponseEntity<String>>() {
             @Override
             public void onCompleted() {
-
+                removeSubscription(key);
             }
 
             @Override
             public void onError(Throwable e) {
                 callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
             }
 
             @Override
@@ -218,6 +226,7 @@ public class DataManager {
                 }
             }
         });
+        subscriptionMap.put(key, subscription);
     }
 
     public void getWishLists(int userId, final ApiCallBack callBack) {

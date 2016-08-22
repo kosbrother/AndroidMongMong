@@ -19,6 +19,11 @@ public class FavoritePresenter implements DataManager.ApiCallBack {
         favoriteManager.getMyCollectList(this);
     }
 
+    public void onDestroy() {
+        view.hideProgressDialog();
+        favoriteManager.cancelRequest(this);
+    }
+
     public void onCollectItemClick(int position) {
         view.startProductActivity(favoriteManager.getProductId(position));
     }
