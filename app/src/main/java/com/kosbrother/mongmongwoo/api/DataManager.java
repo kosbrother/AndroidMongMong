@@ -225,15 +225,17 @@ public class DataManager {
                 .subscribeOn(Schedulers.newThread())
                 .observeOn(AndroidSchedulers.mainThread());
 
-        observable.subscribe(new Observer<ResponseEntity<List<WishListEntity>>>() {
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Observer<ResponseEntity<List<WishListEntity>>>() {
             @Override
             public void onCompleted() {
-
+                removeSubscription(key);
             }
 
             @Override
             public void onError(Throwable e) {
                 callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
             }
 
             @Override
@@ -246,6 +248,7 @@ public class DataManager {
                 }
             }
         });
+        subscriptionMap.put(key, subscription);
     }
 
     public void postWishLists(int userId, PostWishListsEntity entity,
@@ -285,15 +288,17 @@ public class DataManager {
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread());
 
-        observable.subscribe(new Observer<ResponseEntity<String>>() {
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Observer<ResponseEntity<String>>() {
             @Override
             public void onCompleted() {
-
+                removeSubscription(key);
             }
 
             @Override
             public void onError(Throwable e) {
                 callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
             }
 
             @Override
@@ -306,6 +311,7 @@ public class DataManager {
                 }
             }
         });
+        subscriptionMap.put(key, subscription);
     }
 
     public void getOrder(

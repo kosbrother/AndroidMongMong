@@ -19,6 +19,11 @@ public class WishListPresenter implements DataManager.ApiCallBack {
         model.getWishList(this);
     }
 
+    public void onDestroy() {
+        view.hideProgressDialog();
+        model.cancelRequest(this);
+    }
+
     @Override
     public void onError(String errorMessage) {
         view.hideProgressDialog();

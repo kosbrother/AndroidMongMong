@@ -56,6 +56,12 @@ public class WishListFragment extends Fragment implements WishListView, WishList
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        presenter.onDestroy();
+    }
+
+    @Override
     public void showLoadingView() {
         container.removeAllViews();
         View loadingView = LayoutInflater.from(getContext()).inflate(R.layout.loading_no_toolbar, null);
