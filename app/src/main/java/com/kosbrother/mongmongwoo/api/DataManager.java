@@ -9,7 +9,9 @@ import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.WishListEntity;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrderResultEntity;
+import com.kosbrother.mongmongwoo.model.Category;
 import com.kosbrother.mongmongwoo.model.Order;
+import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.mynotification.MyNotification;
 
 import java.io.IOException;
@@ -29,6 +31,7 @@ import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
@@ -414,6 +417,70 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void getSubCategories(int categoryId, final ApiCallBack callBack) {
+        Observable<ResponseEntity<List<Category>>> observable =
+                networkAPI.getSubcategories(categoryId)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<List<Category>>>() {
+            @Override
+            public void onCompleted() {
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<List<Category>> listResponseEntity) {
+                List<Category> data = listResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(listResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
+    public void getCategorySortItems(int categoryId, String sortName, int page, final ApiCallBack callBack) {
+        Observable<ResponseEntity<List<Product>>> observable =
+                networkAPI.getCategorySortItems(categoryId, sortName, page)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<List<Product>>>() {
+            @Override
+            public void onCompleted() {
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<List<Product>> listResponseEntity) {
+                List<Product> data = listResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(listResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void unSubscribe(ApiCallBack callBack) {
         String key = String.valueOf(callBack.hashCode());
         synchronized (subscriptionMap) {
@@ -489,5 +556,13 @@ public class DataManager {
 
         @POST("api/v4/orders")
         Observable<ResponseEntity<PostOrderResultEntity>> postOrders(@Body Order order);
+
+        @GET("api/v3/categories/{categoryId}/subcategory")
+        Observable<ResponseEntity<List<Category>>> getSubcategories(@Path("categoryId") int categoryId);
+
+        @GET("api/v3/categories/{categoryId}/items")
+        Observable<ResponseEntity<List<Product>>> getCategorySortItems(
+                @Path("categoryId") int categoryId, @Query("sort") String sortName, @Query("page") int page);
     }
+
 }

@@ -1,23 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
-    <android.support.design.widget.CoordinatorLayout
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true"
+        android:theme="@style/AppTheme.PopupOverlay">
 
-        <android.support.v4.view.ViewPager
-            android:id="@+id/pager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-        <android.support.design.widget.AppBarLayout
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapse_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/AppTheme.PopupOverlay">
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:titleEnabled="false">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/activity_category_subcategory_rv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="?attr/actionBarSize"
+                android:background="#f5f5f5"
+                android:clipToPadding="false"
+                android:paddingBottom="8dp"
+                android:paddingTop="8dp"
+                android:visibility="gone"
+                app:layout_collapseMode="parallax"
+                tools:visibility="visible" />
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -25,28 +40,39 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary"
                 android:elevation="4dp"
-                app:popupTheme="@style/AppTheme.PopupOverlay"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
                 app:titleTextColor="@color/white" />
 
-            <android.support.design.widget.TabLayout
-                android:id="@+id/tab_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/gray_tab_background"
-                android:elevation="2dp"
-                app:layout_scrollFlags="scroll|enterAlways"
-                app:tabGravity="fill"
-                app:tabIndicatorColor="@color/green_text"
-                app:tabSelectedTextColor="@color/green_text"
-                app:tabTextColor="@android:color/black" />
+        </android.support.design.widget.CollapsingToolbarLayout>
 
-        </android.support.design.widget.AppBarLayout>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/bg_divider_f2f2f2" />
 
-    </android.support.design.widget.CoordinatorLayout>
+        <android.support.design.widget.TabLayout
+            android:id="@+id/tab_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/gray_tab_background"
+            android:elevation="2dp"
+            app:tabGravity="fill"
+            app:tabIndicatorColor="@color/green_text"
+            app:tabSelectedTextColor="@color/green_text"
+            app:tabTextColor="@android:color/black" />
+
+    </android.support.design.widget.AppBarLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     <ViewStub
         android:id="@+id/shopping_car_spotlight_vs"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout="@layout/view_stub_shopping_cart_spotlight" />
-</RelativeLayout>
+</android.support.design.widget.CoordinatorLayout>
