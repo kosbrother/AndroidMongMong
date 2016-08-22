@@ -15,6 +15,7 @@ import com.facebook.applinks.AppLinkData;
 import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
+import com.kosbrother.mongmongwoo.appindex.IndexActivity;
 import com.viewpagerindicator.CirclePageIndicator;
 
 public class LaunchActivity extends FragmentActivity implements AppLinkData.CompletionHandler {
@@ -82,7 +83,7 @@ public class LaunchActivity extends FragmentActivity implements AppLinkData.Comp
     }
 
     private void intentToUriThenFinish(Uri targetUri) {
-        Intent intent = new Intent();
+        Intent intent = new Intent(this, IndexActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(targetUri);
         startActivity(intent);
