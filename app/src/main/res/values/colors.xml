@@ -18,6 +18,7 @@
     <color name="grey_bg_f2f2f2">#f2f2f2</color>
 
     <color name="dark_color_control_highlight">#40000000</color>
+    <color name="light_color_control_highlight">#40ffffff</color>
     <color name="default_background">#FFF9F9F9</color>
 
     <color name="product_title_gray_bg">#f1f1f1</color>

@@ -3,9 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="1dp"
-    android:layout_marginEnd="1dp"
-    android:layout_marginRight="1dp"
     android:background="@drawable/white_selector"
     android:clickable="true"
     android:focusable="true"
@@ -16,9 +13,9 @@
 
     <ImageView
         android:id="@+id/item_sub_category_iv"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginBottom="4dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="8dp"
         tools:src="@mipmap/app_icon9" />
 
     <TextView

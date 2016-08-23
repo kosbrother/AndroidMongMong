@@ -15,23 +15,26 @@
             android:id="@+id/collapse_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/grey_bg_f2f2f2"
             android:fitsSystemWindows="true"
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             app:titleEnabled="false">
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/activity_category_subcategory_rv"
+            <android.support.v7.widget.CardView
+                android:id="@+id/activity_category_subcategory_cv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="?attr/actionBarSize"
-                android:background="#f5f5f5"
-                android:clipToPadding="false"
-                android:paddingBottom="8dp"
-                android:paddingTop="8dp"
                 android:visibility="gone"
+                app:cardCornerRadius="0dp"
                 app:layout_collapseMode="parallax"
-                tools:visibility="visible" />
+                tools:visibility="visible">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/activity_category_subcategory_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="#9b9b9b" />
+            </android.support.v7.widget.CardView>
 
             <android.support.v7.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -44,16 +47,11 @@
 
         </android.support.design.widget.CollapsingToolbarLayout>
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/bg_divider_f2f2f2" />
-
         <android.support.design.widget.TabLayout
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/gray_tab_background"
+            android:background="@color/white"
             android:elevation="2dp"
             app:tabGravity="fill"
             app:tabIndicatorColor="@color/green_text"

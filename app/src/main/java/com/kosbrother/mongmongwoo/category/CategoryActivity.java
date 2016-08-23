@@ -1,6 +1,5 @@
 package com.kosbrother.mongmongwoo.category;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -38,7 +37,6 @@ import com.kosbrother.mongmongwoo.search.SearchActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
-import com.kosbrother.mongmongwoo.widget.CenterProgressDialog;
 import com.kosbrother.mongmongwoo.widget.RecyclerViewEndlessScrollListener;
 
 import java.util.ArrayList;
@@ -147,11 +145,40 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
             return;
         }
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.activity_category_subcategory_rv);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 3));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 3) {
+            @Override
+            public void onLayoutCompleted(RecyclerView.State state) {
+                super.onLayoutCompleted(state);
+                int childCount = recyclerView.getChildCount();
+                int dp0Dot5 = getResources().getDimensionPixelSize(R.dimen.dp_0dot5);
+                for (int i = 0; i < childCount; i++) {
+                    View childView = recyclerView.getChildAt(i);
+                    int childPosition = i + 1;
+                    ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) childView.getLayoutParams();
+
+                    if (childPosition > 3 && childPosition % 3 != 0) {
+                        params.setMargins(0, dp0Dot5, dp0Dot5, 0);
+                    } else if (childPosition > 3 && childPosition % 3 == 0) {
+                        params.setMargins(0, dp0Dot5, 0, 0);
+                    } else if (childPosition % 3 != 0) {
+                        params.setMargins(0, 0, dp0Dot5, 0);
+                    }
+                    childView.setLayoutParams(params);
+                }
+
+            }
+        });
         recyclerView.setHasFixedSize(true);
         RecyclerView.Adapter subCategoryAdapter = new SubCategoryAdapter(data);
         recyclerView.setAdapter(subCategoryAdapter);
-        recyclerView.setVisibility(View.VISIBLE);
+
+        View cardView = findViewById(R.id.activity_category_subcategory_cv);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) cardView.getLayoutParams();
+        int dp8 = getResources().getDimensionPixelSize(R.dimen.dp_8);
+        int topMargin = findViewById(R.id.toolbar).getMeasuredHeight() + dp8;
+        params.setMargins(0, topMargin, 0, dp8);
+        cardView.setLayoutParams(params);
+        cardView.setVisibility(View.VISIBLE);
     }
 
     private void setViewPagerWithTabLayout(String categoryName, int categoryId, int sortIndex) {
