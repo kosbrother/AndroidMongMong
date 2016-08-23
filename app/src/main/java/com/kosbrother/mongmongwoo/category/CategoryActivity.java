@@ -1,6 +1,7 @@
 package com.kosbrother.mongmongwoo.category;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -22,7 +23,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.kosbrother.mongmongwoo.BaseActivity;
+import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.api.DensityApi;
@@ -49,7 +55,8 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
 
     public static final String EXTRA_INT_CATEGORY_ID = "EXTRA_INT_CATEGORY_ID";
     public static final String EXTRA_STRING_CATEGORY_NAME = "EXTRA_STRING_CATEGORY_NAME";
-    public static final String EXTRA_INT_SORT_INDEX = "EXTRA_INT_SORT_INDEX";
+    public static final String EXTRA_STRING_SORT_NAME = "EXTRA_STRING_SORT_NAME";
+    public static final String EXTRA_BOOLEAN_FROM_INDEX_ACTIVITY = "EXTRA_BOOLEAN_FROM_INDEX_ACTIVITY";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,11 +65,11 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
 
         String categoryName = getIntent().getStringExtra(EXTRA_STRING_CATEGORY_NAME);
         int categoryId = getCategoryId();
-        int sortIndex = getIntent().getIntExtra(EXTRA_INT_SORT_INDEX, 0);
+        int sortIndex = getSortIndex();
 
         setToolbar(categoryName);
         setViewPagerWithTabLayout(categoryName, categoryId, sortIndex);
-        getSubCategory(categoryId);
+        getSubCategory(categoryName);
         GAManager.sendEvent(new CategoryEnterEvent(categoryName));
     }
 
@@ -76,6 +83,16 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
     protected void onDestroy() {
         DataManager.getInstance().unSubscribe(this);
         super.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (getIntent().getBooleanExtra(EXTRA_BOOLEAN_FROM_INDEX_ACTIVITY, false)) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
@@ -136,8 +153,21 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         return getIntent().getIntExtra(EXTRA_INT_CATEGORY_ID, 10);
     }
 
-    private void getSubCategory(int categoryId) {
-        DataManager.getInstance().getSubCategories(categoryId, this);
+    private int getSortIndex() {
+        int sortIndex = 0;
+        String sortNameString = getIntent().getStringExtra(EXTRA_STRING_SORT_NAME);
+        if (sortNameString == null || sortNameString.isEmpty()) {
+            return sortIndex;
+        }
+        Category.SortName sortName = Category.SortName.valueOf(sortNameString);
+        if (sortName != null) {
+            sortIndex = sortName.ordinal();
+        }
+        return sortIndex;
+    }
+
+    private void getSubCategory(String categoryName) {
+        DataManager.getInstance().getSubCategories(categoryName, this);
     }
 
     private void setSubCategoryRecyclerView(final List<Category> data) {
@@ -213,6 +243,7 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
             bundle.putInt(ProductsGridFragment.ARG_INT_CATEGORY_ID, categoryId);
             bundle.putString(ProductsGridFragment.ARG_STRING_CATEGORY_NAME, categoryName);
             bundle.putString(ProductsGridFragment.ARG_STRING_SORT_NAME, sortNames[i].name());
+            bundle.putString(ProductsGridFragment.ARG_STRING_TITLE, getPageTitle(i).toString());
             productsGridFragment.setArguments(bundle);
             return productsGridFragment;
         }
@@ -235,10 +266,21 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         public static final String ARG_INT_CATEGORY_ID = "ARG_INT_CATEGORY_ID";
         public static final String ARG_STRING_SORT_NAME = "ARG_STRING_SORT_NAME";
         public static final String ARG_STRING_CATEGORY_NAME = "ARG_STRING_CATEGORY_NAME";
+        public static final String ARG_STRING_TITLE = "ARG_STRING_TITLE";
+
+        private static final String CATEGORY_URI_STRING =
+                "android-app://com.kosbrother.mongmongwoo/https/www.mmwooo.com/categories/%s?sort=%s";
+
+        // create boolean for fetching data
+        private boolean isVisibleToUser = false;
+        private boolean isViewCreated = false;
+        private GoogleApiClient mClient;
 
         private int categoryId = 10;
         private String sortName;
         private String categoryName;
+        private String title;
+
         private RecyclerView recyclerView;
         private ProductsAdapter productsAdapter;
         private List<Product> products = new ArrayList<>();
@@ -251,6 +293,7 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
             categoryId = arguments.getInt(ARG_INT_CATEGORY_ID);
             sortName = arguments.getString(ARG_STRING_SORT_NAME);
             categoryName = arguments.getString(ARG_STRING_CATEGORY_NAME);
+            title = arguments.getString(ARG_STRING_TITLE);
         }
 
         @Override
@@ -261,21 +304,43 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
             recyclerView = (RecyclerView) rootView.findViewById(R.id.fragment_products_grid_rv);
 
             productsAdapter = new ProductsAdapter(products, this);
-            GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.addOnScrollListener(new RecyclerViewEndlessScrollListener(layoutManager,
-                    new Action1<Integer>() {
-                        @Override
-                        public void call(Integer page) {
-                            getCategorySortItems(page);
-                        }
-                    }));
             recyclerView.setAdapter(productsAdapter);
 
             loadingView = rootView.findViewById(R.id.loading_no_toolbar_fl);
-            loadingView.setVisibility(View.VISIBLE);
-            getCategorySortItems(1);
             return rootView;
+        }
+
+        @Override
+        public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+            super.onViewCreated(view, savedInstanceState);
+            isViewCreated = true;
+            lazyLoad();
+        }
+
+        @Override
+        public void setUserVisibleHint(boolean isVisibleToUser) {
+            super.setUserVisibleHint(isVisibleToUser);
+            if (isVisibleToUser) {
+                this.isVisibleToUser = true;
+                lazyLoad();
+            } else {
+                this.isVisibleToUser = false;
+                products.clear();
+                if (recyclerView != null) {
+                    recyclerView.clearOnScrollListeners();
+                    recyclerView.getAdapter().notifyDataSetChanged();
+                    stopCategoryAppIndex();
+                }
+            }
+        }
+
+        private void lazyLoad() {
+            if (isVisibleToUser && isViewCreated) {
+                if (mClient == null) {
+                    mClient = new GoogleApiClient.Builder(getContext()).addApi(AppIndex.API).build();
+                }
+                getInitData();
+            }
         }
 
         @Override
@@ -338,12 +403,61 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         @Override
         public void onSuccess(Object data) {
             loadingView.setVisibility(View.GONE);
+            if (products.size() == 0) {
+                // only index page one
+                startCategoryAppIndex();
+            }
             products.addAll((Collection<? extends Product>) data);
             productsAdapter.notifyDataSetChanged();
         }
 
+        private void getInitData() {
+            loadingView.setVisibility(View.VISIBLE);
+
+            GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.addOnScrollListener(new RecyclerViewEndlessScrollListener(
+                    layoutManager, new Action1<Integer>() {
+                @Override
+                public void call(Integer page) {
+                    getCategorySortItems(page);
+                }
+            }));
+            getCategorySortItems(1);
+        }
+
         private void getCategorySortItems(int page) {
-            DataManager.getInstance().getCategorySortItems(categoryId, sortName, page, this);
+            DataManager.getInstance().getCategorySortItems(categoryName, sortName, page, this);
+        }
+
+        public void startCategoryAppIndex() {
+            if (mClient != null) {
+                mClient.connect();
+                AppIndex.AppIndexApi.start(mClient, getCategoryAction());
+            }
+        }
+
+        public void stopCategoryAppIndex() {
+            if (mClient != null && mClient.isConnected()) {
+                AppIndex.AppIndexApi.end(
+                        mClient, getCategoryAction());
+                mClient.disconnect();
+                mClient = null;
+            }
+        }
+
+        private Action getCategoryAction() {
+            String urlString = String.format(CATEGORY_URI_STRING, categoryName, sortName);
+            Thing object = new Thing.Builder()
+                    .setName(categoryName + " - " + title)
+                    .setDescription(categoryName + " - " + title)
+                    .setUrl(Uri.parse(urlString))
+                    .build();
+
+            return new Action.Builder(Action.TYPE_VIEW)
+                    .setObject(object)
+                    .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                    .build();
         }
     }
 }

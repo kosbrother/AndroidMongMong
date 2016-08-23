@@ -417,9 +417,9 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
-    public void getSubCategories(int categoryId, final ApiCallBack callBack) {
+    public void getSubCategories(String categoryName, final ApiCallBack callBack) {
         Observable<ResponseEntity<List<Category>>> observable =
-                networkAPI.getSubcategories(categoryId)
+                networkAPI.getSubcategories(categoryName)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread());
 
@@ -449,9 +449,9 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
-    public void getCategorySortItems(int categoryId, String sortName, int page, final ApiCallBack callBack) {
+    public void getCategorySortItems(String categoryName, String sortName, int page, final ApiCallBack callBack) {
         Observable<ResponseEntity<List<Product>>> observable =
-                networkAPI.getCategorySortItems(categoryId, sortName, page)
+                networkAPI.getCategorySortItems(categoryName, sortName, page)
                         .subscribeOn(Schedulers.newThread())
                         .observeOn(AndroidSchedulers.mainThread());
 
@@ -557,12 +557,12 @@ public class DataManager {
         @POST("api/v4/orders")
         Observable<ResponseEntity<PostOrderResultEntity>> postOrders(@Body Order order);
 
-        @GET("api/v3/categories/{categoryId}/subcategory")
-        Observable<ResponseEntity<List<Category>>> getSubcategories(@Path("categoryId") int categoryId);
+        @GET("api/v3/categories/{categoryName}/subcategory")
+        Observable<ResponseEntity<List<Category>>> getSubcategories(@Path("categoryName") String categoryName);
 
-        @GET("api/v3/categories/{categoryId}/items")
+        @GET("api/v3/categories/{categoryName}/items")
         Observable<ResponseEntity<List<Product>>> getCategorySortItems(
-                @Path("categoryId") int categoryId, @Query("sort") String sortName, @Query("page") int page);
+                @Path("categoryName") String categoryName, @Query("sort") String sortName, @Query("page") int page);
     }
 
 }
