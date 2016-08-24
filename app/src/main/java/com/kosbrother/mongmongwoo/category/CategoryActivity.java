@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,17 +18,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewStub;
-import android.widget.AdapterView;
 import android.widget.Button;
-import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
+import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.api.DensityApi;
-import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.category.CategoryEnterEvent;
@@ -37,15 +36,16 @@ import com.kosbrother.mongmongwoo.product.ProductActivity;
 import com.kosbrother.mongmongwoo.search.SearchActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
-import com.kosbrother.mongmongwoo.utils.EndlessScrollListener;
 import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
+import com.kosbrother.mongmongwoo.widget.RecyclerViewEndlessScrollListener;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import rx.functions.Action1;
 
-public class CategoryActivity extends BaseActivity {
+public class CategoryActivity extends BaseActivity implements DataManager.ApiCallBack {
 
     public static final String EXTRA_INT_CATEGORY_ID = "EXTRA_INT_CATEGORY_ID";
     public static final String EXTRA_STRING_CATEGORY_NAME = "EXTRA_STRING_CATEGORY_NAME";
@@ -56,13 +56,13 @@ public class CategoryActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
 
-        Intent intent = getIntent();
-        String categoryName = intent.getStringExtra(EXTRA_STRING_CATEGORY_NAME);
-        int categoryId = intent.getIntExtra(EXTRA_INT_CATEGORY_ID, 10);
-        int sortIndex = intent.getIntExtra(EXTRA_INT_SORT_INDEX, 0);
+        String categoryName = getIntent().getStringExtra(EXTRA_STRING_CATEGORY_NAME);
+        int categoryId = getCategoryId();
+        int sortIndex = getIntent().getIntExtra(EXTRA_INT_SORT_INDEX, 0);
 
         setToolbar(categoryName);
         setViewPagerWithTabLayout(categoryName, categoryId, sortIndex);
+        getSubCategory(categoryId);
         GAManager.sendEvent(new CategoryEnterEvent(categoryName));
     }
 
@@ -70,6 +70,12 @@ public class CategoryActivity extends BaseActivity {
     protected void onResume() {
         super.onResume();
         invalidateOptionsMenu();
+    }
+
+    @Override
+    protected void onDestroy() {
+        DataManager.getInstance().unSubscribe(this);
+        super.onDestroy();
     }
 
     @Override
@@ -115,10 +121,70 @@ public class CategoryActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onError(String errorMessage) {
+        // do nothing
+    }
+
+    @Override
+    public void onSuccess(Object data) {
+        List<Category> data1 = (List<Category>) data;
+        setSubCategoryRecyclerView(data1);
+    }
+
+    private int getCategoryId() {
+        return getIntent().getIntExtra(EXTRA_INT_CATEGORY_ID, 10);
+    }
+
+    private void getSubCategory(int categoryId) {
+        DataManager.getInstance().getSubCategories(categoryId, this);
+    }
+
+    private void setSubCategoryRecyclerView(final List<Category> data) {
+        if (data.isEmpty()) {
+            return;
+        }
+        final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.activity_category_subcategory_rv);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 3) {
+            @Override
+            public void onLayoutCompleted(RecyclerView.State state) {
+                super.onLayoutCompleted(state);
+                int childCount = recyclerView.getChildCount();
+                int dp0Dot5 = getResources().getDimensionPixelSize(R.dimen.dp_0dot5);
+                for (int i = 0; i < childCount; i++) {
+                    View childView = recyclerView.getChildAt(i);
+                    int childPosition = i + 1;
+                    ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) childView.getLayoutParams();
+
+                    if (childPosition > 3 && childPosition % 3 != 0) {
+                        params.setMargins(0, dp0Dot5, dp0Dot5, 0);
+                    } else if (childPosition > 3 && childPosition % 3 == 0) {
+                        params.setMargins(0, dp0Dot5, 0, 0);
+                    } else if (childPosition % 3 != 0) {
+                        params.setMargins(0, 0, dp0Dot5, 0);
+                    }
+                    childView.setLayoutParams(params);
+                }
+
+            }
+        });
+        recyclerView.setHasFixedSize(true);
+        RecyclerView.Adapter subCategoryAdapter = new SubCategoryAdapter(data);
+        recyclerView.setAdapter(subCategoryAdapter);
+
+        View cardView = findViewById(R.id.activity_category_subcategory_cv);
+        ViewGroup.MarginLayoutParams params = (ViewGroup.MarginLayoutParams) cardView.getLayoutParams();
+        int dp8 = getResources().getDimensionPixelSize(R.dimen.dp_8);
+        int topMargin = findViewById(R.id.toolbar).getMeasuredHeight() + dp8;
+        params.setMargins(0, topMargin, 0, dp8);
+        cardView.setLayoutParams(params);
+        cardView.setVisibility(View.VISIBLE);
+    }
+
     private void setViewPagerWithTabLayout(String categoryName, int categoryId, int sortIndex) {
+        ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
         FilterPagerAdapter mFilterPagerAdapter = new FilterPagerAdapter(
                 getSupportFragmentManager(), categoryId, categoryName);
-        ViewPager mViewPager = (ViewPager) findViewById(R.id.pager);
         mViewPager.setAdapter(mFilterPagerAdapter);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(mViewPager);
@@ -131,7 +197,10 @@ public class CategoryActivity extends BaseActivity {
         private final int categoryId;
         private final String categoryName;
 
-        public FilterPagerAdapter(FragmentManager fm, int categoryId, String categoryName) {
+        public FilterPagerAdapter(
+                FragmentManager fm,
+                int categoryId,
+                String categoryName) {
             super(fm);
             this.categoryId = categoryId;
             this.categoryName = categoryName;
@@ -157,10 +226,11 @@ public class CategoryActivity extends BaseActivity {
         public CharSequence getPageTitle(int position) {
             return sortNames[position].getTitle();
         }
+
     }
 
-    public static class ProductsGridFragment extends Fragment
-            implements GoodsGridAdapter.GoodsGridAdapterListener {
+    public static class ProductsGridFragment extends Fragment implements
+            ProductsAdapter.GoodsGridAdapterListener, DataManager.ApiCallBack {
 
         public static final String ARG_INT_CATEGORY_ID = "ARG_INT_CATEGORY_ID";
         public static final String ARG_STRING_SORT_NAME = "ARG_STRING_SORT_NAME";
@@ -169,10 +239,10 @@ public class CategoryActivity extends BaseActivity {
         private int categoryId = 10;
         private String sortName;
         private String categoryName;
-
-        private GridView mGridView;
-        private GoodsGridAdapter goodsGridAdapter;
+        private RecyclerView recyclerView;
+        private ProductsAdapter productsAdapter;
         private List<Product> products = new ArrayList<>();
+        private View loadingView;
 
         @Override
         public void onCreate(Bundle savedInstanceState) {
@@ -186,33 +256,32 @@ public class CategoryActivity extends BaseActivity {
         @Override
         public View onCreateView(LayoutInflater inflater,
                                  ViewGroup container, Bundle savedInstanceState) {
-            View rootView = inflater.inflate(
-                    R.layout.fragment_items_gird, container, false);
-            mGridView = (GridView) rootView.findViewById(R.id.products_gv);
-            mGridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    if (products != null) {
-                        Product product = products.get(position);
-                        Intent intent = new Intent(getContext(), ProductActivity.class);
-                        intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
-                        intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, categoryId);
-                        intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, categoryName);
+            final View rootView = inflater.inflate(
+                    R.layout.fragment_products_gird, container, false);
+            recyclerView = (RecyclerView) rootView.findViewById(R.id.fragment_products_grid_rv);
 
-                        startActivity(intent);
-                    }
-                }
-            });
-            mGridView.setOnScrollListener(new EndlessScrollListener() {
-                @Override
-                public void onLoadMore(int page, int totalItemsCount) {
-                    getCategorySortItems(page);
-                }
-            });
-            goodsGridAdapter = new GoodsGridAdapter(getContext(), products, this);
-            mGridView.setAdapter(goodsGridAdapter);
+            productsAdapter = new ProductsAdapter(products, this);
+            GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.addOnScrollListener(new RecyclerViewEndlessScrollListener(layoutManager,
+                    new Action1<Integer>() {
+                        @Override
+                        public void call(Integer page) {
+                            getCategorySortItems(page);
+                        }
+                    }));
+            recyclerView.setAdapter(productsAdapter);
+
+            loadingView = rootView.findViewById(R.id.loading_no_toolbar_fl);
+            loadingView.setVisibility(View.VISIBLE);
             getCategorySortItems(1);
             return rootView;
+        }
+
+        @Override
+        public void onDestroy() {
+            DataManager.getInstance().unSubscribe(this);
+            super.onDestroy();
         }
 
         @Override
@@ -247,16 +316,34 @@ public class CategoryActivity extends BaseActivity {
             }).showWithInitState();
         }
 
+        @Override
+        public void onGoodsItemClick(int position) {
+            if (products != null) {
+                Product product = products.get(position);
+                Intent intent = new Intent(getContext(), ProductActivity.class);
+                intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
+                intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, categoryId);
+                intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, categoryName);
+
+                startActivity(intent);
+            }
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+            loadingView.setVisibility(View.GONE);
+            Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onSuccess(Object data) {
+            loadingView.setVisibility(View.GONE);
+            products.addAll((Collection<? extends Product>) data);
+            productsAdapter.notifyDataSetChanged();
+        }
+
         private void getCategorySortItems(int page) {
-            Webservice.getCategorySortItems(categoryId, sortName, page, new Action1<List<Product>>() {
-                @Override
-                public void call(List<Product> products) {
-                    if (products != null) {
-                        ProductsGridFragment.this.products.addAll(products);
-                        goodsGridAdapter.notifyDataSetChanged();
-                    }
-                }
-            });
+            DataManager.getInstance().getCategorySortItems(categoryId, sortName, page, this);
         }
     }
 }

@@ -437,27 +437,39 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getAllPopularItems() {
-        Webservice.getCategorySortItems(
-                Category.Type.ALL.getId(), Category.SortName.popular.name(), 1, new Action1<List<Product>>() {
+        DataManager.getInstance().getCategorySortItems(
+                Category.Type.ALL.getId(), Category.SortName.popular.name(), 1,
+                new DataManager.ApiCallBack() {
                     @Override
-                    public void call(List<Product> products) {
-                        if (products != null) {
-                            setPopularItemsGridView(products);
-                        }
+                    public void onError(String errorMessage) {
+                        // do nothing
                     }
-                });
+
+                    @Override
+                    public void onSuccess(Object data) {
+                        List<Product> products = (List<Product>) data;
+                        setPopularItemsGridView(products);
+                    }
+                }
+        );
     }
 
     private void getNewDateItems() {
-        Webservice.getCategorySortItems(
-                Category.Type.NEW.getId(), Category.SortName.popular.name(), 1, new Action1<List<Product>>() {
+        DataManager.getInstance().getCategorySortItems(
+                Category.Type.NEW.getId(), Category.SortName.popular.name(), 1,
+                new DataManager.ApiCallBack() {
                     @Override
-                    public void call(List<Product> products) {
-                        if (products != null) {
-                            setLatestItemsGridView(products);
-                        }
+                    public void onError(String errorMessage) {
+                        // do nothing
                     }
-                });
+
+                    @Override
+                    public void onSuccess(Object data) {
+                        List<Product> products = (List<Product>) data;
+                        setLatestItemsGridView(products);
+                    }
+                }
+        );
     }
 
     private void checkAndroidVersion() {

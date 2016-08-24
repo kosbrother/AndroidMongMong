@@ -8,4 +8,7 @@
     <dimen name="fab_margin">16dp</dimen>
 
     <dimen name="hot_keyword_margin">8dp</dimen>
+
+    <dimen name="dp_8">8dp</dimen>
+    <dimen name="dp_0dot5">0.5dp</dimen>
 </resources>
