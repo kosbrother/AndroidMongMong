@@ -2,14 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-
     <item android:title="我的萌萌屋">
         <menu>
-            <item
-                android:id="@+id/nav_my_notification"
-                android:icon="@mipmap/ic_notifications_grey_24dp"
-                android:title="@string/my_notification"
-                app:actionLayout="@layout/new_my_notification_number" />
             <item
                 android:id="@+id/nav_orders"
                 android:icon="@drawable/drawer_order"
