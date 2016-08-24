@@ -81,18 +81,14 @@ public class IndexActivity extends AppCompatActivity {
         if (queryString == null) {
             return sortName;
         }
-        if (queryString.contains("&")) {
-            String[] queryArray = queryString.split("&");
-            for (String q : queryArray) {
-                if (q.contains("sort")) {
-                    sortName = q.split("=")[1];
-                }
-            }
-        } else {
-            if (queryString.contains("sort")) {
-                sortName = queryString.split("=")[1];
+
+        String[] queryArray = queryString.split("&");
+        for (String q : queryArray) {
+            if (q.contains("sort")) {
+                sortName = q.split("=")[1];
             }
         }
+
         return sortName;
     }
 
