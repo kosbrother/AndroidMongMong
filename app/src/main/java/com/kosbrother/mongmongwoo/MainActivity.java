@@ -316,7 +316,6 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, CategoryActivity.class);
         intent.putExtra(CategoryActivity.EXTRA_INT_CATEGORY_ID, Category.Type.NEW.getId());
         intent.putExtra(CategoryActivity.EXTRA_STRING_CATEGORY_NAME, Category.Type.NEW.getName());
-        intent.putExtra(CategoryActivity.EXTRA_INT_SORT_INDEX, Category.SortName.popular.ordinal());
         startActivity(intent);
     }
 
@@ -324,7 +323,6 @@ public class MainActivity extends AppCompatActivity
         Intent intent = new Intent(this, CategoryActivity.class);
         intent.putExtra(CategoryActivity.EXTRA_INT_CATEGORY_ID, Category.Type.ALL.getId());
         intent.putExtra(CategoryActivity.EXTRA_STRING_CATEGORY_NAME, Category.Type.ALL.getName());
-        intent.putExtra(CategoryActivity.EXTRA_INT_SORT_INDEX, Category.SortName.popular.ordinal());
         startActivity(intent);
     }
 
@@ -438,7 +436,7 @@ public class MainActivity extends AppCompatActivity
 
     private void getAllPopularItems() {
         DataManager.getInstance().getCategorySortItems(
-                Category.Type.ALL.getId(), Category.SortName.popular.name(), 1,
+                Category.Type.ALL.getName(), Category.SortName.popular.name(), 1,
                 new DataManager.ApiCallBack() {
                     @Override
                     public void onError(String errorMessage) {
@@ -456,7 +454,7 @@ public class MainActivity extends AppCompatActivity
 
     private void getNewDateItems() {
         DataManager.getInstance().getCategorySortItems(
-                Category.Type.NEW.getId(), Category.SortName.popular.name(), 1,
+                Category.Type.NEW.getName(), Category.SortName.popular.name(), 1,
                 new DataManager.ApiCallBack() {
                     @Override
                     public void onError(String errorMessage) {
