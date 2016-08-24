@@ -98,8 +98,8 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
-        MenuItem shoppingCartItem = menu.findItem(R.id.shopping_cart);
+        inflater.inflate(R.menu.activity_category, menu);
+        MenuItem shoppingCartItem = menu.findItem(R.id.activity_category_shopping_cart);
         View shoppingCartView = MenuItemCompat.getActionView(shoppingCartItem);
         shoppingCartView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,7 +115,7 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.shopping_cart);
+        MenuItem item = menu.findItem(R.id.activity_category_shopping_cart);
         View countView = MenuItemCompat.getActionView(item);
         TextView countTextView = (TextView) countView.findViewById(R.id.count);
 
@@ -131,7 +131,7 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.search) {
+        if (item.getItemId() == R.id.activity_category_search) {
             startActivity(new Intent(this, SearchActivity.class));
             return true;
         }
