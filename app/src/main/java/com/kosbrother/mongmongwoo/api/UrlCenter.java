@@ -18,10 +18,6 @@ public class UrlCenter {
     public static final String CUSTOMER_SERVICE_LINE = "http://line.me/ti/p/%40kya5456n";
     public static final String CUSTOMER_SERVICE_FB = "https://www.facebook.com/kingofgametw/";
 
-    static String postUser() {
-        return HOST + API_V3 + "/oauth_sessions";
-    }
-
     static String getCountryTowns(int countryId) {
         return HOST + API_V3
                 + "/counties/" + countryId
@@ -87,11 +83,6 @@ public class UrlCenter {
 
     static String getShopInfos() {
         return HOST + API_V3 + "/shop_infos";
-    }
-
-    static String register() {
-        return HOST + API_V3
-                + "/mmw_registrations";
     }
 
     static String login() {

@@ -14,21 +14,18 @@ import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.api.Webservice;
-import com.kosbrother.mongmongwoo.entity.ResponseEntity;
-import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.model.User;
 
 import org.json.JSONObject;
 
 import java.util.Arrays;
 
-import rx.functions.Action1;
-
 public class FacebookLogInActivity extends BaseLoginActivity {
 
     private CallbackManager callbackManager;
     private LoginManager loginManager;
+    private DataManager.ApiCallBack callBack;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -59,6 +56,12 @@ public class FacebookLogInActivity extends BaseLoginActivity {
     }
 
     @Override
+    protected void onDestroy() {
+        DataManager.getInstance().unSubscribe(callBack);
+        super.onDestroy();
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         callbackManager.onActivityResult(requestCode, resultCode, data);
@@ -84,28 +87,21 @@ public class FacebookLogInActivity extends BaseLoginActivity {
     }
 
     public void onLoginSuccess(final User user) {
-        Webservice.postUser(user.getUserJsonString(), new Action1<ResponseEntity<Integer>>() {
+        callBack = new DataManager.ApiCallBack() {
             @Override
-            public void call(ResponseEntity<Integer> stringResponseEntity) {
-                int data = stringResponseEntity.getData();
-                if (data == 0) {
-                    loginManager.logOut();
-                    ResponseEntity.Error error = stringResponseEntity.getError();
-                    GAManager.sendError("postUserError", error);
-                    resultCancelThenFinish(error.getMessage());
-                } else {
-                    user.setUserId(data);
-                    Settings.saveUserData(user);
-                    resultOkThenFinish(user.getEmail());
-                }
-            }
-        }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
+            public void onError(String errorMessage) {
                 loginManager.logOut();
-                resultCancelThenFinish(throwable.getMessage());
+                resultCancelThenFinish(errorMessage);
             }
-        });
+
+            @Override
+            public void onSuccess(Object data) {
+                user.setUserId((Integer) data);
+                Settings.saveUserData(user);
+                resultOkThenFinish(user.getEmail());
+            }
+        };
+        DataManager.getInstance().postOauthSessions(user.getPostBody(), callBack);
     }
 
     private Bundle getRequestParameters() {

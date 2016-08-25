@@ -6,13 +6,6 @@ import okhttp3.FormBody;
 
 public class LoginApi {
 
-    public static String register(String email, String password) throws IOException {
-        FormBody.Builder formBody = new FormBody.Builder();
-        formBody.add("email", email);
-        formBody.add("password", password);
-        return RequestUtil.post(UrlCenter.register(), formBody.build());
-    }
-
     public static String login(String email, String password) throws IOException {
         FormBody.Builder formBody = new FormBody.Builder();
         formBody.add("email", email);
