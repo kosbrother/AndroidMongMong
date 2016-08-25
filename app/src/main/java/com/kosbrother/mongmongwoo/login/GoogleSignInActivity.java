@@ -14,12 +14,8 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.api.Webservice;
-import com.kosbrother.mongmongwoo.entity.ResponseEntity;
-import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
+import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.model.User;
-
-import rx.functions.Action1;
 
 public class GoogleSignInActivity extends BaseLoginActivity implements
         GoogleApiClient.OnConnectionFailedListener,
@@ -28,6 +24,7 @@ public class GoogleSignInActivity extends BaseLoginActivity implements
     private static final int RC_SIGN_IN = 9001;
 
     private GoogleApiClient mGoogleApiClient;
+    private DataManager.ApiCallBack callBack;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -52,6 +49,12 @@ public class GoogleSignInActivity extends BaseLoginActivity implements
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect();
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        DataManager.getInstance().unSubscribe(callBack);
+        super.onDestroy();
     }
 
     @Override
@@ -99,29 +102,22 @@ public class GoogleSignInActivity extends BaseLoginActivity implements
     }
 
     public void onSignInSuccess(final User user) {
-        Webservice.postUser(user.getUserJsonString(), new Action1<ResponseEntity<Integer>>() {
+        callBack = new DataManager.ApiCallBack() {
             @Override
-            public void call(ResponseEntity<Integer> stringResponseEntity) {
-                int data = stringResponseEntity.getData();
-                if (data == 0) {
-                    signOut();
-                    ResponseEntity.Error error = stringResponseEntity.getError();
-                    GAManager.sendError("postUserError", error);
-                    resultCancelThenFinish(error.getMessage());
-                } else {
-                    user.setUserId(data);
-                    Settings.saveUserData(user);
-                    String email = user.getEmail();
-                    resultOkThenFinish(email);
-                }
-            }
-        }, new Action1<Throwable>() {
-            @Override
-            public void call(Throwable throwable) {
+            public void onError(String errorMessage) {
                 signOut();
-                resultCancelThenFinish(throwable.getMessage());
+                resultCancelThenFinish(errorMessage);
             }
-        });
+
+            @Override
+            public void onSuccess(Object data) {
+                user.setUserId((Integer) data);
+                Settings.saveUserData(user);
+                String email = user.getEmail();
+                resultOkThenFinish(email);
+            }
+        };
+        DataManager.getInstance().postOauthSessions(user.getPostBody(), callBack);
     }
 
     private void signOut() {

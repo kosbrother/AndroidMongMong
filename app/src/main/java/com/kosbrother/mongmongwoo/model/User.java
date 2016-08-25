@@ -1,6 +1,6 @@
 package com.kosbrother.mongmongwoo.model;
 
-import com.google.gson.Gson;
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.kosbrother.mongmongwoo.entity.UserEntity;
 
 public class User extends UserEntity {
@@ -41,16 +41,16 @@ public class User extends UserEntity {
         return email;
     }
 
-    public String getUserJsonString() {
-        UserEntity postEntity = new UserEntity();
-        postEntity.setEmail(email);
-        postEntity.setGender(gender);
-        postEntity.setUid(uid);
-        postEntity.setUserName(userName);
-        postEntity.setProvider(provider);
-        return new Gson().toJson(postEntity);
+    public UserEntity getPostBody() {
+        UserEntity userEntity = new UserEntity();
+        userEntity.setEmail(email);
+        userEntity.setGender(gender);
+        userEntity.setUid(uid);
+        userEntity.setUserName(userName);
+        userEntity.setProvider(provider);
+        userEntity.setRegistrationId(FirebaseInstanceId.getInstance().getToken());
+        return userEntity;
     }
-
 
     public int getUserId() {
         return userId;

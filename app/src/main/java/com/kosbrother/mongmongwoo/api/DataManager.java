@@ -3,6 +3,7 @@ package com.kosbrother.mongmongwoo.api;
 import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.entity.UserEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.FavoriteItemEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostFavoriteItemsEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
@@ -481,7 +482,42 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void postOauthSessions(UserEntity user, final ApiCallBack callBack) {
+        Observable<ResponseEntity<Integer>> observable =
+                networkAPI.postOauthSessions(user)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<Integer>>() {
+            @Override
+            public void onCompleted() {
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<Integer> integerResponseEntity) {
+                Integer data = integerResponseEntity.getData();
+                if (data == null || data == 0) {
+                    callBack.onError(integerResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void unSubscribe(ApiCallBack callBack) {
+        if (callBack == null) {
+            return;
+        }
         String key = String.valueOf(callBack.hashCode());
         synchronized (subscriptionMap) {
             Subscription subscription = subscriptionMap.get(key);
@@ -563,6 +599,9 @@ public class DataManager {
         @GET("api/v3/categories/{categoryName}/items")
         Observable<ResponseEntity<List<Product>>> getCategorySortItems(
                 @Path("categoryName") String categoryName, @Query("sort") String sortName, @Query("page") int page);
+
+        @POST("api/v4/oauth_sessions")
+        Observable<ResponseEntity<Integer>> postOauthSessions(@Body UserEntity user);
     }
 
 }
