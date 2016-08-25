@@ -374,39 +374,6 @@ public class Webservice {
                 });
     }
 
-    public static void register(
-            final String email, final String password,
-            Action1<? super ResponseEntity<Integer>> onNextAction) {
-        Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                try {
-                    subscriber.onNext(LoginApi.register(email, password));
-                    subscriber.onCompleted();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    subscriber.onError(e);
-                }
-            }
-        })
-                .map(new Func1<String, ResponseEntity<Integer>>() {
-                    @Override
-                    public ResponseEntity<Integer> call(String json) {
-                        Type type = new TypeToken<ResponseEntity<Integer>>() {
-                        }.getType();
-                        return new Gson().fromJson(json, type);
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onNextAction, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        handleThrowable(throwable, "registerException");
-                    }
-                });
-    }
-
     public static void login(
             final String email, final String password,
             Action1<? super ResponseEntity<Integer>> onNextAction) {

@@ -1,7 +1,7 @@
 package com.kosbrother.mongmongwoo.login;
 
-import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -11,16 +11,16 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.databinding.DialogRegisterBinding;
-import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.entity.user.MmwUserEntity;
 import com.kosbrother.mongmongwoo.model.User;
+import com.kosbrother.mongmongwoo.widget.CenterProgressDialog;
 
-import rx.functions.Action1;
-
-public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickListener {
+public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickListener, DialogInterface.OnCancelListener {
 
     private OnRegisterSuccessListener listener = new OnRegisterSuccessListener() {
         @Override
@@ -30,8 +30,9 @@ public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickLis
     };
 
     private Toast toast;
-    private ProgressDialog progressDialog;
+    private CenterProgressDialog progressDialog;
     private LoginUser loginUser;
+    private DataManager.ApiCallBack callBack;
 
     public RegisterDialog(Context context) {
         super(context);
@@ -68,6 +69,11 @@ public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickLis
     }
 
     @Override
+    public void onCancel(DialogInterface dialogInterface) {
+        DataManager.getInstance().unSubscribe(callBack);
+    }
+
+    @Override
     public void onClick(View v) {
         onRegisterClick();
     }
@@ -84,26 +90,29 @@ public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickLis
         checker.check(email, password, new EmailPasswordChecker.OnCheckResultListener() {
             @Override
             public void onCheckValid() {
-                progressDialog = ProgressDialog.show(getContext(), "註冊中", "請稍後...", true);
-                Webservice.register(email, password, new Action1<ResponseEntity<Integer>>() {
+                progressDialog = CenterProgressDialog.show(getContext(), RegisterDialog.this);
+                MmwUserEntity postBody = new MmwUserEntity(email, password, FirebaseInstanceId.getInstance().getToken());
+                callBack = new DataManager.ApiCallBack() {
                     @Override
-                    public void call(ResponseEntity<Integer> stringResponseEntity) {
+                    public void onError(String errorMessage) {
                         progressDialog.dismiss();
-                        int data = stringResponseEntity.getData();
-                        if (data != 0) {
-                            User user = new User(email, "", "", "", email, "mmw");
-                            user.setUserId(data);
-                            Settings.saveUserData(user);
-                            listener.onRegisterSuccess(email);
-                            listener = null;
-                            showAToast("註冊成功");
-                            dismiss();
-                        } else {
-                            ResponseEntity.Error error = stringResponseEntity.getError();
-                            showAToast(error.getMessage());
-                        }
+                        showAToast(errorMessage);
                     }
-                });
+
+                    @Override
+                    public void onSuccess(Object data) {
+                        progressDialog.dismiss();
+                        User user = new User(email, "", "", "", email, "mmw");
+                        user.setUserId((Integer) data);
+                        Settings.saveUserData(user);
+
+                        listener.onRegisterSuccess(email);
+                        listener = null;
+                        showAToast("註冊成功");
+                        dismiss();
+                    }
+                };
+                DataManager.getInstance().postMmwRegistrations(postBody, callBack);
             }
 
             @Override

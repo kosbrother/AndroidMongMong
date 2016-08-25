@@ -10,6 +10,7 @@ import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.WishListEntity;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrderResultEntity;
+import com.kosbrother.mongmongwoo.entity.user.MmwUserEntity;
 import com.kosbrother.mongmongwoo.model.Category;
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.Product;
@@ -514,6 +515,38 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void postMmwRegistrations(MmwUserEntity mmwUserEntity, final ApiCallBack callBack) {
+        Observable<ResponseEntity<Integer>> observable =
+                networkAPI.postMmwRegistrations(mmwUserEntity)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<Integer>>() {
+            @Override
+            public void onCompleted() {
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<Integer> integerResponseEntity) {
+                Integer data = integerResponseEntity.getData();
+                if (data == null || data == 0) {
+                    callBack.onError(integerResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void unSubscribe(ApiCallBack callBack) {
         if (callBack == null) {
             return;
@@ -601,7 +634,10 @@ public class DataManager {
                 @Path("categoryName") String categoryName, @Query("sort") String sortName, @Query("page") int page);
 
         @POST("api/v4/oauth_sessions")
-        Observable<ResponseEntity<Integer>> postOauthSessions(@Body UserEntity user);
+        Observable<ResponseEntity<Integer>> postOauthSessions(@Body UserEntity userEntity);
+
+        @POST("api/v4/mmw_registrations")
+        Observable<ResponseEntity<Integer>> postMmwRegistrations(@Body MmwUserEntity mmwUserEntity);
     }
 
 }
