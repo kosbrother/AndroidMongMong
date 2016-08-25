@@ -17,7 +17,6 @@ import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -137,7 +136,6 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
         updateUserLayout();
-        updateMyNotificationLayout();
         invalidateOptionsMenu();
         setNoNetLayout();
     }
@@ -214,8 +212,8 @@ public class MainActivity extends AppCompatActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.main, menu);
-        MenuItem shoppingCartItem = menu.findItem(R.id.shopping_cart);
+        inflater.inflate(R.menu.activity_main, menu);
+        MenuItem shoppingCartItem = menu.findItem(R.id.activity_main_shopping_cart);
         View shoppingCartView = MenuItemCompat.getActionView(shoppingCartItem);
         shoppingCartView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,28 +224,52 @@ public class MainActivity extends AppCompatActivity
                 startActivity(shoppingCarIntent);
             }
         });
+        MenuItem myNotificationItem = menu.findItem(R.id.activity_main_my_notification);
+        View myNotificationView = MenuItemCompat.getActionView(myNotificationItem);
+        myNotificationView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(MainActivity.this, MyNotificationListActivity.class));
+            }
+        });
         return true;
     }
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.shopping_cart);
-        View countView = MenuItemCompat.getActionView(item);
-        TextView countTextView = (TextView) countView.findViewById(R.id.count);
+        MenuItem shoppingCartItem = menu.findItem(R.id.activity_main_shopping_cart);
+        View shoppingCartCountView = MenuItemCompat.getActionView(shoppingCartItem);
+        TextView shoppingCartCountTextView = (TextView) shoppingCartCountView.findViewById(R.id.count);
 
-        int count = ShoppingCartManager.getInstance().getShoppingCarItemSize();
-        if (count == 0) {
-            countTextView.setVisibility(View.GONE);
+        int shoppingCartCount = ShoppingCartManager.getInstance().getShoppingCarItemSize();
+        if (shoppingCartCount == 0) {
+            shoppingCartCountTextView.setVisibility(View.GONE);
         } else {
-            countTextView.setText(String.valueOf(count));
-            countTextView.setVisibility(View.VISIBLE);
+            shoppingCartCountTextView.setText(String.valueOf(shoppingCartCount));
+            shoppingCartCountTextView.setVisibility(View.VISIBLE);
+        }
+
+        MenuItem myNotificationItem = menu.findItem(R.id.activity_main_my_notification);
+        // TODO: 16/8/24 myNotificationItem always visible next version
+        myNotificationItem.setVisible(Settings.checkIsLogIn());
+
+        View MyNotificationCountView = MenuItemCompat.getActionView(myNotificationItem);
+        TextView myNotificationCountTextView = (TextView) MyNotificationCountView.findViewById(R.id.count);
+
+        int count = MyNotificationManager.getInstance(getApplicationContext(),
+                Settings.getSavedUser().getUserId()).getNumberOfNewNotifications();
+        if (count == 0) {
+            myNotificationCountTextView.setVisibility(View.GONE);
+        } else {
+            myNotificationCountTextView.setText(String.valueOf(count));
+            myNotificationCountTextView.setVisibility(View.VISIBLE);
         }
         return super.onPrepareOptionsMenu(menu);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.search) {
+        if (item.getItemId() == R.id.activity_main_search) {
             startActivity(new Intent(this, SearchActivity.class));
             return true;
         } else if (item.getItemId() == android.R.id.home) {
@@ -278,8 +300,6 @@ public class MainActivity extends AppCompatActivity
             } else {
                 startActivity(new Intent(this, QueryPastOrdersActivity.class));
             }
-        } else if (id == R.id.nav_my_notification) {
-            startActivity(new Intent(this, MyNotificationListActivity.class));
         } else if (id == R.id.nav_service) {
             startActivity(new Intent(this, ServiceActivity.class));
         } else if (id == R.id.nav_shop_infos) {
@@ -488,7 +508,7 @@ public class MainActivity extends AppCompatActivity
                     MyNotificationManager myNotificationManager = MyNotificationManager.
                             getInstance(getApplicationContext(), userId);
                     myNotificationManager.saveNewMyNotifications(myNotifications);
-                    updateMyNotification(true, myNotificationManager.getNumberOfNewNotifications());
+                    invalidateOptionsMenu();
                 }
             });
         }
@@ -764,10 +784,6 @@ public class MainActivity extends AppCompatActivity
         return (NavigationView) findViewById(R.id.nav_view);
     }
 
-    private MenuItem getMyNotificationMenuItem() {
-        return getNavigationView().getMenu().findItem(R.id.nav_my_notification);
-    }
-
     private View getQuickBarCardContainer() {
         return findViewById(R.id.quick_bar_container_cv);
     }
@@ -813,37 +829,6 @@ public class MainActivity extends AppCompatActivity
         } else {
             setUserLogoutView();
         }
-    }
-
-    private void updateMyNotificationLayout() {
-        if (Settings.checkIsLogIn()) {
-            updateMyNotification(true, MyNotificationManager.getInstance(
-                    getApplicationContext(),
-                    Settings.getSavedUser().getUserId()).getNumberOfNewNotifications());
-        } else {
-            updateMyNotification(false, 0);
-        }
-    }
-
-    private void updateMyNotification(boolean isLogin, int numOfNewNotification) {
-        MenuItem item = getMyNotificationMenuItem();
-        item.setVisible(isLogin);
-
-        ActionBar supportActionBar = getSupportActionBar();
-        assert supportActionBar != null;
-
-        if (isLogin) {
-            TextView textView = (TextView) item.getActionView().findViewById(R.id.new_my_notification_number_tv);
-            textView.setText(String.valueOf(numOfNewNotification));
-
-            boolean hasNewNotification = numOfNewNotification > 0;
-            textView.setVisibility(hasNewNotification ? View.VISIBLE : View.GONE);
-            supportActionBar.setHomeAsUpIndicator(hasNewNotification ?
-                    R.mipmap.ic_menu_white_with_notification_24dp : R.mipmap.ic_menu_white_no_notification_24dp);
-        } else {
-            supportActionBar.setHomeAsUpIndicator(R.mipmap.ic_menu_white_no_notification_24dp);
-        }
-
     }
 
     private void showLogoutAlertDialog() {

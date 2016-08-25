@@ -2,12 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/search"
+        android:id="@+id/activity_category_search"
         android:icon="@mipmap/ic_search_white_24dp"
         android:title="@string/search_hint"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
     <item
-        android:id="@+id/shopping_cart"
+        android:id="@+id/activity_category_shopping_cart"
         android:title="購物車"
         app:actionLayout="@layout/action_layout_shopping_cart_count"
         app:showAsAction="always" />
