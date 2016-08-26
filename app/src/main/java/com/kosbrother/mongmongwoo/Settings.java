@@ -8,6 +8,8 @@ import com.kosbrother.mongmongwoo.model.User;
 
 public class Settings {
 
+    public static final int GUEST_USER_ID = 31;
+
     private static final String PREFS_NAME = "USER_DATA";
 
     private final static String keyUserName = "USER_NAME";
@@ -105,9 +107,9 @@ public class Settings {
 
     public static boolean checkIsLogIn() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        int userId = prefs.getInt(keyUserId, 0);
+        int userId = prefs.getInt(keyUserId, GUEST_USER_ID);
         String provider = prefs.getString(keyUserProvider, "");
-        if (userId == 0 || provider.equals("")) {
+        if (userId == GUEST_USER_ID || provider.equals("")) {
             clearAllUserData();
             return false;
         }
@@ -127,7 +129,7 @@ public class Settings {
     public static User getSavedUser() {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String provider = prefs.getString(keyUserProvider, "");
-        int userId = prefs.getInt(keyUserId, 0);
+        int userId = prefs.getInt(keyUserId, GUEST_USER_ID);
         String userName = prefs.getString(keyUserName, "");
         String gender = prefs.getString(keyUserGender, "");
         String fb_uid = prefs.getString(keyUserFBUid, "");
