@@ -72,6 +72,7 @@ import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
 import com.kosbrother.mongmongwoo.mynotification.MyNotification;
 import com.kosbrother.mongmongwoo.mynotification.MyNotificationListActivity;
 import com.kosbrother.mongmongwoo.mynotification.MyNotificationManager;
+import com.kosbrother.mongmongwoo.myshoppingpoints.MyShoppingPointsActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
 import com.kosbrother.mongmongwoo.pastorders.QueryPastOrdersActivity;
 import com.kosbrother.mongmongwoo.product.ProductActivity;
@@ -295,7 +296,7 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
         switch (id) {
             case R.id.activity_main_navigation_my_shopping_points:
-                // TODO: 16/8/26 start MyShoppingPointsActivity
+                startActivity(new Intent(this, MyShoppingPointsActivity.class));
                 break;
             case R.id.activity_main_navigation_my_orders:
                 if (Settings.checkIsLogIn()) {

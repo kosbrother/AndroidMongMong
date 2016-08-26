@@ -51,4 +51,6 @@
     <string name="activity_main_navigation_about_mmw">關於萌萌屋</string>
     <string name="activity_main_navigation_log_out">登出</string>
 
+    <string name="activity_my_shopping_points_shopping_info">購物說明</string>
+
 </resources>
