@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="心動不如馬上行動，趕快到商品資訊頁，\n將喜歡的商品加入收藏吧！"
-            android:textColor="@color/black_text"
+            android:textColor="@color/black_4a4a4a"
             android:textSize="14sp" />
 
         <ImageView

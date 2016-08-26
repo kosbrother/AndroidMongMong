@@ -38,7 +38,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:text="@{notificationDetail.content}"
-                android:textColor="@color/black_text"
+                android:textColor="@color/black_4a4a4a"
                 android:textSize="14sp"
                 tools:text="親愛的柯萌萌您好：\n您的訂單...\n萌萌屋感謝您！" />
 

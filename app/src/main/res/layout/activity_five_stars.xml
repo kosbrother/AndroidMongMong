@@ -34,7 +34,7 @@
             android:layout_marginBottom="8dp"
             android:gravity="center_horizontal"
             android:text="我們正在搜集閃亮亮的星星，\n要是您覺得萌萌屋不錯，\n請給我們五星的評價吧！"
-            android:textColor="@color/black_text"
+            android:textColor="@color/black_4a4a4a"
             android:textSize="14sp" />
 
         <LinearLayout

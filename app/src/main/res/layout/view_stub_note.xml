@@ -30,7 +30,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:textColor="@color/black_text"
+            android:textColor="@color/black_4a4a4a"
             android:textSize="14sp"
             tools:text="備註：客服已通知買家四維店無法寄送，改為全家忠孝店。" />
     </LinearLayout>

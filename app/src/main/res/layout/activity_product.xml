@@ -129,7 +129,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="end"
-                            android:textColor="@color/black_text"
+                            android:textColor="@color/black_4a4a4a"
                             android:textSize="11sp"
                             tools:text="原價$NT 100" />
 
@@ -156,7 +156,7 @@
                         android:layout_toStartOf="@id/price_ll"
                         android:gravity="bottom"
                         android:maxLines="2"
-                        android:textColor="@color/black_text"
+                        android:textColor="@color/black_4a4a4a"
                         android:textSize="18sp"
                         tools:text="節目卡片迷你小賀卡" />
 
@@ -188,7 +188,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
-                        android:textColor="@color/black_text"
+                        android:textColor="@color/black_4a4a4a"
                         android:textSize="14sp"
                         tools:text="這裡是商品介紹的內文" />
                 </LinearLayout>
@@ -218,7 +218,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="7-11超商付款取貨"
-                        android:textColor="@color/black_text"
+                        android:textColor="@color/black_4a4a4a"
                         android:textSize="14sp" />
                 </LinearLayout>
 
@@ -265,7 +265,7 @@
                     android:layout_marginStart="35dp"
                     android:layout_marginTop="4dp"
                     android:text="將商品加入購物車，再至購物車結帳。"
-                    android:textColor="@color/black_text"
+                    android:textColor="@color/black_4a4a4a"
                     android:textSize="14sp" />
 
                 <TextView
@@ -288,7 +288,7 @@
                     android:layout_marginStart="35dp"
                     android:layout_marginTop="4dp"
                     android:text="商品到貨日起，7天內可退貨。"
-                    android:textColor="@color/black_text"
+                    android:textColor="@color/black_4a4a4a"
                     android:textSize="14sp" />
 
                 <TextView
@@ -311,7 +311,7 @@
                     android:layout_marginStart="35dp"
                     android:layout_marginTop="4dp"
                     android:text="商品購買後，3個工作天內會送到指定寄送地址。"
-                    android:textColor="@color/black_text"
+                    android:textColor="@color/black_4a4a4a"
                     android:textSize="14sp" />
 
                 <TextView
@@ -334,7 +334,7 @@
                     android:layout_marginStart="35dp"
                     android:layout_marginTop="4dp"
                     android:text="本商品為超商取貨付款，外島地區可能無法運送。"
-                    android:textColor="@color/black_text"
+                    android:textColor="@color/black_4a4a4a"
                     android:textSize="14sp" />
 
                 <TextView
@@ -359,7 +359,7 @@
                     android:layout_marginStart="35dp"
                     android:layout_marginTop="4dp"
                     android:text="若商品使用上有任何問題，客服人員會耐心為您解答，請透過客服中心與我們聯絡。"
-                    android:textColor="@color/black_text"
+                    android:textColor="@color/black_4a4a4a"
                     android:textSize="14sp" />
 
                 <TextView

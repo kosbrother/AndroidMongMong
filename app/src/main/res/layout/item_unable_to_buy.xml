@@ -31,7 +31,7 @@
             android:id="@+id/item_unable_to_buy_product_name_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black_text"
+            android:textColor="@color/black_4a4a4a"
             android:textSize="14sp"
             tools:text="超級可愛創意繽紛多彩超值可折疊手機支架" />
 
@@ -39,7 +39,7 @@
             android:id="@+id/item_unable_to_buy_spec_name_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black_text"
+            android:textColor="@color/black_4a4a4a"
             android:textSize="11sp"
             tools:text="粉紅色" />
 
@@ -54,7 +54,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="12dp"
                 android:layout_marginRight="12dp"
-                android:textColor="@color/black_text"
+                android:textColor="@color/black_4a4a4a"
                 android:textSize="11sp"
                 tools:text="選購數量：1" />
 

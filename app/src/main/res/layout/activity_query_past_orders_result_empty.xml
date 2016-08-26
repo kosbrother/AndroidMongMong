@@ -48,7 +48,7 @@
             android:layout_marginBottom="30dp"
             android:gravity="center_horizontal"
             android:text="請確認email及電話是否正確，\n或洽詢客服！"
-            android:textColor="@color/black_text"
+            android:textColor="@color/black_4a4a4a"
             android:textSize="14sp" />
     </LinearLayout>
 

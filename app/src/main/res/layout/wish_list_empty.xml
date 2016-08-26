@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:text="補貨商品會在您追蹤無庫存商品時出現，\n並在商品完成補貨時通知您！"
-            android:textColor="@color/black_text"
+            android:textColor="@color/black_4a4a4a"
             android:textSize="14sp" />
 
         <ImageView

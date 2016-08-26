@@ -9,7 +9,6 @@ import android.graphics.Rect;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -377,7 +376,7 @@ public class ProductStyleDialog {
                     storeText.setTextColor(ContextCompat.getColor(context, R.color.white));
                 } else {
                     itemView.setBackgroundResource(R.drawable.bg_spec_non_selected);
-                    storeText.setTextColor(ContextCompat.getColor(context, R.color.black_text));
+                    storeText.setTextColor(ContextCompat.getColor(context, R.color.black_4a4a4a));
                 }
 
                 int stockAmount = spec.getStockAmount();

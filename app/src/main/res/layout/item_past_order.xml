@@ -45,7 +45,7 @@
             android:id="@+id/past_order_total_price_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/black_text"
+            android:textColor="@color/black_4a4a4a"
             android:textSize="14sp"
             tools:text="消費金額：NT$ 2100" />
 

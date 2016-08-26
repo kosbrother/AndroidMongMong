@@ -293,36 +293,47 @@ public class MainActivity extends AppCompatActivity
         GAManager.sendEvent(new NavigationDrawerClickEvent(item.getTitle().toString()));
 
         int id = item.getItemId();
-        if (id == R.id.nav_orders) {
-            if (Settings.checkIsLogIn()) {
-                if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-                    Intent intent = new Intent(MainActivity.this, PastOrderActivity.class);
-                    startActivity(intent);
+        switch (id) {
+            case R.id.activity_main_navigation_my_shopping_points:
+                // TODO: 16/8/26 start MyShoppingPointsActivity
+                break;
+            case R.id.activity_main_navigation_my_orders:
+                if (Settings.checkIsLogIn()) {
+                    if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
+                        Intent intent = new Intent(MainActivity.this, PastOrderActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, QueryPastOrdersActivity.class));
                 }
-            } else {
-                startActivity(new Intent(this, QueryPastOrdersActivity.class));
-            }
-        } else if (id == R.id.nav_service) {
-            startActivity(new Intent(this, ServiceActivity.class));
-        } else if (id == R.id.nav_shop_infos) {
-            startActivity(new Intent(this, ShopInfoActivity.class));
-        } else if (id == R.id.nav_collect) {
-            if (Settings.checkIsLogIn()) {
-                startActivity(new Intent(this, MyCollectActivity.class));
-            } else {
-                startActivity(new Intent(this, LoginActivity.class));
-            }
-        } else if (id == R.id.nav_about) {
-            startActivity(new Intent(this, AboutActivity.class));
-        } else if (id == R.id.nav_share) {
-            String title = "分享萌萌屋";
-            String subject = "萌萌屋 - 走在青年流行前線";
-            String text = UrlCenter.GOOGLE_PLAY_SHARE;
-            ShareUtil.shareText(this, title, subject, text);
-        } else if (id == R.id.nav_log_out) {
-            showLogoutAlertDialog();
+                break;
+            case R.id.activity_main_navigation_customer_service_center:
+                startActivity(new Intent(this, ServiceActivity.class));
+                break;
+            case R.id.activity_main_navigation_shopping_info:
+                startActivity(new Intent(this, ShopInfoActivity.class));
+                break;
+            case R.id.activity_main_navigation_my_collect_title:
+                if (Settings.checkIsLogIn()) {
+                    startActivity(new Intent(this, MyCollectActivity.class));
+                } else {
+                    startActivity(new Intent(this, LoginActivity.class));
+                }
+                break;
+            case R.id.activity_main_navigation_about_mmw:
+                startActivity(new Intent(this, AboutActivity.class));
+                break;
+            case R.id.activity_main_navigation_share_mmw:
+                String title = "分享萌萌屋";
+                String subject = "萌萌屋 - 走在青年流行前線";
+                String text = UrlCenter.GOOGLE_PLAY_SHARE;
+                ShareUtil.shareText(this, title, subject, text);
+                break;
+            case R.id.activity_main_navigation_log_out:
+                showLogoutAlertDialog();
+                break;
         }
 
         DrawerLayout drawer = getDrawer();
@@ -555,7 +566,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = getNavigationView();
         Menu navigationViewMenu = navigationView.getMenu();
-        View lastVersionActionView = navigationViewMenu.findItem(R.id.nav_about).getActionView();
+        View lastVersionActionView = navigationViewMenu.findItem(R.id.activity_main_navigation_about_mmw).getActionView();
 
         if (upToDate) {
             lastVersionActionView.setVisibility(View.INVISIBLE);
@@ -789,9 +800,9 @@ public class MainActivity extends AppCompatActivity
                 .into((ImageView) headerView.findViewById(R.id.user_imageview));
 
         Menu menu = getNavigationView().getMenu();
-        MenuItem ordersMenuItem = menu.findItem(R.id.nav_orders);
+        MenuItem ordersMenuItem = menu.findItem(R.id.activity_main_navigation_my_orders);
         ordersMenuItem.setTitle("我的訂單");
-        menu.findItem(R.id.nav_log_out).setVisible(true);
+        menu.findItem(R.id.activity_main_navigation_log_out).setVisible(true);
     }
 
     private void setUserLogoutView() {
@@ -801,9 +812,9 @@ public class MainActivity extends AppCompatActivity
         headerView.findViewById(R.id.login_ll).setVisibility(View.VISIBLE);
 
         Menu menu = getNavigationView().getMenu();
-        MenuItem ordersMenuItem = menu.findItem(R.id.nav_orders);
+        MenuItem ordersMenuItem = menu.findItem(R.id.activity_main_navigation_my_orders);
         ordersMenuItem.setTitle("查詢訂單");
-        menu.findItem(R.id.nav_log_out).setVisible(false);
+        menu.findItem(R.id.activity_main_navigation_log_out).setVisible(false);
     }
 
     private NavigationView getNavigationView() {

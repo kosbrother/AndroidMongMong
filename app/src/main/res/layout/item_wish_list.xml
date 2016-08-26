@@ -51,7 +51,7 @@
             android:layout_marginRight="16dp"
             android:ellipsize="end"
             android:maxLines="2"
-            android:textColor="@color/black_text"
+            android:textColor="@color/black_4a4a4a"
             android:textSize="12sp"
             tools:text="超萌卡通悠遊卡立體卡套超萌卡通悠遊卡立體卡套" />
 
@@ -62,7 +62,7 @@
             android:layout_below="@id/item_wish_list_product_name_tv"
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
-            android:textColor="@color/black_text"
+            android:textColor="@color/black_4a4a4a"
             android:textSize="11sp"
             tools:text="粉紅色" />
 
@@ -105,7 +105,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
-                android:textColor="@color/black_text"
+                android:textColor="@color/black_4a4a4a"
                 android:textSize="11sp"
                 tools:text="現貨數：2" />
 
