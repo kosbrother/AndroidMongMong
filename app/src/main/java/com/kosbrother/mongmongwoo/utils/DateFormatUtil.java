@@ -27,9 +27,24 @@ public class DateFormatUtil {
             Calendar cal = Calendar.getInstance();
             cal.setTime(simpleDateFormat.parse(createdAt));
             return cal.get(Calendar.YEAR) + "/" +
-                    formatLeadingZero(cal.get(Calendar.MONTH) + 1) + "/"
-                    + cal.get(Calendar.DATE) + " "
-                    + formatLeadingZero(cal.get(Calendar.HOUR_OF_DAY)) + ":" + formatLeadingZero(cal.get(Calendar.MINUTE));
+                    formatLeadingZero(cal.get(Calendar.MONTH) + 1) + "/" +
+                    cal.get(Calendar.DATE) + " " +
+                    formatLeadingZero(cal.get(Calendar.HOUR_OF_DAY)) + ":" +
+                    formatLeadingZero(cal.get(Calendar.MINUTE));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return "";
+    }
+
+    public static String parseToYearMonthDay(String createdAt) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(API_CREATED_AT_PATTERN, Locale.getDefault());
+        try {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(simpleDateFormat.parse(createdAt));
+            return cal.get(Calendar.YEAR) + "/" +
+                    formatLeadingZero(cal.get(Calendar.MONTH) + 1) + "/" +
+                    formatLeadingZero(cal.get(Calendar.DAY_OF_MONTH));
         } catch (ParseException e) {
             e.printStackTrace();
         }
