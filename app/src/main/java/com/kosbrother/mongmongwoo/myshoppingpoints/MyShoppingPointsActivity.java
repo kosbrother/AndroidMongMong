@@ -29,6 +29,8 @@ import java.util.List;
 
 public class MyShoppingPointsActivity extends BaseActivity {
 
+    public static final String EXTRA_BOOLEAN_CAMPAIGN_PAGE = "EXTRA_BOOLEAN_CAMPAIGN_PAGE";
+
     private List<ShoppingPointsCampaignsEntity> shoppingPointsCampaignsEntities;
     private ShoppingPointsDetailEntity shoppingPointsDetailEntity;
 
@@ -116,6 +118,10 @@ public class MyShoppingPointsActivity extends BaseActivity {
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.activity_my_shopping_points_tl);
         tabLayout.setupWithViewPager(viewPager);
+
+        if (getIntent().getBooleanExtra(EXTRA_BOOLEAN_CAMPAIGN_PAGE, false)) {
+            viewPager.setCurrentItem(1);
+        }
     }
 
     private void showToast(String errorMessage) {

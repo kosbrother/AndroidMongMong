@@ -126,7 +126,7 @@ public class MainActivity extends AppCompatActivity
         getNewDateItems();
         getAllPopularItems();
         checkAndroidVersion();
-        getMyNotificationsIfLogin();
+        getMyNotifications();
         postFcmTokenIfServerNotReceived();
         sendGaEventIfFromNotification();
     }
@@ -173,6 +173,7 @@ public class MainActivity extends AppCompatActivity
             case REQUEST_LOGOUT:
                 if (resultCode == RESULT_OK) {
                     Settings.clearAllUserData();
+                    getMyNotifications();
                     Toast.makeText(this, "帳號已登出", Toast.LENGTH_SHORT).show();
                 } else if (resultCode == RESULT_CANCELED) {
                     if (data != null) {
@@ -183,7 +184,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case REQUEST_LOGIN:
                 if (resultCode == RESULT_OK) {
-                    getMyNotificationsIfLogin();
+                    getMyNotifications();
                 }
             default:
                 break;
@@ -255,9 +256,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         MenuItem myNotificationItem = menu.findItem(R.id.activity_main_my_notification);
-        // TODO: 16/8/24 myNotificationItem always visible next version
-        myNotificationItem.setVisible(Settings.checkIsLogIn());
-
         View MyNotificationCountView = MenuItemCompat.getActionView(myNotificationItem);
         TextView myNotificationCountTextView = (TextView) MyNotificationCountView.findViewById(R.id.count);
 
@@ -515,19 +513,17 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void getMyNotificationsIfLogin() {
-        if (Settings.checkIsLogIn()) {
-            final int userId = Settings.getSavedUser().getUserId();
-            DataManager.getInstance().getMyNotificationList(userId, new Action1<List<MyNotification>>() {
-                @Override
-                public void call(List<MyNotification> myNotifications) {
-                    MyNotificationManager myNotificationManager = MyNotificationManager.
-                            getInstance(getApplicationContext(), userId);
-                    myNotificationManager.saveNewMyNotifications(myNotifications);
-                    invalidateOptionsMenu();
-                }
-            });
-        }
+    private void getMyNotifications() {
+        final int userId = Settings.getSavedUser().getUserId();
+        DataManager.getInstance().getMyNotificationList(userId, new Action1<List<MyNotification>>() {
+            @Override
+            public void call(List<MyNotification> myNotifications) {
+                MyNotificationManager myNotificationManager = MyNotificationManager.
+                        getInstance(getApplicationContext(), userId);
+                myNotificationManager.saveNewMyNotifications(myNotifications);
+                invalidateOptionsMenu();
+            }
+        });
     }
 
     private void postFcmTokenIfServerNotReceived() {

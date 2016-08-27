@@ -1,5 +1,7 @@
 package com.kosbrother.mongmongwoo.mynotification;
 
+import android.net.Uri;
+
 import java.util.List;
 
 public interface MyNotificationListContract {
@@ -16,6 +18,8 @@ public interface MyNotificationListContract {
         void startMyNotificationDetailActivity(MyNotification.NotificationDetail notificationDetail);
 
         void startMainActivityThenFinish();
+
+        void startIndexActivity(Uri appIndexUri);
 
         void superOnBackPressed();
     }

@@ -766,7 +766,7 @@ public class DataManager {
         @GET("api/android_version")
         Observable<AndroidVersionEntity> getAndroidVersionObservable();
 
-        @GET("api/v3/users/{userId}/my_messages")
+        @GET("api/v4/users/{userId}/my_messages")
         Observable<ResponseEntity<List<MyNotification>>> getMyMessages(@Path("userId") int userId);
 
         @GET("api/v3/users/{userId}/favorite_items")

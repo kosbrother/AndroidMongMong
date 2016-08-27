@@ -10,6 +10,7 @@ import android.text.TextUtils;
 import com.kosbrother.mongmongwoo.category.CategoryActivity;
 import com.kosbrother.mongmongwoo.launch.LaunchActivity;
 import com.kosbrother.mongmongwoo.model.Category;
+import com.kosbrother.mongmongwoo.myshoppingpoints.MyShoppingPointsActivity;
 import com.kosbrother.mongmongwoo.product.ProductActivity;
 
 import java.io.UnsupportedEncodingException;
@@ -23,6 +24,8 @@ public class IndexActivity extends AppCompatActivity {
             "^https:[/][/]www.mmwooo.com[/]categories[/](.+)[/]items[/](.+)$";
     private static final String CATEGORY_PATTERN =
             "^https:[/][/]www.mmwooo.com[/]categories[/]([^?]+)(?:[?](.+))?$";
+    private static final String SHOPPING_POINT_CAMPAIGNS_PATTERN =
+            "^https:[/][/]www.mmwooo.com[/]shopping_point_campaigns$";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -39,6 +42,7 @@ public class IndexActivity extends AppCompatActivity {
             String input = data.toString();
             Matcher productMatcher = Pattern.compile(PRODUCT_PATTERN).matcher(input);
             Matcher categoryMatcher = Pattern.compile(CATEGORY_PATTERN).matcher(input);
+            Matcher shoppingPointCampaignsMatcher = Pattern.compile(SHOPPING_POINT_CAMPAIGNS_PATTERN).matcher(input);
 
             Intent indexIntent;
             if (productMatcher.matches()) {
@@ -68,6 +72,9 @@ public class IndexActivity extends AppCompatActivity {
                 indexIntent.putExtra(CategoryActivity.EXTRA_STRING_CATEGORY_NAME, categoryName);
                 indexIntent.putExtra(CategoryActivity.EXTRA_STRING_SORT_NAME, sortName);
                 indexIntent.putExtra(CategoryActivity.EXTRA_BOOLEAN_FROM_INDEX_ACTIVITY, true);
+            } else if (shoppingPointCampaignsMatcher.matches()) {
+                indexIntent = new Intent(this, MyShoppingPointsActivity.class);
+                indexIntent.putExtra(MyShoppingPointsActivity.EXTRA_BOOLEAN_CAMPAIGN_PAGE, true);
             } else {
                 indexIntent = new Intent(this, LaunchActivity.class);
             }

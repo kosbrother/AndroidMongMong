@@ -1,5 +1,7 @@
 package com.kosbrother.mongmongwoo.mynotification;
 
+import android.net.Uri;
+
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
@@ -51,5 +53,13 @@ public class MyNotificationListModel {
 
     public void sendNotificationMyMessageOpenedEvent() {
         GAManager.sendEvent(new NotificationMyMessageOpenedEvent(notificationTitle));
+    }
+
+    public Uri getAppIndexUri(int adapterPosition) {
+        String appIndexUrl = myNotificationManager.getDisplayNotifications().get(adapterPosition).getAppIndexUrl();
+        if (appIndexUrl == null || appIndexUrl.isEmpty()) {
+            return null;
+        }
+        return Uri.parse(appIndexUrl);
     }
 }
