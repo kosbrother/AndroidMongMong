@@ -3,6 +3,7 @@ package com.kosbrother.mongmongwoo.appindex;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
@@ -26,6 +27,8 @@ public class IndexActivity extends AppCompatActivity {
             "^https:[/][/]www.mmwooo.com[/]categories[/]([^?]+)(?:[?](.+))?$";
     private static final String SHOPPING_POINT_CAMPAIGNS_PATTERN =
             "^https:[/][/]www.mmwooo.com[/]shopping_point_campaigns$";
+    private static final String FACEBOOK_APP_LINK_PATTERN =
+            "^android-app:[/][/]com.kosbrother.mongmongwoo[/]https[/]www.mmwooo.com[/]categories[/](.+)[/]items[/](.+)$";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -43,27 +46,13 @@ public class IndexActivity extends AppCompatActivity {
             Matcher productMatcher = Pattern.compile(PRODUCT_PATTERN).matcher(input);
             Matcher categoryMatcher = Pattern.compile(CATEGORY_PATTERN).matcher(input);
             Matcher shoppingPointCampaignsMatcher = Pattern.compile(SHOPPING_POINT_CAMPAIGNS_PATTERN).matcher(input);
+            Matcher facebookAppLinkMatcher = Pattern.compile(FACEBOOK_APP_LINK_PATTERN).matcher(input);
 
             Intent indexIntent;
             if (productMatcher.matches()) {
-                indexIntent = new Intent(this, ProductActivity.class);
-
-                String categoriesData = productMatcher.group(1);
-                String itemsData = productMatcher.group(2);
-                if (TextUtils.isDigitsOnly(categoriesData) && TextUtils.isDigitsOnly(itemsData)) {
-                    indexIntent.putExtra(
-                            ProductActivity.EXTRA_INT_CATEGORY_ID, Integer.parseInt(categoriesData));
-                    indexIntent.putExtra(
-                            ProductActivity.EXTRA_INT_PRODUCT_ID, Integer.parseInt(itemsData));
-                } else {
-                    String categoryName = getDecodeString(categoriesData);
-                    String slug = getDecodeString(itemsData);
-                    indexIntent.putExtra(
-                            ProductActivity.EXTRA_STRING_CATEGORY_NAME, categoryName);
-                    indexIntent.putExtra(
-                            ProductActivity.EXTRA_STRING_SLUG, slug);
-                }
-                indexIntent.putExtra(ProductActivity.EXTRA_BOOLEAN_FROM_APP_INDEX, true);
+                indexIntent = getProductIntent(productMatcher);
+            } else if (facebookAppLinkMatcher.matches()) {
+                indexIntent = getProductIntent(facebookAppLinkMatcher);
             } else if (categoryMatcher.matches()) {
                 String categoryName = getDecodeString(categoryMatcher.group(1));
                 String sortName = getCategorySortName(categoryMatcher.group(2));
@@ -81,6 +70,30 @@ public class IndexActivity extends AppCompatActivity {
             startActivity(indexIntent);
             finish();
         }
+    }
+
+    @NonNull
+    private Intent getProductIntent(Matcher matcher) {
+        Intent indexIntent;
+        indexIntent = new Intent(this, ProductActivity.class);
+
+        String categoriesData = matcher.group(1);
+        String itemsData = matcher.group(2);
+        if (TextUtils.isDigitsOnly(categoriesData) && TextUtils.isDigitsOnly(itemsData)) {
+            indexIntent.putExtra(
+                    ProductActivity.EXTRA_INT_CATEGORY_ID, Integer.parseInt(categoriesData));
+            indexIntent.putExtra(
+                    ProductActivity.EXTRA_INT_PRODUCT_ID, Integer.parseInt(itemsData));
+        } else {
+            String categoryName = getDecodeString(categoriesData);
+            String slug = getDecodeString(itemsData);
+            indexIntent.putExtra(
+                    ProductActivity.EXTRA_STRING_CATEGORY_NAME, categoryName);
+            indexIntent.putExtra(
+                    ProductActivity.EXTRA_STRING_SLUG, slug);
+        }
+        indexIntent.putExtra(ProductActivity.EXTRA_BOOLEAN_FROM_APP_INDEX, true);
+        return indexIntent;
     }
 
     private String getCategorySortName(String queryString) {
