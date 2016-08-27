@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -121,7 +122,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="*使用FB登入更方便您查詢及管理訂單"
+                    android:text="*登入購買更方便您查詢及管理訂單"
                     android:textSize="8sp" />
 
                 <View
@@ -180,7 +181,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingBottom="8dp">
 
                 <TextView
                     android:layout_width="0dp"
@@ -188,7 +190,8 @@
                     android:layout_weight="1"
                     android:text="商品總額"
                     android:textColor="@color/black_4a4a4a"
-                    android:textSize="14sp" />
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/fragment1_goodsTotalPriceText"
@@ -196,15 +199,80 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/black_4a4a4a"
                     android:textSize="14sp"
-                    tools:text="$599" />
+                    tools:text="NT$ 490" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/fragment_purchase1_shopping_points_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="8dp"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingBottom="8dp">
+
+                    <android.support.v7.widget.AppCompatCheckBox
+                        android:id="@+id/fragment_purchase1_shopping_points_cb"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="購物金(可折抵金額 NT$ 200)"
+                        android:textColor="@color/green_text"
+                        android:textSize="14sp"
+                        app:buttonTint="@color/green_text" />
+
+                    <TextView
+                        android:id="@+id/fragment_purchase1_shopping_points_amount_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black_4a4a4a"
+                        android:textSize="14sp"
+                        tools:text="-NT0" />
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/bg_divider" />
+
+                <LinearLayout
+                    android:id="@+id/fragment_purchase1_shopping_points_subTotal_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:paddingTop="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="折抵後總額"
+                        android:textColor="@color/black_4a4a4a"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/fragment_purchase1_shopping_points_subTotal_tv"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/black_4a4a4a"
+                        android:textSize="14sp"
+                        tools:text="NT$ 490" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:paddingBottom="16dp">
 
                 <LinearLayout
                     android:layout_width="0dp"
@@ -217,9 +285,10 @@
                         android:id="@+id/ship_text"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="運費 (7-11超商取貨付款)"
+                        android:text="運費（滿490免運費）"
                         android:textColor="@color/black_4a4a4a"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
 
                 </LinearLayout>
 
@@ -227,47 +296,14 @@
                     android:id="@+id/fragment1_shippingPriceText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/red_text"
-                    android:textSize="14sp"
-                    tools:text="$0" />
-            </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="0.5dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/gray_background" />
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="8dp"
-                android:gravity="center_vertical"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="結帳金額"
                     android:textColor="@color/black_4a4a4a"
                     android:textSize="14sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/fragment1_totalPriceText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/red_text"
-                    android:textSize="14sp"
-                    tools:text="$659" />
+                    tools:text="NT$ 90" />
             </LinearLayout>
-
 
         </LinearLayout>
 
     </ScrollView>
 
+    <include layout="@layout/loading_fragment" />
 </RelativeLayout>

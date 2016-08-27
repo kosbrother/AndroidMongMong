@@ -20,6 +20,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3En
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Store;
+import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
 import java.util.List;
 
@@ -27,17 +28,19 @@ public class PurchaseFragment3 extends Fragment {
 
     public static final String ARG_SERIALIZABLE_ORDER = "ARG_SERIALIZABLE_ORDER";
     public static final String ARG_SERIALIZABLE_PRODUCTS = "ARG_SERIALIZABLE_PRODUCTS";
+    public static final String ARG_SERIALIZABLE_ORDER_PRICE = "ARG_SERIALIZABLE_ORDER_PRICE";
 
-    private OnStpe3ButtonClickListener mCallback;
+    private OnStep3ButtonClickListener mCallback;
 
     private Order theOrder;
     private List<Product> products;
+    private CalculateUtil.OrderPrice orderPrice;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         try {
-            mCallback = (OnStpe3ButtonClickListener) context;
+            mCallback = (OnStep3ButtonClickListener) context;
         } catch (ClassCastException e) {
             throw new ClassCastException(context.toString() +
                     " must implement OnStep3ButtonClickListener");
@@ -49,6 +52,7 @@ public class PurchaseFragment3 extends Fragment {
         super.onCreate(savedInstanceState);
         theOrder = (Order) getArguments().getSerializable(ARG_SERIALIZABLE_ORDER);
         products = (List<Product>) getArguments().getSerializable(ARG_SERIALIZABLE_PRODUCTS);
+        orderPrice = (CalculateUtil.OrderPrice) getArguments().getSerializable(ARG_SERIALIZABLE_ORDER_PRICE);
     }
 
     @Override
@@ -56,7 +60,7 @@ public class PurchaseFragment3 extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_purchase3, container, false);
 
-        Button sendButton = (Button) view.findViewById(R.id.fragment3_send_button);
+        Button sendButton = (Button) view.findViewById(R.id.fragment_purchase3_send_btn);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -64,43 +68,51 @@ public class PurchaseFragment3 extends Fragment {
             }
         });
 
-        TextView totalGoodsPriceTextView = (TextView) view.findViewById(R.id.fragment3_total_goods_price_text);
-        String totalGoodsPriceString = "" + theOrder.getItemsPrice();
-        totalGoodsPriceTextView.setText(totalGoodsPriceString);
+        String itemsPriceText = "NT$ " + orderPrice.getItemsPrice();
+        TextView itemsPriceTextView = (TextView) view.findViewById(R.id.fragment_purchase3_items_price_tv);
+        itemsPriceTextView.setText(itemsPriceText);
 
-        TextView shippingPriceText = (TextView) view.findViewById(R.id.fragment3_shipping_price_text);
-        int shipPrice = theOrder.getShipFee();
-        if (shipPrice == 0) {
-            shippingPriceText.setText("免運費");
-        } else {
-            String shippingPriceString = "" + shipPrice;
-            shippingPriceText.setText(shippingPriceString);
-        }
+        String shipFeeText = "NT$ " + orderPrice.getShipFee();
+        TextView shipFeeTextView = (TextView) view.findViewById(R.id.fragment_purchase3_ship_fee_tv);
+        shipFeeTextView.setText(shipFeeText);
 
-        String totalPriceString = "NT$ " + theOrder.getTotal();
-        TextView totalPriceText = (TextView) view.findViewById(R.id.fragment3_total_price_text);
-        totalPriceText.setText(totalPriceString);
+        String totalText = "NT$ " + orderPrice.getTotal();
+        TextView totalTextView = (TextView) view.findViewById(R.id.fragment_purchase3_total_tv);
+        totalTextView.setText(totalText);
 
-        TextView shippingNameText = (TextView) view.findViewById(R.id.fragment3_shipping_name_text);
-        shippingNameText.setText(Settings.getShippingName());
+        TextView shipNameTextView = (TextView) view.findViewById(R.id.fragment_purchase3_ship_name_tv);
+        shipNameTextView.setText(Settings.getShippingName());
 
-        TextView shippingPhoneText = (TextView) view.findViewById(R.id.fragment3_shipping_phone_text);
-        shippingPhoneText.setText(Settings.getShippingPhone());
+        TextView shipPhoneTextView = (TextView) view.findViewById(R.id.fragment_purchase3_ship_phone_tv);
+        shipPhoneTextView.setText(Settings.getShippingPhone());
 
-        TextView emailTextView = (TextView) view.findViewById(R.id.fragment3_email_text);
-        emailTextView.setText(theOrder.getShipEmail());
+        TextView shipEmailTextView = (TextView) view.findViewById(R.id.fragment_purchase3_ship_email_tv);
+        shipEmailTextView.setText(theOrder.getShipEmail());
 
         Store savedStore = Settings.getSavedStore();
         if (savedStore != null) {
-            TextView shippingStoreNameText = (TextView) view.findViewById(R.id.fragment3_shipping_store_name_text);
+            TextView shippingStoreNameText = (TextView) view.findViewById(R.id.fragment_purchase3_shipping_store_name_tv);
             shippingStoreNameText.setText(savedStore.getName());
 
-            TextView shippingStoreAddressText = (TextView) view.findViewById(R.id.fragment3_shipping_store_address_text);
+            TextView shippingStoreAddressText = (TextView) view.findViewById(R.id.fragment_purchase3_shipping_store_address_tv);
             shippingStoreAddressText.setText(savedStore.getAddress());
         }
 
-        LinearLayout goodsContainerLinearLayout = (LinearLayout) view.findViewById(R.id.goods_container_ll);
+        LinearLayout goodsContainerLinearLayout = (LinearLayout) view.findViewById(R.id.fragment_purchase3_goods_container_ll);
         addGoodsItemView(goodsContainerLinearLayout, products);
+
+        int shoppingPointsAmount = orderPrice.getShoppingPointsAmount();
+        if (shoppingPointsAmount > 0) {
+            view.findViewById(R.id.fragment_purchase3_shopping_points_ll).setVisibility(View.VISIBLE);
+
+            String shoppingPointsAmountText = "-NT$ " + shoppingPointsAmount;
+            TextView shoppingPointsAmountTextView = (TextView) view.findViewById(R.id.fragment_purchase3_shopping_points_amount_tv);
+            shoppingPointsAmountTextView.setText(shoppingPointsAmountText);
+
+            String shoppingPointsSubtotalText = "NT$ " + orderPrice.getShoppingPointsSubTotal();
+            TextView shoppingPointsSubtotalTextView = (TextView) view.findViewById(R.id.fragment_purchase3_shopping_points_subtotal_tv);
+            shoppingPointsSubtotalTextView.setText(shoppingPointsSubtotalText);
+        }
         return view;
     }
 
@@ -140,7 +152,7 @@ public class PurchaseFragment3 extends Fragment {
         }
     }
 
-    public interface OnStpe3ButtonClickListener {
+    public interface OnStep3ButtonClickListener {
 
         void onSendOrderClick();
     }
