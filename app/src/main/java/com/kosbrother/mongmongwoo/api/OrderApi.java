@@ -12,8 +12,4 @@ public class OrderApi {
         return RequestUtil.get(UrlCenter.getOrdersByEmailAndPhone(email, phone));
     }
 
-    public static String postOrder(String json) throws IOException {
-        return RequestUtil.post(UrlCenter.postOrder(), json);
-    }
-
 }
