@@ -8,9 +8,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public class LoginPresenterTest {
 
@@ -29,6 +27,14 @@ public class LoginPresenterTest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         presenter = new LoginPresenter(view, model);
+    }
+
+    @Test
+    public void testOnDestroy() throws Exception {
+        presenter.onDestroy();
+
+        verify(view).hideProgressDialog();
+        verify(model).unSubscribe(presenter);
     }
 
     @Test
@@ -103,24 +109,20 @@ public class LoginPresenterTest {
 
     @Test
     public void testCall_loginSuccess() throws Exception {
-        when(userIdEntityResponseEntity.getData()).thenReturn(1111);
+        Object userId = 1111;
 
-        presenter.call(userIdEntityResponseEntity);
+        presenter.onSuccess(userId);
 
         verify(view).hideProgressDialog();
-        verify(model).saveMmwUserData(userIdEntityResponseEntity.getData());
+        verify(model).saveMmwUserData((Integer) userId);
         verify(view).resultOkThenFinish(model.getEmail());
     }
 
     @Test
     public void testCall_loginError() throws Exception {
-        when(userIdEntityResponseEntity.getData()).thenReturn(0);
         String errorMessage = "errorMessage";
-        ResponseEntity.Error error = mock(ResponseEntity.Error.class);
-        when(error.getMessage()).thenReturn(errorMessage);
-        when(userIdEntityResponseEntity.getError()).thenReturn(error);
 
-        presenter.call(userIdEntityResponseEntity);
+        presenter.onError(errorMessage);
 
         verify(view).hideProgressDialog();
         verify(view).showToast(errorMessage);

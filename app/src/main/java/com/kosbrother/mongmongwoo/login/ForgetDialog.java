@@ -1,6 +1,7 @@
 package com.kosbrother.mongmongwoo.login;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
@@ -8,23 +9,18 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.api.Webservice;
-import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.api.DataManager;
+import com.kosbrother.mongmongwoo.widget.CenterProgressDialog;
 
-import rx.functions.Action1;
+public class ForgetDialog extends BaseNoTitleDialog implements
+        View.OnClickListener,
+        DataManager.ApiCallBack,
+        DialogInterface.OnCancelListener {
 
-public class ForgetDialog extends BaseNoTitleDialog implements View.OnClickListener {
+    private CenterProgressDialog progressDialog;
 
     public ForgetDialog(Context context) {
         super(context);
-    }
-
-    public ForgetDialog(Context context, int themeResId) {
-        super(context, themeResId);
-    }
-
-    protected ForgetDialog(Context context, boolean cancelable, OnCancelListener cancelListener) {
-        super(context, cancelable, cancelListener);
     }
 
     @Override
@@ -44,26 +40,34 @@ public class ForgetDialog extends BaseNoTitleDialog implements View.OnClickListe
         if (emailText.isEmpty()) {
             showToast("email不可空白");
         } else {
-            requestForget(emailText);
+            progressDialog = CenterProgressDialog.show(getContext(), this);
+            DataManager.getInstance().forget(emailText, this);
         }
     }
 
-    private void requestForget(String emailText) {
-        Webservice.forget(emailText, new Action1<ResponseEntity<String>>() {
+    @Override
+    public void onCancel(DialogInterface dialogInterface) {
+        DataManager.getInstance().unSubscribe(this);
+    }
+
+    @Override
+    public void onError(String errorMessage) {
+        progressDialog.dismiss();
+        progressDialog = null;
+
+        showToast(errorMessage);
+    }
+
+    @Override
+    public void onSuccess(Object data) {
+        progressDialog.dismiss();
+        progressDialog = null;
+
+        setContentView(R.layout.dialog_forget_send);
+        findViewById(R.id.finish_btn).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void call(ResponseEntity<String> stringResponseEntity) {
-                String data = stringResponseEntity.getData();
-                if (data == null) {
-                    showToast(stringResponseEntity.getError().getMessage());
-                } else {
-                    setContentView(R.layout.dialog_forget_send);
-                    findViewById(R.id.finish_btn).setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            dismiss();
-                        }
-                    });
-                }
+            public void onClick(View v) {
+                dismiss();
             }
         });
     }

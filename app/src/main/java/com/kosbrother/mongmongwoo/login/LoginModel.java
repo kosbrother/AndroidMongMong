@@ -1,11 +1,9 @@
 package com.kosbrother.mongmongwoo.login;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.api.Webservice;
-import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.model.User;
-
-import rx.functions.Action1;
 
 public class LoginModel {
     private final LoginUser loginUser;
@@ -22,8 +20,9 @@ public class LoginModel {
         return loginUser.getPassword();
     }
 
-    public void requestMmwLogin(Action1<? super ResponseEntity<Integer>> onLoginNextAction) {
-        Webservice.login(getEmail(), getPassword(), onLoginNextAction);
+    public void requestMmwLogin(DataManager.ApiCallBack callBack) {
+        String registrationId = FirebaseInstanceId.getInstance().getToken();
+        DataManager.getInstance().login(getEmail(), getPassword(), registrationId, callBack);
     }
 
     public void saveMmwUserData(int userId) {
@@ -36,5 +35,9 @@ public class LoginModel {
     public void checkLoginData(EmailPasswordChecker.OnCheckResultListener listener) {
         EmailPasswordChecker checker = new EmailPasswordChecker();
         checker.check(getEmail(), getPassword(), listener);
+    }
+
+    public void unSubscribe(DataManager.ApiCallBack callBack) {
+        DataManager.getInstance().unSubscribe(callBack);
     }
 }
