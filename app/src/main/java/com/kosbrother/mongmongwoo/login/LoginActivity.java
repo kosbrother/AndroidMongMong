@@ -39,6 +39,12 @@ public class LoginActivity extends BaseLoginActivity implements LoginContract.Vi
         mPresenter = new LoginPresenter(this, new LoginModel(loginUser));
     }
 
+    @Override
+    protected void onDestroy() {
+        mPresenter.onDestroy();
+        super.onDestroy();
+    }
+
     public void onGoogleSignInClick(View view) {
         mPresenter.onGoogleSignInClick();
     }

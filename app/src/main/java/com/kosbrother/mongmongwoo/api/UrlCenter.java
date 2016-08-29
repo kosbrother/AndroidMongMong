@@ -85,18 +85,6 @@ public class UrlCenter {
         return HOST + API_V3 + "/shop_infos";
     }
 
-    static String login() {
-        return HOST + API_V3
-                + "/mmw_registrations"
-                + "/login";
-    }
-
-    static String forget() {
-        return HOST + API_V3
-                + "/mmw_registrations"
-                + "/forget";
-    }
-
     static String searchItems(String query, int page) {
         return HOST + API_V3
                 + "/search_items"

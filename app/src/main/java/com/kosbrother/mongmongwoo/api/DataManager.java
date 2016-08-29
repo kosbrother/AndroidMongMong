@@ -29,6 +29,8 @@ import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.Body;
 import retrofit2.http.DELETE;
+import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.PATCH;
 import retrofit2.http.POST;
@@ -547,6 +549,72 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void login(String email, String password, String registrationId, final ApiCallBack callBack) {
+        Observable<ResponseEntity<Integer>> observable =
+                networkAPI.postMmwRegistrationsLogin(email, password, registrationId)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<Integer>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<Integer> integerResponseEntity) {
+                Integer data = integerResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(integerResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
+    public void forget(String email, final ApiCallBack callBack) {
+        Observable<ResponseEntity<String>> observable =
+                networkAPI.postMmwRegistrationsForget(email)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<String>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<String> stringResponseEntityResponseEntity) {
+                String data = stringResponseEntityResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(stringResponseEntityResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void unSubscribe(ApiCallBack callBack) {
         if (callBack == null) {
             return;
@@ -638,6 +706,16 @@ public class DataManager {
 
         @POST("api/v4/mmw_registrations")
         Observable<ResponseEntity<Integer>> postMmwRegistrations(@Body MmwUserEntity mmwUserEntity);
+
+        @FormUrlEncoded
+        @POST("api/v4/mmw_registrations/login")
+        Observable<ResponseEntity<Integer>> postMmwRegistrationsLogin(
+                @Field("email") String email, @Field("password") String password,
+                @Field("registration_id") String registrationId);
+
+        @FormUrlEncoded
+        @POST("api/v3/mmw_registrations/forget")
+        Observable<ResponseEntity<String>> postMmwRegistrationsForget(@Field("email") String email);
     }
 
 }
