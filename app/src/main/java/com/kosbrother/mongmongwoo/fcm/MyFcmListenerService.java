@@ -33,9 +33,11 @@ import java.util.Map;
 public class MyFcmListenerService extends FirebaseMessagingService {
 
     private static final String TAG = "MyFcmListenerService";
+    private int id;
 
     @Override
     public void onMessageReceived(RemoteMessage message) {
+        id = (int) System.currentTimeMillis();
         Map data = message.getData();
 
         if (orderMessage(data)) {
@@ -141,9 +143,9 @@ public class MyFcmListenerService extends FirebaseMessagingService {
                 true);
         return PendingIntent.getActivity(
                 this,
-                0,
+                id /* Request code */,
                 pastOrderIntent,
-                PendingIntent.FLAG_ONE_SHOT
+                PendingIntent.FLAG_UPDATE_CURRENT
         );
     }
 
@@ -158,8 +160,11 @@ public class MyFcmListenerService extends FirebaseMessagingService {
             intent.putExtra(MainActivity.EXTRA_BOOLEAN_FROM_NOTIFICATION, true);
             intent.putExtra(MainActivity.EXTRA_STRING_NOTIFICATION_TITLE, data.get("content_title").toString());
         }
-        return PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+        return PendingIntent.getActivity(
+                this,
+                id /* Request code */,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private PendingIntent getProductPendingIntent(Map data) {
@@ -170,8 +175,11 @@ public class MyFcmListenerService extends FirebaseMessagingService {
         intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, product.getCategoryName());
         intent.putExtra(ProductActivity.EXTRA_BOOLEAN_FROM_NOTIFICATION, true);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        return PendingIntent.getActivity(this, 0 /* Request code */, intent,
-                PendingIntent.FLAG_ONE_SHOT);
+        return PendingIntent.getActivity(
+                this,
+                id /* Request code */,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private BigPictureStyle getBigPictureStyle(String contentText, Bitmap bitmap) {
@@ -188,6 +196,6 @@ public class MyFcmListenerService extends FirebaseMessagingService {
         NotificationManager notificationManager =
                 (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
-        notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+        notificationManager.notify(id /* ID of notification */, notificationBuilder.build());
     }
 }
