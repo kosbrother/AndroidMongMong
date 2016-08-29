@@ -221,7 +221,7 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         mViewPager.setCurrentItem(sortIndex);
     }
 
-    public class FilterPagerAdapter extends FragmentStatePagerAdapter {
+    public static class FilterPagerAdapter extends FragmentStatePagerAdapter {
 
         private final Category.SortName[] sortNames = Category.SortName.values();
         private final int categoryId;
@@ -344,9 +344,10 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         }
 
         @Override
-        public void onDestroy() {
+        public void onStop() {
+            super.onStop();
+            stopCategoryAppIndex();
             DataManager.getInstance().unSubscribe(this);
-            super.onDestroy();
         }
 
         @Override
