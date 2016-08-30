@@ -14,8 +14,8 @@
         android:paddingRight="16dp">
 
         <FrameLayout
-            android:layout_width="28dp"
-            android:layout_height="28dp"
+            android:layout_width="26dp"
+            android:layout_height="26dp"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp">
 
@@ -50,7 +50,8 @@
                 android:layout_height="wrap_content"
                 android:text="分享萌萌屋，賺取160元購物金"
                 android:textColor="@color/black_4a4a4a"
-                android:textSize="14sp" />
+                android:textSize="15sp"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/item_shopping_points_campaign_active_date_tv"

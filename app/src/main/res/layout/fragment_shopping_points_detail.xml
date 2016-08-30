@@ -13,15 +13,9 @@
         android:background="@color/white"
         android:elevation="2dp"
         android:paddingBottom="12dp"
-        android:paddingLeft="16dp"
+        android:paddingLeft="8dp"
         android:paddingRight="16dp"
         android:paddingTop="12dp">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            android:src="@mipmap/img_money_bag" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -30,7 +24,8 @@
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
             android:text="可用購物金"
-            android:textColor="@color/grey_text_999999" />
+            android:textColor="@color/grey_text_999999"
+            android:textSize="11sp" />
 
         <TextView
             android:id="@+id/fragment_shopping_points_detail_total_tv"
@@ -39,9 +34,17 @@
             android:layout_alignParentBottom="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:textColor="@color/black_4a4a4a"
+            android:textColor="@color/green_text"
             android:textSize="20sp"
+            android:textStyle="bold"
             tools:text="$ 180" />
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@id/fragment_shopping_points_detail_total_tv"
+            android:src="@mipmap/img_money_bag" />
+
     </RelativeLayout>
 
     <android.support.v7.widget.RecyclerView

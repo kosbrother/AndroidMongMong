@@ -75,10 +75,17 @@ public class ShoppingPointsDetailAdapter extends RecyclerView.Adapter<ShoppingPo
         public void bind(Context context, ShoppingPointsViewModel viewModel) {
             boolean valid = viewModel.isValid();
             imageView.setImageResource(valid ? R.mipmap.ic_money_valid : R.mipmap.ic_money_invalid);
-            validUntilTextView.setVisibility(valid ? View.VISIBLE : View.GONE);
 
             pointTypeTextView.setText(viewModel.getPointTypeText());
-            validUntilTextView.setText(viewModel.getValidUntilText());
+
+            String validUntilText = viewModel.getValidUntilText();
+            if (validUntilText == null || validUntilText.isEmpty()) {
+                validUntilTextView.setVisibility(View.GONE);
+            } else {
+                validUntilTextView.setVisibility(View.VISIBLE);
+                validUntilTextView.setText(validUntilText);
+            }
+
             String descriptionText = viewModel.getDescriptionText();
             if (descriptionText == null || descriptionText.isEmpty()) {
                 descriptionTextView.setVisibility(View.GONE);
@@ -86,6 +93,7 @@ public class ShoppingPointsDetailAdapter extends RecyclerView.Adapter<ShoppingPo
                 descriptionTextView.setVisibility(View.VISIBLE);
                 descriptionTextView.setText(descriptionText);
             }
+
             amountTextView.setText(viewModel.getAmountText());
 
             addRecordsItemView(context, viewModel.getShoppingPointsRecordsViewModels());

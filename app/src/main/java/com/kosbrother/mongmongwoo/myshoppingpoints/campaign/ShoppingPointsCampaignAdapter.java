@@ -90,7 +90,7 @@ public class ShoppingPointsCampaignAdapter extends RecyclerView.Adapter<Shopping
     }
 
     private void setTextView(String activeDate, TextView activeDateTextView) {
-        if (activeDate == null || activeDate.isEmpty()) {
+        if (activeDate == null || activeDate.trim().isEmpty()) {
             activeDateTextView.setVisibility(View.GONE);
         } else {
             activeDateTextView.setText(activeDate);
