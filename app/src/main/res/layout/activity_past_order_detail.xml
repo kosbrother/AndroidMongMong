@@ -99,7 +99,70 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/black_4a4a4a"
                         android:textSize="14sp"
-                        tools:text="NT$ 60" />
+                        tools:text="NT$ 490" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/activity_past_order_shopping_points_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingBottom="8dp"
+                    android:visibility="gone"
+                    tools:visibility="visible">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingBottom="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="購物金折抵"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/activity_past_order_shopping_point_amount_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp"
+                            tools:text="-NT$ 200" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/bg_divider" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingTop="8dp">
+
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="折抵後總額"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/activity_past_order_shopping_points_subtotal_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp"
+                            tools:text="NT$ 290" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -113,7 +176,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="運費 (7-11超商取貨付款)"
+                        android:text="運費(滿490免運費)"
                         android:textColor="@color/black_4a4a4a"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -122,9 +185,9 @@
                         android:id="@+id/order_detail_ship_price_tv"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/red_text"
+                        android:textColor="@color/black_4a4a4a"
                         android:textSize="14sp"
-                        tools:text="NT$ 60" />
+                        tools:text="NT$ 90" />
                 </LinearLayout>
 
                 <View
@@ -154,7 +217,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/red_text"
                         android:textSize="14sp"
-                        tools:text="NT$ 207" />
+                        tools:text="NT$ 380" />
                 </LinearLayout>
 
             </LinearLayout>

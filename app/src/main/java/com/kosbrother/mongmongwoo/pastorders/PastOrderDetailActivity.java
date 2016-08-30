@@ -152,6 +152,19 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
         TextView totalPriceTextView = (TextView) findViewById(R.id.order_detail_total_price_tv);
         totalPriceTextView.setText(pastOrder.getTotalText());
 
+        if (pastOrder.getShoppingPointAmount() > 0) {
+            findViewById(R.id.activity_past_order_shopping_points_ll).setVisibility(View.VISIBLE);
+
+            TextView shoppingPointAmountTextView =
+                    (TextView) findViewById(R.id.activity_past_order_shopping_point_amount_tv);
+            shoppingPointAmountTextView.setText(pastOrder.getShoppingPointAmountText());
+
+            TextView shoppingPointSubTotalTextView =
+                    (TextView) findViewById(R.id.activity_past_order_shopping_points_subtotal_tv);
+            shoppingPointSubTotalTextView.setText(pastOrder.getShoppingPointSubTotalText());
+        }
+
+        findViewById(R.id.activity_past_order_shopping_points_ll);
         String note = pastOrder.getNote();
         if (note != null && !note.isEmpty()) {
             ViewStub noteViewStub = (ViewStub) findViewById(R.id.note_vs);
