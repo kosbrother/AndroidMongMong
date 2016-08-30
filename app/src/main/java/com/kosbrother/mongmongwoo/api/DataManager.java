@@ -791,7 +791,7 @@ public class DataManager {
         Observable<ResponseEntity<String>> deleteWishListsItemSpecs(
                 @Path("userId") int userId, @Path("itemSpecId") int itemSpecId);
 
-        @GET("api/v3/orders/{orderId}")
+        @GET("api/v4/orders/{orderId}")
         Observable<ResponseEntity<PastOrder>> getOrders(@Path("orderId") int orderId);
 
         @PATCH("api/v3/users/{userId}/orders/{orderId}/cancel")
