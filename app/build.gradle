@@ -80,7 +80,6 @@ dependencies {
         transitive = true;
     }
 
-    compile 'com.inthecheesefactory.thecheeselibrary:adjustable-imageview:1.0.1'
     compile 'org.apmem.tools:layouts:1.10@aar'
 
     // Dependencies for local unit tests

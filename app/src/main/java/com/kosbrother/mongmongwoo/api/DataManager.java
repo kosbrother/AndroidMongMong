@@ -4,6 +4,7 @@ import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.entity.UserEntity;
+import com.kosbrother.mongmongwoo.entity.banner.Banner;
 import com.kosbrother.mongmongwoo.entity.mycollect.FavoriteItemEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostFavoriteItemsEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
@@ -615,6 +616,39 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void getBanners(final ApiCallBack callBack) {
+        Observable<ResponseEntity<List<Banner>>> observable =
+                networkAPI.getBanners()
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<List<Banner>>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<List<Banner>> listResponseEntity) {
+                List<Banner> data = listResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(listResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void unSubscribe(ApiCallBack callBack) {
         if (callBack == null) {
             return;
@@ -716,6 +750,9 @@ public class DataManager {
         @FormUrlEncoded
         @POST("api/v3/mmw_registrations/forget")
         Observable<ResponseEntity<String>> postMmwRegistrationsForget(@Field("email") String email);
+
+        @GET("api/v4/banners")
+        Observable<ResponseEntity<List<Banner>>> getBanners();
     }
 
 }

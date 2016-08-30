@@ -14,9 +14,11 @@
         android:orientation="vertical">
 
         <RelativeLayout
+            android:id="@+id/content_main_banner_rl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp">
+            android:layout_marginBottom="8dp"
+            android:visibility="gone">
 
             <com.kosbrother.mongmongwoo.widget.WrapContentViewPager
                 android:id="@+id/content_main_banner_vp"
@@ -26,8 +28,8 @@
             <include
                 layout="@layout/indicator"
                 android:layout_width="match_parent"
-                android:layout_alignBottom="@id/content_main_banner_vp"
                 android:layout_height="wrap_content"
+                android:layout_alignBottom="@id/content_main_banner_vp"
                 android:layout_marginBottom="5dp" />
 
         </RelativeLayout>
