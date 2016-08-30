@@ -36,6 +36,7 @@ public class ShoppingPointsCampaignAdapter extends RecyclerView.Adapter<Shopping
 
         setAmountImageView(campaignStatus, holder.amountImageView);
         setStatusTextViewTextColor(campaignStatus, holder.statusTextView);
+        setTitleTextViewTextColor(campaignStatus, holder.titleTextView);
         setTextView(campaignStatus.getText(), holder.statusTextView);
         setTextView(viewModel.getAmountText(), holder.amountTextView);
         setTextView(viewModel.getTitleText(), holder.titleTextView);
@@ -53,6 +54,21 @@ public class ShoppingPointsCampaignAdapter extends RecyclerView.Adapter<Shopping
                 break;
             case PROCESSING:
                 amountImageView.setImageResource(R.mipmap.ic_money_processing);
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    private void setTitleTextViewTextColor(ShoppingPointsCampaignViewModel.CampaignStatus campaignStatus, TextView titleTextView) {
+        switch (campaignStatus) {
+            case COLLECTED:
+            case NOTCOLLECTED:
+                titleTextView.setTextColor(ContextCompat.getColor(context, R.color.grey_text_999999));
+                break;
+            case PROCESSING:
+                titleTextView.setTextColor(ContextCompat.getColor(context, R.color.black_4a4a4a));
                 break;
             default:
                 break;

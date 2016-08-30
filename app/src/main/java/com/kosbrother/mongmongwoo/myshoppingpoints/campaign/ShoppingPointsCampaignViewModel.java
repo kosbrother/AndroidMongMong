@@ -64,6 +64,9 @@ public class ShoppingPointsCampaignViewModel {
     }
 
     public String getDescription() {
+        if (entity.getExpired() || entity.getCollected()) {
+            return "";
+        }
         return entity.getDescription();
     }
 
