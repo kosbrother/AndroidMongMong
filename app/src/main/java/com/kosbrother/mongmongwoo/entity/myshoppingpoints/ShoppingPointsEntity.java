@@ -13,6 +13,8 @@ public class ShoppingPointsEntity implements Serializable {
     private int amount;
     @SerializedName("valid_until")
     private String validUntil;
+    @SerializedName("is_valid")
+    private Boolean isValid;
     @SerializedName("description")
     private String description;
     @SerializedName("shopping_point_records")
@@ -28,6 +30,10 @@ public class ShoppingPointsEntity implements Serializable {
 
     public String getValidUntil() {
         return validUntil;
+    }
+
+    public Boolean getValid() {
+        return isValid;
     }
 
     public String getDescription() {

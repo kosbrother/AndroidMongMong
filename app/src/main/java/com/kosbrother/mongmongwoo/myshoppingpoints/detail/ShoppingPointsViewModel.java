@@ -15,8 +15,7 @@ public class ShoppingPointsViewModel {
     }
 
     public boolean isValid() {
-        String validUntil = entity.getValidUntil();
-        return validUntil != null && !validUntil.isEmpty();
+        return entity.getValid();
     }
 
     public String getPointTypeText() {
