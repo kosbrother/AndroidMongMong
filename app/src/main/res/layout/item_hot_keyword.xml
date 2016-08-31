@@ -10,6 +10,6 @@
     android:paddingLeft="8dp"
     android:paddingRight="8dp"
     android:paddingTop="2dp"
-    android:textColor="@color/orange"
+    android:textColor="@color/orange_f5a623"
     android:textSize="14sp"
     tools:text="test" />

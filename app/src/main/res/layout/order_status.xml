@@ -129,7 +129,8 @@
             android:gravity="center"
             android:text="訂單成立"
             android:textColor="@color/black_4a4a4a"
-            android:textSize="11sp" />
+            android:textSize="11sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/order_status_step2_tv"
@@ -139,7 +140,8 @@
             android:gravity="center"
             android:text="處理中"
             android:textColor="@color/black_4a4a4a"
-            android:textSize="11sp" />
+            android:textSize="11sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/order_status_step3_tv"
@@ -149,7 +151,8 @@
             android:gravity="center"
             android:text="配送中"
             android:textColor="@color/black_4a4a4a"
-            android:textSize="11sp" />
+            android:textSize="11sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/order_status_step4_tv"
@@ -159,7 +162,8 @@
             android:gravity="center"
             android:text="已到店"
             android:textColor="@color/black_4a4a4a"
-            android:textSize="11sp" />
+            android:textSize="11sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/order_status_step5_tv"
@@ -169,7 +173,8 @@
             android:gravity="center"
             android:text="已取貨"
             android:textColor="@color/black_4a4a4a"
-            android:textSize="11sp" />
+            android:textSize="11sp"
+            android:textStyle="bold" />
     </LinearLayout>
 
 </LinearLayout>
