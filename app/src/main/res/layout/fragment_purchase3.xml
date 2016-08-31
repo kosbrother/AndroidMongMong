@@ -13,13 +13,12 @@
 
         <Button
             android:id="@+id/fragment_purchase3_send_btn"
+            style="@style/GreenButton"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_margin="16dp"
-            android:background="@drawable/button_green_selector"
             android:text="送出訂單"
-            android:textColor="@color/white"
             android:textSize="14sp" />
     </FrameLayout>
 

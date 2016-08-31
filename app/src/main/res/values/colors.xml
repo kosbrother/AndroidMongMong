@@ -33,7 +33,7 @@
 
     <color name="fab_blue">#03a9f4</color>
     <color name="fab_yellow">#ffc400</color>
-    <color name="orange">#f5a623</color>
+    <color name="orange_f5a623">#f5a623</color>
 
     <color name="google_button_background_color">#4284f3</color>
     <color name="google_button_background_color_focus">#4284f3</color>
@@ -42,4 +42,5 @@
     <color name="bg_green_color_filter">#40159D75</color>
     <color name="diagonal_line">#4dffffff</color>
 
+    <color name="pink_ff3d53">#FF3D53</color>
 </resources>

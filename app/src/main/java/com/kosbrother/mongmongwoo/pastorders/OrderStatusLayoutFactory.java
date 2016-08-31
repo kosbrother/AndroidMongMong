@@ -75,7 +75,7 @@ public class OrderStatusLayoutFactory {
         imageView.setImageResource(R.mipmap.img_order_status_on);
 
         TextView textView = (TextView) orderStatus.findViewById(stepTextViewId);
-        textView.setTextColor(ContextCompat.getColor(context, R.color.green_text));
+        textView.setTextColor(ContextCompat.getColor(context, R.color.orange_f5a623));
     }
 
     @SuppressLint("InflateParams")

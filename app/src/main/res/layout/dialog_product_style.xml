@@ -100,7 +100,7 @@
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:background="@drawable/red_selector"
+        android:background="@drawable/pink_selector"
         android:text="確定"
         android:textColor="@color/white"
         android:textSize="14sp" />

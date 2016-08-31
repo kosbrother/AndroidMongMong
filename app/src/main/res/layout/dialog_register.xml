@@ -45,15 +45,14 @@
 
         <TextView
             android:id="@+id/register_tv"
+            style="@style/GreenButton"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginBottom="32dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:background="@drawable/button_green_selector"
             android:gravity="center"
             android:text="註冊新帳號"
-            android:textColor="@color/white"
             android:textSize="14sp"
             android:textStyle="bold" />
     </LinearLayout>

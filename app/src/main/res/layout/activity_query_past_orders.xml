@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     tools:context=".pastorders.QueryPastOrdersActivity">
 
@@ -90,16 +90,16 @@
     </LinearLayout>
 
     <Button
+        style="@style/GreenButton"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginStart="10dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
-        android:background="@drawable/button_green_selector"
         android:onClick="onSubmitQueryButtonClick"
         android:text="@string/submit"
-        android:textColor="@color/white" />
+        android:textSize="14sp" />
 
 </LinearLayout>
