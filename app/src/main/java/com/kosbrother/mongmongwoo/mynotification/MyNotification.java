@@ -8,7 +8,6 @@ import java.io.Serializable;
 public class MyNotification extends MyNotificationEntity {
 
     private boolean isNew = true;
-    private NotificationDetail notificationDetail;
 
     public boolean isNew() {
         return isNew;

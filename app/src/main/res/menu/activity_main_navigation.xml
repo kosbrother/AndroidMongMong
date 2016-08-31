@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:title="@string/activity_main_navigation_my_mmw">
+        <menu>
+            <item
+                android:id="@+id/activity_main_navigation_my_shopping_points"
+                android:icon="@mipmap/ic_attach_money_grey_24dp"
+                android:title="@string/activity_main_navigation_my_shopping_points" />
+            <item
+                android:id="@+id/activity_main_navigation_my_orders"
+                android:icon="@drawable/drawer_order"
+                android:title="@string/activity_main_navigation_my_orders" />
+            <item
+                android:id="@+id/activity_main_navigation_my_collect_title"
+                android:icon="@mipmap/ic_favorite_pink_24dp"
+                android:title="@string/activity_main_navigation_my_collect_title" />
+        </menu>
+    </item>
+
+    <item android:title="@string/activity_main_navigation_about_us">
+        <menu>
+            <item
+                android:id="@+id/activity_main_navigation_customer_service_center"
+                android:icon="@drawable/drawer_people"
+                android:title="@string/activity_main_navigation_customer_service_center" />
+            <item
+                android:id="@+id/activity_main_navigation_shopping_info"
+                android:icon="@mipmap/ic_speaker_notes_grey_300_48dp"
+                android:title="@string/activity_main_navigation_shopping_info" />
+            <item
+                android:id="@+id/activity_main_navigation_share_mmw"
+                android:icon="@drawable/ic_share_grey_900_48dp"
+                android:title="@string/activity_main_navigation_share_mmw" />
+            <item
+                android:id="@+id/activity_main_navigation_about_mmw"
+                android:icon="@drawable/drawer_about"
+                android:title="@string/activity_main_navigation_about_mmw"
+                app:actionLayout="@layout/new_version_tv" />
+            <item
+                android:id="@+id/activity_main_navigation_log_out"
+                android:icon="@mipmap/ic_log_out"
+                android:title="@string/activity_main_navigation_log_out" />
+        </menu>
+    </item>
+
+</menu>

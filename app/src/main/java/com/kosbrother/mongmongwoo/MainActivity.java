@@ -72,6 +72,7 @@ import com.kosbrother.mongmongwoo.mycollect.MyCollectActivity;
 import com.kosbrother.mongmongwoo.mynotification.MyNotification;
 import com.kosbrother.mongmongwoo.mynotification.MyNotificationListActivity;
 import com.kosbrother.mongmongwoo.mynotification.MyNotificationManager;
+import com.kosbrother.mongmongwoo.myshoppingpoints.MyShoppingPointsActivity;
 import com.kosbrother.mongmongwoo.pastorders.PastOrderActivity;
 import com.kosbrother.mongmongwoo.pastorders.QueryPastOrdersActivity;
 import com.kosbrother.mongmongwoo.product.ProductActivity;
@@ -125,7 +126,7 @@ public class MainActivity extends AppCompatActivity
         getNewDateItems();
         getAllPopularItems();
         checkAndroidVersion();
-        getMyNotificationsIfLogin();
+        getMyNotifications();
         postFcmTokenIfServerNotReceived();
         sendGaEventIfFromNotification();
     }
@@ -172,6 +173,7 @@ public class MainActivity extends AppCompatActivity
             case REQUEST_LOGOUT:
                 if (resultCode == RESULT_OK) {
                     Settings.clearAllUserData();
+                    getMyNotifications();
                     Toast.makeText(this, "帳號已登出", Toast.LENGTH_SHORT).show();
                 } else if (resultCode == RESULT_CANCELED) {
                     if (data != null) {
@@ -182,7 +184,7 @@ public class MainActivity extends AppCompatActivity
                 break;
             case REQUEST_LOGIN:
                 if (resultCode == RESULT_OK) {
-                    getMyNotificationsIfLogin();
+                    getMyNotifications();
                 }
             default:
                 break;
@@ -254,9 +256,6 @@ public class MainActivity extends AppCompatActivity
         }
 
         MenuItem myNotificationItem = menu.findItem(R.id.activity_main_my_notification);
-        // TODO: 16/8/24 myNotificationItem always visible next version
-        myNotificationItem.setVisible(Settings.checkIsLogIn());
-
         View MyNotificationCountView = MenuItemCompat.getActionView(myNotificationItem);
         TextView myNotificationCountTextView = (TextView) MyNotificationCountView.findViewById(R.id.count);
 
@@ -293,36 +292,47 @@ public class MainActivity extends AppCompatActivity
         GAManager.sendEvent(new NavigationDrawerClickEvent(item.getTitle().toString()));
 
         int id = item.getItemId();
-        if (id == R.id.nav_orders) {
-            if (Settings.checkIsLogIn()) {
-                if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
-                    Intent intent = new Intent(MainActivity.this, PastOrderActivity.class);
-                    startActivity(intent);
+        switch (id) {
+            case R.id.activity_main_navigation_my_shopping_points:
+                startActivity(new Intent(this, MyShoppingPointsActivity.class));
+                break;
+            case R.id.activity_main_navigation_my_orders:
+                if (Settings.checkIsLogIn()) {
+                    if (NetworkUtil.getConnectivityStatus(MainActivity.this) != 0) {
+                        Intent intent = new Intent(MainActivity.this, PastOrderActivity.class);
+                        startActivity(intent);
+                    } else {
+                        Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
+                    }
                 } else {
-                    Toast.makeText(MainActivity.this, "無網路連線", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, QueryPastOrdersActivity.class));
                 }
-            } else {
-                startActivity(new Intent(this, QueryPastOrdersActivity.class));
-            }
-        } else if (id == R.id.nav_service) {
-            startActivity(new Intent(this, ServiceActivity.class));
-        } else if (id == R.id.nav_shop_infos) {
-            startActivity(new Intent(this, ShopInfoActivity.class));
-        } else if (id == R.id.nav_collect) {
-            if (Settings.checkIsLogIn()) {
-                startActivity(new Intent(this, MyCollectActivity.class));
-            } else {
-                startActivity(new Intent(this, LoginActivity.class));
-            }
-        } else if (id == R.id.nav_about) {
-            startActivity(new Intent(this, AboutActivity.class));
-        } else if (id == R.id.nav_share) {
-            String title = "分享萌萌屋";
-            String subject = "萌萌屋 - 走在青年流行前線";
-            String text = UrlCenter.GOOGLE_PLAY_SHARE;
-            ShareUtil.shareText(this, title, subject, text);
-        } else if (id == R.id.nav_log_out) {
-            showLogoutAlertDialog();
+                break;
+            case R.id.activity_main_navigation_customer_service_center:
+                startActivity(new Intent(this, ServiceActivity.class));
+                break;
+            case R.id.activity_main_navigation_shopping_info:
+                startActivity(new Intent(this, ShopInfoActivity.class));
+                break;
+            case R.id.activity_main_navigation_my_collect_title:
+                if (Settings.checkIsLogIn()) {
+                    startActivity(new Intent(this, MyCollectActivity.class));
+                } else {
+                    startActivity(new Intent(this, LoginActivity.class));
+                }
+                break;
+            case R.id.activity_main_navigation_about_mmw:
+                startActivity(new Intent(this, AboutActivity.class));
+                break;
+            case R.id.activity_main_navigation_share_mmw:
+                String title = "分享萌萌屋";
+                String subject = "萌萌屋 - 走在青年流行前線";
+                String text = UrlCenter.GOOGLE_PLAY_SHARE;
+                ShareUtil.shareText(this, title, subject, text);
+                break;
+            case R.id.activity_main_navigation_log_out:
+                showLogoutAlertDialog();
+                break;
         }
 
         DrawerLayout drawer = getDrawer();
@@ -503,19 +513,17 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void getMyNotificationsIfLogin() {
-        if (Settings.checkIsLogIn()) {
-            final int userId = Settings.getSavedUser().getUserId();
-            DataManager.getInstance().getMyNotificationList(userId, new Action1<List<MyNotification>>() {
-                @Override
-                public void call(List<MyNotification> myNotifications) {
-                    MyNotificationManager myNotificationManager = MyNotificationManager.
-                            getInstance(getApplicationContext(), userId);
-                    myNotificationManager.saveNewMyNotifications(myNotifications);
-                    invalidateOptionsMenu();
-                }
-            });
-        }
+    private void getMyNotifications() {
+        final int userId = Settings.getSavedUser().getUserId();
+        DataManager.getInstance().getMyNotificationList(userId, new Action1<List<MyNotification>>() {
+            @Override
+            public void call(List<MyNotification> myNotifications) {
+                MyNotificationManager myNotificationManager = MyNotificationManager.
+                        getInstance(getApplicationContext(), userId);
+                myNotificationManager.saveNewMyNotifications(myNotifications);
+                invalidateOptionsMenu();
+            }
+        });
     }
 
     private void postFcmTokenIfServerNotReceived() {
@@ -555,7 +563,7 @@ public class MainActivity extends AppCompatActivity
 
         NavigationView navigationView = getNavigationView();
         Menu navigationViewMenu = navigationView.getMenu();
-        View lastVersionActionView = navigationViewMenu.findItem(R.id.nav_about).getActionView();
+        View lastVersionActionView = navigationViewMenu.findItem(R.id.activity_main_navigation_about_mmw).getActionView();
 
         if (upToDate) {
             lastVersionActionView.setVisibility(View.INVISIBLE);
@@ -789,9 +797,9 @@ public class MainActivity extends AppCompatActivity
                 .into((ImageView) headerView.findViewById(R.id.user_imageview));
 
         Menu menu = getNavigationView().getMenu();
-        MenuItem ordersMenuItem = menu.findItem(R.id.nav_orders);
+        MenuItem ordersMenuItem = menu.findItem(R.id.activity_main_navigation_my_orders);
         ordersMenuItem.setTitle("我的訂單");
-        menu.findItem(R.id.nav_log_out).setVisible(true);
+        menu.findItem(R.id.activity_main_navigation_log_out).setVisible(true);
     }
 
     private void setUserLogoutView() {
@@ -801,9 +809,9 @@ public class MainActivity extends AppCompatActivity
         headerView.findViewById(R.id.login_ll).setVisibility(View.VISIBLE);
 
         Menu menu = getNavigationView().getMenu();
-        MenuItem ordersMenuItem = menu.findItem(R.id.nav_orders);
+        MenuItem ordersMenuItem = menu.findItem(R.id.activity_main_navigation_my_orders);
         ordersMenuItem.setTitle("查詢訂單");
-        menu.findItem(R.id.nav_log_out).setVisible(false);
+        menu.findItem(R.id.activity_main_navigation_log_out).setVisible(false);
     }
 
     private NavigationView getNavigationView() {

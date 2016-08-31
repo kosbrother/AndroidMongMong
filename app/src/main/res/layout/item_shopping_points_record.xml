@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/item_shopping_points_record_create_at_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:textColor="@color/grey_text_999999"
+        android:textSize="11sp"
+        tools:text="2016/07/29" />
+
+    <TextView
+        android:id="@+id/item_shopping_points_record_order_id_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:textColor="@color/grey_text_999999"
+        android:textSize="11sp"
+        tools:text="訂單編號124" />
+
+    <TextView
+        android:id="@+id/item_shopping_points_record_amount_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:textSize="11sp"
+        tools:text="+$120" />
+
+    <TextView
+        android:id="@+id/item_shopping_points_record_balance_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center_horizontal"
+        android:textColor="@color/grey_text_999999"
+        android:textSize="11sp"
+        tools:text="$120" />
+</LinearLayout>

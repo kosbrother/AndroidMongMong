@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <android.support.design.widget.TabLayout
+        android:id="@+id/activity_my_shopping_points_tl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_grey_f5f5f5"
+        android:elevation="2dp"
+        app:tabGravity="fill"
+        app:tabIndicatorColor="@color/green_text"
+        app:tabSelectedTextColor="@color/green_text"
+        app:tabTextColor="@color/black_4a4a4a" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/activity_my_shopping_points_vp"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+</LinearLayout>

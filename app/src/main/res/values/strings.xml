@@ -16,8 +16,6 @@
 
     <string name="update_hint">歡迎您前往google play<font color="red">下載更新</font>，若有任何問題可直接聯絡客服人員，我們會盡快為您處理！！</string>
 
-    <string name="my_collect_activity_title">我的收藏</string>
-
     <string name="activity_query_post_orders_result_subtitle">查詢結果</string>
     <string name="cell_phone">手機電話</string>
     <string name="cell_phone_hint">請輸入訂購人手機電話</string>
@@ -41,5 +39,18 @@
     <string name="dialog_stock_not_enough_login_message">
         已從您的訂單中移除，待補貨完成會再通知您！請至“我的收藏”裡的“補貨清單”查看．</string>
     <string name="dialog_stock_not_enough_not_login_message">已從您的訂單中移除，請再次確認您的訂單．</string>
+
+    <string name="activity_main_navigation_my_mmw">我的萌萌屋</string>
+    <string name="activity_main_navigation_my_collect_title">我的收藏</string>
+    <string name="activity_main_navigation_my_shopping_points">我的購物金</string>
+    <string name="activity_main_navigation_my_orders">我的訂單</string>
+    <string name="activity_main_navigation_about_us">關於我們</string>
+    <string name="activity_main_navigation_customer_service_center">客服中心</string>
+    <string name="activity_main_navigation_shopping_info">購物說明</string>
+    <string name="activity_main_navigation_share_mmw">分享萌萌屋</string>
+    <string name="activity_main_navigation_about_mmw">關於萌萌屋</string>
+    <string name="activity_main_navigation_log_out">登出</string>
+
+    <string name="activity_my_shopping_points_shopping_info">購物說明</string>
 
 </resources>

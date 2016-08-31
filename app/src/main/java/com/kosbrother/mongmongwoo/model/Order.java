@@ -31,14 +31,8 @@ public class Order implements Serializable {
     private String shipEmail;
     @SerializedName("products")
     private List<PostProduct> products;
-
-    public int getShipFee() {
-        return shipFee;
-    }
-
-    public int getTotal() {
-        return total;
-    }
+    @SerializedName("shopping_points_amount")
+    private int shoppingPointsAmount;
 
     public String getShipEmail() {
         return shipEmail;
@@ -92,8 +86,8 @@ public class Order implements Serializable {
         this.shipStoreName = shipStoreName;
     }
 
-    public int getItemsPrice() {
-        return itemsPrice;
+    public void setShoppingPointsAmount(int shoppingPointsAmount) {
+        this.shoppingPointsAmount = shoppingPointsAmount;
     }
 
 }

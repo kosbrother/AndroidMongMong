@@ -1,6 +1,7 @@
 package com.kosbrother.mongmongwoo.mynotification;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
@@ -86,6 +87,14 @@ public class MyNotificationListActivity extends BaseActivity implements
     public void startMainActivityThenFinish() {
         startActivity(new Intent(this, MainActivity.class));
         finish();
+    }
+
+    @Override
+    public void startIndexActivity(Uri appIndexUri) {
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_VIEW);
+        intent.setData(appIndexUri);
+        startActivity(intent);
     }
 
     @Override

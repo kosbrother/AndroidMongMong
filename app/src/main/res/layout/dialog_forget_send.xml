@@ -31,7 +31,7 @@
         android:layout_marginBottom="24dp"
         android:gravity="center_horizontal"
         android:text="重設密碼的信件已寄出，\n麻煩您前往信箱並完成密碼重設。\n萌萌屋祝您購物愉快！"
-        android:textColor="@color/black_text"
+        android:textColor="@color/black_4a4a4a"
         android:textSize="14sp" />
 
     <TextView

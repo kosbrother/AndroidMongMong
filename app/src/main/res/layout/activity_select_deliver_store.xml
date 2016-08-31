@@ -53,7 +53,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
                     android:text="縣市："
-                    android:textColor="@color/black_text"
+                    android:textColor="@color/black_4a4a4a"
                     android:textSize="14sp" />
 
                 <Spinner
@@ -74,7 +74,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
                     android:text="區域："
-                    android:textColor="@color/black_text"
+                    android:textColor="@color/black_4a4a4a"
                     android:textSize="14sp" />
 
                 <Spinner
@@ -95,7 +95,7 @@
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
                     android:text="路段："
-                    android:textColor="@color/black_text"
+                    android:textColor="@color/black_4a4a4a"
                     android:textSize="14sp" />
 
                 <Spinner

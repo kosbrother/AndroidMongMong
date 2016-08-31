@@ -36,7 +36,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:gravity="center_vertical"
-        android:textColor="@color/black_text"
+        android:textColor="@color/black_4a4a4a"
         android:textSize="14sp"
         tools:text="萌萌屋接收訂單後, 包含假日 7~10 天左右會將商品寄送到取貨門市,如果您等待的天數超過 10 天, 請一定記得通知小編.倘若小編出貨疏失, 會補與精美小禮喔~" />
 </LinearLayout>

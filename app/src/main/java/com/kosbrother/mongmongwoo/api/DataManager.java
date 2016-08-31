@@ -9,6 +9,8 @@ import com.kosbrother.mongmongwoo.entity.mycollect.FavoriteItemEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostFavoriteItemsEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.WishListEntity;
+import com.kosbrother.mongmongwoo.entity.myshoppingpoints.ShoppingPointsCampaignsEntity;
+import com.kosbrother.mongmongwoo.entity.myshoppingpoints.ShoppingPointsDetailEntity;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrderResultEntity;
 import com.kosbrother.mongmongwoo.entity.user.MmwUserEntity;
@@ -550,6 +552,73 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void getShoppingPointsInfo(int userId, final ApiCallBack callBack) {
+        Observable<ResponseEntity<ShoppingPointsDetailEntity>> observable =
+                networkAPI.getShoppingPointsInfo(userId)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(
+                new Subscriber<ResponseEntity<ShoppingPointsDetailEntity>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        removeSubscription(key);
+                        callBack.onError(getErrorMessage(e));
+                    }
+
+                    @Override
+                    public void onNext(ResponseEntity<ShoppingPointsDetailEntity> responseEntity) {
+                        removeSubscription(key);
+                        ShoppingPointsDetailEntity data = responseEntity.getData();
+                        if (data == null) {
+                            callBack.onError(responseEntity.getError().getMessage());
+                        } else {
+                            callBack.onSuccess(data);
+                        }
+                    }
+                });
+        subscriptionMap.put(key, subscription);
+    }
+
+    public void getShoppingPointsCampaign(int userId, final ApiCallBack callBack) {
+        Observable<ResponseEntity<List<ShoppingPointsCampaignsEntity>>> observable =
+                networkAPI.getShoppingPointCampaigns(userId)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(
+                new Subscriber<ResponseEntity<List<ShoppingPointsCampaignsEntity>>>() {
+                    @Override
+                    public void onCompleted() {
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        removeSubscription(key);
+                        callBack.onError(getErrorMessage(e));
+                    }
+
+                    @Override
+                    public void onNext(ResponseEntity<List<ShoppingPointsCampaignsEntity>> responseEntity) {
+                        removeSubscription(key);
+                        List<ShoppingPointsCampaignsEntity> data = responseEntity.getData();
+                        if (data == null) {
+                            callBack.onError(responseEntity.getError().getMessage());
+                        } else {
+                            callBack.onSuccess(data);
+                        }
+                    }
+
+                });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void login(String email, String password, String registrationId, final ApiCallBack callBack) {
         Observable<ResponseEntity<Integer>> observable =
                 networkAPI.postMmwRegistrationsLogin(email, password, registrationId)
@@ -663,6 +732,10 @@ public class DataManager {
         }
     }
 
+    public boolean isAllTasksDone() {
+        return subscriptionMap.isEmpty();
+    }
+
     private synchronized void removeSubscription(String key) {
         subscriptionMap.remove(key);
     }
@@ -693,7 +766,7 @@ public class DataManager {
         @GET("api/android_version")
         Observable<AndroidVersionEntity> getAndroidVersionObservable();
 
-        @GET("api/v3/users/{userId}/my_messages")
+        @GET("api/v4/users/{userId}/my_messages")
         Observable<ResponseEntity<List<MyNotification>>> getMyMessages(@Path("userId") int userId);
 
         @GET("api/v3/users/{userId}/favorite_items")
@@ -718,7 +791,7 @@ public class DataManager {
         Observable<ResponseEntity<String>> deleteWishListsItemSpecs(
                 @Path("userId") int userId, @Path("itemSpecId") int itemSpecId);
 
-        @GET("api/v3/orders/{orderId}")
+        @GET("api/v4/orders/{orderId}")
         Observable<ResponseEntity<PastOrder>> getOrders(@Path("orderId") int orderId);
 
         @PATCH("api/v3/users/{userId}/orders/{orderId}/cancel")
@@ -740,6 +813,14 @@ public class DataManager {
 
         @POST("api/v4/mmw_registrations")
         Observable<ResponseEntity<Integer>> postMmwRegistrations(@Body MmwUserEntity mmwUserEntity);
+
+        @GET("api/v4/users/{userId}/shopping_points")
+        Observable<ResponseEntity<ShoppingPointsDetailEntity>> getShoppingPointsInfo(
+                @Path("userId") int userId);
+
+        @GET("api/v4/users/{userId}/shopping_point_campaigns")
+        Observable<ResponseEntity<List<ShoppingPointsCampaignsEntity>>> getShoppingPointCampaigns(
+                @Path("userId") int userId);
 
         @FormUrlEncoded
         @POST("api/v4/mmw_registrations/login")

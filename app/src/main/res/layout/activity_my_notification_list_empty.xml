@@ -33,7 +33,7 @@
             android:layout_margin="20dp"
             android:gravity="center_horizontal"
             android:text="@string/notification_empty_content"
-            android:textColor="@color/black_text"
+            android:textColor="@color/black_4a4a4a"
             android:textSize="14sp" />
     </LinearLayout>
 </ScrollView>

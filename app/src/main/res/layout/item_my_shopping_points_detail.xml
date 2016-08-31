@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/gray_selector"
+    android:orientation="vertical">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/item_my_shopping_points_detail_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:adjustViewBounds="true"
+            tools:src="@mipmap/ic_money_valid" />
+
+        <TextView
+            android:id="@+id/item_my_shopping_points_detail_amount_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:drawableEnd="@mipmap/ic_arrow_drop_down_grey_36dp"
+            android:drawableRight="@mipmap/ic_arrow_drop_down_grey_36dp"
+            android:gravity="center_vertical"
+            android:textColor="@color/black_4a4a4a"
+            android:textSize="20sp"
+            tools:text="$60" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toEndOf="@id/item_my_shopping_points_detail_iv"
+            android:layout_toLeftOf="@id/item_my_shopping_points_detail_amount_tv"
+            android:layout_toRightOf="@id/item_my_shopping_points_detail_iv"
+            android:layout_toStartOf="@id/item_my_shopping_points_detail_amount_tv"
+            android:orientation="vertical"
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp">
+
+            <TextView
+                android:id="@+id/item_my_shopping_points_detail_point_type_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black_4a4a4a"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                tools:text="活動購物金" />
+
+            <TextView
+                android:id="@+id/item_my_shopping_points_detail_valid_until_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/red_text"
+                android:textSize="11sp"
+                tools:text="到期日：2016/09/01" />
+
+            <TextView
+                android:id="@+id/item_my_shopping_points_detail_description_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/grey_text_999999"
+                android:textSize="11sp"
+                tools:text="分享萌萌屋商品到FB，即可得到購物金$120元，動作要快，錯過可惜！" />
+        </LinearLayout>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/item_my_shopping_points_detail_records_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/grey_bg_f2f2f2"
+        android:orientation="vertical"
+        android:paddingTop="8dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:paddingBottom="8dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="日期"
+                android:textColor="@color/black_4a4a4a"
+                android:textSize="11sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="訂單編號"
+                android:textColor="@color/black_4a4a4a"
+                android:textSize="11sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="額度"
+                android:textColor="@color/black_4a4a4a"
+                android:textSize="11sp" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center_horizontal"
+                android:text="餘額"
+                android:textColor="@color/black_4a4a4a"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/bg_divider_f2f2f2" />
+</LinearLayout>

@@ -17,6 +17,8 @@ public class MyNotificationEntity implements Serializable{
     private String content;
     @SerializedName("created_at")
     private String createdAt;
+    @SerializedName("app_index_url")
+    private String appIndexUrl;
 
     public int getId() {
         return id;
@@ -41,5 +43,9 @@ public class MyNotificationEntity implements Serializable{
 
     public String getCreatedAt() {
         return createdAt;
+    }
+
+    public String getAppIndexUrl() {
+        return appIndexUrl;
     }
 }

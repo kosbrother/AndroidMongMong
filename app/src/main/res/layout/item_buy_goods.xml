@@ -39,7 +39,7 @@
             android:gravity="center_vertical"
             android:maxLines="2"
             android:text="Tsum Tsum 螢幕擦"
-            android:textColor="@color/black_text"
+            android:textColor="@color/black_4a4a4a"
             android:textSize="14sp" />
 
         <LinearLayout
@@ -90,7 +90,7 @@
                 android:id="@+id/item_car_price"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/black_text"
+                android:textColor="@color/black_4a4a4a"
                 android:textSize="14sp"
                 tools:text="NT$ 99 X 1" />
 
@@ -100,7 +100,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="end"
-                android:textColor="@color/black_text"
+                android:textColor="@color/black_4a4a4a"
                 android:textSize="14sp"
                 tools:text="小計：NT$ 199" />
         </LinearLayout>

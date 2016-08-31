@@ -6,10 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.AppCompatCheckBox;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -18,6 +20,8 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
+import com.kosbrother.mongmongwoo.api.DataManager;
+import com.kosbrother.mongmongwoo.entity.myshoppingpoints.ShoppingPointsDetailEntity;
 import com.kosbrother.mongmongwoo.facebookevent.FacebookLogger;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1ClickEvent;
@@ -34,27 +38,32 @@ import java.util.List;
 
 public class PurchaseFragment1 extends Fragment {
 
-    public static final int SHIP_FEE = 90;
-    private static final int FREE_SHIP_REQUIRED_PRICE = 490;
+    public static final String SHOPPING_POINTS_TEXT = "購物金(可折抵金額 NT$ %s)";
 
     private LinearLayout noLoginLayout;
     private Button loginButton;
     private Button guestCheckoutButton;
 
+    private View loadingView;
     private TextView totalGoodsPriceText;
     private TextView shippingPriceText;
-    private TextView totalPriceText;
     private Button confirmButton;
     private TextView freeShippingPriceRemainTextView;
     private TextView checkoutPriceBottomTextView;
     private LinearLayout goodsContainerLinearLayout;
+    private View shoppingPointsView;
+    private TextView shoppingPointsAmountTextView;
+    private View shoppingPointsSubTotalView;
+    private TextView shoppingPointsSubTotalTextView;
 
-    private List<Product> shoppingCarProducts;
-    private int totalGoodsPrice;
-    private int shippingPrice;
+    private List<Product> products;
 
+    private CalculateUtil.OrderPrice orderPrice;
+    private int shoppingPointsAmount = 0;
     private int tempCount;
     private OnStep1ButtonClickListener mCallback;
+    private AppCompatCheckBox shoppingPointsCheckBox;
+    private DataManager.ApiCallBack getShoppingPointsCallBack;
 
     @Override
     public void onAttach(Context context) {
@@ -70,8 +79,8 @@ public class PurchaseFragment1 extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        shoppingCarProducts = ((ShoppingCarActivity) getActivity()).getProducts();
-        if (shoppingCarProducts == null || shoppingCarProducts.size() == 0) {
+        products = ((ShoppingCarActivity) getActivity()).getProducts();
+        if (products == null || products.size() == 0) {
             return inflater.inflate(R.layout.view_stub_empty_shopping_car, container, false);
         }
 
@@ -85,7 +94,7 @@ public class PurchaseFragment1 extends Fragment {
         setConfirmButton();
 
         updatePricesText();
-        updateLayoutByLoginStatus();
+        updateLayoutByLoginStatus(Settings.checkIsLogIn());
         return view;
     }
 
@@ -95,18 +104,60 @@ public class PurchaseFragment1 extends Fragment {
         GAManager.sendEvent(new CheckoutStep1EnterEvent());
     }
 
-    public void updateLayoutByLoginStatus() {
-        if (!Settings.checkIsLogIn()) {
-            noLoginLayout.setVisibility(View.VISIBLE);
-            confirmButton.setVisibility(View.GONE);
-        } else {
+    @Override
+    public void onDestroy() {
+        DataManager.getInstance().unSubscribe(getShoppingPointsCallBack);
+        super.onDestroy();
+    }
+
+    public void updateLayoutByLoginStatus(final boolean login) {
+        if (login) {
+            loadingView.setVisibility(View.VISIBLE);
             noLoginLayout.setVisibility(View.GONE);
             confirmButton.setVisibility(View.VISIBLE);
+
+            getShoppingPointsCallBack = new DataManager.ApiCallBack() {
+                @Override
+                public void onError(String errorMessage) {
+                    loadingView.setVisibility(View.GONE);
+                    Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+                }
+
+                @Override
+                public void onSuccess(Object data) {
+                    ShoppingPointsDetailEntity entity = (ShoppingPointsDetailEntity) data;
+                    int total = entity.getTotal();
+                    if (total > 0) {
+                        initShoppingPointView(total);
+                    }
+                    loadingView.setVisibility(View.GONE);
+                }
+            };
+            int userId = Settings.getSavedUser().getUserId();
+            DataManager.getInstance().getShoppingPointsInfo(userId, getShoppingPointsCallBack);
+        } else {
+            loadingView.setVisibility(View.GONE);
+            noLoginLayout.setVisibility(View.VISIBLE);
+            confirmButton.setVisibility(View.GONE);
         }
     }
 
+    private void initShoppingPointView(final int total) {
+        String checkBoxText = String.format(SHOPPING_POINTS_TEXT, total);
+        shoppingPointsCheckBox.setText(checkBoxText);
+
+        shoppingPointsCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean checked) {
+                shoppingPointsAmount = checked ? total : 0;
+                updatePricesText();
+            }
+        });
+        shoppingPointsView.setVisibility(View.VISIBLE);
+    }
+
     private void logInitiatedCheckoutEvent() {
-        for (Product product : shoppingCarProducts) {
+        for (Product product : products) {
             FacebookLogger.getInstance().logInitiatedCheckoutEvent(
                     String.valueOf(product.getId()),
                     product.getCategoryName(),
@@ -119,27 +170,27 @@ public class PurchaseFragment1 extends Fragment {
     }
 
     private void updatePricesText() {
-        totalGoodsPrice = CalculateUtil.calculateTotalGoodsPrice(shoppingCarProducts);
-        shippingPrice = totalGoodsPrice >= FREE_SHIP_REQUIRED_PRICE ? 0 : SHIP_FEE;
+        orderPrice = CalculateUtil.calculateOrderPrice(products, shoppingPointsAmount);
 
-        String totalGoodsPriceString = "$" + totalGoodsPrice;
+        String totalGoodsPriceString = "NT$ " + orderPrice.getItemsPrice();
         totalGoodsPriceText.setText(totalGoodsPriceString);
 
-        String shippingPriceString;
-        String freeShippingPriceRemainString;
-        if (shippingPrice == 0) {
-            shippingPriceString = "免運費";
-            freeShippingPriceRemainString = "NT$ " + 0;
-        } else {
-            shippingPriceString = "$" + shippingPrice;
-            freeShippingPriceRemainString = "NT$ " + (FREE_SHIP_REQUIRED_PRICE - totalGoodsPrice);
-        }
-        freeShippingPriceRemainTextView.setText(freeShippingPriceRemainString);
-        shippingPriceText.setText(shippingPriceString);
+        String freeShippingPriceRemainText = "NT$ " + orderPrice.getFreeShippingRemain();
+        freeShippingPriceRemainTextView.setText(freeShippingPriceRemainText);
 
-        String totalPrice = "$" + (totalGoodsPrice + shippingPrice);
-        totalPriceText.setText(totalPrice);
+        String shoppingPriceText = "NT$ " + orderPrice.getShipFee();
+        shippingPriceText.setText(shoppingPriceText);
+
+        String totalPrice = "NT$ " + orderPrice.getTotal();
         checkoutPriceBottomTextView.setText(totalPrice);
+
+        int shoppingPointsAmount = orderPrice.getShoppingPointsAmount();
+        String shoppingPointText = "-NT$ " + shoppingPointsAmount;
+        shoppingPointsAmountTextView.setText(shoppingPointText);
+
+        shoppingPointsSubTotalView.setVisibility(shoppingPointsAmount > 0 ? View.VISIBLE : View.GONE);
+        String shoppingPointsSubTotalText = "NT$ " + orderPrice.getShoppingPointsSubTotal();
+        shoppingPointsSubTotalTextView.setText(shoppingPointsSubTotalText);
     }
 
     private void updateGoodsLinearLayout() {
@@ -148,9 +199,9 @@ public class PurchaseFragment1 extends Fragment {
     }
 
     private void findView(View view) {
+        loadingView = view.findViewById(R.id.loading_fragment_fl);
         totalGoodsPriceText = (TextView) view.findViewById(R.id.fragment1_goodsTotalPriceText);
         shippingPriceText = (TextView) view.findViewById(R.id.fragment1_shippingPriceText);
-        totalPriceText = (TextView) view.findViewById(R.id.fragment1_totalPriceText);
         confirmButton = (Button) view.findViewById(R.id.fragment1_confirm_button);
         noLoginLayout = (LinearLayout) view.findViewById(R.id.layout_buy_button);
         loginButton = (Button) view.findViewById(R.id.login_btn);
@@ -158,12 +209,18 @@ public class PurchaseFragment1 extends Fragment {
         freeShippingPriceRemainTextView = (TextView) view.findViewById(R.id.free_shipping_price_remain_tv);
         checkoutPriceBottomTextView = (TextView) view.findViewById(R.id.checkout_price_bottom_tv);
         goodsContainerLinearLayout = (LinearLayout) view.findViewById(R.id.goods_container_ll);
+
+        shoppingPointsView = view.findViewById(R.id.fragment_purchase1_shopping_points_ll);
+        shoppingPointsCheckBox = (AppCompatCheckBox) view.findViewById(R.id.fragment_purchase1_shopping_points_cb);
+        shoppingPointsAmountTextView = (TextView) view.findViewById(R.id.fragment_purchase1_shopping_points_amount_tv);
+        shoppingPointsSubTotalView = view.findViewById(R.id.fragment_purchase1_shopping_points_subTotal_ll);
+        shoppingPointsSubTotalTextView = (TextView) view.findViewById(R.id.fragment_purchase1_shopping_points_subTotal_tv);
     }
 
     @SuppressLint("InflateParams")
     private void addGoodsViewToLinearLayout() {
-        for (int i = 0; i < shoppingCarProducts.size(); i++) {
-            final Product product = shoppingCarProducts.get(i);
+        for (int i = 0; i < products.size(); i++) {
+            final Product product = products.get(i);
             View itemView = LayoutInflater.from(getContext()).inflate(R.layout.item_buy_goods, null);
             goodsContainerLinearLayout.addView(itemView);
 
@@ -183,7 +240,7 @@ public class PurchaseFragment1 extends Fragment {
             String nameString = product.getName();
             goodsNameTextView.setText(nameString);
 
-            String priceString = "NT$ " + product.getFinalPrice() + "X " + product.getBuy_count();
+            String priceString = "NT$ " + product.getFinalPrice() + " X " + product.getBuy_count();
             priceTextView.setText(priceString);
 
             String styleText = product.getSelectedSpec().getStyle();
@@ -206,7 +263,7 @@ public class PurchaseFragment1 extends Fragment {
                 }
             });
 
-            String subTotalText = "小計：NT$ " + (product.getBuy_count() * product.getFinalPrice());
+            String subTotalText = "小計：" + (product.getBuy_count() * product.getFinalPrice());
             subTotalTextView.setText(subTotalText);
 
             deleteImageView.setTag(i);
@@ -225,7 +282,7 @@ public class PurchaseFragment1 extends Fragment {
             @Override
             public void onClick(View v) {
                 GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.ANONYMOUS_PURCHASE));
-                mCallback.onGuestCheckoutClick(totalGoodsPrice, shippingPrice);
+                mCallback.onGuestCheckoutClick(orderPrice);
             }
         });
     }
@@ -235,7 +292,7 @@ public class PurchaseFragment1 extends Fragment {
             @Override
             public void onClick(View v) {
                 GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.LOGIN));
-                mCallback.onLoginClick(totalGoodsPrice, shippingPrice);
+                mCallback.onLoginClick(orderPrice);
             }
         });
     }
@@ -245,7 +302,7 @@ public class PurchaseFragment1 extends Fragment {
             @Override
             public void onClick(View v) {
                 GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.CONFIRM_FACEBOOK_LOGIN));
-                mCallback.onConfirmButtonClick(totalGoodsPrice, shippingPrice);
+                mCallback.onConfirmButtonClick(orderPrice);
             }
         });
     }
@@ -265,9 +322,9 @@ public class PurchaseFragment1 extends Fragment {
             public void onClick(DialogInterface dialog, int which) {
                 GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.PRODUCT_DELETE));
 
-                shoppingCarProducts.remove(position);
+                products.remove(position);
                 ShoppingCartManager.getInstance().removeShoppingItem(position);
-                if (shoppingCarProducts.size() == 0) {
+                if (products.size() == 0) {
                     mCallback.onNoShoppingItem();
                 } else {
                     updateGoodsLinearLayout();
@@ -293,8 +350,8 @@ public class PurchaseFragment1 extends Fragment {
 
             @Override
             public void onConfirmButtonClick(Product product) {
-                shoppingCarProducts.get(productPosition).setSelectedSpec(product.getSelectedSpec());
-                ShoppingCartManager.getInstance().storeShoppingItems(shoppingCarProducts);
+                products.get(productPosition).setSelectedSpec(product.getSelectedSpec());
+                ShoppingCartManager.getInstance().storeShoppingItems(products);
                 updateGoodsLinearLayout();
             }
         });
@@ -350,8 +407,8 @@ public class PurchaseFragment1 extends Fragment {
         alertDialogBuilder.setView(view);
         alertDialogBuilder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                shoppingCarProducts.get(product_position).setBuy_count(tempCount);
-                ShoppingCartManager.getInstance().storeShoppingItems(shoppingCarProducts);
+                products.get(product_position).setBuy_count(tempCount);
+                ShoppingCartManager.getInstance().storeShoppingItems(products);
                 updateGoodsLinearLayout();
                 updatePricesText();
             }
@@ -367,11 +424,11 @@ public class PurchaseFragment1 extends Fragment {
 
     public interface OnStep1ButtonClickListener {
 
-        void onGuestCheckoutClick(int totalGoodsPrice, int shippingPrice);
+        void onGuestCheckoutClick(CalculateUtil.OrderPrice orderPrice);
 
-        void onLoginClick(int totalGoodsPrice, int shippingPrice);
+        void onLoginClick(CalculateUtil.OrderPrice orderPrice);
 
-        void onConfirmButtonClick(int totalGoodsPrice, int shippingPrice);
+        void onConfirmButtonClick(CalculateUtil.OrderPrice orderPrice);
 
         void onNoShoppingItem();
     }

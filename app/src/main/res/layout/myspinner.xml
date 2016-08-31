@@ -9,6 +9,6 @@
     android:paddingRight="8dp"
     android:paddingTop="4dp"
     android:singleLine="true"
-    android:textColor="@color/black_text"
+    android:textColor="@color/black_4a4a4a"
     android:textSize="14sp"
     tools:text="spinnerText" />

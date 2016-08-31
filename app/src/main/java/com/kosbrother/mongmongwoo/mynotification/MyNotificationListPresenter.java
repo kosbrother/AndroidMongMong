@@ -1,5 +1,7 @@
 package com.kosbrother.mongmongwoo.mynotification;
 
+import android.net.Uri;
+
 import java.util.List;
 
 import rx.functions.Action1;
@@ -17,7 +19,7 @@ public class MyNotificationListPresenter implements MyNotificationListContract.P
 
     @Override
     public void onCreate() {
-        if(model.isFromNotification()){
+        if (model.isFromNotification()) {
             model.sendNotificationMyMessageOpenedEvent();
         }
         view.showLoading();
@@ -28,14 +30,20 @@ public class MyNotificationListPresenter implements MyNotificationListContract.P
     public void onMyNotificationClick(int adapterPosition) {
         model.saveReadNotification(adapterPosition);
         view.setMyNotificationRead(adapterPosition);
-        view.startMyNotificationDetailActivity(model.getMyNotificationDetail(adapterPosition));
+
+        Uri appIndexUri = model.getAppIndexUri(adapterPosition);
+        if (appIndexUri == null) {
+            view.startMyNotificationDetailActivity(model.getMyNotificationDetail(adapterPosition));
+        } else {
+            view.startIndexActivity(appIndexUri);
+        }
     }
 
     @Override
     public void onBackPressed() {
-        if(model.isFromNotification()){
+        if (model.isFromNotification()) {
             view.startMainActivityThenFinish();
-        }else {
+        } else {
             view.superOnBackPressed();
         }
     }

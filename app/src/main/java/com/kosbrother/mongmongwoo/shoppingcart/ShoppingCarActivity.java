@@ -50,7 +50,7 @@ import rx.functions.Action1;
 public class ShoppingCarActivity extends BaseActivity implements
         PurchaseFragment1.OnStep1ButtonClickListener,
         PurchaseFragment2.OnStep2ButtonClickListener,
-        PurchaseFragment3.OnStpe3ButtonClickListener {
+        PurchaseFragment3.OnStep3ButtonClickListener {
 
     private static final int REQUEST_LOGIN = 111;
     private static final int REQUEST_SELECT_STORE = REQUEST_LOGIN + 1;
@@ -65,8 +65,7 @@ public class ShoppingCarActivity extends BaseActivity implements
     private View breadCrumb4;
 
     private List<Product> products;
-    private int totalGoodsPrice;
-    private int shippingPrice;
+
     private CenterProgressDialog progressDialog;
 
     private DataManager.ApiCallBack postOrderCallBack = new DataManager.ApiCallBack() {
@@ -85,6 +84,7 @@ public class ShoppingCarActivity extends BaseActivity implements
             }
         }
     };
+    private CalculateUtil.OrderPrice orderPrice;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -170,23 +170,20 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     @Override
-    public void onGuestCheckoutClick(int totalGoodsPrice, int shippingPrice) {
-        this.totalGoodsPrice = totalGoodsPrice;
-        this.shippingPrice = shippingPrice;
+    public void onGuestCheckoutClick(CalculateUtil.OrderPrice orderPrice) {
+        this.orderPrice = orderPrice;
         onStartStep2();
     }
 
     @Override
-    public void onLoginClick(final int totalGoodsPrice, final int shippingPrice) {
-        this.totalGoodsPrice = totalGoodsPrice;
-        this.shippingPrice = shippingPrice;
+    public void onLoginClick(CalculateUtil.OrderPrice orderPrice) {
+        this.orderPrice = orderPrice;
         onStartLogin();
     }
 
     @Override
-    public void onConfirmButtonClick(int totalGoodsPrice, int shippingPrice) {
-        this.totalGoodsPrice = totalGoodsPrice;
-        this.shippingPrice = shippingPrice;
+    public void onConfirmButtonClick(CalculateUtil.OrderPrice orderPrice) {
+        this.orderPrice = orderPrice;
         onStartStep2();
     }
 
@@ -252,7 +249,7 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     private void onStartLogin() {
-        if (totalGoodsPrice < shippingPrice) {
+        if (orderPrice.getItemsPrice() < orderPrice.getShipFee()) {
             showPriceAlertDialog(new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -265,7 +262,8 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     private void onStartStep2() {
-        if (totalGoodsPrice < shippingPrice) {
+        savePostProductsAndPrice();
+        if (orderPrice.getItemsPrice() < orderPrice.getShipFee()) {
             showPriceAlertDialog(new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
@@ -283,8 +281,7 @@ public class ShoppingCarActivity extends BaseActivity implements
 
         PurchaseFragment1 purchaseFragment1 =
                 (PurchaseFragment1) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        purchaseFragment1.updateLayoutByLoginStatus();
-        startStep2();
+        purchaseFragment1.updateLayoutByLoginStatus(true);
     }
 
     private void onSelectStoreResultOk(Intent data) {
@@ -305,9 +302,10 @@ public class ShoppingCarActivity extends BaseActivity implements
 
     private void savePostProductsAndPrice() {
         theOrder.setProducts(getPostProducts());
-        theOrder.setItemsPrice(totalGoodsPrice);
-        theOrder.setShipFee(shippingPrice);
-        theOrder.setTotal(shippingPrice + totalGoodsPrice);
+        theOrder.setItemsPrice(orderPrice.getItemsPrice());
+        theOrder.setShipFee(orderPrice.getShipFee());
+        theOrder.setTotal(orderPrice.getTotal());
+        theOrder.setShoppingPointsAmount(orderPrice.getShoppingPointsAmount());
     }
 
     private void saveShippingInfo(String shipName, String shipPhone, String shipEmail) {
@@ -330,7 +328,6 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     private void startStep2() {
-        savePostProductsAndPrice();
         setStepBar2();
 
         PurchaseFragment2 purchaseFragment2 = new PurchaseFragment2();
@@ -349,6 +346,7 @@ public class ShoppingCarActivity extends BaseActivity implements
         Bundle args = new Bundle();
         args.putSerializable(PurchaseFragment3.ARG_SERIALIZABLE_ORDER, theOrder);
         args.putSerializable(PurchaseFragment3.ARG_SERIALIZABLE_PRODUCTS, (Serializable) products);
+        args.putSerializable(PurchaseFragment3.ARG_SERIALIZABLE_ORDER_PRICE, (Serializable) orderPrice);
         purchaseFragment3.setArguments(args);
 
         getSupportFragmentManager()
@@ -402,7 +400,7 @@ public class ShoppingCarActivity extends BaseActivity implements
         alertDialogBuilder
                 .setTitle("購買金額低於運費")
                 .setMessage(String.format("提醒您，您所購買的金額低於運費%s元，是否確認購買",
-                        PurchaseFragment1.SHIP_FEE))
+                        CalculateUtil.SHIP_FEE))
                 .setCancelable(false)
                 .setPositiveButton("確認", onConfirmClickListener)
                 .setNegativeButton("再逛逛", new DialogInterface.OnClickListener() {
@@ -456,9 +454,9 @@ public class ShoppingCarActivity extends BaseActivity implements
             supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             onNoShoppingItem();
         } else {
-            totalGoodsPrice = CalculateUtil.calculateTotalGoodsPrice(products);
-            shippingPrice = totalGoodsPrice >= 490 ? 0 : 90;
+            orderPrice = CalculateUtil.calculateOrderPrice(products, orderPrice.getShoppingPointsAmount());
             savePostProductsAndPrice();
+
             supportFragmentManager.popBackStack();
             startStep3();
         }

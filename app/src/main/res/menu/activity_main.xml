@@ -6,15 +6,16 @@
         android:icon="@mipmap/ic_search_white_24dp"
         android:title="@string/search_hint"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/activity_main_shopping_cart"
-        android:title="購物車"
-        app:actionLayout="@layout/action_layout_shopping_cart_count"
-        app:showAsAction="always" />
 
     <item
         android:id="@+id/activity_main_my_notification"
         android:title="我的通知"
         app:actionLayout="@layout/action_layout_my_notification"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/activity_main_shopping_cart"
+        android:title="購物車"
+        app:actionLayout="@layout/action_layout_shopping_cart_count"
         app:showAsAction="always" />
 </menu>

@@ -33,7 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
             android:gravity="center_horizontal"
-            android:textColor="@color/black_text"
+            android:textColor="@color/black_4a4a4a"
             android:textSize="14sp"
             tools:text="哎呀！找不到有關「皮卡丘」\n的相關商品呢！" />
     </LinearLayout>

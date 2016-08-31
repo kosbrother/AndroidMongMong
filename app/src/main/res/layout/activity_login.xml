@@ -99,7 +99,7 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1"
-                android:background="@color/black_text" />
+                android:background="@color/black_4a4a4a" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -107,14 +107,14 @@
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:text="或以信箱登入"
-                android:textColor="@color/black_text"
+                android:textColor="@color/black_4a4a4a"
                 android:textSize="11sp" />
 
             <View
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:layout_weight="1"
-                android:background="@color/black_text" />
+                android:background="@color/black_4a4a4a" />
         </LinearLayout>
 
         <include
