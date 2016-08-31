@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:clickable="true"
     android:layout_margin="4dp"
+    android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
     card_view:cardCornerRadius="2dp">
@@ -84,12 +84,12 @@
 
             <LinearLayout
                 android:id="@+id/item_product_add_to_shopping_car_ll"
+                style="@style/GreenButton"
                 android:layout_width="wrap_content"
                 android:layout_height="20dp"
                 android:layout_alignBottom="@id/item_product_price_tv"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:background="@drawable/button_green_selector"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 

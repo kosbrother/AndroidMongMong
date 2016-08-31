@@ -58,4 +58,8 @@
         <item name="android:background">@android:color/transparent</item>
     </style>
 
+    <style name="GreenButton">
+        <item name="android:background">@drawable/button_green_selector</item>
+        <item name="android:textColor">@color/white</item>
+    </style>
 </resources>

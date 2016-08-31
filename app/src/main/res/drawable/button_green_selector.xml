@@ -6,13 +6,13 @@
             <item>
                 <shape>
                     <solid android:color="@color/green_text" />
-                    <corners android:radius="3dp" />
+                    <corners android:radius="2dp" />
                 </shape>
             </item>
             <item>
                 <shape>
                     <solid android:color="@color/dark_color_control_highlight" />
-                    <corners android:radius="3dp" />
+                    <corners android:radius="2dp" />
                 </shape>
             </item>
         </layer-list>
@@ -21,7 +21,7 @@
     <item>
         <shape>
             <solid android:color="@color/green_text" />
-            <corners android:radius="3dp" />
+            <corners android:radius="2dp" />
         </shape>
     </item>
 

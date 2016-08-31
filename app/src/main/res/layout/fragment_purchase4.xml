@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,16 +7,16 @@
     android:paddingLeft="16dp"
     android:paddingRight="16dp">
 
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="20dp"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
         android:paddingBottom="20dp">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
             android:layout_marginTop="40dp"
             android:text="@string/congratulation"
             android:textColor="@color/green_text"
@@ -25,41 +25,47 @@
         <ImageView
             android:layout_width="210dp"
             android:layout_height="144dp"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="85dp"
+            android:layout_marginTop="18dp"
             android:src="@mipmap/img_gift" />
 
         <TextView
             android:id="@+id/thank_you_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:layout_marginTop="250dp"
+            android:layout_marginTop="20dp"
             android:gravity="center_horizontal"
+            android:textColor="@color/black_text"
             android:textSize="14sp"
             tools:text="親愛的%s，非常感謝您在萌萌屋消費！\n此次購物明細已寄至您的信箱，
 商品抵達您指定超商時，會有簡訊通知，\n還請您稍加留意！萌萌屋全體期待您再次光臨！！" />
 
-        <Button
-            android:id="@+id/view_order_btn"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@id/thank_you_tv"
+            android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
-            android:background="@drawable/button_green_selector"
-            android:text="@string/view_order"
-            android:textColor="@color/white"
-            android:textSize="14sp" />
+            android:orientation="horizontal">
 
-        <Button
-            android:id="@+id/continue_shopping_btn"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_below="@id/view_order_btn"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/bg_green_border_white_button"
-            android:text="@string/continue_shopping"
-            android:textColor="@color/green_text"
-            android:textSize="14sp" />
-    </RelativeLayout>
-</FrameLayout>
+            <Button
+                android:id="@+id/view_order_btn"
+                style="@style/GreenButton"
+                android:layout_width="0dp"
+                android:layout_height="33dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:text="@string/view_order"
+                android:textSize="14sp" />
+
+            <Button
+                android:id="@+id/continue_shopping_btn"
+                style="@style/GreenButton"
+                android:layout_width="0dp"
+                android:layout_height="33dp"
+                android:layout_weight="1"
+                android:text="@string/continue_shopping"
+                android:textSize="14sp" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>
