@@ -10,6 +10,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.NavigationView;
@@ -19,6 +21,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.Display;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,6 +30,7 @@ import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
 import android.view.ViewStub;
 import android.view.Window;
+import android.view.WindowManager;
 import android.view.animation.Animation;
 import android.view.animation.TranslateAnimation;
 import android.widget.AdapterView;
@@ -39,7 +43,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.firebase.iid.FirebaseInstanceId;
-import com.inthecheesefactory.thecheeselibrary.widget.AdjustableImageView;
 import com.kosbrother.mongmongwoo.adpters.CategoryAdapter;
 import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
 import com.kosbrother.mongmongwoo.api.DataManager;
@@ -49,6 +52,7 @@ import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
 import com.kosbrother.mongmongwoo.category.CategoryActivity;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.entity.banner.Banner;
 import com.kosbrother.mongmongwoo.fcm.FcmPreferences;
 import com.kosbrother.mongmongwoo.fivestars.FiveStarsActivity;
 import com.kosbrother.mongmongwoo.fivestars.FiveStartsManager;
@@ -113,7 +117,7 @@ public class MainActivity extends AppCompatActivity
         csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
 
         setToolbarAndDrawer();
-        setBannerViewPager();
+        getBanners();
         setNavigationView();
         setQuickBarTextSwitcher();
         setQuickBarWithScrollView();
@@ -601,9 +605,31 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setBannerViewPager() {
+    private void getBanners() {
+        DataManager.getInstance().getBanners(new DataManager.ApiCallBack() {
+            @Override
+            public void onError(String errorMessage) {
+                // do nothing
+            }
+
+            @Override
+            public void onSuccess(Object data) {
+                List<Banner> banners = (List<Banner>) data;
+                setBannerViewPager(banners);
+            }
+        });
+    }
+
+    private void setBannerViewPager(List<Banner> banners) {
+        if (banners.isEmpty()) {
+            return;
+        }
+        findViewById(R.id.content_main_banner_rl).setVisibility(View.VISIBLE);
+
         final WrapContentViewPager viewPager = (WrapContentViewPager) findViewById(R.id.content_main_banner_vp);
-        PagerAdapter adapter = new BannerPagerAdapter(this);
+        viewPager.setOffscreenPageLimit(banners.size() - 1);
+
+        PagerAdapter adapter = new BannerPagerAdapter(this, banners);
         viewPager.setAdapter(adapter);
 
         CirclePageIndicator indicator = (CirclePageIndicator) findViewById(R.id.indicator);
@@ -853,20 +879,29 @@ public class MainActivity extends AppCompatActivity
         dialog.show();
     }
 
-    private class BannerPagerAdapter extends PagerAdapter {
+    private static class BannerPagerAdapter extends PagerAdapter {
 
         private Context context;
-        private int[] bannerRes = {
-                R.mipmap.img_banner1,
-                R.mipmap.img_banner2};
+        private List<Banner> banners;
 
-        private BannerPagerAdapter(Context context) {
+        private final int width;
+        private final int height;
+
+        private BannerPagerAdapter(Context context, List<Banner> banners) {
             this.context = context;
+            this.banners = banners;
+
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            Display display = wm.getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            width = size.x;
+            height = (int) (size.x * 0.35);
         }
 
         @Override
         public int getCount() {
-            return bannerRes.length;
+            return banners.size();
         }
 
         @Override
@@ -876,12 +911,29 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         public Object instantiateItem(ViewGroup container, int position) {
-            AdjustableImageView imageView = new AdjustableImageView(context);
-            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-            imageView.setAdjustViewBounds(true);
-            imageView.setImageResource(bannerRes[position]);
-            imageView.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+            Banner banner = banners.get(position);
+            String url = banner.getImage().getUrl();
+            ImageView imageView = new ImageView(context);
+            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            imageView.setLayoutParams(new LayoutParams(width, height));
+
+            Glide.with(imageView.getContext())
+                    .load(url)
+                    .placeholder(R.mipmap.img_pre_load_rectangle)
+                    .into(imageView);
             container.addView(imageView);
+
+            final String indexUrl = banner.getAppIndexUrl();
+            if (indexUrl != null && !indexUrl.isEmpty()) {
+                imageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(Uri.parse(indexUrl));
+                        context.startActivity(intent);
+                    }
+                });
+            }
             return imageView;
         }
 
