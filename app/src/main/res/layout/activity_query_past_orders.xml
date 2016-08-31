@@ -93,12 +93,13 @@
         style="@style/GreenButton"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginLeft="10dp"
-        android:layout_marginRight="10dp"
-        android:layout_marginStart="10dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:onClick="onSubmitQueryButtonClick"
-        android:text="@string/submit" />
+        android:text="@string/submit"
+        android:textSize="14sp" />
 
 </LinearLayout>
