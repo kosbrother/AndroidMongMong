@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:gravity="center_horizontal"
-            android:textColor="@color/black_text"
+            android:textColor="@color/black_4a4a4a"
             android:textSize="14sp"
             tools:text="親愛的%s，非常感謝您在萌萌屋消費！\n此次購物明細已寄至您的信箱，
 商品抵達您指定超商時，會有簡訊通知，\n還請您稍加留意！萌萌屋全體期待您再次光臨！！" />
