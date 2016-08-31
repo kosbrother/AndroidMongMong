@@ -4,8 +4,8 @@
 
     <item>
         <shape>
-            <solid android:color="#fd6879" />
-            <corners android:radius="3dp" />
+            <solid android:color="@color/pink_ff3d53" />
+            <corners android:radius="2dp" />
         </shape>
     </item>
 
