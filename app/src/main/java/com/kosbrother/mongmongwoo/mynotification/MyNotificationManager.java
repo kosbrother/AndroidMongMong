@@ -59,14 +59,7 @@ public class MyNotificationManager {
         String jsonString = sharedPreferences.getString(keyOfMyReadNotifications, new Gson().toJson(new ArrayList<MyNotification>()));
         Type typeToken = new TypeToken<List<MyNotification>>() {
         }.getType();
-        List<MyNotification> myNotificationList = new Gson().fromJson(jsonString, typeToken);
-        if (myNotificationList != null && !myNotificationList.isEmpty()) {
-            if (!jsonString.contains("app_index_url")) {
-                myNotificationList.clear();
-                clearMySavedNotifications();
-            }
-        }
-        return myNotificationList;
+        return new Gson().fromJson(jsonString, typeToken);
     }
 
     public void saveNewMyNotifications(List<MyNotification> newMyNotifications) {
