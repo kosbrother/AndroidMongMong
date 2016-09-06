@@ -24,17 +24,20 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="7-11門市取貨資訊"
+                android:text="超商配送資訊"
                 android:textColor="@color/green_text"
-                android:textSize="16sp" />
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-            <Button
-                android:id="@+id/select_store_button"
-                style="@style/GreenButton"
+            <TextView
+                android:id="@+id/store_delivery_select_store_tv"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:background="@drawable/bg_white_green_border_selector"
                 android:text="@string/choose_store"
+                android:textColor="@color/green_text"
                 android:textSize="14sp" />
 
             <View
@@ -47,10 +50,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="收件人資訊"
+                android:text="取貨人資訊"
                 android:textColor="@color/green_text"
                 android:textSize="16sp" />
-
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -64,22 +66,21 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
                     android:text="姓        名"
                     android:textColor="@color/black_4a4a4a"
                     android:textSize="14sp" />
 
                 <EditText
-                    android:id="@+id/shipping_name_edit_text"
+                    android:id="@+id/store_delivery_ship_name_et"
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:background="@drawable/edittext_selector"
-                    android:hint="取件人證件姓名"
+                    android:hint="取貨人證件姓名"
                     android:imeOptions="actionNext"
                     android:inputType="text"
                     android:maxLines="1"
-                    android:nextFocusDown="@+id/shipping_phone_edit_text"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
                     android:textColor="@color/black_4a4a4a"
@@ -100,22 +101,21 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
                     android:text="@string/cell_phone"
                     android:textColor="@color/black_4a4a4a"
                     android:textSize="14sp" />
 
                 <EditText
-                    android:id="@+id/shipping_phone_edit_text"
+                    android:id="@+id/store_delivery_ship_phone_et"
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:background="@drawable/edittext_selector"
-                    android:hint="取件人手機電話"
+                    android:hint="取貨人手機電話"
                     android:imeOptions="actionNext"
                     android:inputType="phone"
                     android:maxLines="1"
-                    android:nextFocusDown="@+id/shipping_email_edit_text"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
                     android:textColor="@color/black_4a4a4a"
@@ -124,10 +124,10 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/email_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
+                android:layout_marginBottom="8dp"
                 android:layout_marginStart="8dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
@@ -135,14 +135,14 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
-                    android:layout_marginRight="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginRight="16dp"
                     android:text="電子信箱"
                     android:textColor="@color/black_4a4a4a"
                     android:textSize="14sp" />
 
                 <EditText
-                    android:id="@+id/shipping_email_edit_text"
+                    android:id="@+id/store_delivery_ship_email_et"
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
                     android:background="@drawable/edittext_selector"
@@ -160,10 +160,9 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="6dp"
-                android:layout_marginTop="8dp"
-                android:text="* 姓名和電話必須正確填寫，貨到會有簡訊，也才能收貨喔~"
-                android:textColor="@color/red_text"
+                android:layout_marginBottom="20dp"
+                android:text="*姓名和電話必須正確填寫才能取貨"
+                android:textColor="@color/black_4a4a4a"
                 android:textSize="9sp" />
 
             <Button

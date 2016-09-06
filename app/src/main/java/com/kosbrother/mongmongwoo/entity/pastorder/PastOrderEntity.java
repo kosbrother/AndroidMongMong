@@ -27,9 +27,11 @@ class PastOrderEntity implements Serializable {
     @SerializedName("note")
     private String note;
     @SerializedName("info")
-    private Info info;
+    private InfoEntity info;
     @SerializedName("items")
     private List<PastItem> items;
+    @SerializedName("ship_type")
+    private String shipType;
 
     public int getId() {
         return id;
@@ -51,7 +53,7 @@ class PastOrderEntity implements Serializable {
         return shoppingPointAmount;
     }
 
-    public Info getInfo() {
+    public InfoEntity getInfo() {
         return info;
     }
 
@@ -65,5 +67,9 @@ class PastOrderEntity implements Serializable {
 
     public int getShipFee() {
         return shipFee;
+    }
+
+    public String getShipType() {
+        return shipType;
     }
 }

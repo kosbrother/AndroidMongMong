@@ -71,7 +71,7 @@ public class PurchaseFragment4 extends Fragment implements View.OnClickListener 
     }
 
     private void setThankYouMessage(View view) {
-        String shippingName = Settings.getShippingName();
+        String shippingName = Settings.getShipName();
         setThankYouMessage(shippingName);
         Spannable messageSpannable = getMessageSpannable(shippingName);
 

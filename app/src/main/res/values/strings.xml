@@ -22,7 +22,7 @@
     <string name="email">電子信箱</string>
     <string name="email_hint">請輸入訂購人電子信箱</string>
     <string name="submit">送出</string>
-    <string name="choose_store">選擇門市</string>
+    <string name="choose_store">選擇配送門市</string>
 
     <string name="search_hint">搜尋您的萌萌商品</string>
 
@@ -52,5 +52,8 @@
     <string name="activity_main_navigation_log_out">登出</string>
 
     <string name="activity_my_shopping_points_shopping_info">購物說明</string>
+
+    <string name="dialog_delivery_store">超商取貨付款</string>
+    <string name="dialog_delivery_home">宅配貨到付款</string>
 
 </resources>

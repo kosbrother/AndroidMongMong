@@ -1,5 +1,8 @@
 package com.kosbrother.mongmongwoo.entity.pastorder;
 
+import com.kosbrother.mongmongwoo.common.DeliveryUserInfoViewModel;
+import com.kosbrother.mongmongwoo.common.OrderPriceViewModel;
+
 public class PastOrder extends PastOrderEntity {
 
     public String getIdText() {
@@ -39,5 +42,13 @@ public class PastOrder extends PastOrderEntity {
     public String getShoppingPointSubTotalText() {
         int subtotal = getItemsPrice() - getShoppingPointAmount();
         return "NT$ " + subtotal;
+    }
+
+    public DeliveryUserInfoViewModel getDeliveryUserInfoViewModel(String shipName, String shipPhone, String shipEmail){
+        return new DeliveryUserInfoViewModel(getInfo(),getShipType(), shipName, shipPhone, shipEmail);
+    }
+
+    public OrderPriceViewModel getOrderPrice() {
+        return new OrderPriceViewModel(this);
     }
 }

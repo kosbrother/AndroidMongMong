@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="#f2f2f2"
-    android:fitsSystemWindows="true">
+    xmlns:bind="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="deliveryUserInfo"
+            type="com.kosbrother.mongmongwoo.common.DeliveryUserInfoViewModel" />
+
+        <variable
+            name="orderPrice"
+            type="com.kosbrother.mongmongwoo.common.OrderPriceViewModel" />
+    </data>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#f2f2f2"
+        android:fitsSystemWindows="true">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -21,338 +37,351 @@
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="16dp">
-
-            <FrameLayout
-                android:id="@+id/order_status_container"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="8dp" />
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/bg_white_gray_border_2dp"
-                android:elevation="2dp"
                 android:orientation="vertical"
-                android:padding="16dp">
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="16dp">
 
-                <RelativeLayout
+                <FrameLayout
+                    android:id="@+id/order_status_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp">
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="8dp" />
 
-                    <TextView
-                        android:id="@+id/shopping_detail_tv"
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/bg_white_gray_border_2dp"
+                    android:elevation="2dp"
+                    android:orientation="vertical"
+                    android:padding="16dp"
+                    tools:visibility="visible">
+
+                    <RelativeLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:text="購物明細"
+                        android:layout_marginBottom="8dp">
+
+                        <TextView
+                            android:id="@+id/shopping_detail_tv"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentLeft="true"
+                            android:layout_alignParentStart="true"
+                            android:text="購物明細"
+                            android:textColor="@color/green_text"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/order_detail_id_tv"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignBottom="@id/shopping_detail_tv"
+                            android:layout_alignParentEnd="true"
+                            android:layout_alignParentRight="true"
+                            android:text="訂單編號：讀取中..."
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/order_detail_items_rv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginBottom="8dp"
+                        android:background="@color/bg_divider" />
+
+                    <include
+                        layout="@layout/order_price"
+                        bind:orderPrice="@{orderPrice}" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/bg_white_gray_border_2dp"
+                    android:elevation="2dp"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="8dp"
+                        android:text="取貨方式"
                         android:textColor="@color/green_text"
                         android:textSize="16sp"
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/order_detail_id_tv"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignBottom="@id/shopping_detail_tv"
-                        android:layout_alignParentEnd="true"
-                        android:layout_alignParentRight="true"
-                        android:text="訂單編號：讀取中..."
-                        android:textColor="@color/black_4a4a4a"
-                        android:textSize="14sp" />
-                </RelativeLayout>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/order_detail_items_rv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@color/bg_divider" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="商品總額"
+                        android:text="超商取貨付款"
                         android:textColor="@color/black_4a4a4a"
                         android:textSize="14sp"
-                        android:textStyle="bold" />
+                        android:visibility="@{deliveryUserInfo.storeDelivery ? View.VISIBLE : View.GONE}" />
 
                     <TextView
-                        android:id="@+id/order_detail_items_price_tv"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:text="宅配貨到付款"
                         android:textColor="@color/black_4a4a4a"
                         android:textSize="14sp"
-                        tools:text="NT$ 490" />
+                        android:visibility="@{deliveryUserInfo.homeDelivery ? View.VISIBLE : View.GONE}" />
+
                 </LinearLayout>
 
                 <LinearLayout
-                    android:id="@+id/activity_past_order_shopping_points_ll"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="8dp"
+                    android:background="@drawable/bg_white_gray_border_2dp"
+                    android:elevation="2dp"
                     android:orientation="vertical"
-                    android:paddingBottom="8dp"
-                    android:visibility="gone"
-                    tools:visibility="visible">
+                    android:paddingBottom="16dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="8dp"
+                        android:text="收件人資訊"
+                        android:textColor="@color/green_text"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:visibility="@{deliveryUserInfo.storeDelivery ? View.VISIBLE : View.GONE}" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="8dp"
+                        android:text="取貨資訊"
+                        android:textColor="@color/green_text"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:visibility="@{deliveryUserInfo.homeDelivery ? View.VISIBLE : View.GONE}" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginRight="16dp"
+                            android:text="姓        名"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="@{deliveryUserInfo.userName}"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp"
+                            tools:text="李張劉" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginRight="16dp"
+                            android:text="電        話"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="@{deliveryUserInfo.userPhone}"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp"
+                            tools:text="0912345678" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginRight="16dp"
+                            android:text="聯絡信箱"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="@{deliveryUserInfo.userEmail}"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp"
+                            tools:text="apple@gmail.com" />
+
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingBottom="8dp">
+                        android:visibility="@{deliveryUserInfo.storeDelivery ? View.VISIBLE : View.GONE}">
 
                         <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="購物金折抵"
-                            android:textColor="@color/black_4a4a4a"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/activity_past_order_shopping_point_amount_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginRight="16dp"
+                            android:text="門市名稱"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="@{deliveryUserInfo.storeName}"
                             android:textColor="@color/black_4a4a4a"
                             android:textSize="14sp"
-                            tools:text="-NT$ 200" />
-                    </LinearLayout>
+                            tools:text="7-11台茂漢堡店門市" />
 
-                    <View
-                        android:layout_width="match_parent"
-                        android:layout_height="1dp"
-                        android:background="@color/bg_divider" />
+                    </LinearLayout>
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:paddingTop="8dp">
+                        android:visibility="@{deliveryUserInfo.storeDelivery ? View.VISIBLE : View.GONE}">
 
                         <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="折抵後總額"
-                            android:textColor="@color/black_4a4a4a"
-                            android:textSize="14sp"
-                            android:textStyle="bold" />
-
-                        <TextView
-                            android:id="@+id/activity_past_order_shopping_points_subtotal_tv"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginRight="16dp"
+                            android:text="門市地址"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:text="@{deliveryUserInfo.storeAddress}"
                             android:textColor="@color/black_4a4a4a"
                             android:textSize="14sp"
-                            tools:text="NT$ 290" />
+                            tools:text="台北市中山區四維路一段12號" />
                     </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="@{deliveryUserInfo.storeDelivery ? View.VISIBLE : View.GONE}">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginRight="16dp"
+                            android:text="門市電話"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@{deliveryUserInfo.storePhone}"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp"
+                            tools:text="0919991991" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:visibility="@{deliveryUserInfo.homeDelivery ? View.VISIBLE : View.GONE}">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginRight="16dp"
+                            android:text="收件地址"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@{deliveryUserInfo.shipAddress}"
+                            android:textColor="@color/black_4a4a4a"
+                            android:textSize="14sp"
+                            tools:text="台北市中山區四維路一段12號" />
+
+                    </LinearLayout>
+
                 </LinearLayout>
 
-                <LinearLayout
+                <ViewStub
+                    android:id="@+id/note_vs"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:layout="@layout/view_stub_note" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="運費(滿490免運費)"
-                        android:textColor="@color/black_4a4a4a"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/order_detail_ship_price_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/black_4a4a4a"
-                        android:textSize="14sp"
-                        tools:text="NT$ 90" />
-                </LinearLayout>
-
-                <View
+                <Button
+                    android:id="@+id/continue_shopping_btn"
+                    style="@style/GreenButton"
                     android:layout_width="match_parent"
-                    android:layout_height="1dp"
+                    android:layout_height="40dp"
                     android:layout_marginBottom="8dp"
-                    android:background="@color/bg_divider" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="結帳金額"
-                        android:textColor="@color/black_4a4a4a"
-                        android:textSize="14sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/order_detail_total_price_tv"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/red_text"
-                        android:textSize="14sp"
-                        tools:text="NT$ 380" />
-                </LinearLayout>
-
+                    android:onClick="onContinueShoppingClick"
+                    android:text="@string/continue_shopping"
+                    android:textSize="14sp" />
             </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/bg_white_gray_border_2dp"
-                android:elevation="2dp"
-                android:orientation="vertical"
-                android:paddingBottom="8dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="8dp">
+        <android.support.design.widget.FloatingActionButton
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_gravity="bottom|end"
+            android:layout_margin="16dp"
+            android:onClick="onCustomerServiceFabClick"
+            android:src="@mipmap/ic_customer_service"
+            app:backgroundTint="@color/fab_blue"
+            app:pressedTranslationZ="12dp" />
+    </android.support.design.widget.CoordinatorLayout>
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="4dp"
-                    android:text="7-11門市取貨資訊"
-                    android:textColor="@color/green_text"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/order_detail_ship_store_name_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:textColor="@color/black_4a4a4a"
-                    android:textSize="14sp"
-                    tools:text="門市名稱：7-11台茂漢堡店門市" />
-
-                <TextView
-                    android:id="@+id/order_detail_store_address_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:textColor="@color/black_4a4a4a"
-                    android:textSize="14sp"
-                    tools:text="地         址：台北市中山區四維路一段12號" />
-
-                <TextView
-                    android:id="@+id/order_detail_store_phone_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black_4a4a4a"
-                    android:textSize="14sp"
-                    tools:text="門市電話：0919991991" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="8dp"
-                android:background="@drawable/bg_white_gray_border_2dp"
-                android:elevation="2dp"
-                android:orientation="vertical"
-                android:paddingBottom="8dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="8dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginBottom="4dp"
-                    android:text="收件人資訊"
-                    android:textColor="@color/green_text"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
-
-                <TextView
-                    android:id="@+id/order_detail_ship_name_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:textColor="@color/black_4a4a4a"
-                    android:textSize="14sp"
-                    tools:text="姓        名：李張劉" />
-
-                <TextView
-                    android:id="@+id/order_detail_ship_phone_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
-                    android:textColor="@color/black_4a4a4a"
-                    android:textSize="14sp"
-                    tools:text="電        話：0912345678" />
-
-                <TextView
-                    android:id="@+id/order_detail_ship_email_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/black_4a4a4a"
-                    android:textSize="14sp"
-                    tools:text="聯絡信箱：apple@gmail.com" />
-
-            </LinearLayout>
-
-            <ViewStub
-                android:id="@+id/note_vs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout="@layout/view_stub_note" />
-
-            <Button
-                android:id="@+id/continue_shopping_btn"
-                style="@style/GreenButton"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginBottom="8dp"
-                android:onClick="onContinueShoppingClick"
-                android:text="@string/continue_shopping"
-                android:textSize="14sp" />
-        </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
-
-    <android.support.design.widget.FloatingActionButton
-        android:layout_width="56dp"
-        android:layout_height="56dp"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:onClick="onCustomerServiceFabClick"
-        android:src="@mipmap/ic_customer_service"
-        app:backgroundTint="@color/fab_blue"
-        app:pressedTranslationZ="12dp" />
-</android.support.design.widget.CoordinatorLayout>
+</layout>

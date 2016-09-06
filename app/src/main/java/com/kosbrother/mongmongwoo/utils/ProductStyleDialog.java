@@ -308,7 +308,7 @@ public class ProductStyleDialog {
 
     private void checkFirstAddAndNotifyListener() {
         if (Settings.checkIsFirstAddShoppingCar()) {
-            Settings.setKownShoppingCar();
+            Settings.setKnowShoppingCar();
             listener.onFirstAddShoppingCart();
         }
         listener.onConfirmButtonClick(product);
