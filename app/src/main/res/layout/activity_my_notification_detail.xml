@@ -9,54 +9,63 @@
             type="com.kosbrother.mongmongwoo.mynotification.MyNotification.NotificationDetail" />
     </data>
 
-    <ScrollView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white">
+        android:orientation="vertical">
 
-        <LinearLayout
+        <include layout="@layout/toolbar" />
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:paddingBottom="24dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="24dp">
+            android:layout_height="match_parent"
+            android:background="@color/white">
 
-            <TextView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:text="@{notificationDetail.title}"
-                android:textColor="@color/green_text"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                tools:text="貨品已到店，請儘速取貨！" />
+                android:orientation="vertical"
+                android:paddingBottom="24dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="24dp">
 
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:text="@{notificationDetail.content}"
-                android:textColor="@color/black_4a4a4a"
-                android:textSize="14sp"
-                tools:text="親愛的柯萌萌您好：\n您的訂單...\n萌萌屋感謝您！" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="@{notificationDetail.title}"
+                    android:textColor="@color/green_text"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    tools:text="貨品已到店，請儘速取貨！" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end"
-                android:drawableLeft="@mipmap/ic_access_time_grey_18dp"
-                android:drawablePadding="8dp"
-                android:drawableStart="@mipmap/ic_access_time_grey_18dp"
-                android:gravity="center_vertical"
-                android:text="@{notificationDetail.dateAndTime}"
-                android:textColor="#999999"
-                android:textSize="12sp"
-                tools:text="2016/07/28 14:00" />
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:text="@{notificationDetail.content}"
+                    android:textColor="@color/black_4a4a4a"
+                    android:textSize="14sp"
+                    tools:text="親愛的柯萌萌您好：\n您的訂單...\n萌萌屋感謝您！" />
 
-        </LinearLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end"
+                    android:drawableLeft="@mipmap/ic_access_time_grey_18dp"
+                    android:drawablePadding="8dp"
+                    android:drawableStart="@mipmap/ic_access_time_grey_18dp"
+                    android:gravity="center_vertical"
+                    android:text="@{notificationDetail.dateAndTime}"
+                    android:textColor="#999999"
+                    android:textSize="12sp"
+                    tools:text="2016/07/28 14:00" />
 
-    </ScrollView>
+            </LinearLayout>
+
+        </ScrollView>
+
+    </LinearLayout>
 
 </layout>

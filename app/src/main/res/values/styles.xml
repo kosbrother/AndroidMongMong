@@ -14,19 +14,23 @@
         <item name="windowNoTitle">true</item>
     </style>
 
-    <style name="CustomTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <!--<item name="actionMenuTextColor">@color/white</item>-->
-        <!--<item name="android:textColorSecondary">@color/white</item>-->
+    <style name="NoActionBarTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorAccent">#737373</item>
         <item name="actionMenuTextAppearance">@style/MenuTextStyle</item>
+        <item name="actionMenuTextColor">@color/white</item>
+
+        <!--the color of navigation icon default Back button arrow in toolbar-->
+        <item name="colorControlNormal">@color/white</item>
     </style>
 
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" >
+        <!--the color of navigation icon default Back button arrow in toolbar-->
+        <item name="colorControlNormal">@color/white</item>
+    </style>
 
     <style name="MenuTextStyle">
         <item name="android:textColor">@android:color/white</item>

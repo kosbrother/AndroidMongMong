@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -71,8 +70,9 @@ public class MyShoppingPointsActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.loading_no_toolbar);
-        setSupportActionBar();
+        setContentView(R.layout.loading);
+        setToolbar();
+
         getShoppingPointsDetailAndCampaignData();
     }
 
@@ -98,14 +98,10 @@ public class MyShoppingPointsActivity extends BaseActivity {
         return super.onOptionsItemSelected(menuItem);
     }
 
-    private void setSupportActionBar() {
-        ActionBar supportActionBar = getSupportActionBar();
-        assert supportActionBar != null;
-        supportActionBar.setDisplayHomeAsUpEnabled(true);
-    }
-
     private void onAllTasksDone() {
         setContentView(R.layout.activity_my_shopping_points);
+        setToolbar();
+
         setTabLayoutWithViewPager();
     }
 

@@ -2,7 +2,6 @@ package com.kosbrother.mongmongwoo.pastorders;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -28,11 +27,9 @@ public class PastOrderActivity extends BaseActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActionBar supportActionBar = getSupportActionBar();
-        assert supportActionBar != null;
-        supportActionBar.setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.loading);
+        setToolbar();
 
-        setContentView(R.layout.loading_no_toolbar);
         getOrders();
     }
 
@@ -74,8 +71,11 @@ public class PastOrderActivity extends BaseActivity {
     private void onGetDataResult(final List<PostOrder> postOrders) {
         if (postOrders.size() == 0) {
             setContentView(R.layout.activity_past_orders_empty);
+            setToolbar();
         } else {
             setContentView(R.layout.activity_past_orders);
+            setToolbar();
+
             PastOrdersAdapter pastOrdersAdapter = new PastOrdersAdapter(this, postOrders);
             GridView mGridView = (GridView) findViewById(R.id.fragment_gridview);
             mGridView.setAdapter(pastOrdersAdapter);
