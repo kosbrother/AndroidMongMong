@@ -39,24 +39,8 @@ public class UrlCenter {
                 + "/stores";
     }
 
-    static String getProductById(int categoryId, int productId) {
-        return HOST + API_V3
-                + "/categories/" + categoryId
-                + "/items/" + productId;
-    }
-
-    static String getProductBySlug(String categoryName, String slug) {
-        return HOST + API_V3
-                + "/categories/" + categoryName
-                + "/items/" + slug;
-    }
-
     static String getCategories() {
         return HOST + API_V3 + "/categories";
-    }
-
-    static String postOrder() {
-        return HOST + API_V3 + "/orders";
     }
 
     static String getOrdersByEmail(String email) {

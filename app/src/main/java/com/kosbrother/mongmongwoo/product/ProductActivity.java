@@ -24,9 +24,7 @@ import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.adpters.ProductImageFragmentPagerAdapter;
 import com.kosbrother.mongmongwoo.api.DataManager;
-import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
-import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.facebookevent.FacebookLogger;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
@@ -53,8 +51,6 @@ import com.viewpagerindicator.CirclePageIndicator;
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.functions.Action1;
-
 public class ProductActivity extends BaseActivity {
 
     public static final String EXTRA_INT_PRODUCT_ID = "EXTRA_INT_PRODUCT_ID";
@@ -73,6 +69,10 @@ public class ProductActivity extends BaseActivity {
 
     private Toast toast;
     private ProductStyleDialog dialog;
+    private DataManager.ApiCallBack isProductCollectedCallBack;
+    private DataManager.ApiCallBack addFavoriteItemCallBack;
+    private DataManager.ApiCallBack deleteFavoriteItemCallBack;
+    private DataManager.ApiCallBack getProductCallBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,24 +96,24 @@ public class ProductActivity extends BaseActivity {
     }
 
     private void getProduct() {
-        Action1<ResponseEntity<Product>> getProductAction = new Action1<ResponseEntity<Product>>() {
+        getProductCallBack = new DataManager.ApiCallBack() {
             @Override
-            public void call(ResponseEntity<Product> listResponseEntity) {
-                Product data = listResponseEntity.getData();
-                if (data == null) {
-                    GAManager.sendError("getProduct", listResponseEntity.getError());
-                    showAToast("無法取得資料，請檢查網路連線");
-                } else {
-                    theProduct = data;
-                    onGetProductResult();
-                }
+            public void onError(String errorMessage) {
+                showAToast(errorMessage);
+            }
+
+            @Override
+            public void onSuccess(Object data) {
+                theProduct = (Product) data;
+                onGetProductResult();
             }
         };
+
         String slug = getIntent().getStringExtra(EXTRA_STRING_SLUG);
         if (slug == null || slug.isEmpty()) {
-            Webservice.getProduct(getCategoryId(), getProductId(), getProductAction);
+            DataManager.getInstance().getProduct(getCategoryId(), getProductId(), getProductCallBack);
         } else {
-            Webservice.getProduct(getCategoryName(), slug, getProductAction);
+            DataManager.getInstance().getProduct(getCategoryName(), slug, getProductCallBack);
         }
     }
 
@@ -137,6 +137,16 @@ public class ProductActivity extends BaseActivity {
             }
         }
         super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        DataManager dataManager = DataManager.getInstance();
+        dataManager.unSubscribe(isProductCollectedCallBack);
+        dataManager.unSubscribe(addFavoriteItemCallBack);
+        dataManager.unSubscribe(deleteFavoriteItemCallBack);
+        dataManager.unSubscribe(getProductCallBack);
+        super.onDestroy();
     }
 
     @Override
@@ -283,8 +293,7 @@ public class ProductActivity extends BaseActivity {
 
         if (Settings.checkIsLogIn()) {
             int userId = Settings.getSavedUser().getUserId();
-            FavoriteManager manager = FavoriteManager.getInstance(userId, getApplicationContext());
-            manager.isProductCollected(getProductId(), new DataManager.ApiCallBack() {
+            isProductCollectedCallBack = new DataManager.ApiCallBack() {
                 @Override
                 public void onError(String errorMessage) {
                     showAToast(errorMessage);
@@ -299,7 +308,9 @@ public class ProductActivity extends BaseActivity {
                         collectImageView.setVisibility(View.VISIBLE);
                     }
                 }
-            });
+            };
+            FavoriteManager.getInstance(userId, getApplicationContext())
+                    .isProductCollected(getProductId(), isProductCollectedCallBack);
         } else {
             collectImageView.setTag(false);
             setCollectImageViewRes(collectImageView);
@@ -322,7 +333,7 @@ public class ProductActivity extends BaseActivity {
 
         FavoriteManager manager = FavoriteManager.getInstance(Settings.getSavedUser().getUserId(), getApplicationContext());
         if (collected) {
-            manager.deleteFavoriteItemsFromId(getProductId(), new DataManager.ApiCallBack() {
+            deleteFavoriteItemCallBack = new DataManager.ApiCallBack() {
                 @Override
                 public void onError(String errorMessage) {
                     showAToast(errorMessage);
@@ -334,11 +345,12 @@ public class ProductActivity extends BaseActivity {
                     v.setTag(false);
                     setCollectImageViewRes(v);
                 }
-            });
+            };
+            manager.deleteFavoriteItemsFromId(getProductId(), deleteFavoriteItemCallBack);
         } else {
             GAManager.sendEvent(new ProductAddToCollectionEvent(theProduct.getName()));
 
-            manager.addFavoriteItems(theProduct, new DataManager.ApiCallBack() {
+            addFavoriteItemCallBack = new DataManager.ApiCallBack() {
                 @Override
                 public void onError(String errorMessage) {
                     showAToast(errorMessage);
@@ -355,7 +367,8 @@ public class ProductActivity extends BaseActivity {
                     v.setTag(true);
                     setCollectImageViewRes(v);
                 }
-            });
+            };
+            manager.addFavoriteItems(theProduct, addFavoriteItemCallBack);
         }
 
     }
