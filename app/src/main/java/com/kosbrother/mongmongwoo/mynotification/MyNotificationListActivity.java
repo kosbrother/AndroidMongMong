@@ -28,8 +28,6 @@ public class MyNotificationListActivity extends BaseActivity implements
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
         int userId = Settings.getSavedUser().getUserId();
         MyNotificationListModel model = new MyNotificationListModel(
                 DataManager.getInstance(),
@@ -47,12 +45,14 @@ public class MyNotificationListActivity extends BaseActivity implements
 
     @Override
     public void showLoading() {
-        setContentView(R.layout.loading_no_toolbar);
+        setContentView(R.layout.loading);
+        setToolbar();
     }
 
     @Override
     public void showMyNotificationList(List<MyNotification> myNotificationList) {
         setContentView(R.layout.activity_my_notification_list);
+        setToolbar();
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.my_notification_rv);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

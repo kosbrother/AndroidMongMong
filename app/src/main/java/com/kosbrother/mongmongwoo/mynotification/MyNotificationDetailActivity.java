@@ -16,13 +16,12 @@ public class MyNotificationDetailActivity extends BaseActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        MyNotification.NotificationDetail notificationDetail =
+                (MyNotification.NotificationDetail) getIntent().getSerializableExtra(EXTRA_SERIALIZABLE_NOTIFICATION_DETAIL);
 
         ActivityMyNotificationDetailBinding binding =
                 DataBindingUtil.setContentView(this, R.layout.activity_my_notification_detail);
-        MyNotification.NotificationDetail serializableExtra =
-                (MyNotification.NotificationDetail) getIntent().getSerializableExtra(EXTRA_SERIALIZABLE_NOTIFICATION_DETAIL);
-        binding.setNotificationDetail(serializableExtra);
-
+        binding.setNotificationDetail(notificationDetail);
+        setToolbar();
     }
 }

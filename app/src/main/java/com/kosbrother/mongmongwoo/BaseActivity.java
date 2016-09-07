@@ -13,9 +13,10 @@ public class BaseActivity extends AppCompatActivity {
     protected void setToolbar(String title) {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         assert toolbar != null;
-        toolbar.setNavigationIcon(R.drawable.icon_back_white);
         toolbar.setTitle(title);
+        toolbar.setContentInsetStartWithNavigation(0);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     protected void setToolbarWithoutNavIcon(String title) {

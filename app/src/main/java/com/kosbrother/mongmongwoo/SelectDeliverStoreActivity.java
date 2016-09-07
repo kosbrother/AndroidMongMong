@@ -2,9 +2,6 @@ package com.kosbrother.mongmongwoo;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -42,7 +39,7 @@ import java.util.List;
 
 import rx.functions.Action1;
 
-public class SelectDeliverStoreActivity extends AppCompatActivity implements
+public class SelectDeliverStoreActivity extends BaseActivity implements
         OnMapReadyCallback,
         GoogleMap.OnCameraIdleListener {
 
@@ -70,7 +67,7 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements
         counties = StoreApi.getCounties();
         setContentView(R.layout.activity_select_deliver_store);
         scrollView = (ScrollView) findViewById(R.id.activity_select_deliver_store_sv);
-        setToolBar();
+        setToolbar();
         setMapFragment();
         setMapTouchView();
         setCountySpinner();
@@ -104,14 +101,6 @@ public class SelectDeliverStoreActivity extends AppCompatActivity implements
             mMap.moveCamera(CameraUpdateFactory.newLatLng(theStore.getLatLng()));
             mMap.animateCamera(CameraUpdateFactory.zoomTo(17));
         }
-    }
-
-    private void setToolBar() {
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setTitleTextColor(ContextCompat.getColor(this, R.color.white));
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowHomeEnabled(false);
-        getSupportActionBar().setTitle("選擇超商地址");
     }
 
     private void setMapFragment() {

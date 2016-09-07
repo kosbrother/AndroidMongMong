@@ -3,7 +3,6 @@ package com.kosbrother.mongmongwoo.pastorders;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,10 +45,6 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActionBar supportActionBar = getSupportActionBar();
-        assert supportActionBar != null;
-        supportActionBar.setDisplayHomeAsUpEnabled(true);
-
         if (isFromNotification()) {
             GAManager.sendEvent(new NotificationPickUpOpenedEvent("" + getOrderId()));
         }
@@ -58,7 +53,9 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
     @Override
     protected void onResume() {
         super.onResume();
-        setContentView(R.layout.loading_no_toolbar);
+        setContentView(R.layout.loading);
+        setToolbar();
+
         DataManager.getInstance().getOrder(getOrderId(), this);
     }
 
@@ -108,6 +105,8 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
     private void onGetPostOrderResult(PastOrder pastOrder) {
         this.pastOrder = pastOrder;
         setContentView(R.layout.activity_past_order_detail);
+        setToolbar();
+
         initCsBottomSheet();
         setOrderStatusLayout(pastOrder.getStatus());
         setRecyclerView(pastOrder.getItems());
