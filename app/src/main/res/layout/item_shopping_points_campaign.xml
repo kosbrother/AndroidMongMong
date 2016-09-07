@@ -48,16 +48,24 @@
                 android:id="@+id/item_shopping_points_campaign_title_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="分享萌萌屋，賺取160元購物金"
                 android:textColor="@color/black_4a4a4a"
                 android:textSize="15sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="分享萌萌屋，賺取160元購物金" />
 
             <TextView
                 android:id="@+id/item_shopping_points_campaign_active_date_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="活動日期：2016/08/25~2016/09/01"
+                android:textColor="@color/red_text"
+                android:textSize="11sp"
+                tools:text="活動日期：2016/08/25~2016/09/01" />
+
+            <TextView
+                android:id="@+id/item_shopping_points_campaign_reusable_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="＊本購物金可重複領取"
                 android:textColor="@color/red_text"
                 android:textSize="11sp" />
 
@@ -65,9 +73,9 @@
                 android:id="@+id/item_shopping_points_campaign_description_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="分享萌萌屋商品到FB，即可得到購物金$160元，動作要快，錯過可惜！快點分享賺飽飽！"
                 android:textColor="@color/black_4a4a4a"
-                android:textSize="11sp" />
+                android:textSize="11sp"
+                tools:text="分享萌萌屋商品到FB，即可得到購物金$160元，動作要快，錯過可惜！快點分享賺飽飽！" />
         </LinearLayout>
 
         <TextView

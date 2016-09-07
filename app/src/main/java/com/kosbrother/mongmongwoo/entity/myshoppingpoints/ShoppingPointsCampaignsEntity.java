@@ -20,6 +20,8 @@ public class ShoppingPointsCampaignsEntity implements Serializable {
     private String createdAt;
     @SerializedName("title")
     private String title;
+    @SerializedName("is_reusable")
+    private Boolean isReusable;
     @SerializedName("is_collected")
     private Boolean isCollected;
 
@@ -45,6 +47,10 @@ public class ShoppingPointsCampaignsEntity implements Serializable {
 
     public String getTitle() {
         return title;
+    }
+
+    public Boolean getReusable() {
+        return isReusable;
     }
 
     public Boolean getCollected() {
