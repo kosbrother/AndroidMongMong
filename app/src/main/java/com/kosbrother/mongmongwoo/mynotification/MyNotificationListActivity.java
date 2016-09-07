@@ -12,6 +12,7 @@ import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.DataManager;
+import com.kosbrother.mongmongwoo.appindex.IndexActivity;
 
 import java.util.List;
 
@@ -91,7 +92,7 @@ public class MyNotificationListActivity extends BaseActivity implements
 
     @Override
     public void startIndexActivity(Uri appIndexUri) {
-        Intent intent = new Intent();
+        Intent intent = new Intent(this, IndexActivity.class);
         intent.setAction(Intent.ACTION_VIEW);
         intent.setData(appIndexUri);
         startActivity(intent);
