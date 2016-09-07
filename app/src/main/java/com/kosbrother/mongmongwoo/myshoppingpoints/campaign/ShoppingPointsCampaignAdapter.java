@@ -34,6 +34,7 @@ public class ShoppingPointsCampaignAdapter extends RecyclerView.Adapter<Shopping
         ShoppingPointsCampaignViewModel viewModel = viewModels.get(position);
         ShoppingPointsCampaignViewModel.CampaignStatus campaignStatus = viewModel.getCampaignStatus();
 
+        holder.reusableView.setVisibility(viewModel.isReusable() ? View.VISIBLE : View.GONE);
         setAmountImageView(campaignStatus, holder.amountImageView);
         setStatusTextViewTextColor(campaignStatus, holder.statusTextView);
         setTitleTextViewTextColor(campaignStatus, holder.titleTextView);
@@ -109,6 +110,7 @@ public class ShoppingPointsCampaignAdapter extends RecyclerView.Adapter<Shopping
         private final TextView amountTextView;
         private final TextView titleTextView;
         private final TextView activeDateTextView;
+        private final View reusableView;
         private final TextView descriptionTextView;
         private final TextView statusTextView;
 
@@ -118,6 +120,7 @@ public class ShoppingPointsCampaignAdapter extends RecyclerView.Adapter<Shopping
             amountTextView = (TextView) itemView.findViewById(R.id.item_shopping_points_campaign_amount_tv);
             titleTextView = (TextView) itemView.findViewById(R.id.item_shopping_points_campaign_title_tv);
             activeDateTextView = (TextView) itemView.findViewById(R.id.item_shopping_points_campaign_active_date_tv);
+            reusableView = itemView.findViewById(R.id.item_shopping_points_campaign_reusable_tv);
             descriptionTextView = (TextView) itemView.findViewById(R.id.item_shopping_points_campaign_description_tv);
             statusTextView = (TextView) itemView.findViewById(R.id.item_shopping_points_campaign_status_tv);
         }

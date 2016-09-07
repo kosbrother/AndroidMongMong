@@ -34,6 +34,9 @@ public class ShoppingPointsCampaignViewModel {
     }
 
     public CampaignStatus getCampaignStatus() {
+        if (entity.getReusable()) {
+            return CampaignStatus.PROCESSING;
+        }
         if (entity.getCollected()) {
             return CampaignStatus.COLLECTED;
         } else {
@@ -61,6 +64,10 @@ public class ShoppingPointsCampaignViewModel {
             return "活動日期：" + DateFormatUtil.parseToYearMonthDay(createAt) + "~" +
                     DateFormatUtil.parseToYearMonthDay(validUntil);
         }
+    }
+
+    public boolean isReusable() {
+        return entity.getReusable();
     }
 
     public String getDescription() {
