@@ -69,19 +69,4 @@ public class UrlCenter {
         return HOST + API_V3 + "/shop_infos";
     }
 
-    static String searchItems(String query, int page) {
-        return HOST + API_V3
-                + "/search_items"
-                + "?query=" + query
-                + "&page=" + page;
-    }
-
-    static String getSuggestions() {
-        return HOST + API_V3 + "/item_names";
-    }
-
-    static String getHotKeywords() {
-        return HOST + API_V3 + "/hot_keywords";
-    }
-
 }
