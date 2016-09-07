@@ -26,7 +26,7 @@ public class IndexActivity extends AppCompatActivity {
     private static final String CATEGORY_PATTERN =
             "^https:[/][/]www.mmwooo.com[/]categories[/]([^?]+)(?:[?](.+))?$";
     private static final String SHOPPING_POINT_CAMPAIGNS_PATTERN =
-            "^https:[/][/]www.mmwooo.com[/]shopping_point_campaigns$";
+            "^android-app:[/][/]com.kosbrother.mongmongwoo[/]https[/]www.mmwooo.com[/]shopping_point_campaigns$";
     private static final String FACEBOOK_APP_LINK_PATTERN =
             "^android-app:[/][/]com.kosbrother.mongmongwoo[/]https[/]www.mmwooo.com[/]categories[/](.+)[/]items[/](.+)$";
 
