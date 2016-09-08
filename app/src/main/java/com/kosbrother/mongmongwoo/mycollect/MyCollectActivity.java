@@ -17,7 +17,7 @@ public class MyCollectActivity extends BaseActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_collect);
-        setToolbar();
+        setNoElevationToolbar();
 
         TabLayout tabLayout = (TabLayout) findViewById(R.id.activity_my_collect_tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("收藏清單"));
@@ -56,7 +56,7 @@ public class MyCollectActivity extends BaseActivity {
         @Override
         public Fragment getItem(int position) {
             if (position == 0) {
-            return new FavoriteFragment();
+                return new FavoriteFragment();
             } else {
                 return new WishListFragment();
             }

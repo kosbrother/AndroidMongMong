@@ -100,7 +100,7 @@ public class MyShoppingPointsActivity extends BaseActivity {
 
     private void onAllTasksDone() {
         setContentView(R.layout.activity_my_shopping_points);
-        setToolbar();
+        setNoElevationToolbar();
 
         setTabLayoutWithViewPager();
     }
