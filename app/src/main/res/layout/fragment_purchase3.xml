@@ -59,7 +59,8 @@
                     android:layout_marginTop="16dp"
                     android:text="購物明細"
                     android:textColor="@color/green_text"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:id="@+id/fragment_purchase3_goods_container_ll"
