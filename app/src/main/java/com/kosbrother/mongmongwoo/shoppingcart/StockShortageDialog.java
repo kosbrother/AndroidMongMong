@@ -6,7 +6,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,9 +30,7 @@ public class StockShortageDialog extends BaseNoTitleDialog implements View.OnCli
         this.unableToBuyModels = unableToBuyModels;
         this.onConfirmClickAction = onConfirmClickAction;
         setContentView(R.layout.dialog_stock_shortage);
-        // Fix dialog size problem
-        getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.WRAP_CONTENT);
+
         findViewById(R.id.dialog_stock_shortage_confirm_btn).setOnClickListener(this);
         TextView messageTextView = (TextView) findViewById(R.id.dialog_stock_shortage_message_tv);
         messageTextView.setText(Settings.checkIsLogIn() ?
@@ -63,6 +60,8 @@ public class StockShortageDialog extends BaseNoTitleDialog implements View.OnCli
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(new UnableToBuyAdapter(unableToBuyModels));
+
+        fixDialogSize();
     }
 
     @Override
