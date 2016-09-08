@@ -49,6 +49,7 @@ import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.api.UrlCenter;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
+import com.kosbrother.mongmongwoo.appindex.IndexActivity;
 import com.kosbrother.mongmongwoo.category.CategoryActivity;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
@@ -921,7 +922,7 @@ public class MainActivity extends AppCompatActivity
         public Object instantiateItem(ViewGroup container, int position) {
             Banner banner = banners.get(position);
             String url = banner.getImage().getUrl();
-            ImageView imageView = new ImageView(context);
+            final ImageView imageView = new ImageView(context);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
             imageView.setLayoutParams(new LayoutParams(width, height));
 
@@ -936,7 +937,8 @@ public class MainActivity extends AppCompatActivity
                 imageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        Intent intent = new Intent(context, IndexActivity.class);
+                        intent.setAction(Intent.ACTION_VIEW);
                         intent.setData(Uri.parse(indexUrl));
                         context.startActivity(intent);
                     }
