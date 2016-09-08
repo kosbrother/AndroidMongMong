@@ -718,6 +718,165 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void getProduct(int categoryId, int itemId, final ApiCallBack callBack) {
+        Observable<ResponseEntity<Product>> observable = networkAPI.getProduct(categoryId, itemId)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<Product>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<Product> productResponseEntity) {
+                Product data = productResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(productResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
+    public void getProduct(String categoryName, String slug, final ApiCallBack callBack) {
+        Observable<ResponseEntity<Product>> observable = networkAPI.getProduct(categoryName, slug)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+        final String key = String.valueOf(callBack.hashCode());
+        final Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<Product>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<Product> productResponseEntity) {
+                Product data = productResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(productResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
+    public void getSuggestions(final ApiCallBack callBack) {
+        Observable<ResponseEntity<List<String>>> observable = networkAPI.getItemNames()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<List<String>>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<List<String>> productResponseEntity) {
+                List<String> data = productResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(productResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
+    public void getHotKeywords(final ApiCallBack callBack) {
+        Observable<ResponseEntity<List<String>>> observable = networkAPI.getHotKeywords()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<List<String>>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<List<String>> productResponseEntity) {
+                List<String> data = productResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(productResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
+    public void getSearchItems(String query, int page, final ApiCallBack callBack) {
+        Observable<ResponseEntity<List<Product>>> observable =
+                networkAPI.getSearchItems(query, page)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<List<Product>>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<List<Product>> productResponseEntity) {
+                List<Product> data = productResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(productResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void unSubscribe(ApiCallBack callBack) {
         if (callBack == null) {
             return;
@@ -834,6 +993,24 @@ public class DataManager {
 
         @GET("api/v4/banners")
         Observable<ResponseEntity<List<Banner>>> getBanners();
+
+        @GET("api/v3/categories/{categoryId}/items/{itemId}")
+        Observable<ResponseEntity<Product>> getProduct(
+                @Path("categoryId") int categoryId, @Path("itemId") int itemId);
+
+        @GET("api/v3/categories/{categoryName}/items/{slug}")
+        Observable<ResponseEntity<Product>> getProduct(
+                @Path("categoryName") String categoryName, @Path("slug") String slug);
+
+        @GET("api/v3/item_names")
+        Observable<ResponseEntity<List<String>>> getItemNames();
+
+        @GET("api/v3/hot_keywords")
+        Observable<ResponseEntity<List<String>>> getHotKeywords();
+
+        @GET("api/v3/search_items")
+        Observable<ResponseEntity<List<Product>>> getSearchItems(
+                @Query("query") String query, @Query("page") int page);
     }
 
 }

@@ -22,7 +22,7 @@ import android.widget.Toast;
 import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
-import com.kosbrother.mongmongwoo.api.Webservice;
+import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.facebookevent.FacebookLogger;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.search.SearchSubmitQueryEvent;
@@ -38,8 +38,6 @@ import org.apmem.tools.layouts.FlowLayout;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import rx.functions.Action1;
 
 public class SearchActivity extends BaseActivity implements View.OnClickListener {
 
@@ -62,6 +60,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     private String query;
     private List<Product> products = new ArrayList<>();
+    private DataManager.ApiCallBack getSuggestionsCallback;
+    private DataManager.ApiCallBack getHotKeywordsCallBack;
+    private DataManager.ApiCallBack getSearchItemsCallBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,6 +74,14 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
         initSearchLayout();
         getSuggestionList();
         getHotKeywordList();
+    }
+
+    @Override
+    protected void onDestroy() {
+        DataManager.getInstance().unSubscribe(getSearchItemsCallBack);
+        DataManager.getInstance().unSubscribe(getHotKeywordsCallBack);
+        DataManager.getInstance().unSubscribe(getSearchItemsCallBack);
+        super.onDestroy();
     }
 
     @Override
@@ -137,22 +146,34 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void getSuggestionList() {
-        Webservice.getSuggestions(new Action1<List<String>>() {
+        getSuggestionsCallback = new DataManager.ApiCallBack() {
             @Override
-            public void call(List<String> suggestionList) {
-                SearchActivity.this.suggestionList = suggestionList;
+            public void onError(String errorMessage) {
+                // do nothing
             }
-        });
+
+            @Override
+            public void onSuccess(Object data) {
+                SearchActivity.this.suggestionList = (List<String>) data;
+            }
+        };
+        DataManager.getInstance().getSuggestions(getSuggestionsCallback);
     }
 
     private void getHotKeywordList() {
-        Webservice.getHotKeywords(new Action1<List<String>>() {
+        getHotKeywordsCallBack = new DataManager.ApiCallBack() {
             @Override
-            public void call(List<String> hotKeywordList) {
-                SearchActivity.this.hotKeywordList = hotKeywordList;
+            public void onError(String errorMessage) {
+                Toast.makeText(SearchActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSuccess(Object data) {
+                SearchActivity.this.hotKeywordList = (List<String>) data;
                 setHotKeywordLayout();
             }
-        });
+        };
+        DataManager.getInstance().getHotKeywords(getHotKeywordsCallBack);
     }
 
     private List<String> getDisplaySuggestionList(String query) {
@@ -184,9 +205,15 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
 
     private void getSearchResult(int page) {
         startSearch = true;
-        Webservice.getSearchItems(query, page, new Action1<List<Product>>() {
+        getSearchItemsCallBack = new DataManager.ApiCallBack() {
             @Override
-            public void call(final List<Product> products) {
+            public void onError(String errorMessage) {
+                Toast.makeText(SearchActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onSuccess(Object data) {
+                List<Product> products = (List<Product>) data;
                 int searchResultSize = products.size();
                 if (SearchActivity.this.products.size() == 0 && searchResultSize == 0) {
                     setContentView(R.layout.activity_search_result_empty);
@@ -207,7 +234,8 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 searchView.clearFocus();
                 startSearch = false;
             }
-        });
+        };
+        DataManager.getInstance().getSearchItems(query, page, getSearchItemsCallBack);
     }
 
     private void setResultEmptyLayout(String query) {

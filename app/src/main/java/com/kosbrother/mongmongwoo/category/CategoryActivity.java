@@ -325,6 +325,7 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
                 lazyLoad();
             } else {
                 this.isVisibleToUser = false;
+                DataManager.getInstance().unSubscribe(this);
                 products.clear();
                 if (recyclerView != null) {
                     recyclerView.clearOnScrollListeners();
@@ -347,7 +348,6 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         public void onStop() {
             super.onStop();
             stopCategoryAppIndex();
-            DataManager.getInstance().unSubscribe(this);
         }
 
         @Override

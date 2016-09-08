@@ -39,24 +39,8 @@ public class UrlCenter {
                 + "/stores";
     }
 
-    static String getProductById(int categoryId, int productId) {
-        return HOST + API_V3
-                + "/categories/" + categoryId
-                + "/items/" + productId;
-    }
-
-    static String getProductBySlug(String categoryName, String slug) {
-        return HOST + API_V3
-                + "/categories/" + categoryName
-                + "/items/" + slug;
-    }
-
     static String getCategories() {
         return HOST + API_V3 + "/categories";
-    }
-
-    static String postOrder() {
-        return HOST + API_V3 + "/orders";
     }
 
     static String getOrdersByEmail(String email) {
@@ -83,21 +67,6 @@ public class UrlCenter {
 
     static String getShopInfos() {
         return HOST + API_V3 + "/shop_infos";
-    }
-
-    static String searchItems(String query, int page) {
-        return HOST + API_V3
-                + "/search_items"
-                + "?query=" + query
-                + "&page=" + page;
-    }
-
-    static String getSuggestions() {
-        return HOST + API_V3 + "/item_names";
-    }
-
-    static String getHotKeywords() {
-        return HOST + API_V3 + "/hot_keywords";
     }
 
 }
