@@ -23,6 +23,7 @@ import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.adpters.PastItemAdapter;
 import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.databinding.ActivityPastOrderDetailBinding;
+import com.kosbrother.mongmongwoo.entity.pastorder.InfoEntity;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastItem;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
@@ -106,10 +107,9 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
     private void onGetPostOrderResult(PastOrder pastOrder) {
         this.pastOrder = pastOrder;
         ActivityPastOrderDetailBinding binding = DataBindingUtil.setContentView(this, R.layout.activity_past_order_detail);
-        String shipName = Settings.getShipName();
-        String shipPhone = Settings.getShipPhone();
-        String shipEmail = Settings.getShipEmail();
-        binding.setDeliveryUserInfo(pastOrder.getDeliveryUserInfoViewModel(shipName, shipPhone, shipEmail));
+        InfoEntity info = pastOrder.getInfo();
+        binding.setDeliveryUserInfo(pastOrder.getDeliveryUserInfoViewModel(
+                info.getShipName(), info.getShipPhone(), info.getShipEmail()));
         binding.setOrderPrice(pastOrder.getOrderPrice());
 
         setToolbar();
