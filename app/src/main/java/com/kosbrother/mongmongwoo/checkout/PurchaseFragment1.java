@@ -43,7 +43,7 @@ import rx.functions.Action1;
 
 public class PurchaseFragment1 extends Fragment {
 
-    public static final String SHOPPING_POINTS_TEXT = "購物金(可折抵金額 NT$ %s)";
+    public static final String SHOPPING_POINTS_TEXT = "折扣NT$ %s";
     private static final int REQUEST_LOGIN = 111;
 
     private LinearLayout noLoginLayout;
