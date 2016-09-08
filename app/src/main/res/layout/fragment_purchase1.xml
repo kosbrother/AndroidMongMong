@@ -295,14 +295,14 @@
 
                 <TextView
                     android:id="@+id/fragment_purchase1_delivery_tv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="20dp"
+                    android:layout_width="180dp"
+                    android:layout_height="28dp"
                     android:background="@drawable/bg_white_green_border_selector"
-                    android:gravity="center_vertical"
+                    android:gravity="center"
                     android:paddingLeft="8dp"
                     android:paddingRight="8dp"
                     android:textColor="@color/green_text"
-                    android:textSize="12sp"
+                    android:textSize="14sp"
                     tools:text="請選擇" />
             </LinearLayout>
 
