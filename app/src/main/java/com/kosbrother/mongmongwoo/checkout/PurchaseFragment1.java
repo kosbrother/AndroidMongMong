@@ -1,11 +1,13 @@
 package com.kosbrother.mongmongwoo.checkout;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
+import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +29,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep1EnterEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
+import com.kosbrother.mongmongwoo.login.LoginActivity;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.Spec;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
@@ -36,9 +39,12 @@ import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
 
 import java.util.List;
 
+import rx.functions.Action1;
+
 public class PurchaseFragment1 extends Fragment {
 
-    public static final String SHOPPING_POINTS_TEXT = "購物金(可折抵金額 NT$ %s)";
+    public static final String SHOPPING_POINTS_TEXT = "折扣NT$ %s";
+    private static final int REQUEST_LOGIN = 111;
 
     private LinearLayout noLoginLayout;
     private Button loginButton;
@@ -55,6 +61,7 @@ public class PurchaseFragment1 extends Fragment {
     private TextView shoppingPointsAmountTextView;
     private View shoppingPointsSubTotalView;
     private TextView shoppingPointsSubTotalTextView;
+    private TextView deliveryTextView;
 
     private List<Product> products;
 
@@ -64,6 +71,9 @@ public class PurchaseFragment1 extends Fragment {
     private OnStep1ButtonClickListener mCallback;
     private AppCompatCheckBox shoppingPointsCheckBox;
     private DataManager.ApiCallBack getShoppingPointsCallBack;
+    private String selectedDelivery = "請選擇";
+
+    private String email = Settings.getEmail();
 
     @Override
     public void onAttach(Context context) {
@@ -89,6 +99,7 @@ public class PurchaseFragment1 extends Fragment {
         findView(view);
 
         addGoodsViewToLinearLayout();
+        setDeliveryTextView();
         setLoginButton();
         setGuestCheckoutButton();
         setConfirmButton();
@@ -102,6 +113,17 @@ public class PurchaseFragment1 extends Fragment {
     public void onResume() {
         super.onResume();
         GAManager.sendEvent(new CheckoutStep1EnterEvent());
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_LOGIN) {
+            if (resultCode == Activity.RESULT_OK) {
+                email = data.getStringExtra(LoginActivity.EXTRA_STRING_EMAIL);
+                updateLayoutByLoginStatus(true);
+            }
+        }
     }
 
     @Override
@@ -215,6 +237,7 @@ public class PurchaseFragment1 extends Fragment {
         shoppingPointsAmountTextView = (TextView) view.findViewById(R.id.fragment_purchase1_shopping_points_amount_tv);
         shoppingPointsSubTotalView = view.findViewById(R.id.fragment_purchase1_shopping_points_subTotal_ll);
         shoppingPointsSubTotalTextView = (TextView) view.findViewById(R.id.fragment_purchase1_shopping_points_subTotal_tv);
+        deliveryTextView = (TextView) view.findViewById(R.id.fragment_purchase1_delivery_tv);
     }
 
     @SuppressLint("InflateParams")
@@ -281,8 +304,24 @@ public class PurchaseFragment1 extends Fragment {
         guestCheckoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.ANONYMOUS_PURCHASE));
-                mCallback.onGuestCheckoutClick(orderPrice);
+                onNextStepButtonClick();
+            }
+        });
+    }
+
+    private void setDeliveryTextView() {
+        deliveryTextView.setText(selectedDelivery);
+        deliveryTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                new DeliveryDialog(getContext(), deliveryTextView.getText().toString(),
+                        new Action1<String>() {
+                            @Override
+                            public void call(String selectedDelivery) {
+                                PurchaseFragment1.this.selectedDelivery = selectedDelivery;
+                                deliveryTextView.setText(selectedDelivery);
+                            }
+                        }).show();
             }
         });
     }
@@ -292,7 +331,7 @@ public class PurchaseFragment1 extends Fragment {
             @Override
             public void onClick(View v) {
                 GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.LOGIN));
-                mCallback.onLoginClick(orderPrice);
+                startLoginActivity();
             }
         });
     }
@@ -301,8 +340,7 @@ public class PurchaseFragment1 extends Fragment {
         confirmButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.CONFIRM_FACEBOOK_LOGIN));
-                mCallback.onConfirmButtonClick(orderPrice);
+                onNextStepButtonClick();
             }
         });
     }
@@ -334,6 +372,34 @@ public class PurchaseFragment1 extends Fragment {
             }
         });
         alertDialogBuilder.show();
+    }
+
+    private void onNextStepButtonClick() {
+        final String delivery = deliveryTextView.getText().toString();
+        if (delivery.equals("請選擇")) {
+            Toast.makeText(getContext(), "請選擇取貨方式", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (orderPrice.getItemsPrice() < orderPrice.getShipFee()) {
+            showPriceAlertDialog(new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    startNextStep(delivery);
+                }
+            });
+        } else {
+            startNextStep(delivery);
+        }
+    }
+
+    private void startNextStep(String delivery) {
+        if (Settings.checkIsLogIn()) {
+            GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.CONFIRM_FACEBOOK_LOGIN));
+        } else {
+            GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.ANONYMOUS_PURCHASE));
+        }
+        mCallback.onStep1NextButtonClick(email, orderPrice, delivery);
     }
 
     private void onSelectStyleButtonClick(final int productPosition, Product product) {
@@ -422,13 +488,34 @@ public class PurchaseFragment1 extends Fragment {
         return alertDialogBuilder.create();
     }
 
+    private void showPriceAlertDialog(DialogInterface.OnClickListener onConfirmClickListener) {
+        android.app.AlertDialog.Builder alertDialogBuilder =
+                new android.app.AlertDialog.Builder(getContext());
+
+        alertDialogBuilder
+                .setTitle("購買金額低於運費")
+                .setMessage(String.format("提醒您，您所購買的金額低於運費%s元，是否確認購買",
+                        CalculateUtil.SHIP_FEE))
+                .setCancelable(false)
+                .setPositiveButton("確認", onConfirmClickListener)
+                .setNegativeButton("再逛逛", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        android.app.AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+    }
+
+    private void startLoginActivity() {
+        Intent intent = new Intent(getContext(), LoginActivity.class);
+        startActivityForResult(intent, REQUEST_LOGIN);
+    }
+
     public interface OnStep1ButtonClickListener {
 
-        void onGuestCheckoutClick(CalculateUtil.OrderPrice orderPrice);
-
-        void onLoginClick(CalculateUtil.OrderPrice orderPrice);
-
-        void onConfirmButtonClick(CalculateUtil.OrderPrice orderPrice);
+        void onStep1NextButtonClick(String email, CalculateUtil.OrderPrice orderPrice, String delivery);
 
         void onNoShoppingItem();
     }

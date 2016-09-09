@@ -33,6 +33,10 @@ public class Order implements Serializable {
     private List<PostProduct> products;
     @SerializedName("shopping_points_amount")
     private int shoppingPointsAmount;
+    @SerializedName("ship_type")
+    private String shipType;
+    @SerializedName("ship_address")
+    private String shipAddress;
 
     public String getShipEmail() {
         return shipEmail;
@@ -90,4 +94,11 @@ public class Order implements Serializable {
         this.shoppingPointsAmount = shoppingPointsAmount;
     }
 
+    public void setShipType(String shipType) {
+        this.shipType = shipType;
+    }
+
+    public void setShipAddress(String shipAddress) {
+        this.shipAddress = shipAddress;
+    }
 }

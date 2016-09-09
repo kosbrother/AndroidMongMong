@@ -1,8 +1,6 @@
 package com.kosbrother.mongmongwoo.shoppingcart;
 
-import android.app.AlertDialog;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
@@ -17,13 +15,14 @@ import android.widget.Toast;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.SelectDeliverStoreActivity;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.DataManager;
+import com.kosbrother.mongmongwoo.checkout.CheckoutStep2Fragment;
+import com.kosbrother.mongmongwoo.checkout.HomeDeliveryFragment;
 import com.kosbrother.mongmongwoo.checkout.PurchaseFragment1;
-import com.kosbrother.mongmongwoo.checkout.PurchaseFragment2;
 import com.kosbrother.mongmongwoo.checkout.PurchaseFragment3;
 import com.kosbrother.mongmongwoo.checkout.PurchaseFragment4;
+import com.kosbrother.mongmongwoo.checkout.StoreDeliveryFragment;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrderResultEntity;
 import com.kosbrother.mongmongwoo.entity.postorder.UnableToBuyModel;
@@ -32,13 +31,12 @@ import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep2ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3ClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.label.GALabel;
-import com.kosbrother.mongmongwoo.login.LoginActivity;
 import com.kosbrother.mongmongwoo.model.Order;
 import com.kosbrother.mongmongwoo.model.PostProduct;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.model.ShipType;
 import com.kosbrother.mongmongwoo.model.Store;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
-import com.kosbrother.mongmongwoo.utils.KeyboardUtil;
 import com.kosbrother.mongmongwoo.widget.CenterProgressDialog;
 
 import java.io.Serializable;
@@ -49,11 +47,8 @@ import rx.functions.Action1;
 
 public class ShoppingCarActivity extends BaseActivity implements
         PurchaseFragment1.OnStep1ButtonClickListener,
-        PurchaseFragment2.OnStep2ButtonClickListener,
+        CheckoutStep2Fragment.OnStep2ButtonClickListener,
         PurchaseFragment3.OnStep3ButtonClickListener {
-
-    private static final int REQUEST_LOGIN = 111;
-    private static final int REQUEST_SELECT_STORE = REQUEST_LOGIN + 1;
 
     private long mLastClickTime = 0;
 
@@ -85,6 +80,8 @@ public class ShoppingCarActivity extends BaseActivity implements
         }
     };
     private CalculateUtil.OrderPrice orderPrice;
+    private Store store;
+    private String shipAddress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -153,41 +150,6 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        switch (requestCode) {
-            case REQUEST_LOGIN:
-                if (resultCode == RESULT_OK) {
-                    onLoginResultOk(data);
-                }
-                break;
-            case REQUEST_SELECT_STORE:
-                if (resultCode == RESULT_OK) {
-                    onSelectStoreResultOk(data);
-                }
-                break;
-        }
-    }
-
-    @Override
-    public void onGuestCheckoutClick(CalculateUtil.OrderPrice orderPrice) {
-        this.orderPrice = orderPrice;
-        onStartStep2();
-    }
-
-    @Override
-    public void onLoginClick(CalculateUtil.OrderPrice orderPrice) {
-        this.orderPrice = orderPrice;
-        onStartLogin();
-    }
-
-    @Override
-    public void onConfirmButtonClick(CalculateUtil.OrderPrice orderPrice) {
-        this.orderPrice = orderPrice;
-        onStartStep2();
-    }
-
-    @Override
     public void onNoShoppingItem() {
         ViewStub emptyShoppingCar = (ViewStub) findViewById(R.id.empty_shopping_car_vs);
         emptyShoppingCar.inflate();
@@ -195,21 +157,24 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     @Override
-    public void onSelectStoreClick() {
-        Intent selectStoreIntent = new Intent(this, SelectDeliverStoreActivity.class);
-        startActivityForResult(selectStoreIntent, REQUEST_SELECT_STORE);
+    public void onStep1NextButtonClick(String email, CalculateUtil.OrderPrice orderPrice, String delivery) {
+        this.orderPrice = orderPrice;
+        theOrder.setEmail(email.isEmpty() ? "anonymous@mmwooo.fake.com" : email);
+        theOrder.setShipType(ShipType.fromString(delivery).getShipType());
+        setOrderProductsAndPrice();
+
+        startStep2(delivery);
     }
 
     @Override
-    public void onStep2NextButtonClick(String shipName, String shipPhone, String shipEmail) {
-        FacebookLogger.getInstance().logAddedPaymentInfoEvent(true);
-        saveShippingInfo(shipName, shipPhone, shipEmail);
-        Settings.saveUserShippingNameAndPhone(shipName, shipPhone);
+    public void onStep2NextButtonClick(Store store, String shipAddress, String shipName, String shipPhone, String shipEmail) {
+        this.store = store;
+        this.shipAddress = shipAddress;
 
-        View view = getCurrentFocus();
-        if (view != null) {
-            KeyboardUtil.hide(this, view);
-        }
+        setOrderStoreInfo();
+        setOrderShipInfo(shipName, shipPhone, shipEmail, shipAddress);
+
+        FacebookLogger.getInstance().logAddedPaymentInfoEvent(true);
 
         startStep3();
     }
@@ -240,67 +205,16 @@ public class ShoppingCarActivity extends BaseActivity implements
 
     private void initOrder() {
         theOrder = new Order();
-        if (Settings.getSavedStore() != null) {
-            saveStoreInfo(Settings.getSavedStore());
-        }
-        String email = Settings.getEmail();
-        theOrder.setEmail(email.isEmpty() ? "anonymous@mmwooo.fake.com" : email);
         theOrder.setRegistrationId(FirebaseInstanceId.getInstance().getToken());
     }
 
-    private void onStartLogin() {
-        if (orderPrice.getItemsPrice() < orderPrice.getShipFee()) {
-            showPriceAlertDialog(new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    startLoginActivity();
-                }
-            });
-        } else {
-            startLoginActivity();
-        }
-    }
-
-    private void onStartStep2() {
-        savePostProductsAndPrice();
-        if (orderPrice.getItemsPrice() < orderPrice.getShipFee()) {
-            showPriceAlertDialog(new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    startStep2();
-                }
-            });
-        } else {
-            startStep2();
-        }
-    }
-
-    private void onLoginResultOk(Intent data) {
-        String email = data.getStringExtra(LoginActivity.EXTRA_STRING_EMAIL);
-        theOrder.setEmail(email);
-
-        PurchaseFragment1 purchaseFragment1 =
-                (PurchaseFragment1) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        purchaseFragment1.updateLayoutByLoginStatus(true);
-    }
-
-    private void onSelectStoreResultOk(Intent data) {
-        Store theStore = (Store) data.getSerializableExtra(SelectDeliverStoreActivity.EXTRA_SELECTED_STORE);
-        saveStoreInfo(theStore);
-        Settings.saveUserStoreData(theStore);
-
-        PurchaseFragment2 purchaseFragment2 =
-                (PurchaseFragment2) getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        purchaseFragment2.updateStoreName(theStore.getName());
-    }
-
-    private void saveStoreInfo(Store store) {
+    private void setOrderStoreInfo() {
         theOrder.setShipStoreCode(store.getStoreCode());
         theOrder.setShipStoreId(store.getId());
         theOrder.setShipStoreName(store.getName());
     }
 
-    private void savePostProductsAndPrice() {
+    private void setOrderProductsAndPrice() {
         theOrder.setProducts(getPostProducts());
         theOrder.setItemsPrice(orderPrice.getItemsPrice());
         theOrder.setShipFee(orderPrice.getShipFee());
@@ -308,10 +222,11 @@ public class ShoppingCarActivity extends BaseActivity implements
         theOrder.setShoppingPointsAmount(orderPrice.getShoppingPointsAmount());
     }
 
-    private void saveShippingInfo(String shipName, String shipPhone, String shipEmail) {
+    private void setOrderShipInfo(String shipName, String shipPhone, String shipEmail, String shipAddress) {
         theOrder.setShipName(shipName);
         theOrder.setShipPhone(shipPhone);
         theOrder.setShipEmail(shipEmail);
+        theOrder.setShipAddress(shipAddress);
     }
 
     private void startStep1(Bundle savedInstanceState) {
@@ -327,10 +242,14 @@ public class ShoppingCarActivity extends BaseActivity implements
                 .commit();
     }
 
-    private void startStep2() {
+    private void startStep2(String delivery) {
         setStepBar2();
-
-        PurchaseFragment2 purchaseFragment2 = new PurchaseFragment2();
+        Fragment purchaseFragment2;
+        if (delivery.equals(getString(R.string.dialog_delivery_store))) {
+            purchaseFragment2 = new StoreDeliveryFragment();
+        } else {
+            purchaseFragment2 = new HomeDeliveryFragment();
+        }
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -344,9 +263,10 @@ public class ShoppingCarActivity extends BaseActivity implements
 
         PurchaseFragment3 purchaseFragment3 = new PurchaseFragment3();
         Bundle args = new Bundle();
-        args.putSerializable(PurchaseFragment3.ARG_SERIALIZABLE_ORDER, theOrder);
         args.putSerializable(PurchaseFragment3.ARG_SERIALIZABLE_PRODUCTS, (Serializable) products);
-        args.putSerializable(PurchaseFragment3.ARG_SERIALIZABLE_ORDER_PRICE, (Serializable) orderPrice);
+        args.putSerializable(PurchaseFragment3.ARG_SERIALIZABLE_ORDER_PRICE, orderPrice);
+        args.putSerializable(PurchaseFragment3.ARG_SERIALIZABLE_STORE, store);
+        args.putSerializable(PurchaseFragment3.ARG_STRING_SHIP_ADDRESS, shipAddress);
         purchaseFragment3.setArguments(args);
 
         getSupportFragmentManager()
@@ -374,11 +294,6 @@ public class ShoppingCarActivity extends BaseActivity implements
                 .commit();
     }
 
-    private void startLoginActivity() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        startActivityForResult(intent, REQUEST_LOGIN);
-    }
-
     private List<PostProduct> getPostProducts() {
         List<PostProduct> postProductList = new ArrayList<>();
         for (Product product : products) {
@@ -392,25 +307,6 @@ public class ShoppingCarActivity extends BaseActivity implements
             postProductList.add(postProduct);
         }
         return postProductList;
-    }
-
-    private void showPriceAlertDialog(DialogInterface.OnClickListener onConfirmClickListener) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
-
-        alertDialogBuilder
-                .setTitle("購買金額低於運費")
-                .setMessage(String.format("提醒您，您所購買的金額低於運費%s元，是否確認購買",
-                        CalculateUtil.SHIP_FEE))
-                .setCancelable(false)
-                .setPositiveButton("確認", onConfirmClickListener)
-                .setNegativeButton("再逛逛", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-
-        AlertDialog alertDialog = alertDialogBuilder.create();
-        alertDialog.show();
     }
 
     private void onPostOrderSuccess(PostOrderResultEntity result) {
@@ -455,7 +351,7 @@ public class ShoppingCarActivity extends BaseActivity implements
             onNoShoppingItem();
         } else {
             orderPrice = CalculateUtil.calculateOrderPrice(products, orderPrice.getShoppingPointsAmount());
-            savePostProductsAndPrice();
+            setOrderProductsAndPrice();
 
             supportFragmentManager.popBackStack();
             startStep3();

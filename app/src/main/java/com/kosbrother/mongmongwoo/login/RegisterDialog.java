@@ -6,7 +6,6 @@ import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -55,10 +54,6 @@ public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickLis
         loginUser = new LoginUser("", "");
         binding.setLoginUser(loginUser);
 
-        // Fix dialog size problem
-        getWindow().setLayout(WindowManager.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.WRAP_CONTENT);
-
         ShowPasswordHelper helper = new ShowPasswordHelper();
         helper.setShowPasswordBehavior(
                 findViewById(R.id.show_pw_ll),
@@ -66,6 +61,8 @@ public class RegisterDialog extends BaseNoTitleDialog implements View.OnClickLis
                 (EditText) findViewById(R.id.password_et));
 
         findViewById(R.id.register_tv).setOnClickListener(this);
+
+        fixDialogSize();
     }
 
     @Override

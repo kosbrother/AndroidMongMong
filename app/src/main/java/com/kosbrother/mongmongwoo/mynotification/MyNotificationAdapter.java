@@ -1,18 +1,16 @@
 package com.kosbrother.mongmongwoo.mynotification;
 
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.style.ImageSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.kosbrother.mongmongwoo.R;
+import com.kosbrother.mongmongwoo.widget.CenteredImageSpan;
 
 import java.util.List;
 
@@ -41,11 +39,10 @@ public class MyNotificationAdapter extends RecyclerView.Adapter<MyNotificationAd
 
         boolean isNew = myNotification.isNew();
         if (isNew) {
-            BitmapDrawable drawable = (BitmapDrawable) ContextCompat.getDrawable(context, R.mipmap.ic_new);
-            ImageSpan imagespan = new ImageSpan(context, drawable.getBitmap(), ImageSpan.ALIGN_BASELINE);
+            CenteredImageSpan imageSpan = new CenteredImageSpan(context, R.mipmap.ic_new);
             String displayTitle = myNotification.getTitle() + "    ";
             SpannableString ss = new SpannableString(displayTitle);
-            ss.setSpan(imagespan, displayTitle.length() - 1, displayTitle.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
+            ss.setSpan(imageSpan, displayTitle.length() - 1, displayTitle.length(), Spannable.SPAN_INCLUSIVE_EXCLUSIVE);
             holder.titleTextView.setText(ss);
         } else {
             holder.titleTextView.setText(myNotification.getTitle());

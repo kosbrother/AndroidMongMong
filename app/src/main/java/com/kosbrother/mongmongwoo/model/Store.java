@@ -22,11 +22,12 @@ public class Store implements Serializable {
     @SerializedName("lng")
     private double lng;
 
-    public Store(int id, String storeCode, String name, String address) {
+    public Store(int id, String storeCode, String name, String address, String storePhone) {
         this.id = id;
         this.storeCode = storeCode;
         this.name = name;
         this.address = address;
+        phone = storePhone;
     }
 
     public LatLng getLatLng() {
@@ -49,4 +50,7 @@ public class Store implements Serializable {
         return address;
     }
 
+    public String getPhone() {
+        return phone;
+    }
 }

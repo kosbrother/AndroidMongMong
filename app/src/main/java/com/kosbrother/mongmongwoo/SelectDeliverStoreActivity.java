@@ -135,8 +135,8 @@ public class SelectDeliverStoreActivity extends BaseActivity implements
 
     private void setCountySpinner() {
         Spinner countySpinners = (Spinner) findViewById(R.id.country_spinner);
-        ArrayAdapter<County> countyArrayAdapter = new ArrayAdapter<>(this, R.layout.myspinner, counties);
-        countyArrayAdapter.setDropDownViewResource(R.layout.myspinner);
+        ArrayAdapter<County> countyArrayAdapter = new ArrayAdapter<>(this, R.layout.spinner_drop_down_arrow, counties);
+        countyArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         countySpinners.setAdapter(countyArrayAdapter);
 
         countySpinners.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -156,8 +156,8 @@ public class SelectDeliverStoreActivity extends BaseActivity implements
                         } else {
                             townArray = data;
                             ArrayAdapter<Town> townArrayAdapter = new ArrayAdapter<>(
-                                    SelectDeliverStoreActivity.this, R.layout.myspinner, townArray);
-                            townArrayAdapter.setDropDownViewResource(R.layout.myspinner);
+                                    SelectDeliverStoreActivity.this, R.layout.spinner_drop_down_arrow, townArray);
+                            townArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             townSpinners.setAdapter(townArrayAdapter);
                         }
                     }
@@ -190,8 +190,8 @@ public class SelectDeliverStoreActivity extends BaseActivity implements
                             } else {
                                 roadArray = data;
                                 ArrayAdapter<Road> roadArrayAdapter = new ArrayAdapter<>(
-                                        SelectDeliverStoreActivity.this, R.layout.myspinner, roadArray);
-                                roadArrayAdapter.setDropDownViewResource(R.layout.myspinner);
+                                        SelectDeliverStoreActivity.this, R.layout.spinner_drop_down_arrow, roadArray);
+                                roadArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 roadSpinners.setAdapter(roadArrayAdapter);
                             }
                         }

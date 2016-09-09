@@ -2,7 +2,7 @@ package com.kosbrother.mongmongwoo.entity.pastorder;
 
 import com.google.gson.annotations.SerializedName;
 
-class InfoEntity {
+public class InfoEntity {
     @SerializedName("id")
     private int id;
     @SerializedName("ship_name")
@@ -21,6 +21,8 @@ class InfoEntity {
     private String shipStoreAddress;
     @SerializedName("ship_store_phone")
     private String shipStorePhone;
+    @SerializedName("ship_address")
+    private String shipAddress;
 
     public int getId() {
         return id;
@@ -48,5 +50,9 @@ class InfoEntity {
 
     public String getShipStorePhone() {
         return shipStorePhone;
+    }
+
+    public String getShipAddress() {
+        return shipAddress;
     }
 }

@@ -1,7 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true" android:state_selected="true">
+        <layer-list>
+            <item>
+                <shape>
+                    <corners android:radius="2dp" />
+                    <solid android:color="@color/green_text" />
+                </shape>
+            </item>
+            <item>
+                <shape>
+                    <solid android:color="@color/dark_color_control_highlight" />
+                    <corners android:radius="2dp" />
+                </shape>
+            </item>
+        </layer-list>
+    </item>
 
-    <item android:state_pressed="true">
+    <item android:state_pressed="true" android:state_selected="false">
         <layer-list>
             <item>
                 <shape>
@@ -19,16 +35,18 @@
         </layer-list>
     </item>
 
-    <item>
-        <layer-list>
-            <item>
-                <shape>
-                    <solid android:color="@color/white" />
-                    <stroke android:width="1dp" android:color="@color/green_text" />
-                    <corners android:radius="2dp" />
-                </shape>
-            </item>
-        </layer-list>
+    <item android:state_pressed="false" android:state_selected="true">
+        <shape>
+            <corners android:radius="2dp" />
+            <solid android:color="@color/green_text" />
+        </shape>
     </item>
 
+    <item>
+        <shape>
+            <solid android:color="@color/white" />
+            <stroke android:width="1dp" android:color="@color/green_text" />
+            <corners android:radius="2dp" />
+        </shape>
+    </item>
 </selector>
