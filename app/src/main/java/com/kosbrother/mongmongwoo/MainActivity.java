@@ -18,6 +18,7 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -27,7 +28,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewGroup.LayoutParams;
 import android.view.ViewStub;
 import android.view.Window;
 import android.view.WindowManager;
@@ -37,6 +37,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextSwitcher;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -88,7 +89,6 @@ import com.kosbrother.mongmongwoo.utils.NetworkUtil;
 import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
 import com.kosbrother.mongmongwoo.utils.ShareUtil;
 import com.kosbrother.mongmongwoo.utils.VersionUtil;
-import com.kosbrother.mongmongwoo.widget.WrapContentViewPager;
 import com.viewpagerindicator.CirclePageIndicator;
 
 import java.util.ArrayList;
@@ -615,6 +615,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void getBanners() {
+        RelativeLayout bannerRelativeLayout = (RelativeLayout) findViewById(R.id.content_main_banner_rl);
+        ImageView defaultImageView = new ImageView(this);
+        defaultImageView.setImageResource(R.mipmap.banner_default);
+        bannerRelativeLayout.addView(defaultImageView, 0);
+
+        ViewPager viewPager = (ViewPager) findViewById(R.id.content_main_banner_vp);
+        setViewPagerHeight(viewPager);
+
+        ArrayList<Banner> banners = new ArrayList<>();
+        PagerAdapter adapter = new BannerPagerAdapter(this, banners);
+        viewPager.setAdapter(adapter);
+
+        CirclePageIndicator indicator = (CirclePageIndicator) findViewById(R.id.indicator);
+        indicator.setViewPager(viewPager);
+
         DataManager.getInstance().getBanners(new DataManager.ApiCallBack() {
             @Override
             public void onError(String errorMessage) {
@@ -624,25 +639,37 @@ public class MainActivity extends AppCompatActivity
             @Override
             public void onSuccess(Object data) {
                 List<Banner> banners = (List<Banner>) data;
-                setBannerViewPager(banners);
+                updateBannerViewPager(banners);
             }
         });
     }
 
-    private void setBannerViewPager(List<Banner> banners) {
+    private void setViewPagerHeight(ViewPager viewPager) {
+        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = (int) (size.x * 0.35);
+
+        ViewGroup.LayoutParams params = viewPager.getLayoutParams();
+        params.height = height;
+        params.width = width;
+        viewPager.setLayoutParams(params);
+    }
+
+    private void updateBannerViewPager(List<Banner> banners) {
         if (banners.isEmpty()) {
             return;
         }
-        findViewById(R.id.content_main_banner_rl).setVisibility(View.VISIBLE);
+        RelativeLayout bannerRelativeLayout = (RelativeLayout) findViewById(R.id.content_main_banner_rl);
+        bannerRelativeLayout.removeViewAt(0);
 
-        final WrapContentViewPager viewPager = (WrapContentViewPager) findViewById(R.id.content_main_banner_vp);
+        final ViewPager viewPager = (ViewPager) findViewById(R.id.content_main_banner_vp);
         viewPager.setOffscreenPageLimit(banners.size() - 1);
 
-        PagerAdapter adapter = new BannerPagerAdapter(this, banners);
-        viewPager.setAdapter(adapter);
-
-        CirclePageIndicator indicator = (CirclePageIndicator) findViewById(R.id.indicator);
-        indicator.setViewPager(viewPager);
+        BannerPagerAdapter adapter = (BannerPagerAdapter) viewPager.getAdapter();
+        adapter.updateData(banners);
 
         new Thread(new Runnable() {
             @Override
@@ -893,19 +920,9 @@ public class MainActivity extends AppCompatActivity
         private Context context;
         private List<Banner> banners;
 
-        private final int width;
-        private final int height;
-
         private BannerPagerAdapter(Context context, List<Banner> banners) {
             this.context = context;
             this.banners = banners;
-
-            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-            Display display = wm.getDefaultDisplay();
-            Point size = new Point();
-            display.getSize(size);
-            width = size.x;
-            height = (int) (size.x * 0.35);
         }
 
         @Override
@@ -923,12 +940,13 @@ public class MainActivity extends AppCompatActivity
             Banner banner = banners.get(position);
             String url = banner.getImage().getUrl();
             final ImageView imageView = new ImageView(context);
-            imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            imageView.setLayoutParams(new LayoutParams(width, height));
+            imageView.setLayoutParams(new ViewGroup.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
 
             Glide.with(imageView.getContext())
                     .load(url)
-                    .placeholder(R.mipmap.img_pre_load_rectangle)
+                    .fitCenter()
+                    .placeholder(R.mipmap.banner_default)
                     .into(imageView);
             container.addView(imageView);
 
@@ -947,5 +965,10 @@ public class MainActivity extends AppCompatActivity
             return imageView;
         }
 
+        public void updateData(List<Banner> banners) {
+            this.banners = banners;
+            notifyDataSetChanged();
+        }
     }
+
 }
