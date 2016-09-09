@@ -46,7 +46,8 @@
                 <Spinner
                     android:id="@+id/country_spinner"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
 
             <LinearLayout
@@ -67,7 +68,8 @@
                 <Spinner
                     android:id="@+id/town_spinner"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
 
             <LinearLayout
@@ -88,7 +90,8 @@
                 <Spinner
                     android:id="@+id/road_spinner"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
 
             <View

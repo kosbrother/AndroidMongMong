@@ -62,8 +62,8 @@ public class HomeDeliveryFragment extends CheckoutStep2Fragment {
 
     private void setCountySpinner(View view) {
         Spinner countySpinners = (Spinner) view.findViewById(R.id.fragment_home_delivery_country_spinner);
-        ArrayAdapter<County> countyArrayAdapter = new ArrayAdapter<>(getContext(), R.layout.myspinner, counties);
-        countyArrayAdapter.setDropDownViewResource(R.layout.myspinner);
+        ArrayAdapter<County> countyArrayAdapter = new ArrayAdapter<>(getContext(), R.layout.spinner_drop_down_arrow, counties);
+        countyArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         countySpinners.setAdapter(countyArrayAdapter);
 
         countySpinners.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -83,8 +83,8 @@ public class HomeDeliveryFragment extends CheckoutStep2Fragment {
                         } else {
                             townArray = data;
                             ArrayAdapter<Town> townArrayAdapter = new ArrayAdapter<>(
-                                    getContext(), R.layout.myspinner, townArray);
-                            townArrayAdapter.setDropDownViewResource(R.layout.myspinner);
+                                    getContext(), R.layout.spinner_drop_down_arrow, townArray);
+                            townArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                             townSpinners.setAdapter(townArrayAdapter);
                         }
                     }

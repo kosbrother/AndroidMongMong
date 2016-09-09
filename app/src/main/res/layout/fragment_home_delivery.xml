@@ -37,7 +37,8 @@
             <Spinner
                 android:id="@+id/fragment_home_delivery_country_spinner"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent" />
         </LinearLayout>
 
         <LinearLayout
@@ -58,7 +59,8 @@
             <Spinner
                 android:id="@+id/fragment_home_delivery_town_spinner"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent" />
         </LinearLayout>
 
         <LinearLayout
