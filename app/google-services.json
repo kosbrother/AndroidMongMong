@@ -45,6 +45,14 @@
         {
           "client_id": "455561524983-6i8go1lg6ccbe80ugdf60s7svo3bl9g7.apps.googleusercontent.com",
           "client_type": 3
+        },
+        {
+          "client_id": "455561524983-b1j37crsggr640gop2qeln2jb2nofvqq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.kosbrother.mongmongwoo",
+            "certificate_hash": "C8EF3BAD9A8DE1164FE05FDB936FD10DA1E4BE4B"
+          }
         }
       ],
       "api_key": [
