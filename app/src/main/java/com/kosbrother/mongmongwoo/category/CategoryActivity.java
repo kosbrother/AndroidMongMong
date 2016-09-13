@@ -318,6 +318,12 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         }
 
         @Override
+        public void onDestroy() {
+            DataManager.getInstance().unSubscribe(this);
+            super.onDestroy();
+        }
+
+        @Override
         public void setUserVisibleHint(boolean isVisibleToUser) {
             super.setUserVisibleHint(isVisibleToUser);
             if (isVisibleToUser) {
@@ -338,7 +344,7 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         private void lazyLoad() {
             if (isVisibleToUser && isViewCreated) {
                 if (mClient == null) {
-                    mClient = new GoogleApiClient.Builder(getContext()).addApi(AppIndex.API).build();
+                    mClient = new GoogleApiClient.Builder(getActivity()).addApi(AppIndex.API).build();
                 }
                 getInitData();
             }
@@ -354,14 +360,14 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         public void onAddShoppingCartButtonClick(int productId, int position) {
             Product product = products.get(position);
             GAManager.sendEvent(new IndexGridCartAddToCartEvent(product.getName()));
-            new ProductStyleDialog(getContext(), product, new ProductStyleDialog.ProductStyleDialogListener() {
+            new ProductStyleDialog(getActivity(), product, new ProductStyleDialog.ProductStyleDialogListener() {
                 @Override
                 public void onFirstAddShoppingCart() {
                     ViewStub viewStub = (ViewStub) getActivity().findViewById(R.id.shopping_car_spotlight_vs);
                     if (viewStub != null) {
                         final View spotLightShoppingCarLayout = viewStub.inflate();
                         spotLightShoppingCarLayout.setPadding(
-                                0, (int) DensityApi.convertDpToPixel(56, getContext()), 0, 0);
+                                0, (int) DensityApi.convertDpToPixel(56, getActivity()), 0, 0);
                         Button spotLightConfirmButton =
                                 (Button) spotLightShoppingCarLayout.findViewById(R.id.confirm_button);
                         spotLightConfirmButton.setOnClickListener(new View.OnClickListener() {
@@ -377,7 +383,7 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
                 public void onConfirmButtonClick(Product product) {
                     ShoppingCartManager.getInstance().addShoppingItem(product);
                     getActivity().invalidateOptionsMenu();
-                    Toast.makeText(getContext(), "成功加入購物車", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "成功加入購物車", Toast.LENGTH_SHORT).show();
                 }
             }).showWithInitState();
         }
@@ -386,7 +392,7 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         public void onGoodsItemClick(int position) {
             if (products != null) {
                 Product product = products.get(position);
-                Intent intent = new Intent(getContext(), ProductActivity.class);
+                Intent intent = new Intent(getActivity(), ProductActivity.class);
                 intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
                 intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, categoryId);
                 intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, categoryName);
@@ -398,7 +404,7 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         @Override
         public void onError(String errorMessage) {
             loadingView.setVisibility(View.GONE);
-            Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
         }
 
         @Override
@@ -415,7 +421,7 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         private void getInitData() {
             loadingView.setVisibility(View.VISIBLE);
 
-            GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
+            GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
             recyclerView.setLayoutManager(layoutManager);
             recyclerView.addOnScrollListener(new RecyclerViewEndlessScrollListener(
                     layoutManager, new Action1<Integer>() {
