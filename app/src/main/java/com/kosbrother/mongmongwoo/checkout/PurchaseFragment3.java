@@ -40,6 +40,8 @@ public class PurchaseFragment3 extends Fragment {
     private String shipAddress;
     private Store store;
 
+    private Button sendButton;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -68,7 +70,7 @@ public class PurchaseFragment3 extends Fragment {
         binding.setOrderPrice(new OrderPriceViewModel(orderPrice));
         View view = binding.getRoot();
 
-        Button sendButton = (Button) view.findViewById(R.id.fragment_purchase3_send_btn);
+        sendButton = (Button) view.findViewById(R.id.fragment_purchase3_send_btn);
         sendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -86,6 +88,10 @@ public class PurchaseFragment3 extends Fragment {
     public void onResume() {
         super.onResume();
         GAManager.sendEvent(new CheckoutStep3EnterEvent());
+    }
+
+    public void setSendOrderButtonEnabled(boolean enabled) {
+        sendButton.setEnabled(enabled);
     }
 
     private void addGoodsItemView(LinearLayout goodsContainerLinearLayout, List<Product> orderProducts) {
