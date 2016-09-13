@@ -1,6 +1,6 @@
 package com.kosbrother.mongmongwoo.shoppingcart;
 
-import android.content.DialogInterface;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
@@ -37,7 +37,6 @@ import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.ShipType;
 import com.kosbrother.mongmongwoo.model.Store;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
-import com.kosbrother.mongmongwoo.widget.CenterProgressDialog;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -61,13 +60,14 @@ public class ShoppingCarActivity extends BaseActivity implements
 
     private List<Product> products;
 
-    private CenterProgressDialog progressDialog;
+    private ProgressDialog progressDialog;
 
     private DataManager.ApiCallBack postOrderCallBack = new DataManager.ApiCallBack() {
         @Override
         public void onError(String errorMessage) {
             hideProgressDialog();
             Toast.makeText(ShoppingCarActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
+            setSendButtonEnabled(true);
         }
 
         @Override
@@ -181,8 +181,10 @@ public class ShoppingCarActivity extends BaseActivity implements
 
     @Override
     public void onSendOrderClick() {
+        setSendButtonEnabled(false);
         // mis-clicking prevention, using threshold of 1000 ms
         if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
+            setSendButtonEnabled(true);
             return;
         }
         mLastClickTime = SystemClock.elapsedRealtime();
@@ -324,6 +326,7 @@ public class ShoppingCarActivity extends BaseActivity implements
                 }
             });
             dialog.show();
+            setSendButtonEnabled(true);
         }
     }
 
@@ -410,17 +413,20 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     private void showProgressDialog() {
-        progressDialog = CenterProgressDialog.show(this, new DialogInterface.OnCancelListener() {
-            @Override
-            public void onCancel(DialogInterface dialogInterface) {
-                DataManager.getInstance().unSubscribe(postOrderCallBack);
-            }
-        });
+        progressDialog = ProgressDialog.show(this, "送出訂單", "送出訂單中，請稍後...", true, false);
     }
 
     private void hideProgressDialog() {
         if (progressDialog != null) {
             progressDialog.dismiss();
+        }
+    }
+
+    private void setSendButtonEnabled(boolean enabled) {
+        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+        if (currentFragment instanceof PurchaseFragment3) {
+            PurchaseFragment3 fragment3 = (PurchaseFragment3) currentFragment;
+            fragment3.setSendOrderButtonEnabled(enabled);
         }
     }
 }
