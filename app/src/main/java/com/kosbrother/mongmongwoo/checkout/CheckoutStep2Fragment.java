@@ -66,5 +66,7 @@ public class CheckoutStep2Fragment extends Fragment {
     public interface OnStep2ButtonClickListener {
 
         void onStep2NextButtonClick(Store store, String shipAddress, String shipName, String shipPhone, String shipEmail);
+
+        void onStep2CheckFailed();
     }
 }
