@@ -23,6 +23,7 @@ import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.DataManager;
+import com.kosbrother.mongmongwoo.entity.ShipInfoEntity;
 import com.kosbrother.mongmongwoo.entity.myshoppingpoints.ShoppingPointsDetailEntity;
 import com.kosbrother.mongmongwoo.facebookevent.FacebookLogger;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
@@ -36,6 +37,7 @@ import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCarActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
+import com.kosbrother.mongmongwoo.widget.CenterProgressDialog;
 
 import java.util.List;
 
@@ -62,6 +64,7 @@ public class PurchaseFragment1 extends Fragment {
     private View shoppingPointsSubTotalView;
     private TextView shoppingPointsSubTotalTextView;
     private TextView deliveryTextView;
+    private CenterProgressDialog progressDialog;
 
     private List<Product> products;
 
@@ -74,6 +77,29 @@ public class PurchaseFragment1 extends Fragment {
     private String selectedDelivery = "請選擇";
 
     private String email = Settings.getEmail();
+    private DataManager.CheckResultCallBack checkPickupRecordCallBack = new DataManager.CheckResultCallBack() {
+        @Override
+        public void onSuccessWithErrorMessage(String errorMessage) {
+            progressDialog.dismiss();
+            AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+            alertDialogBuilder.setTitle("錯誤");
+            alertDialogBuilder.setMessage(errorMessage);
+            alertDialogBuilder.setPositiveButton("確認", null);
+            alertDialogBuilder.show();
+        }
+
+        @Override
+        public void onError(String errorMessage) {
+            progressDialog.dismiss();
+            Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onSuccess(Object data) {
+            progressDialog.dismiss();
+            mCallback.onStep1NextButtonClick(email, orderPrice, selectedDelivery);
+        }
+    };
 
     @Override
     public void onAttach(Context context) {
@@ -375,8 +401,7 @@ public class PurchaseFragment1 extends Fragment {
     }
 
     private void onNextStepButtonClick() {
-        final String delivery = deliveryTextView.getText().toString();
-        if (delivery.equals("請選擇")) {
+        if (selectedDelivery.equals("請選擇")) {
             Toast.makeText(getContext(), "請選擇取貨方式", Toast.LENGTH_SHORT).show();
             return;
         }
@@ -385,21 +410,36 @@ public class PurchaseFragment1 extends Fragment {
             showPriceAlertDialog(new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    startNextStep(delivery);
+                    startNextStep();
                 }
             });
         } else {
-            startNextStep(delivery);
+            startNextStep();
         }
     }
 
-    private void startNextStep(String delivery) {
+    private void startNextStep() {
         if (Settings.checkIsLogIn()) {
             GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.CONFIRM_FACEBOOK_LOGIN));
+            if (selectedDelivery.equals(getString(R.string.dialog_delivery_store))) {
+                progressDialog = CenterProgressDialog.show(getActivity(), new DialogInterface.OnCancelListener() {
+                    @Override
+                    public void onCancel(DialogInterface dialogInterface) {
+                        DataManager.getInstance().unSubscribe(checkPickupRecordCallBack);
+                    }
+                });
+                ShipInfoEntity shipInfoEntity = new ShipInfoEntity(
+                        Settings.getSavedUser().getUserId(),
+                        "",
+                        "");
+                DataManager.getInstance().checkPickupRecord(shipInfoEntity, checkPickupRecordCallBack);
+            } else {
+                mCallback.onStep1NextButtonClick(email, orderPrice, selectedDelivery);
+            }
         } else {
             GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.ANONYMOUS_PURCHASE));
+            mCallback.onStep1NextButtonClick(email, orderPrice, selectedDelivery);
         }
-        mCallback.onStep1NextButtonClick(email, orderPrice, delivery);
     }
 
     private void onSelectStyleButtonClick(final int productPosition, Product product) {

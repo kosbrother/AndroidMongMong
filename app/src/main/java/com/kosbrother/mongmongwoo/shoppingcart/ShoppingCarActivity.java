@@ -180,6 +180,11 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     @Override
+    public void onStep2CheckFailed() {
+        onBackPressed();
+    }
+
+    @Override
     public void onSendOrderClick() {
         setSendButtonEnabled(false);
         // mis-clicking prevention, using threshold of 1000 ms

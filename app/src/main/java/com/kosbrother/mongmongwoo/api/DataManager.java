@@ -3,6 +3,7 @@ package com.kosbrother.mongmongwoo.api;
 import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.entity.ShipInfoEntity;
 import com.kosbrother.mongmongwoo.entity.UserEntity;
 import com.kosbrother.mongmongwoo.entity.banner.Banner;
 import com.kosbrother.mongmongwoo.entity.mycollect.FavoriteItemEntity;
@@ -877,6 +878,39 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void checkPickupRecord(ShipInfoEntity shipInfoEntity, final CheckResultCallBack callBack) {
+        Observable<ResponseEntity<String>> observable =
+                networkAPI.checkPickupRecord(shipInfoEntity)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<String>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<String> stringResponseEntity) {
+                String data = stringResponseEntity.getData();
+                if (data == null) {
+                    callBack.onSuccessWithErrorMessage(stringResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void unSubscribe(ApiCallBack callBack) {
         if (callBack == null) {
             return;
@@ -921,6 +955,10 @@ public class DataManager {
         void onSuccess(Object data);
     }
 
+    public interface CheckResultCallBack extends ApiCallBack{
+        void onSuccessWithErrorMessage(String errorMessage);
+    }
+
     public interface NetworkAPI {
         @GET("api/android_version")
         Observable<AndroidVersionEntity> getAndroidVersionObservable();
@@ -956,6 +994,9 @@ public class DataManager {
         @PATCH("api/v3/users/{userId}/orders/{orderId}/cancel")
         Observable<ResponseEntity<String>> cancelOrders(
                 @Path("userId") int userId, @Path("orderId") int orderId);
+
+        @POST("api/v4/orders/check_pickup_record")
+        Observable<ResponseEntity<String>> checkPickupRecord(@Body ShipInfoEntity shipInfoEntity);
 
         @POST("api/v4/orders")
         Observable<ResponseEntity<PostOrderResultEntity>> postOrders(@Body Order order);
