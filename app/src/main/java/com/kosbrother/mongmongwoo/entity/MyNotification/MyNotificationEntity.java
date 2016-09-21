@@ -1,6 +1,5 @@
 package com.kosbrother.mongmongwoo.entity.MyNotification;
 
-import com.google.common.annotations.VisibleForTesting;
 import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
@@ -24,7 +23,6 @@ public class MyNotificationEntity implements Serializable{
         return id;
     }
 
-    @VisibleForTesting
     public void setId(int id){
         this.id = id;
     }

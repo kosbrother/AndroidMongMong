@@ -36,6 +36,10 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="45dedb112a0726be1b7bb4914d4d1a965117cae3" />
+        <!-- Enables the Android Pay API -->
+        <meta-data
+            android:name="com.google.android.gms.wallet.api.enabled"
+            android:value="true" />
 
         <activity
             android:name=".launch.LaunchActivity"

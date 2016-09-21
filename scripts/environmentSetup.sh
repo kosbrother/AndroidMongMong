@@ -10,7 +10,7 @@ function getAndroidSDK {
     echo y | android update sdk --no-ui --all --filter tools &&
     echo y | android update sdk --no-ui --all --filter android-24 &&
     echo y | android update sdk --no-ui --all --filter platform-tools &&
-    echo y | android update sdk --no-ui --all --filter build-tools-24.0.1 &&
+    echo y | android update sdk --no-ui --all --filter build-tools-24.0.2 &&
     echo y | android update sdk --no-ui --all --filter extra-android-m2repository &&
     echo y | android update sdk --no-ui --all --filter "extra-android-support" &&
     echo y | android update sdk --no-ui --all --filter extra-google-m2repository &&
