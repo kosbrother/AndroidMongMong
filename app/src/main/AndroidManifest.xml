@@ -88,6 +88,16 @@
             android:theme="@style/NoActionBarTheme" />
 
         <activity
+            android:name=".checkout.MpgActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarTheme" />
+
+        <activity
+            android:name=".checkout.ThankYouActivity"
+            android:label="訂購完成"
+            android:screenOrientation="portrait" />
+
+        <activity
             android:name="com.kosbrother.mongmongwoo.AboutActivity"
             android:label="關於我們"
             android:screenOrientation="portrait"

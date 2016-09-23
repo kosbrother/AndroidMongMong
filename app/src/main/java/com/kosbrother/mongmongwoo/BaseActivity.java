@@ -36,10 +36,10 @@ public class BaseActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-    protected void setToolbarWithoutNavIcon(String title) {
+    protected void setToolbarWithoutNavIcon() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         assert toolbar != null;
-        toolbar.setTitle(title);
+        toolbar.setTitle(getTitle().toString());
         setSupportActionBar(toolbar);
     }
 

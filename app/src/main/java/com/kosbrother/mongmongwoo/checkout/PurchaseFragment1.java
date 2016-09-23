@@ -372,16 +372,15 @@ public class PurchaseFragment1 extends Fragment {
     }
 
     public void onDeleteImageViewClick(final int position) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
-        alertDialogBuilder.setTitle("刪除商品");
-        alertDialogBuilder.setMessage("是否確定要刪除商品");
-        alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        });
-        alertDialogBuilder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext(), R.style.MmwAlertDialog);
+        alertDialogBuilder.setTitle("刪除商品")
+                .setMessage("是否確定要刪除商品")
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).setPositiveButton("確定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 GAManager.sendEvent(new CheckoutStep1ClickEvent(GALabel.PRODUCT_DELETE));
@@ -507,23 +506,23 @@ public class PurchaseFragment1 extends Fragment {
     }
 
     private AlertDialog getAlertDialog(final int product_position, View view) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext(), R.style.MmwAlertDialog);
 
-        alertDialogBuilder.setTitle("選擇商品數量");
-        alertDialogBuilder.setView(view);
-        alertDialogBuilder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                products.get(product_position).setBuy_count(tempCount);
-                ShoppingCartManager.getInstance().storeShoppingItems(products);
-                updateGoodsLinearLayout();
-                updatePricesText();
-            }
-        });
-        alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+        alertDialogBuilder.setTitle("選擇商品數量")
+                .setView(view)
+                .setPositiveButton("確定", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        products.get(product_position).setBuy_count(tempCount);
+                        ShoppingCartManager.getInstance().storeShoppingItems(products);
+                        updateGoodsLinearLayout();
+                        updatePricesText();
+                    }
+                })
+                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
 
         return alertDialogBuilder.create();
     }

@@ -10,14 +10,15 @@ import com.kosbrother.mongmongwoo.login.BaseNoTitleDialog;
 
 import rx.functions.Action1;
 
-public class DeliveryDialog extends BaseNoTitleDialog implements View.OnClickListener {
+class DeliveryDialog extends BaseNoTitleDialog implements View.OnClickListener {
 
     private TextView storeTextView;
     private TextView homeTextView;
+    private TextView homeByCreditCardTextView;
     private String selectedDelivery;
     private Action1<String> confirmDeliveryAction;
 
-    public DeliveryDialog(Context context, String selectedDelivery, final Action1<String> confirmDeliveryAction) {
+    DeliveryDialog(Context context, String selectedDelivery, final Action1<String> confirmDeliveryAction) {
         super(context);
         this.selectedDelivery = selectedDelivery;
         this.confirmDeliveryAction = confirmDeliveryAction;
@@ -34,8 +35,12 @@ public class DeliveryDialog extends BaseNoTitleDialog implements View.OnClickLis
         homeTextView = (TextView) findViewById(R.id.dialog_delivery_home_tv);
         homeTextView.setOnClickListener(this);
 
+        homeByCreditCardTextView = (TextView) findViewById(R.id.dialog_delivery_home_by_credit_card_tv);
+        homeByCreditCardTextView.setOnClickListener(this);
+
         setSelectedTextView(storeTextView);
         setSelectedTextView(homeTextView);
+        setSelectedTextView(homeByCreditCardTextView);
 
         fixDialogSize();
     }
@@ -53,6 +58,7 @@ public class DeliveryDialog extends BaseNoTitleDialog implements View.OnClickLis
 
         storeTextView = null;
         homeTextView = null;
+        homeByCreditCardTextView = null;
         confirmDeliveryAction = null;
         dismiss();
     }

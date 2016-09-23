@@ -23,19 +23,19 @@
         android:background="#f2f2f2"
         android:fitsSystemWindows="true">
 
-    <android.support.design.widget.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.PopupOverlay">
+        <android.support.design.widget.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:theme="@style/AppTheme.PopupOverlay">
 
-        <include layout="@layout/toolbar" />
-    </android.support.design.widget.AppBarLayout>
+            <include layout="@layout/toolbar" />
+        </android.support.design.widget.AppBarLayout>
 
-    <android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -129,18 +129,9 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="超商取貨付款"
+                        android:text="@{deliveryUserInfo.shipTypeText}"
                         android:textColor="@color/black_4a4a4a"
-                        android:textSize="14sp"
-                        android:visibility="@{deliveryUserInfo.storeDelivery ? View.VISIBLE : View.GONE}" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="宅配貨到付款"
-                        android:textColor="@color/black_4a4a4a"
-                        android:textSize="14sp"
-                        android:visibility="@{deliveryUserInfo.homeDelivery ? View.VISIBLE : View.GONE}" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
@@ -174,7 +165,7 @@
                         android:textColor="@color/green_text"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:visibility="@{deliveryUserInfo.homeDelivery ? View.VISIBLE : View.GONE}" />
+                        android:visibility="@{deliveryUserInfo.storeDelivery ? View.GONE : View.VISIBLE}" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -330,7 +321,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:visibility="@{deliveryUserInfo.homeDelivery ? View.VISIBLE : View.GONE}">
+                        android:visibility="@{deliveryUserInfo.storeDelivery ? View.GONE : View.VISIBLE}">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -366,7 +357,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="40dp"
                     android:layout_marginBottom="8dp"
-                    android:onClick="onContinueShoppingClick"
+                    android:onClick="onContinueShoppingButtonClick"
                     android:text="@string/continue_shopping"
                     android:textSize="14sp" />
             </LinearLayout>

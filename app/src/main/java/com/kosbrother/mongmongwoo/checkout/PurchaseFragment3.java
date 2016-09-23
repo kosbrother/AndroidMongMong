@@ -21,6 +21,7 @@ import com.kosbrother.mongmongwoo.databinding.FragmentPurchase3Binding;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep3EnterEvent;
 import com.kosbrother.mongmongwoo.model.Product;
+import com.kosbrother.mongmongwoo.model.ShipType;
 import com.kosbrother.mongmongwoo.model.Store;
 import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
@@ -32,6 +33,7 @@ public class PurchaseFragment3 extends Fragment {
     public static final String ARG_SERIALIZABLE_ORDER_PRICE = "ARG_SERIALIZABLE_ORDER_PRICE";
     public static final String ARG_SERIALIZABLE_STORE = "ARG_SERIALIZABLE_STORE";
     public static final String ARG_STRING_SHIP_ADDRESS = "ARG_STRING_SHIP_ADDRESS";
+    public static final String ARG_STRING_DELIVERY = "ARG_STRING_DELIVERY";
 
     private OnStep3ButtonClickListener mCallback;
 
@@ -39,6 +41,7 @@ public class PurchaseFragment3 extends Fragment {
     private CalculateUtil.OrderPrice orderPrice;
     private String shipAddress;
     private Store store;
+    private String delivery;
 
     private Button sendButton;
 
@@ -60,13 +63,14 @@ public class PurchaseFragment3 extends Fragment {
         orderPrice = (CalculateUtil.OrderPrice) getArguments().getSerializable(ARG_SERIALIZABLE_ORDER_PRICE);
         store = (Store) getArguments().getSerializable(ARG_SERIALIZABLE_STORE);
         shipAddress = getArguments().getString(ARG_STRING_SHIP_ADDRESS);
+        delivery = getArguments().getString(ARG_STRING_DELIVERY);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         FragmentPurchase3Binding binding = DataBindingUtil.inflate(inflater, R.layout.fragment_purchase3, container, false);
-        binding.setDeliveryUserInfo(new DeliveryUserInfoViewModel(store, shipAddress));
+        binding.setDeliveryUserInfo(new DeliveryUserInfoViewModel(store, shipAddress,delivery));
         binding.setOrderPrice(new OrderPriceViewModel(orderPrice));
         View view = binding.getRoot();
 
@@ -77,6 +81,13 @@ public class PurchaseFragment3 extends Fragment {
                 mCallback.onSendOrderClick();
             }
         });
+        boolean isHomeDeliveryByCreditCard =
+                ShipType.homeByCreditCard.getShipTypeText().equalsIgnoreCase(delivery);
+        if (isHomeDeliveryByCreditCard) {
+            sendButton.setText("信用卡付款");
+        } else {
+            sendButton.setText("送出訂單");
+        }
 
         LinearLayout goodsContainerLinearLayout = (LinearLayout) view.findViewById(R.id.fragment_purchase3_goods_container_ll);
         addGoodsItemView(goodsContainerLinearLayout, products);

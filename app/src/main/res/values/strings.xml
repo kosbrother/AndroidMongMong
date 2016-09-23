@@ -53,7 +53,8 @@
 
     <string name="activity_my_shopping_points_shopping_info">購物說明</string>
 
-    <string name="dialog_delivery_store">超商取貨付款</string>
-    <string name="dialog_delivery_home">宅配貨到付款</string>
+    <string name="dialog_delivery_store">超商-取貨付款</string>
+    <string name="dialog_delivery_home">宅配-貨到付款</string>
+    <string name="dialog_delivery_home_by_credit_card">宅配-信用卡付款</string>
 
 </resources>
