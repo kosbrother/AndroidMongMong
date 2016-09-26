@@ -76,7 +76,7 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        if (pastOrder != null && fromMyOrders()) {
+        if (pastOrder != null) {
             MenuItem cancelOrderItem = menu.findItem(R.id.past_order_detail_cancel_order_item);
             cancelOrderItem.setVisible(pastOrder.isCancelable());
             return true;

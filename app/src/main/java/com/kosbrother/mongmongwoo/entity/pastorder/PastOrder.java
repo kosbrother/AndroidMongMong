@@ -2,6 +2,7 @@ package com.kosbrother.mongmongwoo.entity.pastorder;
 
 import com.kosbrother.mongmongwoo.common.DeliveryUserInfoViewModel;
 import com.kosbrother.mongmongwoo.common.OrderPriceViewModel;
+import com.kosbrother.mongmongwoo.model.ShipType;
 
 public class PastOrder extends PastOrderEntity {
 
@@ -31,8 +32,10 @@ public class PastOrder extends PastOrderEntity {
     }
 
     public boolean isCancelable() {
-        String status = getStatus();
-        return status.equals("訂單成立") || status.equals("處理中");
+        if (getShipType().equals(ShipType.homeByCreditCard.getShipType())) {
+            return false;
+        }
+        return getStatus().equals("訂單成立");
     }
 
     public String getShoppingPointAmountText() {
@@ -44,8 +47,8 @@ public class PastOrder extends PastOrderEntity {
         return "NT$ " + subtotal;
     }
 
-    public DeliveryUserInfoViewModel getDeliveryUserInfoViewModel(String shipName, String shipPhone, String shipEmail){
-        return new DeliveryUserInfoViewModel(getInfo(),getShipType(), shipName, shipPhone, shipEmail);
+    public DeliveryUserInfoViewModel getDeliveryUserInfoViewModel(String shipName, String shipPhone, String shipEmail) {
+        return new DeliveryUserInfoViewModel(getInfo(), getShipType(), shipName, shipPhone, shipEmail);
     }
 
     public OrderPriceViewModel getOrderPrice() {
