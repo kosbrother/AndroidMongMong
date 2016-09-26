@@ -16,7 +16,7 @@ public class UrlCenter {
             "https://play.google.com/store/apps/details?id=com.kosbrother.mongmongwoo&referrer=utm_source%3D%2508in_app_navigation";
 
     public static final String CUSTOMER_SERVICE_LINE = "http://line.me/ti/p/%40kya5456n";
-    public static final String CUSTOMER_SERVICE_FB = "https://www.facebook.com/kingofgametw/";
+    public static final String CUSTOMER_SERVICE_FB = "https://www.facebook.com/mmwooo";
 
     static String getCountryTowns(int countryId) {
         return HOST + API_V3
