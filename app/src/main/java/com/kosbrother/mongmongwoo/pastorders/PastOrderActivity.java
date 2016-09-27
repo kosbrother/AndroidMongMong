@@ -13,16 +13,12 @@ import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.adpters.PastOrdersAdapter;
-import com.kosbrother.mongmongwoo.api.Webservice;
-import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrder;
-import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 
 import java.util.List;
 
-import rx.functions.Action1;
-
-public class PastOrderActivity extends BaseActivity {
+public class PastOrderActivity extends BaseActivity implements DataManager.ApiCallBack {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,22 +46,25 @@ public class PastOrderActivity extends BaseActivity {
         return super.onOptionsItemSelected(menuItem);
     }
 
+    @Override
+    protected void onDestroy() {
+        DataManager.getInstance().unSubscribe(this);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onError(String errorMessage) {
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSuccess(Object data) {
+        onGetDataResult((List<PostOrder>) data);
+    }
+
     private void getOrders() {
         String email = Settings.getSavedUser().getEmail();
-        Webservice.getOrdersByEmail(email,
-                new Action1<ResponseEntity<List<PostOrder>>>() {
-                    @Override
-                    public void call(ResponseEntity<List<PostOrder>> listResponseEntity) {
-                        List<PostOrder> postOrders = listResponseEntity.getData();
-                        if (postOrders != null) {
-                            onGetDataResult(postOrders);
-                        } else {
-                            ResponseEntity.Error error = listResponseEntity.getError();
-                            Toast.makeText(PastOrderActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
-                            GAManager.sendError("getOrdersByEmailError", error);
-                        }
-                    }
-                });
+        DataManager.getInstance().getOrdersByEmail(email, this);
     }
 
     private void onGetDataResult(final List<PostOrder> postOrders) {
@@ -92,5 +91,4 @@ public class PastOrderActivity extends BaseActivity {
 
         }
     }
-
 }

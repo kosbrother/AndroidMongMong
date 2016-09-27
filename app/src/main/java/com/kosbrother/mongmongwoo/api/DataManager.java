@@ -13,6 +13,7 @@ import com.kosbrother.mongmongwoo.entity.mycollect.WishListEntity;
 import com.kosbrother.mongmongwoo.entity.myshoppingpoints.ShoppingPointsCampaignsEntity;
 import com.kosbrother.mongmongwoo.entity.myshoppingpoints.ShoppingPointsDetailEntity;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
+import com.kosbrother.mongmongwoo.entity.postorder.PostOrder;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrderResultEntity;
 import com.kosbrother.mongmongwoo.entity.user.MmwUserEntity;
 import com.kosbrother.mongmongwoo.model.Category;
@@ -911,6 +912,72 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void getOrdersByEmailAndPhone(
+            final String shipEmail, final String shipPhone, final ApiCallBack callBack) {
+        Observable<ResponseEntity<List<PostOrder>>> observable =
+                networkAPI.getOrdersByEmailPhone(shipEmail, shipPhone)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<List<PostOrder>>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<List<PostOrder>> listResponseEntity) {
+                List<PostOrder> data = listResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(listResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
+    public void getOrdersByEmail(final String email, final ApiCallBack callBack) {
+        Observable<ResponseEntity<List<PostOrder>>> observable = networkAPI.getOrdersByEmail(email)
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<List<PostOrder>>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<List<PostOrder>> listResponseEntity) {
+                List<PostOrder> data = listResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(listResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void unSubscribe(ApiCallBack callBack) {
         if (callBack == null) {
             return;
@@ -955,7 +1022,7 @@ public class DataManager {
         void onSuccess(Object data);
     }
 
-    public interface CheckResultCallBack extends ApiCallBack{
+    public interface CheckResultCallBack extends ApiCallBack {
         void onSuccessWithErrorMessage(String errorMessage);
     }
 
@@ -990,6 +1057,13 @@ public class DataManager {
 
         @GET("api/v4/orders/{orderId}")
         Observable<ResponseEntity<PastOrder>> getOrders(@Path("orderId") int orderId);
+
+        @GET("/api/v4/orders/by_email_phone")
+        Observable<ResponseEntity<List<PostOrder>>> getOrdersByEmailPhone(
+                @Query("ship_email") String shipEmail, @Query("ship_phone") String shipPhone);
+
+        @GET("api/v4/orders/by_user_email")
+        Observable<ResponseEntity<List<PostOrder>>> getOrdersByEmail(@Query("email") String email);
 
         @PATCH("api/v3/users/{userId}/orders/{orderId}/cancel")
         Observable<ResponseEntity<String>> cancelOrders(

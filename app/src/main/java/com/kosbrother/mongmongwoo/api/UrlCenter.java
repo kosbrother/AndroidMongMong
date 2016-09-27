@@ -43,26 +43,12 @@ public class UrlCenter {
         return HOST + API_V3 + "/categories";
     }
 
-    static String getOrdersByEmail(String email) {
-        return HOST + API_V3
-                + "/orders/"
-                + "by_user_email"
-                + "?email=" + email;
-    }
-
     static String postRegistrationId() {
         return HOST + API_V3 + "/device_registrations";
     }
 
     static String getAndroidVersion() {
         return HOST + API + "/android_version";
-    }
-
-    static String getOrdersByEmailAndPhone(String email, String phone) {
-        return HOST + API_V3
-                + "/orders/by_email_phone/"
-                + "?email=" + email
-                + "&phone=" + phone;
     }
 
     static String getShopInfos() {

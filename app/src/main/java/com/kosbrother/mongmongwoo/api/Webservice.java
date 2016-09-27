@@ -4,7 +4,6 @@ import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.entity.ShopInfoEntity;
-import com.kosbrother.mongmongwoo.entity.postorder.PostOrder;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.exception.ExceptionEvent;
 import com.kosbrother.mongmongwoo.model.Category;
@@ -54,72 +53,6 @@ public class Webservice {
                     @Override
                     public void call(Throwable throwable) {
                         handleThrowable(throwable, "getCategoriesException");
-                    }
-                });
-    }
-
-    public static void getOrdersByEmailAndPhone(
-            final String email, final String phone,
-            Action1<? super ResponseEntity<List<PostOrder>>> onNextAction) {
-        Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                try {
-                    subscriber.onNext(OrderApi.getOrdersByEmailAndPhone(email, phone));
-                    subscriber.onCompleted();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    subscriber.onError(e);
-                }
-            }
-        })
-                .map(new Func1<String, ResponseEntity<List<PostOrder>>>() {
-                    @Override
-                    public ResponseEntity<List<PostOrder>> call(String json) {
-                        Type listType = new TypeToken<ResponseEntity<List<PostOrder>>>() {
-                        }.getType();
-                        return new Gson().fromJson(json, listType);
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onNextAction, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        handleThrowable(throwable, "getOrdersByEmailAndPhoneException");
-                    }
-                });
-    }
-
-    public static void getOrdersByEmail(
-            final String email,
-            Action1<? super ResponseEntity<List<PostOrder>>> onNextAction) {
-        Observable.create(new Observable.OnSubscribe<String>() {
-            @Override
-            public void call(Subscriber<? super String> subscriber) {
-                try {
-                    subscriber.onNext(OrderApi.getOrdersByEmail(email));
-                    subscriber.onCompleted();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    subscriber.onError(e);
-                }
-            }
-        })
-                .map(new Func1<String, ResponseEntity<List<PostOrder>>>() {
-                    @Override
-                    public ResponseEntity<List<PostOrder>> call(String json) {
-                        Type listType = new TypeToken<ResponseEntity<List<PostOrder>>>() {
-                        }.getType();
-                        return new Gson().fromJson(json, listType);
-                    }
-                })
-                .subscribeOn(Schedulers.newThread())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(onNextAction, new Action1<Throwable>() {
-                    @Override
-                    public void call(Throwable throwable) {
-                        handleThrowable(throwable, "getOrdersByEmailException");
                     }
                 });
     }
