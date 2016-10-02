@@ -1,14 +1,19 @@
 package com.kosbrother.mongmongwoo.entity.checkout;
 
+import com.kosbrother.mongmongwoo.BuildConfig;
+
 import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.util.HashMap;
 
 public class MpgEntity {
 
-    private static final String MERCHANT_ID = "12465125";
-    private static final String HASH_KEY = "wmUZxGOvhnFZjn42LmWaNMarirb5c8MJ";
-    private static final String HASH_IV = "vHJ2oyxFVcFfAKhm";
+    private static final String MERCHANT_ID = BuildConfig.DEBUG ?
+            "12465125" : "312128390";
+    private static final String HASH_KEY = BuildConfig.DEBUG ?
+            "wmUZxGOvhnFZjn42LmWaNMarirb5c8MJ" : "XSBetD89lZ0hSTwckwZwWTB9fyCBzMow";
+    private static final String HASH_IV = BuildConfig.DEBUG ?
+            "vHJ2oyxFVcFfAKhm" : "FZK8DThZShgLaMYv";
     /**
      * JSON or String
      */
