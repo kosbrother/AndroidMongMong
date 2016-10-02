@@ -97,18 +97,9 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="超商取貨付款"
+                        android:text="@{deliveryUserInfo.shipTypeText}"
                         android:textColor="@color/black_4a4a4a"
-                        android:textSize="14sp"
-                        android:visibility="@{deliveryUserInfo.storeDelivery ? View.VISIBLE : View.GONE}" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="宅配貨到付款"
-                        android:textColor="@color/black_4a4a4a"
-                        android:textSize="14sp"
-                        android:visibility="@{deliveryUserInfo.homeDelivery ? View.VISIBLE : View.GONE}" />
+                        android:textSize="14sp" />
 
                 </LinearLayout>
 
@@ -136,7 +127,7 @@
                         android:textColor="@color/green_text"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:visibility="@{deliveryUserInfo.homeDelivery ? View.VISIBLE : View.GONE}" />
+                        android:visibility="@{deliveryUserInfo.storeDelivery ? View.GONE : View.VISIBLE}" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -292,7 +283,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:visibility="@{deliveryUserInfo.homeDelivery ? View.VISIBLE : View.GONE}">
+                        android:visibility="@{deliveryUserInfo.storeDelivery ? View.GONE : View.VISIBLE}">
 
                         <TextView
                             android:layout_width="wrap_content"

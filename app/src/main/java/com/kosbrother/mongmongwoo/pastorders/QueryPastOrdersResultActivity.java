@@ -6,12 +6,12 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.adpters.PastOrdersAdapter;
-import com.kosbrother.mongmongwoo.api.Webservice;
-import com.kosbrother.mongmongwoo.entity.ResponseEntity;
+import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrder;
 import com.kosbrother.mongmongwoo.fragments.CsBottomSheetDialogFragment;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
@@ -19,9 +19,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.Customer
 
 import java.util.List;
 
-import rx.functions.Action1;
-
-public class QueryPastOrdersResultActivity extends BaseActivity {
+public class QueryPastOrdersResultActivity extends BaseActivity implements DataManager.ApiCallBack {
 
     public static final String EXTRA_STRING_EMAIL = "EXTRA_STRING_EMAIL";
     public static final String EXTRA_STRING_PHONE = "EXTRA_STRING_PHONE";
@@ -36,24 +34,38 @@ public class QueryPastOrdersResultActivity extends BaseActivity {
         requestOrders();
     }
 
+    @Override
+    protected void onDestroy() {
+        DataManager.getInstance().unSubscribe(this);
+        super.onDestroy();
+    }
+
+    public void onCustomerServiceFabClick(View view) {
+        csBottomSheetDialogFragment.show(getSupportFragmentManager(), "");
+        GAManager.sendEvent(new CustomerServiceClickEvent("FAB"));
+    }
+
+    @Override
+    public void onError(String errorMessage) {
+        Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onSuccess(Object data) {
+        onGetOrdersResult((List<PostOrder>) data);
+    }
+
+    private void onOrderItemClick(int orderId) {
+        Intent intent = new Intent(this, PastOrderDetailActivity.class);
+        intent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID, orderId);
+        startActivity(intent);
+    }
+
     private void requestOrders() {
         Intent intent = getIntent();
         String email = intent.getStringExtra(EXTRA_STRING_EMAIL);
         String phone = intent.getStringExtra(EXTRA_STRING_PHONE);
-        Webservice.getOrdersByEmailAndPhone(email, phone,
-                new Action1<ResponseEntity<List<PostOrder>>>() {
-                    @Override
-                    public void call(ResponseEntity<List<PostOrder>> listResponseEntity) {
-                        List<PostOrder> data = listResponseEntity.getData();
-                        if (data == null) {
-                            GAManager.sendError("getOrdersByEmailAndPhoneError", listResponseEntity.getError());
-                        } else {
-                            onGetOrdersResult(data);
-                        }
-                    }
-                }
-        );
-
+        DataManager.getInstance().getOrdersByEmailAndPhone(email, phone, this);
     }
 
     private void onGetOrdersResult(List<PostOrder> postOrders) {
@@ -83,16 +95,5 @@ public class QueryPastOrdersResultActivity extends BaseActivity {
                 onOrderItemClick(postOrders.get(position).getId());
             }
         });
-    }
-
-    private void onOrderItemClick(int orderId) {
-        Intent intent = new Intent(this, PastOrderDetailActivity.class);
-        intent.putExtra(PastOrderDetailActivity.EXTRA_INT_ORDER_ID, orderId);
-        startActivity(intent);
-    }
-
-    public void onCustomerServiceFabClick(View view) {
-        csBottomSheetDialogFragment.show(getSupportFragmentManager(), "");
-        GAManager.sendEvent(new CustomerServiceClickEvent("FAB"));
     }
 }

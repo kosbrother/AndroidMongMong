@@ -1,7 +1,7 @@
 package com.kosbrother.mongmongwoo.model;
 
 public enum ShipType {
-    store("超商取貨付款"), home("宅配貨到付款");
+    store("超商-取貨付款"), home("宅配-貨到付款"), homeByCreditCard("宅配-信用卡付款");
 
     private String shipTypeText;
 
@@ -11,12 +11,15 @@ public enum ShipType {
 
     public String getShipType() {
         String shipType;
-        switch (shipTypeText){
-            case "超商取貨付款":
+        switch (shipTypeText) {
+            case "超商-取貨付款":
                 shipType = "store_delivery";
                 break;
-            case "宅配貨到付款":
+            case "宅配-貨到付款":
                 shipType = "home_delivery";
+                break;
+            case "宅配-信用卡付款":
+                shipType = "home_delivery_by_credit_card";
                 break;
             default:
                 shipType = "";
@@ -25,15 +28,29 @@ public enum ShipType {
         return shipType;
     }
 
-    public static ShipType fromString(String text) {
-        if (text != null) {
+    public String getShipTypeText() {
+        return shipTypeText;
+    }
+
+    public static String getShipTypeFromShipTypeText(String shipTypeText) {
+        if (shipTypeText != null) {
             for (ShipType shipType : ShipType.values()) {
-                if (text.equalsIgnoreCase(shipType.shipTypeText)) {
-                    return shipType;
+                if (shipTypeText.equalsIgnoreCase(shipType.getShipTypeText())) {
+                    return shipType.getShipType();
                 }
             }
         }
+        throw new IllegalArgumentException("No constant with shipTypeText " + shipTypeText + " found");
+    }
 
-        throw new IllegalArgumentException("No constant with text " + text + " found");
+    public static String getShipTypeTextFromShipType(String shipType) {
+        if (shipType != null) {
+            for (ShipType type : ShipType.values()) {
+                if (shipType.equalsIgnoreCase(type.getShipType())) {
+                    return type.getShipTypeText();
+                }
+            }
+        }
+        throw new IllegalArgumentException("No constant with shipType " + shipType + " found");
     }
 }

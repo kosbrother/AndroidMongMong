@@ -1,6 +1,7 @@
 package com.kosbrother.mongmongwoo.shoppingcart;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.app.Fragment;
@@ -19,10 +20,12 @@ import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.checkout.CheckoutStep2Fragment;
 import com.kosbrother.mongmongwoo.checkout.HomeDeliveryFragment;
+import com.kosbrother.mongmongwoo.checkout.MpgActivity;
 import com.kosbrother.mongmongwoo.checkout.PurchaseFragment1;
 import com.kosbrother.mongmongwoo.checkout.PurchaseFragment3;
-import com.kosbrother.mongmongwoo.checkout.PurchaseFragment4;
 import com.kosbrother.mongmongwoo.checkout.StoreDeliveryFragment;
+import com.kosbrother.mongmongwoo.checkout.ThankYouActivity;
+import com.kosbrother.mongmongwoo.entity.checkout.MpgEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrderResultEntity;
 import com.kosbrother.mongmongwoo.entity.postorder.UnableToBuyModel;
@@ -49,6 +52,8 @@ public class ShoppingCarActivity extends BaseActivity implements
         CheckoutStep2Fragment.OnStep2ButtonClickListener,
         PurchaseFragment3.OnStep3ButtonClickListener {
 
+    private static final int REQUEST_MPG_PAYMENT = 222;
+
     private long mLastClickTime = 0;
 
     private Order theOrder;
@@ -56,7 +61,6 @@ public class ShoppingCarActivity extends BaseActivity implements
     private View breadCrumb1;
     private View breadCrumb2;
     private View breadCrumb3;
-    private View breadCrumb4;
 
     private List<Product> products;
 
@@ -80,14 +84,17 @@ public class ShoppingCarActivity extends BaseActivity implements
         }
     };
     private CalculateUtil.OrderPrice orderPrice;
+    private String shipTypeText;
     private Store store;
     private String shipAddress;
+    private MpgEntity mpgEntity;
+    private int orderId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_shopping_car);
-        setToolbarWithoutNavIcon("結帳");
+        setToolbarWithoutNavIcon();
 
         products = ShoppingCartManager.getInstance().loadShoppingItems();
         if (products == null || products.size() == 0) {
@@ -114,15 +121,6 @@ public class ShoppingCarActivity extends BaseActivity implements
             return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onPrepareOptionsMenu(Menu menu) {
-        Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment instanceof PurchaseFragment3) {
-            menu.findItem(R.id.previous).setVisible(false);
-        }
-        return true;
     }
 
     @Override
@@ -157,13 +155,14 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     @Override
-    public void onStep1NextButtonClick(String email, CalculateUtil.OrderPrice orderPrice, String delivery) {
+    public void onStep1NextButtonClick(String email, CalculateUtil.OrderPrice orderPrice, String shipTypeText) {
         this.orderPrice = orderPrice;
+        this.shipTypeText = shipTypeText;
         theOrder.setEmail(email.isEmpty() ? "anonymous@mmwooo.fake.com" : email);
-        theOrder.setShipType(ShipType.fromString(delivery).getShipType());
+        theOrder.setShipType(ShipType.getShipTypeFromShipTypeText(shipTypeText));
         setOrderProductsAndPrice();
 
-        startStep2(delivery);
+        startStep2(shipTypeText);
     }
 
     @Override
@@ -173,6 +172,10 @@ public class ShoppingCarActivity extends BaseActivity implements
 
         setOrderStoreInfo();
         setOrderShipInfo(shipName, shipPhone, shipEmail, shipAddress);
+        if (isHomeDeliveryByCreditCard()) {
+            mpgEntity = new MpgEntity();
+            mpgEntity.setEmail(shipEmail);
+        }
 
         FacebookLogger.getInstance().logAddedPaymentInfoEvent(true);
 
@@ -199,6 +202,20 @@ public class ShoppingCarActivity extends BaseActivity implements
         DataManager.getInstance().postOrders(theOrder, postOrderCallBack);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_MPG_PAYMENT) {
+            if (resultCode == RESULT_OK) {
+                logPurchasedEvent();
+                ShoppingCartManager.getInstance().removeAllShoppingItems();
+                startThankYouActivityThenFinish(orderId, Settings.getShipName());
+            } else {
+                setSendButtonEnabled(true);
+            }
+        }
+    }
+
     public List<Product> getProducts() {
         return products;
     }
@@ -207,7 +224,6 @@ public class ShoppingCarActivity extends BaseActivity implements
         breadCrumb1 = findViewById(R.id.bread_crumbs_1_text);
         breadCrumb2 = findViewById(R.id.bread_crumbs_2_text);
         breadCrumb3 = findViewById(R.id.bread_crumbs_3_text);
-        breadCrumb4 = findViewById(R.id.bread_crumbs_4_text);
     }
 
     private void initOrder() {
@@ -274,6 +290,7 @@ public class ShoppingCarActivity extends BaseActivity implements
         args.putSerializable(PurchaseFragment3.ARG_SERIALIZABLE_ORDER_PRICE, orderPrice);
         args.putSerializable(PurchaseFragment3.ARG_SERIALIZABLE_STORE, store);
         args.putSerializable(PurchaseFragment3.ARG_STRING_SHIP_ADDRESS, shipAddress);
+        args.putSerializable(PurchaseFragment3.ARG_STRING_DELIVERY, shipTypeText);
         purchaseFragment3.setArguments(args);
 
         getSupportFragmentManager()
@@ -283,22 +300,12 @@ public class ShoppingCarActivity extends BaseActivity implements
                 .commit();
     }
 
-    private void startStep4(int id) {
-        invalidateOptionsMenu();
-        setStepBar4();
-
-        PurchaseFragment4 purchaseFragment4 = new PurchaseFragment4();
-        Bundle args = new Bundle();
-        args.putInt(PurchaseFragment4.ARG_INT_ORDER_ID, id);
-        purchaseFragment4.setArguments(args);
-
-        FragmentManager supportFragmentManager = getSupportFragmentManager();
-        supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
-
-        supportFragmentManager
-                .beginTransaction()
-                .replace(R.id.fragment_container, purchaseFragment4)
-                .commit();
+    private void startThankYouActivityThenFinish(int orderId, String shipName) {
+        Intent intent = new Intent(this, ThankYouActivity.class);
+        intent.putExtra(ThankYouActivity.EXTRA_INT_ORDER_ID, orderId);
+        intent.putExtra(ThankYouActivity.EXTRA_STRING_SHIP_NAME, shipName);
+        startActivity(intent);
+        finish();
     }
 
     private List<PostProduct> getPostProducts() {
@@ -317,11 +324,22 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     private void onPostOrderSuccess(PostOrderResultEntity result) {
-        int orderId = result.getId();
+        orderId = result.getId();
         if (orderId != 0) {
-            logPurchasedEvent();
-            ShoppingCartManager.getInstance().removeAllShoppingItems();
-            startStep4(orderId);
+            if (isHomeDeliveryByCreditCard()) {
+                Intent intent = new Intent(this, MpgActivity.class);
+                mpgEntity.setTimeStamp(String.valueOf(System.currentTimeMillis()));
+                mpgEntity.setMerchantOrderNo(String.valueOf(orderId));
+                mpgEntity.setItemDesc("萌萌屋訂單(" + orderId + ")");
+                mpgEntity.setAmt(orderPrice.getTotal());
+                intent.putExtra(MpgActivity.EXTRA_BYTE_ARRAY_POST_DATA, mpgEntity.getPostData());
+                intent.putExtra(MpgActivity.EXTRA_INT_ORDER_ID, orderId);
+                startActivityForResult(intent, REQUEST_MPG_PAYMENT);
+            } else {
+                logPurchasedEvent();
+                ShoppingCartManager.getInstance().removeAllShoppingItems();
+                startThankYouActivityThenFinish(orderId, Settings.getShipName());
+            }
         } else {
             StockShortageDialog dialog = new StockShortageDialog(
                     this, result.getUnableToBuyModels(), new Action1<List<UnableToBuyModel>>() {
@@ -393,28 +411,18 @@ public class ShoppingCarActivity extends BaseActivity implements
         breadCrumb1.setBackgroundResource(R.drawable.circle_style);
         breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
         breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
-        breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
     }
 
     private void setStepBar2() {
         breadCrumb1.setBackgroundResource(R.drawable.circle_non_select_style);
         breadCrumb2.setBackgroundResource(R.drawable.circle_style);
         breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
-        breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
     }
 
     private void setStepBar3() {
         breadCrumb1.setBackgroundResource(R.drawable.circle_non_select_style);
         breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
         breadCrumb3.setBackgroundResource(R.drawable.circle_style);
-        breadCrumb4.setBackgroundResource(R.drawable.circle_non_select_style);
-    }
-
-    private void setStepBar4() {
-        breadCrumb1.setBackgroundResource(R.drawable.circle_non_select_style);
-        breadCrumb2.setBackgroundResource(R.drawable.circle_non_select_style);
-        breadCrumb3.setBackgroundResource(R.drawable.circle_non_select_style);
-        breadCrumb4.setBackgroundResource(R.drawable.circle_style);
     }
 
     private void showProgressDialog() {
@@ -433,5 +441,9 @@ public class ShoppingCarActivity extends BaseActivity implements
             PurchaseFragment3 fragment3 = (PurchaseFragment3) currentFragment;
             fragment3.setSendOrderButtonEnabled(enabled);
         }
+    }
+
+    private boolean isHomeDeliveryByCreditCard() {
+        return shipTypeText.equals(ShipType.homeByCreditCard.getShipTypeText());
     }
 }

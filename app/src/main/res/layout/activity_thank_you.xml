@@ -29,7 +29,7 @@
             android:src="@mipmap/img_gift" />
 
         <TextView
-            android:id="@+id/thank_you_tv"
+            android:id="@+id/activity_thank_you_message_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
@@ -46,22 +46,22 @@
             android:orientation="horizontal">
 
             <Button
-                android:id="@+id/view_order_btn"
                 style="@style/GreenButton"
                 android:layout_width="0dp"
                 android:layout_height="33dp"
                 android:layout_marginEnd="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_weight="1"
+                android:onClick="onViewOrderButtonClick"
                 android:text="@string/view_order"
                 android:textSize="14sp" />
 
             <Button
-                android:id="@+id/continue_shopping_btn"
                 style="@style/GreenButton"
                 android:layout_width="0dp"
                 android:layout_height="33dp"
                 android:layout_weight="1"
+                android:onClick="onContinueShoppingButtonClick"
                 android:text="@string/continue_shopping"
                 android:textSize="14sp" />
 

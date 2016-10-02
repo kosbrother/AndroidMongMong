@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".checkout.MpgActivity">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -35,7 +37,7 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_gravity="end"
-                android:background="@drawable/circle_style"
+                android:background="@drawable/circle_non_select_style"
                 android:gravity="center"
                 android:text="1"
                 android:textColor="#FFFFFF"
@@ -71,23 +73,26 @@
                 android:layout_width="25dp"
                 android:layout_height="25dp"
                 android:layout_gravity="end"
-                android:background="@drawable/circle_non_select_style"
+                android:background="@drawable/circle_style"
                 android:gravity="center"
                 android:text="3"
                 android:textColor="#FFFFFF"
                 android:textSize="15dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:text="上一步"
+                android:textSize="20sp"
+                android:visibility="invisible" />
         </LinearLayout>
 
     </android.support.v7.widget.Toolbar>
 
-    <ViewStub
-        android:id="@+id/empty_shopping_car_vs"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout="@layout/view_stub_empty_shopping_car" />
-
-    <FrameLayout
-        android:id="@+id/fragment_container"
+    <WebView
+        android:id="@+id/activity_mpg_wb"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

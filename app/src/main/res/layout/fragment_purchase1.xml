@@ -233,7 +233,6 @@
                         android:layout_weight="1"
                         android:textColor="@color/green_text"
                         android:textSize="14sp"
-                        android:textStyle="bold"
                         app:buttonTint="@color/green_text"
                         tools:text="折扣NT$ 200" />
 

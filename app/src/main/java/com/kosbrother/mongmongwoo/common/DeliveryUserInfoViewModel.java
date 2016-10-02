@@ -18,14 +18,19 @@ public class DeliveryUserInfoViewModel {
 
     private boolean isHomeDelivery;
     private String shipAddress;
+    private String shipTypeText;
 
-    public DeliveryUserInfoViewModel(Store savedStore, String shipAddress) {
+    private boolean isHomeDeliveryByCreditCard;
+
+    public DeliveryUserInfoViewModel(Store savedStore, String shipAddress, String shipTypeText) {
         userName = Settings.getShipName();
         userPhone = Settings.getShipPhone();
         userEmail = Settings.getShipEmail();
 
-        isHomeDelivery = shipAddress != null && !shipAddress.isEmpty();
-        isStoreDelivery = !isHomeDelivery;
+        isStoreDelivery = ShipType.store.getShipTypeText().equals(shipTypeText);
+        isHomeDelivery = ShipType.home.getShipTypeText().equals(shipTypeText);
+        isHomeDeliveryByCreditCard = ShipType.homeByCreditCard.getShipTypeText().equals(shipTypeText);
+        this.shipTypeText = shipTypeText;
 
         storeName = savedStore.getName();
         storeAddress = savedStore.getAddress();
@@ -46,6 +51,8 @@ public class DeliveryUserInfoViewModel {
 
         isStoreDelivery = ShipType.store.getShipType().equals(shipType);
         isHomeDelivery = ShipType.home.getShipType().equals(shipType);
+        isHomeDeliveryByCreditCard = ShipType.homeByCreditCard.getShipType().equals(shipType);
+        shipTypeText = ShipType.getShipTypeTextFromShipType(shipType);
     }
 
     public String getUserName() {
@@ -82,5 +89,13 @@ public class DeliveryUserInfoViewModel {
 
     public String getShipAddress() {
         return shipAddress;
+    }
+
+    public String getShipTypeText() {
+        return shipTypeText;
+    }
+
+    public boolean isHomeDeliveryByCreditCard() {
+        return isHomeDeliveryByCreditCard;
     }
 }
