@@ -162,7 +162,7 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
         GAManager.sendEvent(new CustomerServiceClickEvent("FAB"));
     }
 
-    public void onContinueShoppingClick(View view) {
+    public void onContinueShoppingButtonClick(View view) {
         startActivity(new Intent(this, MainActivity.class));
         finish();
     }
