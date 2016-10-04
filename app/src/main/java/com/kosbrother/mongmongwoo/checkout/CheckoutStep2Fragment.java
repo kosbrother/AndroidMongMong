@@ -8,6 +8,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.checkout.CheckoutStep2EnterEvent;
 import com.kosbrother.mongmongwoo.model.Store;
 import com.kosbrother.mongmongwoo.utils.KeyboardUtil;
+import com.kosbrother.mongmongwoo.utils.StringUtil;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,6 +42,10 @@ public class CheckoutStep2Fragment extends Fragment {
     protected String validateUserInfo(String shipName, String shipPhone, String shipEmail) {
         if (shipName.isEmpty() || shipPhone.isEmpty() || shipEmail.isEmpty()) {
             return "收件人名稱、手機電話跟email不可空白";
+        }
+
+        if (StringUtil.notOnlyChinese(shipName)) {
+            return "收件人名稱只能輸入中文";
         }
 
         Matcher cellPhoneMatcher = VALID_CELL_PHONE_REGEX.matcher(shipPhone);
