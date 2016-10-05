@@ -10,8 +10,10 @@ import android.media.RingtoneManager;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.BigPictureStyle;
 
+import com.crashlytics.android.Crashlytics;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
@@ -30,9 +32,14 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
 
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
+
 public class MyFcmListenerService extends FirebaseMessagingService {
 
-    private static final String TAG = "MyFcmListenerService";
     private int id;
 
     @Override
@@ -87,41 +94,66 @@ public class MyFcmListenerService extends FirebaseMessagingService {
     }
 
     private void onReceivedProduct(Map data) {
-        Bitmap productBitmap = getProductBitmap(data);
-        String contentTitle = data.get("content_title").toString();
-        String contentText = data.get("content_text").toString();
-
-        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
-                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon9))
-                .setSmallIcon(R.mipmap.ic_mhouse)
-                .setContentTitle(contentTitle)
-                .setContentText(contentText)
-                .setAutoCancel(true)
-                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
-                .setContentIntent(getProductPendingIntent(data))
-                .setPriority(NotificationCompat.PRIORITY_MAX)
-                .setStyle(getBigPictureStyle(contentText, productBitmap));
-
-        sendNotification(notificationBuilder);
-        GAManager.sendEvent(new NotificationPromoSendEvent(contentTitle));
+        getProductBitmap(data);
     }
 
-    private Bitmap getProductBitmap(Map data) {
-        Bitmap bitmap;
-        try {
-            URL url = new URL(data.get("content_pic").toString());
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            bitmap = BitmapFactory.decodeStream(input);
-        } catch (IOException e) {
-            e.printStackTrace();
-            bitmap = BitmapFactory.decodeResource(
-                    getApplication().getResources(),
-                    R.mipmap.img_pre_load_rectangle);
-        }
-        return bitmap;
+    private void getProductBitmap(final Map data) {
+        Observable.create(new Observable.OnSubscribe<Bitmap>() {
+            @Override
+            public void call(Subscriber<? super Bitmap> subscriber) {
+                InputStream in = null;
+                try {
+                    URL url = new URL(data.get("content_pic").toString());
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setDoInput(true);
+                    connection.connect();
+                    in = connection.getInputStream();
+                    Bitmap bitmap = BitmapFactory.decodeStream(in);
+                    subscriber.onNext(bitmap);
+                } catch (IOException e) {
+                    if (!BuildConfig.DEBUG) {
+                        Crashlytics.log("Get Notification bitmap exception.");
+                        Crashlytics.logException(e);
+                    }
+                    Bitmap bitmap = BitmapFactory.decodeResource(
+                            getApplication().getResources(),
+                            R.mipmap.img_pre_load_rectangle);
+                    subscriber.onNext(bitmap);
+                } finally {
+                    if (in != null) {
+                        try {
+                            in.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    subscriber.onCompleted();
+                }
+            }
+        })
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Bitmap>() {
+                    @Override
+                    public void call(Bitmap bitmap) {
+                        String contentTitle = data.get("content_title").toString();
+                        String contentText = data.get("content_text").toString();
+
+                        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(MyFcmListenerService.this)
+                                .setLargeIcon(BitmapFactory.decodeResource(getResources(), R.mipmap.app_icon9))
+                                .setSmallIcon(R.mipmap.ic_mhouse)
+                                .setContentTitle(contentTitle)
+                                .setContentText(contentText)
+                                .setAutoCancel(true)
+                                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION))
+                                .setContentIntent(getProductPendingIntent(data))
+                                .setPriority(NotificationCompat.PRIORITY_MAX)
+                                .setStyle(getBigPictureStyle(contentText, bitmap));
+
+                        sendNotification(notificationBuilder);
+                        GAManager.sendEvent(new NotificationPromoSendEvent(contentTitle));
+                    }
+                });
     }
 
     private Product getProduct(Map data) {
