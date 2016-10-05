@@ -4,6 +4,8 @@ import com.google.gson.annotations.SerializedName;
 import com.kosbrother.mongmongwoo.api.UrlCenter;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -130,7 +132,15 @@ public class Product implements Serializable {
     }
 
     public String getUrl() {
-        return String.format(ITEM_URI_STRING, categoryName, name);
+        String encodeCategory = categoryName;
+        String encodeSlug = slug;
+        try {
+            encodeCategory = URLEncoder.encode(encodeCategory, "utf-8");
+            encodeSlug = URLEncoder.encode(encodeSlug, "utf-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        return String.format(ITEM_URI_STRING, encodeCategory, encodeSlug);
     }
 
     public int getFinalPrice() {
