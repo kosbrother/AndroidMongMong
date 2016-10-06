@@ -103,11 +103,11 @@ public class FavoriteFragment extends Fragment implements FavoriteView,
 
     @Override
     public void showMyCollectList(List<Product> productList) {
-        RecyclerView recyclerView = new RecyclerView(getContext());
+        RecyclerView recyclerView = new RecyclerView(getActivity());
         recyclerView.setLayoutParams(new RecyclerView.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         FavoriteAdapter adapter = new FavoriteAdapter(productList, this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
         container.removeAllViews();
@@ -137,6 +137,6 @@ public class FavoriteFragment extends Fragment implements FavoriteView,
 
     @Override
     public void showToast(String errorMessage) {
-        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
     }
 }

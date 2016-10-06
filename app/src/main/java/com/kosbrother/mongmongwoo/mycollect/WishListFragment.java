@@ -64,17 +64,17 @@ public class WishListFragment extends Fragment implements WishListView, WishList
     @Override
     public void showLoadingView() {
         container.removeAllViews();
-        View loadingView = LayoutInflater.from(getContext()).inflate(R.layout.loading_no_toolbar, null);
+        View loadingView = LayoutInflater.from(getActivity()).inflate(R.layout.loading_no_toolbar, null);
         container.addView(loadingView);
     }
 
     @Override
     public void showWishListView(List<Product> wishListProducts, List<Spec> specs) {
-        RecyclerView recyclerView = new RecyclerView(getContext());
+        RecyclerView recyclerView = new RecyclerView(getActivity());
         recyclerView.setLayoutParams(new RecyclerView.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
         WishListAdapter adapter = new WishListAdapter(wishListProducts, specs, this);
-        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
         container.removeAllViews();
@@ -84,7 +84,7 @@ public class WishListFragment extends Fragment implements WishListView, WishList
     @Override
     public void showWishListEmptyView() {
         container.removeAllViews();
-        View loadingView = LayoutInflater.from(getContext()).inflate(R.layout.wish_list_empty, null);
+        View loadingView = LayoutInflater.from(getActivity()).inflate(R.layout.wish_list_empty, null);
         container.addView(loadingView);
     }
 
@@ -99,7 +99,7 @@ public class WishListFragment extends Fragment implements WishListView, WishList
 
     @Override
     public void showProgressDialog() {
-        progressDialog = CenterProgressDialog.show(getContext());
+        progressDialog = CenterProgressDialog.show(getActivity());
     }
 
     @Override
@@ -111,7 +111,7 @@ public class WishListFragment extends Fragment implements WishListView, WishList
 
     @Override
     public void showToast(String errorMessage) {
-        Toast.makeText(getContext(), errorMessage, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getActivity(), errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
@@ -121,7 +121,7 @@ public class WishListFragment extends Fragment implements WishListView, WishList
 
     @Override
     public void onDeleteWishItemClick(final int position) {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setTitle("取消補貨");
         alertDialogBuilder.setMessage("是否確定要取消補貨");
         alertDialogBuilder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
