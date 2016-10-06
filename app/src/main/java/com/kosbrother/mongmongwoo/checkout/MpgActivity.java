@@ -31,6 +31,7 @@ public class MpgActivity extends BaseActivity implements DataManager.ApiCallBack
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_mpg);
+        progressDialog = CenterProgressDialog.show(this);
         setWebView();
     }
 
@@ -71,19 +72,24 @@ public class MpgActivity extends BaseActivity implements DataManager.ApiCallBack
                 }
             }
 
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                dismissProgressDialog();
+            }
         });
         webView.postUrl(urlPath, getIntent().getByteArrayExtra(EXTRA_BYTE_ARRAY_POST_DATA));
     }
 
     @Override
     public void onError(String errorMessage) {
-        progressDialog.dismiss();
+        dismissProgressDialog();
         Toast.makeText(this, errorMessage, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onSuccess(Object data) {
-        progressDialog.dismiss();
+        dismissProgressDialog();
         setResult(RESULT_CANCELED);
         finish();
     }
@@ -104,5 +110,12 @@ public class MpgActivity extends BaseActivity implements DataManager.ApiCallBack
 
     private int getOrderId() {
         return getIntent().getIntExtra(EXTRA_INT_ORDER_ID, 0);
+    }
+
+    private void dismissProgressDialog() {
+        if (progressDialog != null && progressDialog.isShowing()) {
+            progressDialog.dismiss();
+            progressDialog = null;
+        }
     }
 }
