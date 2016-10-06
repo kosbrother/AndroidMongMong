@@ -14,4 +14,19 @@ public class StringUtil {
         return new String(c);
     }
 
+    public static boolean notOnlyChinese(String str) {
+        int length = str.length();
+        for (int i = 0; i < length; i++) {
+            char ch = str.charAt(i);
+            Character.UnicodeBlock block = Character.UnicodeBlock.of(ch);
+            if (!Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS.equals(block) &&
+                    !Character.UnicodeBlock.CJK_COMPATIBILITY_IDEOGRAPHS.equals(block) &&
+                    !Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_A.equals(block) &&
+                    !Character.UnicodeBlock.CJK_UNIFIED_IDEOGRAPHS_EXTENSION_B.equals(block)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
