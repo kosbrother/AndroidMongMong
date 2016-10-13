@@ -6,6 +6,8 @@ import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.entity.ShipInfoEntity;
 import com.kosbrother.mongmongwoo.entity.UserEntity;
 import com.kosbrother.mongmongwoo.entity.banner.Banner;
+import com.kosbrother.mongmongwoo.entity.checkout.CheckoutPostEntity;
+import com.kosbrother.mongmongwoo.entity.checkout.CheckoutResultEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.FavoriteItemEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostFavoriteItemsEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
@@ -978,6 +980,39 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void postCheckout(CheckoutPostEntity checkoutPostEntity, final ApiCallBack callBack) {
+        Observable<ResponseEntity<CheckoutResultEntity>> observable =
+                networkAPI.postCheckout(checkoutPostEntity)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<CheckoutResultEntity>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<CheckoutResultEntity> responseEntity) {
+                CheckoutResultEntity data = responseEntity.getData();
+                if (data == null) {
+                    callBack.onError(responseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void unSubscribe(ApiCallBack callBack) {
         if (callBack == null) {
             return;
@@ -1126,6 +1161,10 @@ public class DataManager {
         @GET("api/v3/search_items")
         Observable<ResponseEntity<List<Product>>> getSearchItems(
                 @Query("query") String query, @Query("page") int page);
+
+        @POST("api/v4/orders/checkout")
+        Observable<ResponseEntity<CheckoutResultEntity>> postCheckout(
+                @Body CheckoutPostEntity checkoutPostEntity);
     }
 
 }

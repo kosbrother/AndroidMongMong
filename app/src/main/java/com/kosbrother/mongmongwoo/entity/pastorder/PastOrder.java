@@ -11,15 +11,15 @@ public class PastOrder extends PastOrderEntity {
     }
 
     public String getItemsPriceText() {
-        return "NT$ " + getItemsPrice();
+        return "NT$" + getItemsPrice();
     }
 
     public String getShipFeeText() {
-        return "NT$ " + getShipFee();
+        return "NT$" + getShipFee();
     }
 
     public String getTotalText() {
-        return "NT$ " + getTotal();
+        return "NT$" + getTotal();
     }
 
     @Override
@@ -39,12 +39,12 @@ public class PastOrder extends PastOrderEntity {
     }
 
     public String getShoppingPointAmountText() {
-        return "-NT$ " + getShoppingPointAmount();
+        return "-NT$" + getShoppingPointAmount();
     }
 
     public String getShoppingPointSubTotalText() {
         int subtotal = getItemsPrice() - getShoppingPointAmount();
-        return "NT$ " + subtotal;
+        return "NT$" + subtotal;
     }
 
     public DeliveryUserInfoViewModel getDeliveryUserInfoViewModel(String shipName, String shipPhone, String shipEmail) {

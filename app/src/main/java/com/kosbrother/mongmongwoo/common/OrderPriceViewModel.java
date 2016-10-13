@@ -1,7 +1,8 @@
 package com.kosbrother.mongmongwoo.common;
 
+import com.kosbrother.mongmongwoo.entity.checkout.OrderPrice;
+import com.kosbrother.mongmongwoo.entity.checkout.ShoppingPoint;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
-import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
 public class OrderPriceViewModel {
 
@@ -12,15 +13,15 @@ public class OrderPriceViewModel {
     private final String shoppingPointsAmountText;
     private final String shoppingPointsSubtotalText;
 
-    public OrderPriceViewModel(CalculateUtil.OrderPrice orderPrice) {
-        itemsPriceText = "NT$ " + orderPrice.getItemsPrice();
-        shipFeeText = "NT$ " + orderPrice.getShipFee();
-        totalText = "NT$ " + orderPrice.getTotal();
+    public OrderPriceViewModel(OrderPrice orderPrice) {
+        itemsPriceText = "NT$" + orderPrice.getOriginItemsPrice();
+        shipFeeText = "NT$" + orderPrice.getShipFee();
+        totalText = "NT$" + orderPrice.getTotal();
 
-        int shoppingPointsAmount = orderPrice.getShoppingPointsAmount();
-        useShoppingPoints = shoppingPointsAmount > 0;
-        shoppingPointsAmountText = "-NT$ " + shoppingPointsAmount;
-        shoppingPointsSubtotalText = "NT$ " + orderPrice.getShoppingPointsSubTotal();
+        ShoppingPoint shoppingPoint = orderPrice.getShoppingPoint();
+        useShoppingPoints = shoppingPoint.getUsedAmount() > 0;
+        shoppingPointsAmountText = "-NT$" + shoppingPoint.getUsedAmount();
+        shoppingPointsSubtotalText = "NT$" + shoppingPoint.getReducedItemsPrice();
     }
 
     public OrderPriceViewModel(PastOrder pastOrder) {

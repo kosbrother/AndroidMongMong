@@ -1,6 +1,9 @@
 package com.kosbrother.mongmongwoo.entity.pastorder;
 
 import com.google.gson.annotations.SerializedName;
+import com.kosbrother.mongmongwoo.entity.checkout.Campaign;
+import com.kosbrother.mongmongwoo.entity.checkout.ShipCampaign;
+import com.kosbrother.mongmongwoo.entity.checkout.ShoppingPointCampaign;
 
 import java.io.Serializable;
 import java.util.List;
@@ -26,12 +29,18 @@ class PastOrderEntity implements Serializable {
     private int shoppingPointAmount;
     @SerializedName("note")
     private String note;
+    @SerializedName("ship_type")
+    private String shipType;
+    @SerializedName("campaigns")
+    private List<Campaign> campaigns;
+    @SerializedName("shopping_point_campaigns")
+    private List<ShoppingPointCampaign> shoppingPointCampaigns;
+    @SerializedName("ship_campaign")
+    private ShipCampaign shipCampaign;
     @SerializedName("info")
     private InfoEntity info;
     @SerializedName("items")
     private List<PastItem> items;
-    @SerializedName("ship_type")
-    private String shipType;
 
     public int getId() {
         return id;
@@ -71,5 +80,17 @@ class PastOrderEntity implements Serializable {
 
     public String getShipType() {
         return shipType;
+    }
+
+    public List<Campaign> getCampaigns() {
+        return campaigns;
+    }
+
+    public List<ShoppingPointCampaign> getShoppingPointCampaigns() {
+        return shoppingPointCampaigns;
+    }
+
+    public ShipCampaign getShipCampaign() {
+        return shipCampaign;
     }
 }

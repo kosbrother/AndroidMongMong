@@ -18,14 +18,15 @@ import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.api.DataManager;
+import com.kosbrother.mongmongwoo.checkout.CheckoutFragment;
 import com.kosbrother.mongmongwoo.checkout.CheckoutStep2Fragment;
 import com.kosbrother.mongmongwoo.checkout.HomeDeliveryFragment;
 import com.kosbrother.mongmongwoo.checkout.MpgActivity;
-import com.kosbrother.mongmongwoo.checkout.PurchaseFragment1;
-import com.kosbrother.mongmongwoo.checkout.PurchaseFragment3;
+import com.kosbrother.mongmongwoo.checkout.Step1Fragment;
 import com.kosbrother.mongmongwoo.checkout.StoreDeliveryFragment;
 import com.kosbrother.mongmongwoo.checkout.ThankYouActivity;
 import com.kosbrother.mongmongwoo.entity.checkout.MpgEntity;
+import com.kosbrother.mongmongwoo.entity.checkout.OrderPrice;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
 import com.kosbrother.mongmongwoo.entity.postorder.PostOrderResultEntity;
 import com.kosbrother.mongmongwoo.entity.postorder.UnableToBuyModel;
@@ -39,18 +40,16 @@ import com.kosbrother.mongmongwoo.model.PostProduct;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.model.ShipType;
 import com.kosbrother.mongmongwoo.model.Store;
-import com.kosbrother.mongmongwoo.utils.CalculateUtil;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import rx.functions.Action1;
 
 public class ShoppingCarActivity extends BaseActivity implements
-        PurchaseFragment1.OnStep1ButtonClickListener,
+        Step1Fragment.OnStep1ButtonClickListener,
         CheckoutStep2Fragment.OnStep2ButtonClickListener,
-        PurchaseFragment3.OnStep3ButtonClickListener {
+        CheckoutFragment.OnStep3ButtonClickListener {
 
     private static final int REQUEST_MPG_PAYMENT = 222;
 
@@ -61,8 +60,6 @@ public class ShoppingCarActivity extends BaseActivity implements
     private View breadCrumb1;
     private View breadCrumb2;
     private View breadCrumb3;
-
-    private List<Product> products;
 
     private ProgressDialog progressDialog;
 
@@ -83,12 +80,13 @@ public class ShoppingCarActivity extends BaseActivity implements
             }
         }
     };
-    private CalculateUtil.OrderPrice orderPrice;
+    private OrderPrice orderPrice;
     private String shipTypeText;
     private Store store;
     private String shipAddress;
     private MpgEntity mpgEntity;
     private int orderId;
+    private boolean spendShoppingPoint;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +94,7 @@ public class ShoppingCarActivity extends BaseActivity implements
         setContentView(R.layout.activity_shopping_car);
         setToolbarWithoutNavIcon();
 
-        products = ShoppingCartManager.getInstance().loadShoppingItems();
+        List<Product> products = ShoppingCartManager.getInstance().loadShoppingItems();
         if (products == null || products.size() == 0) {
             onNoShoppingItem();
             return;
@@ -155,12 +153,12 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     @Override
-    public void onStep1NextButtonClick(String email, CalculateUtil.OrderPrice orderPrice, String shipTypeText) {
-        this.orderPrice = orderPrice;
+    public void onStep1NextButtonClick(String email, String shipTypeText, boolean isSpendShoppingPoint) {
         this.shipTypeText = shipTypeText;
+        this.spendShoppingPoint = isSpendShoppingPoint;
+
         theOrder.setEmail(email.isEmpty() ? "anonymous@mmwooo.fake.com" : email);
         theOrder.setShipType(ShipType.getShipTypeFromShipTypeText(shipTypeText));
-        setOrderProductsAndPrice();
 
         startStep2(shipTypeText);
     }
@@ -188,7 +186,8 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     @Override
-    public void onSendOrderClick() {
+    public void onSendOrderClick(OrderPrice orderPrice) {
+        this.orderPrice = orderPrice;
         setSendButtonEnabled(false);
         // mis-clicking prevention, using threshold of 1000 ms
         if (SystemClock.elapsedRealtime() - mLastClickTime < 1000) {
@@ -197,6 +196,7 @@ public class ShoppingCarActivity extends BaseActivity implements
         }
         mLastClickTime = SystemClock.elapsedRealtime();
 
+        setOrderProductsAndPrice();
         showProgressDialog();
         GAManager.sendEvent(new CheckoutStep3ClickEvent(GALabel.SEND_ORDER));
         DataManager.getInstance().postOrders(theOrder, postOrderCallBack);
@@ -214,10 +214,6 @@ public class ShoppingCarActivity extends BaseActivity implements
                 setSendButtonEnabled(true);
             }
         }
-    }
-
-    public List<Product> getProducts() {
-        return products;
     }
 
     private void findStepBarView() {
@@ -239,10 +235,10 @@ public class ShoppingCarActivity extends BaseActivity implements
 
     private void setOrderProductsAndPrice() {
         theOrder.setProducts(getPostProducts());
-        theOrder.setItemsPrice(orderPrice.getItemsPrice());
+        theOrder.setItemsPrice(orderPrice.getOriginItemsPrice());
         theOrder.setShipFee(orderPrice.getShipFee());
         theOrder.setTotal(orderPrice.getTotal());
-        theOrder.setShoppingPointsAmount(orderPrice.getShoppingPointsAmount());
+        theOrder.setShoppingPointsAmount(orderPrice.getShoppingPoint().getUsedAmount());
     }
 
     private void setOrderShipInfo(String shipName, String shipPhone, String shipEmail, String shipAddress) {
@@ -257,7 +253,7 @@ public class ShoppingCarActivity extends BaseActivity implements
             return;
         }
 
-        PurchaseFragment1 firstFragment = new PurchaseFragment1();
+        Step1Fragment firstFragment = new Step1Fragment();
 
         getSupportFragmentManager()
                 .beginTransaction()
@@ -284,18 +280,17 @@ public class ShoppingCarActivity extends BaseActivity implements
     private void startStep3() {
         setStepBar3();
 
-        PurchaseFragment3 purchaseFragment3 = new PurchaseFragment3();
+        CheckoutFragment checkoutFragment = new CheckoutFragment();
         Bundle args = new Bundle();
-        args.putSerializable(PurchaseFragment3.ARG_SERIALIZABLE_PRODUCTS, (Serializable) products);
-        args.putSerializable(PurchaseFragment3.ARG_SERIALIZABLE_ORDER_PRICE, orderPrice);
-        args.putSerializable(PurchaseFragment3.ARG_SERIALIZABLE_STORE, store);
-        args.putSerializable(PurchaseFragment3.ARG_STRING_SHIP_ADDRESS, shipAddress);
-        args.putSerializable(PurchaseFragment3.ARG_STRING_DELIVERY, shipTypeText);
-        purchaseFragment3.setArguments(args);
+        args.putBoolean(CheckoutFragment.ARG_BOOLEAN_SPEND_SHOPPING_POINT, spendShoppingPoint);
+        args.putSerializable(CheckoutFragment.ARG_SERIALIZABLE_STORE, store);
+        args.putString(CheckoutFragment.ARG_STRING_SHIP_ADDRESS, shipAddress);
+        args.putString(CheckoutFragment.ARG_STRING_DELIVERY, shipTypeText);
+        checkoutFragment.setArguments(args);
 
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(R.id.fragment_container, purchaseFragment3)
+                .replace(R.id.fragment_container, checkoutFragment)
                 .addToBackStack(null)
                 .commit();
     }
@@ -310,6 +305,7 @@ public class ShoppingCarActivity extends BaseActivity implements
 
     private List<PostProduct> getPostProducts() {
         List<PostProduct> postProductList = new ArrayList<>();
+        List<Product> products = ShoppingCartManager.getInstance().loadShoppingItems();
         for (Product product : products) {
             PostProduct postProduct = new PostProduct();
             postProduct.setName(product.getName());
@@ -354,6 +350,7 @@ public class ShoppingCarActivity extends BaseActivity implements
     }
 
     private void logPurchasedEvent() {
+        List<Product> products = ShoppingCartManager.getInstance().loadShoppingItems();
         for (Product product : products) {
             FacebookLogger.getInstance().logPurchasedEvent(
                     product.getBuy_count(),
@@ -370,15 +367,12 @@ public class ShoppingCarActivity extends BaseActivity implements
                 removeUnableToBuyFromShoppingCart(unableToBuyModels);
         postWishListsIfLogin(unableToBuyProduct);
 
-        products = ShoppingCartManager.getInstance().loadShoppingItems();
+        List<Product> products = ShoppingCartManager.getInstance().loadShoppingItems();
         FragmentManager supportFragmentManager = getSupportFragmentManager();
         if (products.size() == 0) {
             supportFragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
             onNoShoppingItem();
         } else {
-            orderPrice = CalculateUtil.calculateOrderPrice(products, orderPrice.getShoppingPointsAmount());
-            setOrderProductsAndPrice();
-
             supportFragmentManager.popBackStack();
             startStep3();
         }
@@ -437,8 +431,8 @@ public class ShoppingCarActivity extends BaseActivity implements
 
     private void setSendButtonEnabled(boolean enabled) {
         Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
-        if (currentFragment instanceof PurchaseFragment3) {
-            PurchaseFragment3 fragment3 = (PurchaseFragment3) currentFragment;
+        if (currentFragment instanceof CheckoutFragment) {
+            CheckoutFragment fragment3 = (CheckoutFragment) currentFragment;
             fragment3.setSendOrderButtonEnabled(enabled);
         }
     }

@@ -6,6 +6,7 @@
     <data>
 
         <import type="android.view.View" />
+        <import type="com.kosbrother.mongmongwoo.checkout.CheckoutFragment" />
 
         <variable
             name="deliveryUserInfo"
@@ -14,6 +15,10 @@
         <variable
             name="orderPrice"
             type="com.kosbrother.mongmongwoo.common.OrderPriceViewModel" />
+
+        <variable
+            name="checkoutFragment"
+            type="CheckoutFragment" />
     </data>
 
     <RelativeLayout
@@ -32,6 +37,7 @@
                 style="@style/GreenButton"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
+                android:onClick="@{() -> checkoutFragment.onSendOrderButtonClick()}"
                 android:layout_gravity="center"
                 android:layout_margin="16dp"
                 android:text="送出訂單"
@@ -63,7 +69,7 @@
                     android:textStyle="bold" />
 
                 <LinearLayout
-                    android:id="@+id/fragment_purchase3_goods_container_ll"
+                    android:id="@+id/fragment_purchase3_products_container_ll"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical" />
@@ -309,6 +315,8 @@
             </LinearLayout>
 
         </ScrollView>
+
+        <include layout="@layout/loading_fragment" />
 
     </RelativeLayout>
 </layout>
