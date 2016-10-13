@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
@@ -14,15 +15,13 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.GridView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
 import com.kosbrother.mongmongwoo.api.DataManager;
+import com.kosbrother.mongmongwoo.category.ProductsAdapter;
 import com.kosbrother.mongmongwoo.facebookevent.FacebookLogger;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.search.SearchSubmitQueryEvent;
@@ -30,14 +29,16 @@ import com.kosbrother.mongmongwoo.model.Category;
 import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.product.ProductActivity;
 import com.kosbrother.mongmongwoo.shoppingcart.ShoppingCartManager;
-import com.kosbrother.mongmongwoo.utils.EndlessScrollListener;
 import com.kosbrother.mongmongwoo.utils.KeyboardUtil;
 import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
+import com.kosbrother.mongmongwoo.widget.RecyclerViewEndlessScrollListener;
 
 import org.apmem.tools.layouts.FlowLayout;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import rx.functions.Action1;
 
 public class SearchActivity extends BaseActivity implements View.OnClickListener {
 
@@ -225,10 +226,9 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                         setSearchResultLayout();
                     } else {
                         SearchActivity.this.products.addAll(products);
-                        GridView gridView = (GridView) findViewById(R.id.search_result_gv);
-                        assert gridView != null;
-                        GoodsGridAdapter adapter = (GoodsGridAdapter) gridView.getAdapter();
-                        adapter.notifyDataSetChanged();
+                        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.search_result_rv);
+                        assert recyclerView != null;
+                        recyclerView.getAdapter().notifyDataSetChanged();
                     }
                 }
                 searchView.clearFocus();
@@ -245,26 +245,18 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
     }
 
     private void setSearchResultLayout() {
-        GoodsGridAdapter adapter = new GoodsGridAdapter(SearchActivity.this, products,
-                new GoodsGridAdapter.GoodsGridAdapterListener() {
-                    @Override
-                    public void onAddShoppingCartButtonClick(int productId, int position) {
-                        showProductStyleDialog(products.get(position));
-                    }
-                });
-        GridView gridView = (GridView) findViewById(R.id.search_result_gv);
-        assert gridView != null;
-        gridView.setAdapter(adapter);
-        gridView.setOnScrollListener(new EndlessScrollListener() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.search_result_rv);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 2);
+        recyclerView.setLayoutManager(layoutManager);
+        ProductsAdapter productsAdapter = new ProductsAdapter(products, new ProductsAdapter.GoodsGridAdapterListener() {
             @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                getSearchResult(page);
+            public void onAddShoppingCartButtonClick(int productId, int position) {
+                showProductStyleDialog(products.get(position));
             }
-        });
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Product product = (Product) parent.getAdapter().getItem(position);
+            public void onGoodsItemClick(int position) {
+                Product product = products.get(position);
                 Intent intent = new Intent(SearchActivity.this, ProductActivity.class);
                 intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
                 intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, Category.Type.ALL.getId());
@@ -273,6 +265,14 @@ public class SearchActivity extends BaseActivity implements View.OnClickListener
                 startActivity(intent);
             }
         });
+        recyclerView.setAdapter(productsAdapter);
+        recyclerView.addOnScrollListener(new RecyclerViewEndlessScrollListener(
+                layoutManager, new Action1<Integer>() {
+            @Override
+            public void call(Integer page) {
+                getSearchResult(page);
+            }
+        }));
     }
 
     private void showProductStyleDialog(Product product) {

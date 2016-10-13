@@ -29,13 +29,12 @@
 
             <ImageView
                 android:id="@+id/item_product_special_price_iv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_marginEnd="8dp"
-                android:layout_marginRight="8dp"
-                android:src="@mipmap/img_special_price" />
+                android:layout_alignParentTop="true"
+                tools:src="@mipmap/img_pre_load_square" />
         </RelativeLayout>
 
         <TextView

@@ -32,6 +32,8 @@ public class Product implements Serializable {
     private Cover cover;
     @SerializedName("special_price")
     private int specialPrice;
+    @SerializedName("discount_icon_url")
+    private String discountIconUrl;
     @SerializedName("specs")
     private ArrayList<Spec> specs;
     @SerializedName("photos")
@@ -219,5 +221,9 @@ public class Product implements Serializable {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public String getDiscountIconUrl() {
+        return discountIconUrl;
     }
 }

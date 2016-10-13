@@ -1113,7 +1113,7 @@ public class DataManager {
         @GET("api/v3/categories/{categoryName}/subcategory")
         Observable<ResponseEntity<List<Category>>> getSubcategories(@Path("categoryName") String categoryName);
 
-        @GET("api/v3/categories/{categoryName}/items")
+        @GET("api/v4/categories/{categoryName}/items")
         Observable<ResponseEntity<List<Product>>> getCategorySortItems(
                 @Path("categoryName") String categoryName, @Query("sort") String sortName, @Query("page") int page);
 
@@ -1158,7 +1158,7 @@ public class DataManager {
         @GET("api/v3/hot_keywords")
         Observable<ResponseEntity<List<String>>> getHotKeywords();
 
-        @GET("api/v3/search_items")
+        @GET("api/v4/search_items")
         Observable<ResponseEntity<List<Product>>> getSearchItems(
                 @Query("query") String query, @Query("page") int page);
 

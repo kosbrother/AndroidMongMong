@@ -21,6 +21,8 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Display;
 import android.view.Menu;
@@ -46,13 +48,13 @@ import com.bumptech.glide.Glide;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.kosbrother.mongmongwoo.adpters.CategoryAdapter;
-import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
 import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.api.UrlCenter;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.appindex.AppIndexUtil;
 import com.kosbrother.mongmongwoo.appindex.IndexActivity;
 import com.kosbrother.mongmongwoo.category.CategoryActivity;
+import com.kosbrother.mongmongwoo.category.ProductsAdapter;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.entity.banner.Banner;
@@ -483,7 +485,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onSuccess(Object data) {
                         List<Product> products = (List<Product>) data;
-                        setPopularItemsGridView(products);
+                        setPopularItemsRecyclerView(products);
                     }
                 }
         );
@@ -501,7 +503,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onSuccess(Object data) {
                         List<Product> products = (List<Product>) data;
-                        setLatestItemsGridView(products);
+                        setLatestItemsRecyclerView(products);
                     }
                 }
         );
@@ -718,21 +720,19 @@ public class MainActivity extends AppCompatActivity
         });
     }
 
-    private void setLatestItemsGridView(List<Product> products) {
-        ExpandableHeightGridView gridView = (ExpandableHeightGridView) findViewById(R.id.latest_items_gv);
+    private void setLatestItemsRecyclerView(final List<Product> products) {
         final List<Product> displayProducts = getDisplayProducts(products);
-        GoodsGridAdapter adapter = new GoodsGridAdapter(this, displayProducts,
-                new GoodsGridAdapter.GoodsGridAdapterListener() {
-                    @Override
-                    public void onAddShoppingCartButtonClick(int productId, int position) {
-                        showProductStyleDialog(displayProducts.get(position));
-                    }
-                });
-        gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.latest_items_rv);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        ProductsAdapter productsAdapter = new ProductsAdapter(products, new ProductsAdapter.GoodsGridAdapterListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Product product = (Product) parent.getAdapter().getItem(position);
+            public void onAddShoppingCartButtonClick(int productId, int position) {
+                showProductStyleDialog(displayProducts.get(position));
+            }
+
+            @Override
+            public void onGoodsItemClick(int position) {
+                Product product = displayProducts.get(position);
                 Intent intent = new Intent(MainActivity.this, ProductActivity.class);
                 intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
                 intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, Category.Type.NEW.getId());
@@ -741,23 +741,22 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+        recyclerView.setAdapter(productsAdapter);
     }
 
-    private void setPopularItemsGridView(List<Product> products) {
-        ExpandableHeightGridView gridView = (ExpandableHeightGridView) findViewById(R.id.popular_items_gv);
+    private void setPopularItemsRecyclerView(List<Product> products) {
         final List<Product> displayProducts = getDisplayProducts(products);
-        GoodsGridAdapter adapter = new GoodsGridAdapter(this, displayProducts,
-                new GoodsGridAdapter.GoodsGridAdapterListener() {
-                    @Override
-                    public void onAddShoppingCartButtonClick(int productId, int position) {
-                        showProductStyleDialog(displayProducts.get(position));
-                    }
-                });
-        gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.popular_items_rv);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        ProductsAdapter productsAdapter = new ProductsAdapter(products, new ProductsAdapter.GoodsGridAdapterListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Product product = (Product) parent.getAdapter().getItem(position);
+            public void onAddShoppingCartButtonClick(int productId, int position) {
+                showProductStyleDialog(displayProducts.get(position));
+            }
+
+            @Override
+            public void onGoodsItemClick(int position) {
+                Product product = displayProducts.get(position);
                 Intent intent = new Intent(MainActivity.this, ProductActivity.class);
                 intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
                 intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, Category.Type.ALL.getId());
@@ -766,6 +765,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+        recyclerView.setAdapter(productsAdapter);
     }
 
     private List<Product> getDisplayProducts(List<Product> products) {
