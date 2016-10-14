@@ -16,4 +16,13 @@ public class BindingAdapterUtil {
                 .placeholder(R.mipmap.img_pre_load_square)
                 .into(imageView);
     }
+
+    @BindingAdapter("bind:bannerImageUrl")
+    public static void loadBannerImageUrl(ImageView imageView, String url) {
+        Glide.with(imageView.getContext())
+                .load(url)
+                .fitCenter()
+                .placeholder(R.mipmap.banner_default)
+                .into(imageView);
+    }
 }

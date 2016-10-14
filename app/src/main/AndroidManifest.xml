@@ -104,6 +104,16 @@
             android:theme="@style/NoActionBarTheme" />
 
         <activity
+            android:name=".campaignrules.CampaignRulesActivity"
+            android:label="優惠活動"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarTheme" />
+
+        <activity android:name=".campaignrules.CampaignRuleDetailActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/NoActionBarTheme" />
+
+        <activity
             android:name="com.kosbrother.mongmongwoo.ServiceActivity"
             android:label="客服中心"
             android:screenOrientation="portrait"

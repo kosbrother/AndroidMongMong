@@ -29,10 +29,9 @@ public class ProductViewModel {
         Spec selectedSpec = product.getSelectedSpec();
         specImageUrl = selectedSpec.getStylePic().getUrl();
         nameText = product.getName();
-        List<Campaign> campaigns = product.getCampaigns();
-        showCampaign = campaigns != null && campaigns.size() > 0;
+        Campaign campaign = product.getCampaign();
+        showCampaign = campaign != null;
         if (showCampaign) {
-            Campaign campaign = campaigns.get(0);
             campaignText = campaign.getTitle();
             isDiscount = campaign.isApplied();
         }

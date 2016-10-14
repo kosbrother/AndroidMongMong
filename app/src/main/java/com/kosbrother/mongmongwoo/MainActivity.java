@@ -53,6 +53,7 @@ import com.kosbrother.mongmongwoo.api.UrlCenter;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.appindex.AppIndexUtil;
 import com.kosbrother.mongmongwoo.appindex.IndexActivity;
+import com.kosbrother.mongmongwoo.campaignrules.CampaignRulesActivity;
 import com.kosbrother.mongmongwoo.category.CategoryActivity;
 import com.kosbrother.mongmongwoo.category.ProductsAdapter;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
@@ -312,6 +313,9 @@ public class MainActivity extends AppCompatActivity
                 } else {
                     startActivity(new Intent(this, QueryPastOrdersActivity.class));
                 }
+                break;
+            case R.id.activity_main_navigation_promotions:
+                startActivity(new Intent(this, CampaignRulesActivity.class));
                 break;
             case R.id.activity_main_navigation_customer_service_center:
                 startActivity(new Intent(this, ServiceActivity.class));

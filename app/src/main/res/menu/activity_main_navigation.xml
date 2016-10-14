@@ -22,6 +22,10 @@
     <item android:title="@string/activity_main_navigation_about_us">
         <menu>
             <item
+                android:id="@+id/activity_main_navigation_promotions"
+                android:icon="@mipmap/ic_campaign_rule"
+                android:title="@string/activity_main_navigation_promotions" />
+            <item
                 android:id="@+id/activity_main_navigation_customer_service_center"
                 android:icon="@drawable/drawer_people"
                 android:title="@string/activity_main_navigation_customer_service_center" />

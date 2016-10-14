@@ -6,6 +6,8 @@ import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.entity.ShipInfoEntity;
 import com.kosbrother.mongmongwoo.entity.UserEntity;
 import com.kosbrother.mongmongwoo.entity.banner.Banner;
+import com.kosbrother.mongmongwoo.entity.camapign.CampaignRuleDetailEntity;
+import com.kosbrother.mongmongwoo.entity.camapign.CampaignRuleEntity;
 import com.kosbrother.mongmongwoo.entity.checkout.CheckoutPostEntity;
 import com.kosbrother.mongmongwoo.entity.checkout.CheckoutResultEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.FavoriteItemEntity;
@@ -1013,6 +1015,72 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void getCampaignRules(final ApiCallBack callBack) {
+        Observable<ResponseEntity<List<CampaignRuleEntity>>> observable =
+                networkAPI.getCampaignRules()
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<List<CampaignRuleEntity>>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<List<CampaignRuleEntity>> listResponseEntity) {
+                List<CampaignRuleEntity> data = listResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(listResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
+    public void getCampaignRule(int id, final ApiCallBack callBack) {
+        Observable<ResponseEntity<CampaignRuleDetailEntity>> observable =
+                networkAPI.getCampaignRule(id)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<CampaignRuleDetailEntity>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<CampaignRuleDetailEntity> listResponseEntity) {
+                CampaignRuleDetailEntity data = listResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(listResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void unSubscribe(ApiCallBack callBack) {
         if (callBack == null) {
             return;
@@ -1165,6 +1233,12 @@ public class DataManager {
         @POST("api/v4/orders/checkout")
         Observable<ResponseEntity<CheckoutResultEntity>> postCheckout(
                 @Body CheckoutPostEntity checkoutPostEntity);
+
+        @GET("api/v4/campaign_rules")
+        Observable<ResponseEntity<List<CampaignRuleEntity>>> getCampaignRules();
+
+        @GET("api/v4/campaign_rules/{id}")
+        Observable<ResponseEntity<CampaignRuleDetailEntity>> getCampaignRule(@Path("id") int id);
     }
 
 }

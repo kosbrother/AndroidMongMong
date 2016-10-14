@@ -61,9 +61,9 @@ public class Product implements Serializable {
     /**
      * campaigns for get checkout result
      */
-    @SerializedName("campaigns")
+    @SerializedName("campaign")
     @Expose
-    public List<Campaign> campaigns = new ArrayList<>();
+    public Campaign campaign;
 
     private int buy_count;
     private Spec selectedSpec;
@@ -211,8 +211,8 @@ public class Product implements Serializable {
         return subtotal;
     }
 
-    public List<Campaign> getCampaigns() {
-        return campaigns;
+    public Campaign getCampaign() {
+        return campaign;
     }
 
     public void setItemSpecId(int itemSpecId) {
