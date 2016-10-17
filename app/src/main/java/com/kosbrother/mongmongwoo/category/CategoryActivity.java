@@ -170,16 +170,13 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
     }
 
     private int getSortIndex() {
-        int sortIndex = 0;
         String sortNameString = getIntent().getStringExtra(EXTRA_STRING_SORT_NAME);
         if (sortNameString == null || sortNameString.isEmpty()) {
-            return sortIndex;
+            return 0;
         }
+
         Category.SortName sortName = Category.SortName.valueOf(sortNameString);
-        if (sortName != null) {
-            sortIndex = sortName.ordinal();
-        }
-        return sortIndex;
+        return sortName.ordinal();
     }
 
     private void getSubCategory(String categoryName) {
@@ -232,9 +229,10 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         FilterPagerAdapter mFilterPagerAdapter = new FilterPagerAdapter(
                 getSupportFragmentManager(), categoryId, categoryName);
         mViewPager.setAdapter(mFilterPagerAdapter);
+        mViewPager.setCurrentItem(sortIndex);
+        mViewPager.setOffscreenPageLimit(3);
         TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.setupWithViewPager(mViewPager);
-        mViewPager.setCurrentItem(sortIndex);
     }
 
     public static class FilterPagerAdapter extends FragmentStatePagerAdapter {
@@ -282,47 +280,37 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         public static final String ARG_STRING_SORT_NAME = "ARG_STRING_SORT_NAME";
         public static final String ARG_STRING_CATEGORY_NAME = "ARG_STRING_CATEGORY_NAME";
 
-        // create boolean for fetching data
-        private boolean isVisibleToUser = false;
-        private boolean isViewCreated = false;
-
-        private int categoryId = 10;
-        private String sortName;
-        private String categoryName;
-
         private RecyclerView recyclerView;
+        private View loadingView;
         private ProductsAdapter productsAdapter;
         private List<Product> products = new ArrayList<>();
-        private View loadingView;
-
-        @Override
-        public void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            Bundle arguments = getArguments();
-            categoryId = arguments.getInt(ARG_INT_CATEGORY_ID);
-            sortName = arguments.getString(ARG_STRING_SORT_NAME);
-            categoryName = arguments.getString(ARG_STRING_CATEGORY_NAME);
-        }
 
         @Override
         public View onCreateView(LayoutInflater inflater,
                                  ViewGroup container, Bundle savedInstanceState) {
-            final View rootView = inflater.inflate(
-                    R.layout.fragment_products_gird, container, false);
-            recyclerView = (RecyclerView) rootView.findViewById(R.id.fragment_products_grid_rv);
-
-            productsAdapter = new ProductsAdapter(products, this);
-            recyclerView.setAdapter(productsAdapter);
-
-            loadingView = rootView.findViewById(R.id.loading_no_toolbar_fl);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_products_gird, container, false);
         }
 
         @Override
         public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
             super.onViewCreated(view, savedInstanceState);
-            isViewCreated = true;
-            lazyLoad();
+            recyclerView = (RecyclerView) view.findViewById(R.id.fragment_products_grid_rv);
+            loadingView = view.findViewById(R.id.loading_no_toolbar_fl);
+
+            productsAdapter = new ProductsAdapter(products, this);
+            recyclerView.setAdapter(productsAdapter);
+
+            GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
+            recyclerView.setLayoutManager(layoutManager);
+            recyclerView.addOnScrollListener(new RecyclerViewEndlessScrollListener(
+                    layoutManager, new Action1<Integer>() {
+                @Override
+                public void call(Integer page) {
+                    getCategorySortItems(page);
+                }
+            }));
+
+            getInitData();
         }
 
         @Override
@@ -332,31 +320,9 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         }
 
         @Override
-        public void setUserVisibleHint(boolean isVisibleToUser) {
-            super.setUserVisibleHint(isVisibleToUser);
-            if (isVisibleToUser) {
-                this.isVisibleToUser = true;
-                lazyLoad();
-            } else {
-                this.isVisibleToUser = false;
-                DataManager.getInstance().unSubscribe(this);
-                products.clear();
-                if (recyclerView != null) {
-                    recyclerView.clearOnScrollListeners();
-                    recyclerView.getAdapter().notifyDataSetChanged();
-                }
-            }
-        }
-
-        private void lazyLoad() {
-            if (isVisibleToUser && isViewCreated) {
-                getInitData();
-            }
-        }
-
-        @Override
         public void onAddShoppingCartButtonClick(int productId, int position) {
             Product product = products.get(position);
+
             GAManager.sendEvent(new IndexGridCartAddToCartEvent(product.getName()));
             new ProductStyleDialog(getActivity(), product, new ProductStyleDialog.ProductStyleDialogListener() {
                 @Override
@@ -392,8 +358,8 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
                 Product product = products.get(position);
                 Intent intent = new Intent(getActivity(), ProductActivity.class);
                 intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
-                intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, categoryId);
-                intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, categoryName);
+                intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, getCategoryId());
+                intent.putExtra(ProductActivity.EXTRA_STRING_CATEGORY_NAME, getCategoryName());
 
                 startActivity(intent);
             }
@@ -414,21 +380,23 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
 
         private void getInitData() {
             loadingView.setVisibility(View.VISIBLE);
-
-            GridLayoutManager layoutManager = new GridLayoutManager(getActivity(), 2);
-            recyclerView.setLayoutManager(layoutManager);
-            recyclerView.addOnScrollListener(new RecyclerViewEndlessScrollListener(
-                    layoutManager, new Action1<Integer>() {
-                @Override
-                public void call(Integer page) {
-                    getCategorySortItems(page);
-                }
-            }));
             getCategorySortItems(1);
         }
 
         private void getCategorySortItems(int page) {
-            DataManager.getInstance().getCategorySortItems(categoryName, sortName, page, this);
+            DataManager.getInstance().getCategorySortItems(getCategoryName(), getSortName(), page, this);
+        }
+
+        private int getCategoryId() {
+            return getArguments().getInt(ARG_INT_CATEGORY_ID, 10);
+        }
+
+        private String getCategoryName() {
+            return getArguments().getString(ARG_STRING_CATEGORY_NAME);
+        }
+
+        private String getSortName() {
+            return getArguments().getString(ARG_STRING_SORT_NAME);
         }
 
     }
