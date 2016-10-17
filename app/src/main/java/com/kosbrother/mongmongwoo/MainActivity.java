@@ -43,13 +43,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.kosbrother.mongmongwoo.adpters.CategoryAdapter;
 import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
 import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.api.UrlCenter;
 import com.kosbrother.mongmongwoo.api.Webservice;
-import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
+import com.kosbrother.mongmongwoo.appindex.AppIndexUtil;
 import com.kosbrother.mongmongwoo.appindex.IndexActivity;
 import com.kosbrother.mongmongwoo.category.CategoryActivity;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
@@ -109,13 +110,14 @@ public class MainActivity extends AppCompatActivity
     private View spotLightShoppingCarLayout;
     private Toast toast;
     private boolean destroying = false;
+    private GoogleApiClient googleApiClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        AppIndexManager.init(this);
+        googleApiClient = AppIndexUtil.buildAppIndexClient(this);
         csBottomSheetDialogFragment = new CsBottomSheetDialogFragment();
 
         setToolbarAndDrawer();
@@ -135,7 +137,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        AppIndexManager.startMainAppIndex();
+        AppIndexUtil.startMainAppIndex(googleApiClient);
     }
 
     @Override
@@ -148,7 +150,7 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
-        AppIndexManager.stopMainAppIndex();
+        AppIndexUtil.stopMainAppIndex(googleApiClient);
         super.onStop();
     }
 

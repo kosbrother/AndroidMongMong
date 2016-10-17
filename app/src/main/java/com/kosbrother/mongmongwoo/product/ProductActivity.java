@@ -18,13 +18,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
 import com.kosbrother.mongmongwoo.adpters.ProductImageFragmentPagerAdapter;
 import com.kosbrother.mongmongwoo.api.DataManager;
-import com.kosbrother.mongmongwoo.appindex.AppIndexManager;
+import com.kosbrother.mongmongwoo.appindex.AppIndexUtil;
 import com.kosbrother.mongmongwoo.facebookevent.FacebookLogger;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
@@ -74,11 +75,13 @@ public class ProductActivity extends BaseActivity {
     private DataManager.ApiCallBack deleteFavoriteItemCallBack;
     private DataManager.ApiCallBack getProductCallBack;
 
+    private GoogleApiClient googleApiClient;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product);
-        AppIndexManager.init(this);
+        googleApiClient = AppIndexUtil.buildAppIndexClient(this);
         setToolbar();
         initAddCartButton();
         initCollectImageView();
@@ -133,7 +136,7 @@ public class ProductActivity extends BaseActivity {
         if (theProduct != null) {
             String categoryName = theProduct.getCategoryName();
             if (categoryName != null && !categoryName.isEmpty()) {
-                AppIndexManager.stopItemAppIndex(theProduct);
+                AppIndexUtil.stopProductAppIndex(googleApiClient, theProduct);
             }
         }
         super.onStop();
@@ -398,7 +401,7 @@ public class ProductActivity extends BaseActivity {
         if (categoryName != null && !categoryName.isEmpty()) {
             theProduct.setCategoryName(categoryName);
             theProduct.setCategoryId(getCategoryId());
-            AppIndexManager.startItemAppIndex(theProduct);
+            AppIndexUtil.startProductAppIndex(googleApiClient, theProduct);
         }
     }
 

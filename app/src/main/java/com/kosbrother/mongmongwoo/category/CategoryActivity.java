@@ -1,7 +1,6 @@
 package com.kosbrother.mongmongwoo.category;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
@@ -23,15 +22,13 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.appindexing.Action;
-import com.google.android.gms.appindexing.AppIndex;
-import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.api.DensityApi;
+import com.kosbrother.mongmongwoo.appindex.AppIndexUtil;
 import com.kosbrother.mongmongwoo.googleanalytics.GAManager;
 import com.kosbrother.mongmongwoo.googleanalytics.event.cart.CartClickEvent;
 import com.kosbrother.mongmongwoo.googleanalytics.event.category.CategoryEnterEvent;
@@ -58,12 +55,15 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
     public static final String EXTRA_STRING_SORT_NAME = "EXTRA_STRING_SORT_NAME";
     public static final String EXTRA_BOOLEAN_FROM_INDEX_ACTIVITY = "EXTRA_BOOLEAN_FROM_INDEX_ACTIVITY";
 
+    private GoogleApiClient googleApiClient;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_category);
+        googleApiClient = AppIndexUtil.buildAppIndexClient(this);
 
-        String categoryName = getIntent().getStringExtra(EXTRA_STRING_CATEGORY_NAME);
+        String categoryName = getCategoryName();
         int categoryId = getCategoryId();
         int sortIndex = getSortIndex();
 
@@ -77,6 +77,18 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
     protected void onResume() {
         super.onResume();
         invalidateOptionsMenu();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        AppIndexUtil.startCategoryAppIndex(googleApiClient, getCategoryName());
+    }
+
+    @Override
+    protected void onStop() {
+        AppIndexUtil.stopCategoryAppIndex(googleApiClient, getCategoryName());
+        super.onStop();
     }
 
     @Override
@@ -151,6 +163,10 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
 
     private int getCategoryId() {
         return getIntent().getIntExtra(EXTRA_INT_CATEGORY_ID, 10);
+    }
+
+    private String getCategoryName() {
+        return getIntent().getStringExtra(EXTRA_STRING_CATEGORY_NAME);
     }
 
     private int getSortIndex() {
@@ -243,7 +259,6 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
             bundle.putInt(ProductsGridFragment.ARG_INT_CATEGORY_ID, categoryId);
             bundle.putString(ProductsGridFragment.ARG_STRING_CATEGORY_NAME, categoryName);
             bundle.putString(ProductsGridFragment.ARG_STRING_SORT_NAME, sortNames[i].name());
-            bundle.putString(ProductsGridFragment.ARG_STRING_TITLE, getPageTitle(i).toString());
             productsGridFragment.setArguments(bundle);
             return productsGridFragment;
         }
@@ -266,20 +281,14 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         public static final String ARG_INT_CATEGORY_ID = "ARG_INT_CATEGORY_ID";
         public static final String ARG_STRING_SORT_NAME = "ARG_STRING_SORT_NAME";
         public static final String ARG_STRING_CATEGORY_NAME = "ARG_STRING_CATEGORY_NAME";
-        public static final String ARG_STRING_TITLE = "ARG_STRING_TITLE";
-
-        private static final String CATEGORY_URI_STRING =
-                "android-app://com.kosbrother.mongmongwoo/https/www.mmwooo.com/categories/%s?sort=%s";
 
         // create boolean for fetching data
         private boolean isVisibleToUser = false;
         private boolean isViewCreated = false;
-        private GoogleApiClient mClient;
 
         private int categoryId = 10;
         private String sortName;
         private String categoryName;
-        private String title;
 
         private RecyclerView recyclerView;
         private ProductsAdapter productsAdapter;
@@ -293,7 +302,6 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
             categoryId = arguments.getInt(ARG_INT_CATEGORY_ID);
             sortName = arguments.getString(ARG_STRING_SORT_NAME);
             categoryName = arguments.getString(ARG_STRING_CATEGORY_NAME);
-            title = arguments.getString(ARG_STRING_TITLE);
         }
 
         @Override
@@ -336,24 +344,14 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
                 if (recyclerView != null) {
                     recyclerView.clearOnScrollListeners();
                     recyclerView.getAdapter().notifyDataSetChanged();
-                    stopCategoryAppIndex();
                 }
             }
         }
 
         private void lazyLoad() {
             if (isVisibleToUser && isViewCreated) {
-                if (mClient == null) {
-                    mClient = new GoogleApiClient.Builder(getActivity()).addApi(AppIndex.API).build();
-                }
                 getInitData();
             }
-        }
-
-        @Override
-        public void onStop() {
-            super.onStop();
-            stopCategoryAppIndex();
         }
 
         @Override
@@ -410,10 +408,6 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
         @Override
         public void onSuccess(Object data) {
             loadingView.setVisibility(View.GONE);
-            if (products.size() == 0) {
-                // only index page one
-                startCategoryAppIndex();
-            }
             products.addAll((Collection<? extends Product>) data);
             productsAdapter.notifyDataSetChanged();
         }
@@ -437,34 +431,5 @@ public class CategoryActivity extends BaseActivity implements DataManager.ApiCal
             DataManager.getInstance().getCategorySortItems(categoryName, sortName, page, this);
         }
 
-        public void startCategoryAppIndex() {
-            if (mClient != null) {
-                mClient.connect();
-                AppIndex.AppIndexApi.start(mClient, getCategoryAction());
-            }
-        }
-
-        public void stopCategoryAppIndex() {
-            if (mClient != null && mClient.isConnected()) {
-                AppIndex.AppIndexApi.end(
-                        mClient, getCategoryAction());
-                mClient.disconnect();
-                mClient = null;
-            }
-        }
-
-        private Action getCategoryAction() {
-            String urlString = String.format(CATEGORY_URI_STRING, categoryName, sortName);
-            Thing object = new Thing.Builder()
-                    .setName(categoryName + " - " + title)
-                    .setDescription(categoryName + " - " + title)
-                    .setUrl(Uri.parse(urlString))
-                    .build();
-
-            return new Action.Builder(Action.TYPE_VIEW)
-                    .setObject(object)
-                    .setActionStatus(Action.STATUS_TYPE_COMPLETED)
-                    .build();
-        }
     }
 }
