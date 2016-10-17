@@ -727,6 +727,7 @@ public class MainActivity extends AppCompatActivity
     private void setLatestItemsRecyclerView(final List<Product> products) {
         final List<Product> displayProducts = getDisplayProducts(products);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.latest_items_rv);
+        recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         ProductsAdapter productsAdapter = new ProductsAdapter(products, new ProductsAdapter.GoodsGridAdapterListener() {
             @Override
@@ -751,6 +752,7 @@ public class MainActivity extends AppCompatActivity
     private void setPopularItemsRecyclerView(List<Product> products) {
         final List<Product> displayProducts = getDisplayProducts(products);
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.popular_items_rv);
+        recyclerView.setNestedScrollingEnabled(false);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
         ProductsAdapter productsAdapter = new ProductsAdapter(products, new ProductsAdapter.GoodsGridAdapterListener() {
             @Override
