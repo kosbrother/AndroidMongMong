@@ -1136,25 +1136,25 @@ public class DataManager {
         @GET("api/v4/users/{userId}/my_messages")
         Observable<ResponseEntity<List<MyNotification>>> getMyMessages(@Path("userId") int userId);
 
-        @GET("api/v3/users/{userId}/favorite_items")
+        @GET("api/v4/users/{userId}/favorite_items")
         Observable<ResponseEntity<List<FavoriteItemEntity>>> getFavoriteItems(@Path("userId") int userId);
 
-        @POST("api/v3/users/{userId}/favorite_items")
+        @POST("api/v4/users/{userId}/favorite_items")
         Observable<ResponseEntity<String>> postFavoriteItems(
                 @Path("userId") int userId, @Body PostFavoriteItemsEntity postFavoriteItemsEntity);
 
-        @DELETE("api/v3/users/{userId}/favorite_items/items/{itemId}")
+        @DELETE("api/v4/users/{userId}/favorite_items/items/{itemId}")
         Observable<ResponseEntity<String>> deleteFavoriteItems(
                 @Path("userId") int userId, @Path("itemId") int itemId);
 
-        @GET("api/v3/users/{userId}/wish_lists")
+        @GET("api/v4/users/{userId}/wish_lists")
         Observable<ResponseEntity<List<WishListEntity>>> getWishLists(@Path("userId") int userId);
 
-        @POST("api/v3/users/{userId}/wish_lists")
+        @POST("api/v4/users/{userId}/wish_lists")
         Observable<ResponseEntity<String>> postWishLists(
                 @Path("userId") int userId, @Body PostWishListsEntity postWishListsEntity);
 
-        @DELETE("api/v3/users/{userId}/wish_lists/item_specs/{itemSpecId}")
+        @DELETE("api/v4/users/{userId}/wish_lists/item_specs/{itemSpecId}")
         Observable<ResponseEntity<String>> deleteWishListsItemSpecs(
                 @Path("userId") int userId, @Path("itemSpecId") int itemSpecId);
 
@@ -1212,11 +1212,11 @@ public class DataManager {
         @GET("api/v4/banners")
         Observable<ResponseEntity<List<Banner>>> getBanners();
 
-        @GET("api/v3/categories/{categoryId}/items/{itemId}")
+        @GET("api/v4/categories/{categoryId}/items/{itemId}")
         Observable<ResponseEntity<Product>> getProduct(
                 @Path("categoryId") int categoryId, @Path("itemId") int itemId);
 
-        @GET("api/v3/categories/{categoryName}/items/{slug}")
+        @GET("api/v4/categories/{categoryName}/items/{slug}")
         Observable<ResponseEntity<Product>> getProduct(
                 @Path("categoryName") String categoryName, @Path("slug") String slug);
 
