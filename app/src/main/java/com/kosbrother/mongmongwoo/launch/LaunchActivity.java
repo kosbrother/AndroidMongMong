@@ -63,7 +63,11 @@ public class LaunchActivity extends FragmentActivity implements AppLinkData.Comp
     }
 
     private boolean appLinkUriValid(AppLinkData appLinkData) {
-        return appLinkData != null && appLinkData.getTargetUri().toString().startsWith("android-app");
+        if (appLinkData == null) {
+            return false;
+        }
+        String uriString = appLinkData.getTargetUri().toString();
+        return uriString.startsWith("android-app") || uriString.startsWith("mmwooo");
     }
 
     private void setLaunchContentView() {

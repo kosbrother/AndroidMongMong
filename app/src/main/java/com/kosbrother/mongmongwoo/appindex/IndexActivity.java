@@ -21,16 +21,27 @@ import java.util.regex.Pattern;
 
 public class IndexActivity extends AppCompatActivity {
 
+    /**
+     * Item url from facebook deep link may append question mark and some string,
+     * but the information is not required.
+     */
+    public static final String WWW_MMWOOO_COM_CATEGORIES_ITEMS = "www.mmwooo.com[/]categories[/](.+)[/]items[/]([^?]+)";
+    public static final String WWW_MMWOOO_COM_CATEGORIES = "www.mmwooo.com[/]categories[/]([^?]+)";
+    public static final String WWW_MMWOOO_COM_SHOPPING_POINT_CAMPAIGNS = "www.mmwooo.com[/]shopping_point_campaigns";
+
+    public static final String APPEND_QUESTION_MARK = "(?:[?](.+))?";
+
     private static final String PRODUCT_PATTERN =
-            "^https:[/][/]www.mmwooo.com[/]categories[/](.+)[/]items[/](.+)$";
+            "^(?:mmwooo)?(?:https)?:[/][/]" + WWW_MMWOOO_COM_CATEGORIES_ITEMS + APPEND_QUESTION_MARK + "$";
     private static final String CATEGORY_PATTERN =
-            "^https:[/][/]www.mmwooo.com[/]categories[/]([^?]+)(?:[?](.+))?$";
+            "^(?:mmwooo)?(?:https)?:[/][/]" + WWW_MMWOOO_COM_CATEGORIES + APPEND_QUESTION_MARK + "$";
+
     private static final String SHOPPING_POINT_CAMPAIGNS_PATTERN =
-            "^android-app:[/][/]com.kosbrother.mongmongwoo[/]https[/]www.mmwooo.com[/]shopping_point_campaigns$";
+            "^android-app:[/][/]com.kosbrother.mongmongwoo[/]https[/]" + WWW_MMWOOO_COM_SHOPPING_POINT_CAMPAIGNS + "$";
     private static final String PRODUCT_FROM_APP_INDEX_URL_PATTERN =
-            "^android-app:[/][/]com.kosbrother.mongmongwoo[/]https[/]www.mmwooo.com[/]categories[/](.+)[/]items[/](.+)$";
+            "^android-app:[/][/]com.kosbrother.mongmongwoo[/]https[/]" + WWW_MMWOOO_COM_CATEGORIES_ITEMS + "$";
     private static final String CATEGORY_FROM_APP_INDEX_URL_PATTERN =
-            "^android-app:[/][/]com.kosbrother.mongmongwoo[/]https[/]www.mmwooo.com[/]categories[/]([^?]+)(?:[?](.+))?$";
+            "^android-app:[/][/]com.kosbrother.mongmongwoo[/]https[/]" + WWW_MMWOOO_COM_CATEGORIES + "$";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -47,17 +58,18 @@ public class IndexActivity extends AppCompatActivity {
             String input = data.toString();
             Matcher productMatcher = Pattern.compile(PRODUCT_PATTERN).matcher(input);
             Matcher categoryMatcher = Pattern.compile(CATEGORY_PATTERN).matcher(input);
-            Matcher shoppingPointCampaignsMatcher = Pattern.compile(SHOPPING_POINT_CAMPAIGNS_PATTERN).matcher(input);
-            Matcher productFromAppIndexUrlMatcher = Pattern.compile(PRODUCT_FROM_APP_INDEX_URL_PATTERN).matcher(input);
+
+            Matcher productFromAppIndexHttpsUrlMatcher = Pattern.compile(PRODUCT_FROM_APP_INDEX_URL_PATTERN).matcher(input);
             Matcher categoryFromAppIndexUrlMatcher = Pattern.compile(CATEGORY_FROM_APP_INDEX_URL_PATTERN).matcher(input);
+            Matcher shoppingPointCampaignsMatcher = Pattern.compile(SHOPPING_POINT_CAMPAIGNS_PATTERN).matcher(input);
 
             Intent indexIntent;
             if (productMatcher.matches()) {
                 indexIntent = getProductIntent(productMatcher);
-            } else if (productFromAppIndexUrlMatcher.matches()) {
-                indexIntent = getProductIntent(productFromAppIndexUrlMatcher);
             } else if (categoryMatcher.matches()) {
                 indexIntent = getCategoryIntent(categoryMatcher);
+            } else if (productFromAppIndexHttpsUrlMatcher.matches()) {
+                indexIntent = getProductIntent(productFromAppIndexHttpsUrlMatcher);
             } else if (categoryFromAppIndexUrlMatcher.matches()) {
                 indexIntent = getCategoryIntent(categoryFromAppIndexUrlMatcher);
             } else if (shoppingPointCampaignsMatcher.matches()) {
