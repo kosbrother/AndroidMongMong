@@ -1,83 +1,122 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/gray_selector">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <ImageView
-        android:id="@+id/item_favorite_product_iv"
-        android:layout_width="68dp"
-        android:layout_height="48dp"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginStart="12dp"
-        android:layout_marginTop="8dp"
-        tools:src="@drawable/app_icon9" />
+    <data>
 
-    <ImageView
-        android:id="@+id/item_favorite_collect_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
-        android:background="@drawable/bg_circle_selector_24dp"
-        android:padding="8dp"
-        android:src="@mipmap/ic_favorite_pink_24dp" />
+        <import type="android.view.View" />
 
-    <LinearLayout
+        <import type="com.kosbrother.mongmongwoo.mycollect.FavoriteViewModel" />
+
+        <import type="com.kosbrother.mongmongwoo.mycollect.FavoriteListener" />
+
+        <variable
+            name="favoriteViewModel"
+            type="FavoriteViewModel" />
+
+        <variable
+            name="favoriteListener"
+            type="FavoriteListener" />
+    </data>
+
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_toEndOf="@id/item_favorite_product_iv"
-        android:layout_toLeftOf="@id/item_favorite_collect_iv"
-        android:layout_toRightOf="@id/item_favorite_product_iv"
-        android:layout_toStartOf="@id/item_favorite_collect_iv"
-        android:orientation="vertical">
+        android:background="@drawable/gray_selector"
+        android:clickable="true"
+        android:onClick="@{() -> favoriteListener.onCollectItemClick(favoriteViewModel.id)}">
 
-        <TextView
-            android:id="@+id/item_favorite_product_name_tv"
+        <RelativeLayout
+            android:id="@+id/item_favorite_image_rl"
+            android:layout_width="68dp"
+            android:layout_height="48dp"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="12dp"
+            android:layout_marginLeft="12dp"
+            android:layout_marginRight="12dp"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="8dp">
+
+            <ImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:rectImageUrl="@{favoriteViewModel.coverUrlString}"
+                tools:src="@drawable/app_icon9" />
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                app:imageUrlWithoutPlaceholder="@{favoriteViewModel.discountIconUrlString}"
+                tools:src="@drawable/app_icon9" />
+        </RelativeLayout>
+
+        <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:maxLines="2"
-            android:textColor="@color/black_4a4a4a"
-            android:textSize="12sp"
-            tools:text="超萌卡通悠遊卡立體卡套超萌卡通悠遊卡立體卡套" />
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:background="@drawable/bg_circle_selector_24dp"
+            android:onClick="@{() -> favoriteListener.onCancelCollectClick(favoriteViewModel.id)}"
+            android:padding="8dp"
+            android:src="@mipmap/ic_favorite_pink_24dp" />
 
-        <TextView
-            android:id="@+id/item_favorite_original_price_tv"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textColor="@color/black_4a4a4a"
-            android:textSize="11sp"
-            tools:text="原價NT$ 100" />
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_toEndOf="@id/item_favorite_image_rl"
+            android:layout_toLeftOf="@id/item_favorite_collect_iv"
+            android:layout_toRightOf="@id/item_favorite_image_rl"
+            android:layout_toStartOf="@id/item_favorite_collect_iv"
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/item_favorite_product_price_tv"
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:ellipsize="end"
+                android:maxLines="2"
+                android:text="@{favoriteViewModel.name}"
+                android:textColor="@color/black_4a4a4a"
+                android:textSize="12sp"
+                tools:text="超萌卡通悠遊卡立體卡套超萌卡通悠遊卡立體卡套" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{favoriteViewModel.originalPriceText}"
+                android:textColor="@color/black_4a4a4a"
+                android:textSize="11sp"
+                android:visibility="@{favoriteViewModel.specialPrice?View.VISIBLE:View.GONE}"
+                app:paintLineThrough="@{@Bool{true}}"
+                tools:text="原價NT$ 100" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{favoriteViewModel.finalPriceText}"
+                android:textColor="@color/green_text"
+                android:textSize="11sp"
+                tools:text="NT$89" />
+
+        </LinearLayout>
+
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/green_text"
-            android:textSize="11sp"
-            tools:text="NT$89" />
-
-    </LinearLayout>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginStart="8dp"
-        android:background="@color/light_gray" />
-</RelativeLayout>
+            android:layout_height="1dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:background="@color/light_gray" />
+    </RelativeLayout>
+</layout>

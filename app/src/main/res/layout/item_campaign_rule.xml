@@ -39,7 +39,7 @@
                 android:layout_height="50dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginRight="16dp"
-                app:imageUrl="@{campaignRule.imageUrl}"
+                app:squareImageUrl="@{campaignRule.imageUrl}"
                 tools:src="@drawable/app_icon9" />
 
             <LinearLayout

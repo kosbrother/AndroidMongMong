@@ -5,11 +5,11 @@ import com.kosbrother.mongmongwoo.entity.mycollect.FavoriteItemEntity;
 
 import java.util.List;
 
-public class FavoritePresenter implements DataManager.ApiCallBack {
+class FavoritePresenter implements DataManager.ApiCallBack {
     private FavoriteView view;
     private FavoriteManager favoriteManager;
 
-    public FavoritePresenter(FavoriteView view, FavoriteManager favoriteManager) {
+    FavoritePresenter(FavoriteView view, FavoriteManager favoriteManager) {
         this.view = view;
         this.favoriteManager = favoriteManager;
     }
@@ -24,13 +24,13 @@ public class FavoritePresenter implements DataManager.ApiCallBack {
         favoriteManager.cancelRequest(this);
     }
 
-    public void onCollectItemClick(int position) {
-        view.startProductActivity(favoriteManager.getProductId(position));
+    void onCollectItemClick(int id) {
+        view.startProductActivity(id);
     }
 
-    public void onCancelCollectConfirmClick(int position) {
+    void onCancelCollectConfirmClick(int id) {
         view.showProgressDialog();
-        favoriteManager.deleteFavoriteItemsFromPosition(position, this);
+        favoriteManager.deleteFavoriteItemsFromId(id, this);
     }
 
     @Override
@@ -47,7 +47,7 @@ public class FavoritePresenter implements DataManager.ApiCallBack {
             if (myCollectEntities.size() == 0) {
                 view.showEmptyView();
             } else {
-                view.showMyCollectList(favoriteManager.getProductList());
+                view.showMyCollectList(favoriteManager.getFavoriteProductViewModels());
             }
         } else if (data instanceof String) {
             onResume();

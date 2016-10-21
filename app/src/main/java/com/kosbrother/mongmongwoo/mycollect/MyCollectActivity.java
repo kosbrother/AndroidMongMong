@@ -48,7 +48,7 @@ public class MyCollectActivity extends BaseActivity {
     public class PagerAdapter extends FragmentStatePagerAdapter {
         int mNumOfTabs;
 
-        public PagerAdapter(FragmentManager fm, int NumOfTabs) {
+        PagerAdapter(FragmentManager fm, int NumOfTabs) {
             super(fm);
             this.mNumOfTabs = NumOfTabs;
         }

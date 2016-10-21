@@ -27,7 +27,7 @@
             android:layout_height="60dp"
             android:layout_marginEnd="16dp"
             android:layout_marginRight="16dp"
-            app:imageUrl="@{productViewModel.specImageUrl}" />
+            app:squareImageUrl="@{productViewModel.specImageUrl}" />
 
         <LinearLayout
             android:layout_width="match_parent"

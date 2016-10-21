@@ -5,11 +5,11 @@ import com.kosbrother.mongmongwoo.entity.mycollect.WishListEntity;
 
 import java.util.List;
 
-public class WishListPresenter implements DataManager.ApiCallBack {
+class WishListPresenter implements DataManager.ApiCallBack {
     private WishListView view;
     private WishListModel model;
 
-    public WishListPresenter(WishListView view, WishListModel model) {
+    WishListPresenter(WishListView view, WishListModel model) {
         this.view = view;
         this.model = model;
     }
@@ -39,19 +39,19 @@ public class WishListPresenter implements DataManager.ApiCallBack {
             if (wishList.size() == 0) {
                 view.showWishListEmptyView();
             } else {
-                view.showWishListView(model.getWishListProducts(), model.getSpecs());
+                view.showWishListView(model.getWishListViewModels());
             }
         } else if (data instanceof String) {
             onResume();
         }
     }
 
-    public void onWishItemClick(int position) {
-        view.startProductActivity(model.getProductId(position));
+    void onWishItemClick(int productId) {
+        view.startProductActivity(productId);
     }
 
-    public void onConfirmDeleteWishItemClick(int position) {
+    void onConfirmDeleteWishItemClick(int specId) {
         view.showProgressDialog();
-        model.deleteWishItem(position, this);
+        model.deleteWishItem(specId, this);
     }
 }
