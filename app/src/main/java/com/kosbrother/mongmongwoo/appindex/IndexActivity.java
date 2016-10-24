@@ -1,5 +1,11 @@
 package com.kosbrother.mongmongwoo.appindex;
 
+import com.kosbrother.mongmongwoo.category.CategoryActivity;
+import com.kosbrother.mongmongwoo.launch.LaunchActivity;
+import com.kosbrother.mongmongwoo.model.Category;
+import com.kosbrother.mongmongwoo.myshoppingpoints.MyShoppingPointsActivity;
+import com.kosbrother.mongmongwoo.product.ProductActivity;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,12 +13,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
-
-import com.kosbrother.mongmongwoo.category.CategoryActivity;
-import com.kosbrother.mongmongwoo.launch.LaunchActivity;
-import com.kosbrother.mongmongwoo.model.Category;
-import com.kosbrother.mongmongwoo.myshoppingpoints.MyShoppingPointsActivity;
-import com.kosbrother.mongmongwoo.product.ProductActivity;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -109,7 +109,12 @@ public class IndexActivity extends AppCompatActivity {
     @NonNull
     private Intent getCategoryIntent(Matcher categoryMatcher) {
         String categoryName = getDecodeString(categoryMatcher.group(1));
-        String sortName = getCategorySortName(categoryMatcher.group(2));
+        String sortName = "popular";
+        try{
+            sortName = getCategorySortName(categoryMatcher.group(2));
+        }catch (Exception e){
+        }
+
 
         Intent indexIntent = new Intent(this, CategoryActivity.class);
         indexIntent.putExtra(CategoryActivity.EXTRA_STRING_CATEGORY_NAME, categoryName);
