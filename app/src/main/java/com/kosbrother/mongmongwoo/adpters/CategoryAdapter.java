@@ -1,5 +1,9 @@
 package com.kosbrother.mongmongwoo.adpters;
 
+import com.bumptech.glide.Glide;
+import com.kosbrother.mongmongwoo.R;
+import com.kosbrother.mongmongwoo.model.Category;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,10 +11,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.bumptech.glide.Glide;
-import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.model.Category;
 
 import java.util.List;
 
@@ -56,7 +56,11 @@ public class CategoryAdapter extends BaseAdapter {
                 .centerCrop()
                 .placeholder(R.mipmap.img_pre_load_square)
                 .into(viewHolder.categoryImageView);
-        viewHolder.categoryNameTextView.setText(category.getName());
+        if(position == 0) {
+            viewHolder.categoryNameTextView.setText("優惠活動");
+        }else{
+            viewHolder.categoryNameTextView.setText(category.getName());
+        }
         return convertView;
     }
 
