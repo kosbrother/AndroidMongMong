@@ -15,17 +15,14 @@ import android.widget.FrameLayout;
 import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.R;
-import com.kosbrother.mongmongwoo.adpters.WishListAdapter;
 import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.model.Category;
-import com.kosbrother.mongmongwoo.model.Product;
-import com.kosbrother.mongmongwoo.model.Spec;
 import com.kosbrother.mongmongwoo.product.ProductActivity;
 import com.kosbrother.mongmongwoo.widget.CenterProgressDialog;
 
 import java.util.List;
 
-public class WishListFragment extends Fragment implements WishListView, WishListAdapter.WishListListener {
+public class WishListFragment extends Fragment implements WishListView, WishListListener {
 
     private WishListPresenter presenter;
     private FrameLayout container;
@@ -69,11 +66,11 @@ public class WishListFragment extends Fragment implements WishListView, WishList
     }
 
     @Override
-    public void showWishListView(List<Product> wishListProducts, List<Spec> specs) {
+    public void showWishListView(List<WishListViewModel> wishListViewModels) {
         RecyclerView recyclerView = new RecyclerView(getActivity());
         recyclerView.setLayoutParams(new RecyclerView.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        WishListAdapter adapter = new WishListAdapter(wishListProducts, specs, this);
+        WishListAdapter adapter = new WishListAdapter(wishListViewModels, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 
@@ -115,12 +112,12 @@ public class WishListFragment extends Fragment implements WishListView, WishList
     }
 
     @Override
-    public void onWishItemClick(int position) {
-        presenter.onWishItemClick(position);
+    public void onWishItemClick(int productId) {
+        presenter.onWishItemClick(productId);
     }
 
     @Override
-    public void onDeleteWishItemClick(final int position) {
+    public void onDeleteWishItemClick(final int specId) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setTitle("取消補貨");
         alertDialogBuilder.setMessage("是否確定要取消補貨");
@@ -133,7 +130,7 @@ public class WishListFragment extends Fragment implements WishListView, WishList
         alertDialogBuilder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                presenter.onConfirmDeleteWishItemClick(position);
+                presenter.onConfirmDeleteWishItemClick(specId);
             }
         });
         AlertDialog alertDialog = alertDialogBuilder.create();

@@ -1,8 +1,10 @@
 package com.kosbrother.mongmongwoo.entity.pastorder;
 
+import com.kosbrother.mongmongwoo.common.ProductViewModel;
+
 public class PastItem extends PastItemEntity {
 
-    public String getPriceAndQuantityText() {
-        return "NT$ " + getPrice() + " x " + getQuantity();
+    public ProductViewModel getProductViewModel() {
+        return new ProductViewModel(this);
     }
 }

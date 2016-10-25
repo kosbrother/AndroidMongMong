@@ -6,6 +6,10 @@ import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.entity.ShipInfoEntity;
 import com.kosbrother.mongmongwoo.entity.UserEntity;
 import com.kosbrother.mongmongwoo.entity.banner.Banner;
+import com.kosbrother.mongmongwoo.entity.camapign.CampaignRuleDetailEntity;
+import com.kosbrother.mongmongwoo.entity.camapign.CampaignRuleEntity;
+import com.kosbrother.mongmongwoo.entity.checkout.CheckoutPostEntity;
+import com.kosbrother.mongmongwoo.entity.checkout.CheckoutResultEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.FavoriteItemEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostFavoriteItemsEntity;
 import com.kosbrother.mongmongwoo.entity.mycollect.PostWishListsEntity;
@@ -978,6 +982,105 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void postCheckout(CheckoutPostEntity checkoutPostEntity, final ApiCallBack callBack) {
+        Observable<ResponseEntity<CheckoutResultEntity>> observable =
+                networkAPI.postCheckout(checkoutPostEntity)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<CheckoutResultEntity>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<CheckoutResultEntity> responseEntity) {
+                CheckoutResultEntity data = responseEntity.getData();
+                if (data == null) {
+                    callBack.onError(responseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
+    public void getCampaignRules(final ApiCallBack callBack) {
+        Observable<ResponseEntity<List<CampaignRuleEntity>>> observable =
+                networkAPI.getCampaignRules()
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<List<CampaignRuleEntity>>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<List<CampaignRuleEntity>> listResponseEntity) {
+                List<CampaignRuleEntity> data = listResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(listResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
+    public void getCampaignRule(int id, final ApiCallBack callBack) {
+        Observable<ResponseEntity<CampaignRuleDetailEntity>> observable =
+                networkAPI.getCampaignRule(id)
+                        .subscribeOn(Schedulers.newThread())
+                        .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<ResponseEntity<CampaignRuleDetailEntity>>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(ResponseEntity<CampaignRuleDetailEntity> listResponseEntity) {
+                CampaignRuleDetailEntity data = listResponseEntity.getData();
+                if (data == null) {
+                    callBack.onError(listResponseEntity.getError().getMessage());
+                } else {
+                    callBack.onSuccess(data);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void unSubscribe(ApiCallBack callBack) {
         if (callBack == null) {
             return;
@@ -1033,25 +1136,25 @@ public class DataManager {
         @GET("api/v4/users/{userId}/my_messages")
         Observable<ResponseEntity<List<MyNotification>>> getMyMessages(@Path("userId") int userId);
 
-        @GET("api/v3/users/{userId}/favorite_items")
+        @GET("api/v4/users/{userId}/favorite_items")
         Observable<ResponseEntity<List<FavoriteItemEntity>>> getFavoriteItems(@Path("userId") int userId);
 
-        @POST("api/v3/users/{userId}/favorite_items")
+        @POST("api/v4/users/{userId}/favorite_items")
         Observable<ResponseEntity<String>> postFavoriteItems(
                 @Path("userId") int userId, @Body PostFavoriteItemsEntity postFavoriteItemsEntity);
 
-        @DELETE("api/v3/users/{userId}/favorite_items/items/{itemId}")
+        @DELETE("api/v4/users/{userId}/favorite_items/items/{itemId}")
         Observable<ResponseEntity<String>> deleteFavoriteItems(
                 @Path("userId") int userId, @Path("itemId") int itemId);
 
-        @GET("api/v3/users/{userId}/wish_lists")
+        @GET("api/v4/users/{userId}/wish_lists")
         Observable<ResponseEntity<List<WishListEntity>>> getWishLists(@Path("userId") int userId);
 
-        @POST("api/v3/users/{userId}/wish_lists")
+        @POST("api/v4/users/{userId}/wish_lists")
         Observable<ResponseEntity<String>> postWishLists(
                 @Path("userId") int userId, @Body PostWishListsEntity postWishListsEntity);
 
-        @DELETE("api/v3/users/{userId}/wish_lists/item_specs/{itemSpecId}")
+        @DELETE("api/v4/users/{userId}/wish_lists/item_specs/{itemSpecId}")
         Observable<ResponseEntity<String>> deleteWishListsItemSpecs(
                 @Path("userId") int userId, @Path("itemSpecId") int itemSpecId);
 
@@ -1078,7 +1181,7 @@ public class DataManager {
         @GET("api/v3/categories/{categoryName}/subcategory")
         Observable<ResponseEntity<List<Category>>> getSubcategories(@Path("categoryName") String categoryName);
 
-        @GET("api/v3/categories/{categoryName}/items")
+        @GET("api/v4/categories/{categoryName}/items")
         Observable<ResponseEntity<List<Product>>> getCategorySortItems(
                 @Path("categoryName") String categoryName, @Query("sort") String sortName, @Query("page") int page);
 
@@ -1109,11 +1212,11 @@ public class DataManager {
         @GET("api/v4/banners")
         Observable<ResponseEntity<List<Banner>>> getBanners();
 
-        @GET("api/v3/categories/{categoryId}/items/{itemId}")
+        @GET("api/v4/categories/{categoryId}/items/{itemId}")
         Observable<ResponseEntity<Product>> getProduct(
                 @Path("categoryId") int categoryId, @Path("itemId") int itemId);
 
-        @GET("api/v3/categories/{categoryName}/items/{slug}")
+        @GET("api/v4/categories/{categoryName}/items/{slug}")
         Observable<ResponseEntity<Product>> getProduct(
                 @Path("categoryName") String categoryName, @Path("slug") String slug);
 
@@ -1123,9 +1226,19 @@ public class DataManager {
         @GET("api/v3/hot_keywords")
         Observable<ResponseEntity<List<String>>> getHotKeywords();
 
-        @GET("api/v3/search_items")
+        @GET("api/v4/search_items")
         Observable<ResponseEntity<List<Product>>> getSearchItems(
                 @Query("query") String query, @Query("page") int page);
+
+        @POST("api/v4/orders/checkout")
+        Observable<ResponseEntity<CheckoutResultEntity>> postCheckout(
+                @Body CheckoutPostEntity checkoutPostEntity);
+
+        @GET("api/v4/campaign_rules")
+        Observable<ResponseEntity<List<CampaignRuleEntity>>> getCampaignRules();
+
+        @GET("api/v4/campaign_rules/{id}")
+        Observable<ResponseEntity<CampaignRuleDetailEntity>> getCampaignRule(@Path("id") int id);
     }
 
 }

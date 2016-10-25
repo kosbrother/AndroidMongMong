@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.kosbrother.mongmongwoo.common.ProductViewModel" />
+
+        <variable
+            name="productViewModel"
+            type="ProductViewModel" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            app:squareImageUrl="@{productViewModel.specImageUrl}" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:gravity="center_vertical"
+                android:maxLines="2"
+                android:text="@{productViewModel.nameText}"
+                android:textColor="@color/black_4a4a4a"
+                android:textSize="14sp"
+                tools:text="Tsum Tsum 螢幕擦" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:gravity="center_vertical"
+                android:text="@{productViewModel.campaignText}"
+                android:textColor="@color/orange_f5a623"
+                android:textSize="11sp"
+                android:visibility="@{productViewModel.showCampaign?View.VISIBLE:View.GONE}"
+                tools:text="85折優惠!" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:gravity="center_vertical"
+                android:maxLines="2"
+                android:text="@{productViewModel.selectedSpecText}"
+                android:textColor="@color/black_4a4a4a"
+                android:textSize="14sp"
+                tools:text="粉紅色" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:text="@{productViewModel.finalPriceText}"
+                    android:textColor="@color/black_4a4a4a"
+                    android:textSize="14sp"
+                    tools:text="NT$199 X 1" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="@{productViewModel.subTotalText}"
+                    android:textColor="@color/black_4a4a4a"
+                    android:textSize="14sp"
+                    tools:text="小計：NT$199" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

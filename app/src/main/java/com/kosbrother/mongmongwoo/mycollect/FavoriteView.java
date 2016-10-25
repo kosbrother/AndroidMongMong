@@ -1,15 +1,13 @@
 package com.kosbrother.mongmongwoo.mycollect;
 
-import com.kosbrother.mongmongwoo.model.Product;
-
 import java.util.List;
 
-public interface FavoriteView {
+interface FavoriteView {
     void showLoadingView();
 
     void showEmptyView();
 
-    void showMyCollectList(List<Product> myCollectEntities);
+    void showMyCollectList(List<FavoriteViewModel> favoriteViewModels);
 
     void showProgressDialog();
 

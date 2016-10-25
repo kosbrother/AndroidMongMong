@@ -1,7 +1,9 @@
 package com.kosbrother.mongmongwoo.model;
 
+import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 import com.kosbrother.mongmongwoo.api.UrlCenter;
+import com.kosbrother.mongmongwoo.entity.checkout.Campaign;
 
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
@@ -30,12 +32,38 @@ public class Product implements Serializable {
     private Cover cover;
     @SerializedName("special_price")
     private int specialPrice;
+    @SerializedName("discount_icon_url")
+    private String discountIconUrl;
     @SerializedName("specs")
     private ArrayList<Spec> specs;
     @SerializedName("photos")
     private ArrayList<Photo> photos;
     @SerializedName("final_price")
     private int finalPrice;
+    /**
+     * item sepc id for post to checkout api
+     */
+    @SerializedName("item_spec_id")
+    @Expose
+    public int itemSpecId;
+    /**
+     * item sepc id for post to checkout api
+     */
+    @SerializedName("quantity")
+    @Expose
+    public int quantity;
+    /**
+     * subtotal for get checkout result
+     */
+    @SerializedName("subtotal")
+    @Expose
+    public int subtotal;
+    /**
+     * campaigns for get checkout result
+     */
+    @SerializedName("campaign")
+    @Expose
+    public Campaign campaign;
 
     private int buy_count;
     private Spec selectedSpec;
@@ -46,7 +74,7 @@ public class Product implements Serializable {
         this.id = id;
         this.name = name;
         this.price = price;
-        this.buy_count = 0;
+        this.buy_count = 1;
         this.cover = new Cover(coverUrl);
     }
 
@@ -171,4 +199,31 @@ public class Product implements Serializable {
         return price != getFinalPrice();
     }
 
+    public int getItemSpecId() {
+        return selectedSpec.getId();
+    }
+
+    public int getQuantity() {
+        return buy_count;
+    }
+
+    public int getSubtotal() {
+        return subtotal;
+    }
+
+    public Campaign getCampaign() {
+        return campaign;
+    }
+
+    public void setItemSpecId(int itemSpecId) {
+        this.itemSpecId = itemSpecId;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    public String getDiscountIconUrl() {
+        return discountIconUrl;
+    }
 }

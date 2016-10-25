@@ -1,6 +1,5 @@
 package com.kosbrother.mongmongwoo.category;
 
-import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,7 +19,6 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
 
     private List<Product> productList;
     private GoodsGridAdapterListener listener;
-    private Context context;
 
     public ProductsAdapter(List<Product> productList, GoodsGridAdapterListener listener) {
         this.productList = productList;
@@ -29,8 +27,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        context = parent.getContext();
-        return new ViewHolder(LayoutInflater.from(context)
+        return new ViewHolder(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_product, parent, false));
     }
 
@@ -38,10 +35,10 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         final Product theProduct = productList.get(position);
 
-        Glide.with(context)
+        Glide.with(holder.goodsImageView.getContext())
                 .load(theProduct.getCover().getUrl())
                 .centerCrop()
-                .placeholder(R.mipmap.img_pre_load_rectangle)
+                .placeholder(R.mipmap.img_pre_load_square)
                 .into(holder.goodsImageView);
 
         holder.nameTextView.setText(theProduct.getName());
@@ -50,11 +47,21 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
 
         TextView originalPriceTextView = holder.originalPriceTextView;
         originalPriceTextView.setText(theProduct.getOriginalPriceText());
+        String discountIconUrl = theProduct.getDiscountIconUrl();
+        if (discountIconUrl != null) {
+            Glide.with(holder.discountIconImageView.getContext())
+                    .load(discountIconUrl)
+                    .centerCrop()
+                    .placeholder(R.mipmap.img_pre_load_square)
+                    .into(holder.discountIconImageView);
+            holder.discountIconImageView.setVisibility(View.VISIBLE);
+        } else {
+            holder.discountIconImageView.setVisibility(View.GONE);
+        }
+
         if (theProduct.isSpecial()) {
-            holder.specialPriceImageView.setVisibility(View.VISIBLE);
             TextViewUtil.paintLineThroughTextView(originalPriceTextView);
         } else {
-            holder.specialPriceImageView.setVisibility(View.GONE);
             TextViewUtil.removeLineThroughTextView(originalPriceTextView);
         }
 
@@ -73,7 +80,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
         ImageView goodsImageView;
-        ImageView specialPriceImageView;
+        ImageView discountIconImageView;
         TextView nameTextView;
         TextView priceTextView;
         TextView originalPriceTextView;
@@ -82,7 +89,7 @@ public class ProductsAdapter extends RecyclerView.Adapter<ProductsAdapter.ViewHo
         public ViewHolder(View itemView) {
             super(itemView);
             goodsImageView = (ImageView) itemView.findViewById(R.id.item_product_iv);
-            specialPriceImageView = (ImageView) itemView.findViewById(R.id.item_product_special_price_iv);
+            discountIconImageView = (ImageView) itemView.findViewById(R.id.item_product_special_price_iv);
             nameTextView = (TextView) itemView.findViewById(R.id.item_product_name_tv);
             priceTextView = (TextView) itemView.findViewById(R.id.item_product_price_tv);
             originalPriceTextView =

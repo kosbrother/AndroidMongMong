@@ -1,5 +1,6 @@
 package com.kosbrother.mongmongwoo.mycollect;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 
@@ -22,6 +23,7 @@ public class FavoriteManager {
     private static final String PREF_MY_COLLECT = "PREF_MY_COLLECT";
     private static final String PREF_STRING_COLLECT_LIST = "PREF_STRING_COLLECT_LIST";
 
+    @SuppressLint("StaticFieldLeak")
     private static FavoriteManager instance;
     private final List<Product> tmpProductList;
     private int userId;
@@ -86,11 +88,6 @@ public class FavoriteManager {
         }
     }
 
-    public void deleteFavoriteItemsFromPosition(final int position, final DataManager.ApiCallBack callBack) {
-        final int productId = tmpProductList.get(position).getId();
-        deleteFavoriteItemsFromId(productId, callBack);
-    }
-
     public void deleteFavoriteItemsFromId(final int productId, final DataManager.ApiCallBack callBack) {
         DataManager.getInstance().deleteFavoriteItems(userId, productId,
                 new DataManager.ApiCallBack() {
@@ -135,7 +132,7 @@ public class FavoriteManager {
         );
     }
 
-    public void getMyCollectList(final DataManager.ApiCallBack callBack) {
+    void getMyCollectList(final DataManager.ApiCallBack callBack) {
         List<Product> prefCollectedList = getCollectedList(context);
         // check old version collect list, if size more then 1, upload to server.
         if (prefCollectedList.size() > 0) {
@@ -194,12 +191,12 @@ public class FavoriteManager {
         }
     }
 
-    public List<Product> getProductList() {
-        return tmpProductList;
-    }
-
-    public int getProductId(int position) {
-        return tmpProductList.get(position).getId();
+    List<FavoriteViewModel> getFavoriteProductViewModels() {
+        List<FavoriteViewModel> viewModels = new ArrayList<>();
+        for (Product product : tmpProductList) {
+            viewModels.add(new FavoriteViewModel(product));
+        }
+        return viewModels;
     }
 
     private boolean checkCollected(int productId) {
@@ -256,7 +253,7 @@ public class FavoriteManager {
                 .apply();
     }
 
-    public void cancelRequest(DataManager.ApiCallBack callBack) {
+    void cancelRequest(DataManager.ApiCallBack callBack) {
         DataManager.getInstance().unSubscribe(callBack);
     }
 }

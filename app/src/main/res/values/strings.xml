@@ -45,6 +45,7 @@
     <string name="activity_main_navigation_my_shopping_points">我的購物金</string>
     <string name="activity_main_navigation_my_orders">我的訂單</string>
     <string name="activity_main_navigation_about_us">關於我們</string>
+    <string name="activity_main_navigation_promotions">優惠活動</string>
     <string name="activity_main_navigation_customer_service_center">客服中心</string>
     <string name="activity_main_navigation_shopping_info">購物說明</string>
     <string name="activity_main_navigation_share_mmw">分享萌萌屋</string>

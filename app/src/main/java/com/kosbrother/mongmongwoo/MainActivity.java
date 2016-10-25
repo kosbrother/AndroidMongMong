@@ -1,58 +1,18 @@
 package com.kosbrother.mongmongwoo;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ObjectAnimator;
-import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Point;
-import android.net.Uri;
-import android.os.Bundle;
-import android.preference.PreferenceManager;
-import android.support.design.widget.NavigationView;
-import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.ViewPager;
-import android.support.v4.widget.DrawerLayout;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-import android.view.Display;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewStub;
-import android.view.Window;
-import android.view.WindowManager;
-import android.view.animation.Animation;
-import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextSwitcher;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.firebase.iid.FirebaseInstanceId;
+
+import com.bumptech.glide.Glide;
 import com.kosbrother.mongmongwoo.adpters.CategoryAdapter;
-import com.kosbrother.mongmongwoo.adpters.GoodsGridAdapter;
 import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.api.UrlCenter;
 import com.kosbrother.mongmongwoo.api.Webservice;
 import com.kosbrother.mongmongwoo.appindex.AppIndexUtil;
 import com.kosbrother.mongmongwoo.appindex.IndexActivity;
+import com.kosbrother.mongmongwoo.campaignrules.CampaignRulesActivity;
 import com.kosbrother.mongmongwoo.category.CategoryActivity;
+import com.kosbrother.mongmongwoo.category.ProductsAdapter;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.entity.banner.Banner;
@@ -91,6 +51,50 @@ import com.kosbrother.mongmongwoo.utils.ProductStyleDialog;
 import com.kosbrother.mongmongwoo.utils.ShareUtil;
 import com.kosbrother.mongmongwoo.utils.VersionUtil;
 import com.viewpagerindicator.CirclePageIndicator;
+
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.Dialog;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Point;
+import android.net.Uri;
+import android.os.Bundle;
+import android.preference.PreferenceManager;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
+import android.view.Display;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewStub;
+import android.view.Window;
+import android.view.WindowManager;
+import android.view.animation.Animation;
+import android.view.animation.TranslateAnimation;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextSwitcher;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -311,6 +315,9 @@ public class MainActivity extends AppCompatActivity
                     startActivity(new Intent(this, QueryPastOrdersActivity.class));
                 }
                 break;
+            case R.id.activity_main_navigation_promotions:
+                startActivity(new Intent(this, CampaignRulesActivity.class));
+                break;
             case R.id.activity_main_navigation_customer_service_center:
                 startActivity(new Intent(this, ServiceActivity.class));
                 break;
@@ -483,7 +490,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onSuccess(Object data) {
                         List<Product> products = (List<Product>) data;
-                        setPopularItemsGridView(products);
+                        setPopularItemsRecyclerView(products);
                     }
                 }
         );
@@ -501,7 +508,7 @@ public class MainActivity extends AppCompatActivity
                     @Override
                     public void onSuccess(Object data) {
                         List<Product> products = (List<Product>) data;
-                        setLatestItemsGridView(products);
+                        setLatestItemsRecyclerView(products);
                     }
                 }
         );
@@ -709,30 +716,33 @@ public class MainActivity extends AppCompatActivity
         gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Category category = (Category) parent.getAdapter().getItem(position);
-                Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
-                intent.putExtra(CategoryActivity.EXTRA_INT_CATEGORY_ID, category.getId());
-                intent.putExtra(CategoryActivity.EXTRA_STRING_CATEGORY_NAME, category.getName());
-                startActivity(intent);
+                if(position == 0){
+                    startActivity(new Intent(MainActivity.this, CampaignRulesActivity.class));
+                }else {
+                    Category category = (Category) parent.getAdapter().getItem(position);
+                    Intent intent = new Intent(MainActivity.this, CategoryActivity.class);
+                    intent.putExtra(CategoryActivity.EXTRA_INT_CATEGORY_ID, category.getId());
+                    intent.putExtra(CategoryActivity.EXTRA_STRING_CATEGORY_NAME, category.getName());
+                    startActivity(intent);
+                }
             }
         });
     }
 
-    private void setLatestItemsGridView(List<Product> products) {
-        ExpandableHeightGridView gridView = (ExpandableHeightGridView) findViewById(R.id.latest_items_gv);
+    private void setLatestItemsRecyclerView(final List<Product> products) {
         final List<Product> displayProducts = getDisplayProducts(products);
-        GoodsGridAdapter adapter = new GoodsGridAdapter(this, displayProducts,
-                new GoodsGridAdapter.GoodsGridAdapterListener() {
-                    @Override
-                    public void onAddShoppingCartButtonClick(int productId, int position) {
-                        showProductStyleDialog(displayProducts.get(position));
-                    }
-                });
-        gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.latest_items_rv);
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        ProductsAdapter productsAdapter = new ProductsAdapter(products, new ProductsAdapter.GoodsGridAdapterListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Product product = (Product) parent.getAdapter().getItem(position);
+            public void onAddShoppingCartButtonClick(int productId, int position) {
+                showProductStyleDialog(displayProducts.get(position));
+            }
+
+            @Override
+            public void onGoodsItemClick(int position) {
+                Product product = displayProducts.get(position);
                 Intent intent = new Intent(MainActivity.this, ProductActivity.class);
                 intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
                 intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, Category.Type.NEW.getId());
@@ -741,23 +751,23 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+        recyclerView.setAdapter(productsAdapter);
     }
 
-    private void setPopularItemsGridView(List<Product> products) {
-        ExpandableHeightGridView gridView = (ExpandableHeightGridView) findViewById(R.id.popular_items_gv);
+    private void setPopularItemsRecyclerView(List<Product> products) {
         final List<Product> displayProducts = getDisplayProducts(products);
-        GoodsGridAdapter adapter = new GoodsGridAdapter(this, displayProducts,
-                new GoodsGridAdapter.GoodsGridAdapterListener() {
-                    @Override
-                    public void onAddShoppingCartButtonClick(int productId, int position) {
-                        showProductStyleDialog(displayProducts.get(position));
-                    }
-                });
-        gridView.setAdapter(adapter);
-        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.popular_items_rv);
+        recyclerView.setNestedScrollingEnabled(false);
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2));
+        ProductsAdapter productsAdapter = new ProductsAdapter(products, new ProductsAdapter.GoodsGridAdapterListener() {
             @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Product product = (Product) parent.getAdapter().getItem(position);
+            public void onAddShoppingCartButtonClick(int productId, int position) {
+                showProductStyleDialog(displayProducts.get(position));
+            }
+
+            @Override
+            public void onGoodsItemClick(int position) {
+                Product product = displayProducts.get(position);
                 Intent intent = new Intent(MainActivity.this, ProductActivity.class);
                 intent.putExtra(ProductActivity.EXTRA_INT_PRODUCT_ID, product.getId());
                 intent.putExtra(ProductActivity.EXTRA_INT_CATEGORY_ID, Category.Type.ALL.getId());
@@ -766,6 +776,7 @@ public class MainActivity extends AppCompatActivity
                 startActivity(intent);
             }
         });
+        recyclerView.setAdapter(productsAdapter);
     }
 
     private List<Product> getDisplayProducts(List<Product> products) {

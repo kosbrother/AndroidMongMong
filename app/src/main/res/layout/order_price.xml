@@ -7,7 +7,8 @@
         <variable
             name="orderPrice"
             type="com.kosbrother.mongmongwoo.common.OrderPriceViewModel" />
-        <import type="android.view.View"/>
+
+        <import type="android.view.View" />
     </data>
 
     <LinearLayout
@@ -99,7 +100,20 @@
                     android:textSize="14sp"
                     tools:text="NT$ 290" />
             </LinearLayout>
+
         </LinearLayout>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/order_price_activity_campaign_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_height="20dp" />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/order_price_shopping_point_campaign_rv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            tools:layout_height="20dp" />
 
         <LinearLayout
             android:layout_width="match_parent"

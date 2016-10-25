@@ -20,9 +20,14 @@ import com.kosbrother.mongmongwoo.BaseActivity;
 import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.adpters.PastItemAdapter;
 import com.kosbrother.mongmongwoo.api.DataManager;
+import com.kosbrother.mongmongwoo.checkout.ActivityCampaignAdapter;
+import com.kosbrother.mongmongwoo.checkout.ActivityCampaignViewModel;
+import com.kosbrother.mongmongwoo.checkout.ShoppingPointCampaignAdapter;
+import com.kosbrother.mongmongwoo.checkout.ShoppingPointCampaignViewModel;
 import com.kosbrother.mongmongwoo.databinding.ActivityPastOrderDetailBinding;
+import com.kosbrother.mongmongwoo.entity.checkout.Campaign;
+import com.kosbrother.mongmongwoo.entity.checkout.ShoppingPointCampaign;
 import com.kosbrother.mongmongwoo.entity.pastorder.InfoEntity;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastItem;
 import com.kosbrother.mongmongwoo.entity.pastorder.PastOrder;
@@ -32,6 +37,7 @@ import com.kosbrother.mongmongwoo.googleanalytics.event.customerservice.Customer
 import com.kosbrother.mongmongwoo.googleanalytics.event.notification.NotificationPickUpOpenedEvent;
 import com.kosbrother.mongmongwoo.widget.CenterProgressDialog;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PastOrderDetailActivity extends BaseActivity implements DataManager.ApiCallBack {
@@ -111,7 +117,7 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
         binding.setDeliveryUserInfo(pastOrder.getDeliveryUserInfoViewModel(
                 info.getShipName(), info.getShipPhone(), info.getShipEmail()));
         binding.setOrderPrice(pastOrder.getOrderPrice());
-
+        View view = binding.getRoot();
         setToolbar();
 
         initCsBottomSheet();
@@ -119,6 +125,27 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
         setRecyclerView(pastOrder.getItems());
         setPastOrder(pastOrder);
         invalidateOptionsMenu();
+
+        RecyclerView activityCampaignRecyclerView =
+                (RecyclerView) view.findViewById(R.id.order_price_activity_campaign_rv);
+        activityCampaignRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        List<ActivityCampaignViewModel> activityCampaignViewModels = new ArrayList<>();
+        for (Campaign campaign : pastOrder.getCampaigns()) {
+            activityCampaignViewModels.add(new ActivityCampaignViewModel(campaign, false));
+        }
+        ActivityCampaignAdapter adapter = new ActivityCampaignAdapter(activityCampaignViewModels);
+        activityCampaignRecyclerView.setAdapter(adapter);
+
+        RecyclerView shoppingPointCampaignRecyclerView =
+                (RecyclerView) view.findViewById(R.id.order_price_shopping_point_campaign_rv);
+        shoppingPointCampaignRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        List<ShoppingPointCampaignViewModel> shoppingPointCampaignViewModels = new ArrayList<>();
+        for (ShoppingPointCampaign campaign : pastOrder.getShoppingPointCampaigns()) {
+            shoppingPointCampaignViewModels.add(new ShoppingPointCampaignViewModel(campaign, false));
+        }
+        ShoppingPointCampaignAdapter shoppingPointCampaignAdapter =
+                new ShoppingPointCampaignAdapter(shoppingPointCampaignViewModels);
+        shoppingPointCampaignRecyclerView.setAdapter(shoppingPointCampaignAdapter);
     }
 
     private void initCsBottomSheet() {
@@ -135,9 +162,7 @@ public class PastOrderDetailActivity extends BaseActivity implements DataManager
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.order_detail_items_rv);
         assert recyclerView != null;
         recyclerView.setHasFixedSize(true);
-        LinearLayoutManager mLayoutManager = new LinearLayoutManager(PastOrderDetailActivity.this);
-        mLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         PastItemAdapter adapter = new PastItemAdapter(pastOrderProducts);
         recyclerView.setAdapter(adapter);
     }

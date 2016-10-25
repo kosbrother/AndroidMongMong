@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="com.kosbrother.mongmongwoo.checkout.ActivityCampaignViewModel" />
+
+        <variable
+            name="campaignViewModel"
+            type="ActivityCampaignViewModel" />
+    </data>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp">
+
+        <TextView
+            android:id="@+id/item_order_activity_campaign_discount_amount_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:text="@{campaignViewModel.discountAmountText}"
+            android:textColor="@color/black_4a4a4a"
+            android:textSize="14sp"
+            tools:text="-NT$0" />
+
+        <TextView
+            android:id="@+id/item_order_activity_campaign_discount_head_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="4dp"
+            android:layout_marginRight="4dp"
+            android:text="活動折扣"
+            android:textColor="@color/black_4a4a4a"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/item_order_activity_campaign_title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_toEndOf="@id/item_order_activity_campaign_discount_head_tv"
+            android:layout_toLeftOf="@id/item_order_activity_campaign_discount_amount_tv"
+            android:layout_toRightOf="@id/item_order_activity_campaign_discount_head_tv"
+            android:layout_toStartOf="@id/item_order_activity_campaign_discount_amount_tv"
+            android:text="@{campaignViewModel.titleText}"
+            tools:text="(全館滿千送百，還差NT$300)" />
+
+    </RelativeLayout>
+</layout>

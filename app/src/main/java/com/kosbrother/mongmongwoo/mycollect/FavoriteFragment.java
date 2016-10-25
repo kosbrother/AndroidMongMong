@@ -16,16 +16,13 @@ import android.widget.Toast;
 
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
-import com.kosbrother.mongmongwoo.adpters.FavoriteAdapter;
 import com.kosbrother.mongmongwoo.model.Category;
-import com.kosbrother.mongmongwoo.model.Product;
 import com.kosbrother.mongmongwoo.product.ProductActivity;
 import com.kosbrother.mongmongwoo.widget.CenterProgressDialog;
 
 import java.util.List;
 
-public class FavoriteFragment extends Fragment implements FavoriteView,
-        FavoriteAdapter.MyCollectListener {
+public class FavoriteFragment extends Fragment implements FavoriteView, FavoriteListener {
 
     private FavoritePresenter presenter;
     private FrameLayout container;
@@ -35,7 +32,8 @@ public class FavoriteFragment extends Fragment implements FavoriteView,
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         int userId = Settings.getSavedUser().getUserId();
-        FavoriteManager favoriteManager = FavoriteManager.getInstance(userId, getActivity().getApplicationContext());
+        FavoriteManager favoriteManager =
+                FavoriteManager.getInstance(userId, getActivity().getApplicationContext());
         presenter = new FavoritePresenter(this, favoriteManager);
     }
 
@@ -64,12 +62,12 @@ public class FavoriteFragment extends Fragment implements FavoriteView,
     }
 
     @Override
-    public void onCollectItemClick(int position) {
-        presenter.onCollectItemClick(position);
+    public void onCollectItemClick(int productId) {
+        presenter.onCollectItemClick(productId);
     }
 
     @Override
-    public void onCancelCollectClick(final int position) {
+    public void onCancelCollectClick(final int productId) {
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
         alertDialogBuilder.setTitle("取消收藏");
         alertDialogBuilder.setMessage("是否確定要取消收藏");
@@ -82,7 +80,7 @@ public class FavoriteFragment extends Fragment implements FavoriteView,
         alertDialogBuilder.setPositiveButton("確定", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                presenter.onCancelCollectConfirmClick(position);
+                presenter.onCancelCollectConfirmClick(productId);
             }
         });
         AlertDialog alertDialog = alertDialogBuilder.create();
@@ -102,11 +100,11 @@ public class FavoriteFragment extends Fragment implements FavoriteView,
     }
 
     @Override
-    public void showMyCollectList(List<Product> productList) {
+    public void showMyCollectList(List<FavoriteViewModel> favoriteViewModels) {
         RecyclerView recyclerView = new RecyclerView(getActivity());
         recyclerView.setLayoutParams(new RecyclerView.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT));
-        FavoriteAdapter adapter = new FavoriteAdapter(productList, this);
+        FavoriteAdapter adapter = new FavoriteAdapter(favoriteViewModels, this);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         recyclerView.setAdapter(adapter);
 

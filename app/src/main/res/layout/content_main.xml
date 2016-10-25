@@ -96,23 +96,13 @@
                         android:textSize="11sp" />
                 </RelativeLayout>
 
-                <com.kosbrother.mongmongwoo.utils.ExpandableHeightGridView
-                    android:id="@+id/latest_items_gv"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/latest_items_rv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
-                    android:columnWidth="8dp"
-                    android:drawSelectorOnTop="true"
-                    android:gravity="center"
-                    android:horizontalSpacing="8dp"
-                    android:listSelector="@drawable/grid_view_list_selector_corner3"
-                    android:numColumns="2"
-                    android:paddingBottom="8dp"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:scrollbarStyle="outsideOverlay"
-                    android:stretchMode="columnWidth"
-                    android:verticalSpacing="8dp" />
+                    android:padding="4dp"
+                    android:scrollbarStyle="outsideOverlay" />
 
                 <Button
                     android:id="@+id/new_more_btn"
@@ -179,23 +169,13 @@
                         android:textSize="11sp" />
                 </RelativeLayout>
 
-                <com.kosbrother.mongmongwoo.utils.ExpandableHeightGridView
-                    android:id="@+id/popular_items_gv"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/popular_items_rv"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:clipToPadding="false"
-                    android:columnWidth="8dp"
-                    android:drawSelectorOnTop="true"
-                    android:gravity="center"
-                    android:horizontalSpacing="8dp"
-                    android:listSelector="@drawable/grid_view_list_selector_corner3"
-                    android:numColumns="2"
-                    android:paddingBottom="8dp"
-                    android:paddingLeft="8dp"
-                    android:paddingRight="8dp"
-                    android:scrollbarStyle="outsideOverlay"
-                    android:stretchMode="columnWidth"
-                    android:verticalSpacing="8dp" />
+                    android:padding="4dp"
+                    android:scrollbarStyle="outsideOverlay" />
 
                 <Button
                     android:id="@+id/popular_more_btn"

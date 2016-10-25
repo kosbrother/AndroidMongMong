@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.kosbrother.mongmongwoo.common.ProductViewModel" />
+
+        <import type="com.kosbrother.mongmongwoo.checkout.Step1Fragment" />
+
+        <variable
+            name="productViewModel"
+            type="ProductViewModel" />
+
+        <variable
+            name="step1Fragment"
+            type="Step1Fragment" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="8dp">
+
+        <ImageView
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginRight="10dp"
+            android:onClick="@{() -> step1Fragment.onDeleteImageViewClick(productViewModel)}"
+            android:src="@mipmap/ic_delete" />
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            app:squareImageUrl="@{productViewModel.specImageUrl}" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:gravity="center_vertical"
+                android:maxLines="2"
+                android:text="@{productViewModel.nameText}"
+                android:textColor="@color/black_4a4a4a"
+                android:textSize="14sp"
+                tools:text="北歐生活幾何物語304不鏽鋼水杯" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                android:gravity="center_vertical"
+                android:text="@{productViewModel.campaignText}"
+                android:textColor="@color/orange_f5a623"
+                android:textSize="11sp"
+                android:visibility="@{productViewModel.showCampaign?View.VISIBLE:View.GONE}"
+                tools:text="85折優惠!" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="4dp"
+                android:orientation="horizontal">
+
+                <Button
+                    style="@style/Widget.AppCompat.Button.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:background="@drawable/bg_white_green_border_selector"
+                    android:onClick="@{() -> step1Fragment.onProductStyleButtonClick(productViewModel)}"
+                    android:paddingEnd="8dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingStart="8dp"
+                    android:text="@{productViewModel.selectedSpecText}"
+                    android:textColor="@color/green_text"
+                    android:textSize="12sp"
+                    tools:text="米白色" />
+
+                <Button
+                    style="@style/Widget.AppCompat.Button.Small"
+                    android:layout_width="wrap_content"
+                    android:layout_height="20dp"
+                    android:background="@drawable/bg_white_green_border_selector"
+                    android:onClick="@{() -> step1Fragment.onProductQuantityButtonClick(productViewModel)}"
+                    android:paddingEnd="8dp"
+                    android:paddingLeft="8dp"
+                    android:paddingRight="8dp"
+                    android:paddingStart="8dp"
+                    android:text="@{productViewModel.quantityText}"
+                    android:textColor="@color/green_text"
+                    android:textSize="12sp"
+                    tools:text="數量：1" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="@{productViewModel.finalPriceText}"
+                    android:textColor="@color/black_4a4a4a"
+                    android:textSize="14sp"
+                    android:visibility="@{productViewModel.discount?View.GONE:View.VISIBLE}"
+                    tools:text="NT$ 99 X 1"
+                    tools:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/item_shopping_cart_product_original_price_tv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:layout_marginRight="8dp"
+                    android:text="@{productViewModel.originalPriceText}"
+                    android:textColor="@color/grey_text_999999"
+                    android:textSize="14sp"
+                    android:visibility="@{productViewModel.discount?View.VISIBLE:View.GONE}"
+                    tools:text="NT$199" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@{productViewModel.finalPriceText}"
+                    android:textColor="@color/red_text"
+                    android:textSize="14sp"
+                    android:visibility="@{productViewModel.discount?View.VISIBLE:View.GONE}"
+                    tools:text="NT$ 99 X 1" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="end"
+                    android:text="@{productViewModel.subTotalText}"
+                    android:textColor="@color/black_4a4a4a"
+                    android:textSize="14sp"
+                    tools:text="小計：NT$ 199" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

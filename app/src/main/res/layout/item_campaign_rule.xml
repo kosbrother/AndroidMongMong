@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <import type="com.kosbrother.mongmongwoo.campaignrules.CampaignRuleViewModel" />
+
+        <import type="com.kosbrother.mongmongwoo.campaignrules.CampaignRulesActivity" />
+
+        <variable
+            name="campaignRule"
+            type="CampaignRuleViewModel" />
+
+        <variable
+            name="onClickListener"
+            type="CampaignRulesActivity" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/gray_selector"
+        android:clickable="true"
+        android:onClick="@{() -> onClickListener.onCampaignRuleClick(campaignRule.id,campaignRule.title)}"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginRight="16dp"
+                app:squareImageUrl="@{campaignRule.imageUrl}"
+                tools:src="@drawable/app_icon9" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{campaignRule.title}"
+                    android:textColor="@color/black_4a4a4a"
+                    android:textSize="14sp"
+                    tools:text="萌萌屋手帳特賣會，特賣商品85折優惠開賣了！！" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{campaignRule.activityDateText}"
+                    android:textColor="@color/red_text"
+                    android:textSize="11sp"
+                    android:visibility="@{campaignRule.showActivityData?View.VISIBLE:View.GONE}"
+                    tools:text="活動日期：2016/08/25~2016/09/01" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{campaignRule.description}"
+                    android:textColor="@color/black_4a4a4a"
+                    android:textSize="11sp"
+                    tools:text="萌萌屋特惠活動，現在只要消費滿千即可享有百元折扣優惠，快點前往搶購吧！" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/bg_divider_f2f2f2" />
+    </LinearLayout>
+
+</layout>
