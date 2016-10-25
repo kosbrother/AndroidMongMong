@@ -1,5 +1,6 @@
 package com.kosbrother.mongmongwoo.appindex;
 
+import com.kosbrother.mongmongwoo.campaignrules.CampaignRuleDetailActivity;
 import com.kosbrother.mongmongwoo.category.CategoryActivity;
 import com.kosbrother.mongmongwoo.launch.LaunchActivity;
 import com.kosbrother.mongmongwoo.model.Category;
@@ -28,6 +29,7 @@ public class IndexActivity extends AppCompatActivity {
     public static final String WWW_MMWOOO_COM_CATEGORIES_ITEMS = "www.mmwooo.com[/]categories[/](.+)[/]items[/]([^?]+)";
     public static final String WWW_MMWOOO_COM_CATEGORIES = "www.mmwooo.com[/]categories[/]([^?]+)";
     public static final String WWW_MMWOOO_COM_SHOPPING_POINT_CAMPAIGNS = "www.mmwooo.com[/]shopping_point_campaigns";
+    public static final String WWW_MMWOOO_COM_CAMPAIGN_RULES = "www.mmwooo.com[/]campaign_rules[/]([^?]+)";
 
     public static final String APPEND_QUESTION_MARK = "(?:[?](.+))?";
 
@@ -42,6 +44,8 @@ public class IndexActivity extends AppCompatActivity {
             "^android-app:[/][/]com.kosbrother.mongmongwoo[/]https[/]" + WWW_MMWOOO_COM_CATEGORIES_ITEMS + "$";
     private static final String CATEGORY_FROM_APP_INDEX_URL_PATTERN =
             "^android-app:[/][/]com.kosbrother.mongmongwoo[/]https[/]" + WWW_MMWOOO_COM_CATEGORIES + "$";
+    private static final String CAMPAIGN_RULE_FROM_APP_INDEX_URL_PATTERN =
+            "^android-app:[/][/]com.kosbrother.mongmongwoo[/]https[/]" + WWW_MMWOOO_COM_CAMPAIGN_RULES + "$";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -62,6 +66,7 @@ public class IndexActivity extends AppCompatActivity {
             Matcher productFromAppIndexHttpsUrlMatcher = Pattern.compile(PRODUCT_FROM_APP_INDEX_URL_PATTERN).matcher(input);
             Matcher categoryFromAppIndexUrlMatcher = Pattern.compile(CATEGORY_FROM_APP_INDEX_URL_PATTERN).matcher(input);
             Matcher shoppingPointCampaignsMatcher = Pattern.compile(SHOPPING_POINT_CAMPAIGNS_PATTERN).matcher(input);
+            Matcher campaignRuleMatcher = Pattern.compile(CAMPAIGN_RULE_FROM_APP_INDEX_URL_PATTERN).matcher(input);
 
             Intent indexIntent;
             if (productMatcher.matches()) {
@@ -75,6 +80,10 @@ public class IndexActivity extends AppCompatActivity {
             } else if (shoppingPointCampaignsMatcher.matches()) {
                 indexIntent = new Intent(this, MyShoppingPointsActivity.class);
                 indexIntent.putExtra(MyShoppingPointsActivity.EXTRA_BOOLEAN_CAMPAIGN_PAGE, true);
+            } else if (campaignRuleMatcher.matches()) {
+                indexIntent = new Intent(this, CampaignRuleDetailActivity.class);
+                indexIntent.putExtra(CampaignRuleDetailActivity.EXTRA_INT_ID, Integer.parseInt(campaignRuleMatcher.group(1)));
+                indexIntent.putExtra(CampaignRuleDetailActivity.EXTRA_STRING_TITLE, "優惠活動");
             } else {
                 indexIntent = new Intent(this, LaunchActivity.class);
             }
