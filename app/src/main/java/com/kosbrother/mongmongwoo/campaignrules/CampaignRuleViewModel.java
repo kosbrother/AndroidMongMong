@@ -20,6 +20,7 @@ public class CampaignRuleViewModel {
         showActivityData = validUntil != null;
         if (showActivityData) {
             activityDateText = DateFormatUtil.parseToYearMonthDay(campaignRule.getCreatedAt())
+                    + "~"
                     + DateFormatUtil.parseToYearMonthDay(validUntil);
         }
         description = campaignRule.getDescription();
