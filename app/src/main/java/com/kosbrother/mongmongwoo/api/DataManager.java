@@ -2,6 +2,7 @@ package com.kosbrother.mongmongwoo.api;
 
 import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
+import com.kosbrother.mongmongwoo.entity.GetNewAppEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.entity.ShipInfoEntity;
 import com.kosbrother.mongmongwoo.entity.UserEntity;
@@ -1081,6 +1082,35 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void getNewApp(final ApiCallBack callBack) {
+        Observable<GetNewAppEntity> observable = networkAPI.getNewApp()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<GetNewAppEntity>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(GetNewAppEntity productResponseEntity) {
+                if (productResponseEntity != null) {
+                    callBack.onSuccess(productResponseEntity);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void unSubscribe(ApiCallBack callBack) {
         if (callBack == null) {
             return;
@@ -1239,6 +1269,9 @@ public class DataManager {
 
         @GET("api/v4/campaign_rules/{id}")
         Observable<ResponseEntity<CampaignRuleDetailEntity>> getCampaignRule(@Path("id") int id);
+
+        @GET("api/get_new_app")
+        Observable<GetNewAppEntity> getNewApp();
     }
 
 }
