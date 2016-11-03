@@ -1,5 +1,7 @@
 package com.kosbrother.mongmongwoo.launch;
 
+import com.kosbrother.mongmongwoo.R;
+
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -12,14 +14,12 @@ import android.text.style.ForegroundColorSpan;
 import android.view.View;
 import android.widget.TextView;
 
-import com.kosbrother.mongmongwoo.R;
-
 public class NewAppActivity extends AppCompatActivity {
 
     public static final String EXTRA_STRING_URL = "EXTRA_STRING_URL";
     public static final String EXTRA_STRING_COUPON = "EXTRA_STRING_COUPON";
     private static final String MESSAGE_WITT_COUPON =
-            "舊的APP將不再提供服務，請萌萌們至Google Play下載新的APP，下載新的APP後，可以利用優惠碼: %s，我們會提供舊APP換新APP的優惠哦";
+            "為了服務更多的萌友們，萌萌屋要換到新的平台了！舊的APP將不再提供服務，請萌友們至Google Play下載新的APP\n\n下載新的APP後，可以輸入優惠碼: %s\n\n我們會提供舊APP換新APP的專屬優惠哦！！";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
