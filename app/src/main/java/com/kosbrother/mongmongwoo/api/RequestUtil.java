@@ -10,6 +10,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+
 import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.OkHttpClient;
@@ -20,7 +24,7 @@ public class RequestUtil {
     private static final String TAG = "RequestUtil";
 
     public static String get(String url) throws IOException {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = getOkHttpClient();
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -37,7 +41,7 @@ public class RequestUtil {
     }
 
     public static String post(String url, FormBody body) throws IOException {
-        OkHttpClient client = new OkHttpClient();
+        OkHttpClient client = getOkHttpClient();
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
@@ -51,6 +55,19 @@ public class RequestUtil {
             total.append(line).append('\n');
         }
         return total.toString();
+    }
+
+    @NonNull
+    private static OkHttpClient getOkHttpClient() {
+        return new OkHttpClient.Builder()
+                .hostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String hostname, SSLSession session) {
+                        HostnameVerifier hv =
+                                HttpsURLConnection.getDefaultHostnameVerifier();
+                        return hv.verify("mmwooo.com", session);
+                    }
+                }).build();
     }
 
     @NonNull

@@ -1,7 +1,10 @@
 package com.kosbrother.mongmongwoo.api;
 
+import android.support.annotation.NonNull;
+
 import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
+import com.kosbrother.mongmongwoo.entity.GetNewAppEntity;
 import com.kosbrother.mongmongwoo.entity.ResponseEntity;
 import com.kosbrother.mongmongwoo.entity.ShipInfoEntity;
 import com.kosbrother.mongmongwoo.entity.UserEntity;
@@ -30,6 +33,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -57,7 +64,7 @@ import rx.schedulers.Schedulers;
 public class DataManager {
 
     private static final String DEBUG_URL = "http://104.199.129.36/";
-    private static final String PRD_URL = "https://www.mmwooo.com/";
+    private static final String PRD_URL = "https://oldsite.mmwooo.com/";
     private static final String BASE_URL = BuildConfig.DEBUG ? DEBUG_URL : PRD_URL;
 
     private static DataManager instance;
@@ -69,9 +76,9 @@ public class DataManager {
         if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            client = new OkHttpClient().newBuilder().addInterceptor(interceptor).build();
+            client = getBaseBuilder().addInterceptor(interceptor).build();
         } else {
-            client = new OkHttpClient().newBuilder().build();
+            client = getBaseBuilder().build();
         }
 
         Retrofit.Builder builder = new Retrofit.Builder();
@@ -83,6 +90,19 @@ public class DataManager {
 
         networkAPI = retrofit.create(NetworkAPI.class);
         subscriptionMap = new LinkedHashMap<>();
+    }
+
+    @NonNull
+    private OkHttpClient.Builder getBaseBuilder() {
+        return new OkHttpClient().newBuilder()
+                .hostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String hostname, SSLSession session) {
+                        HostnameVerifier hv =
+                                HttpsURLConnection.getDefaultHostnameVerifier();
+                        return hv.verify("mmwooo.com", session);
+                    }
+                });
     }
 
     public static DataManager getInstance() {
@@ -1081,6 +1101,35 @@ public class DataManager {
         subscriptionMap.put(key, subscription);
     }
 
+    public void getNewApp(final ApiCallBack callBack) {
+        Observable<GetNewAppEntity> observable = networkAPI.getNewApp()
+                .subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread());
+
+        final String key = String.valueOf(callBack.hashCode());
+        Subscription subscription = observable.subscribe(new Subscriber<GetNewAppEntity>() {
+            @Override
+            public void onCompleted() {
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+                callBack.onError(getErrorMessage(e));
+                removeSubscription(key);
+            }
+
+            @Override
+            public void onNext(GetNewAppEntity productResponseEntity) {
+                if (productResponseEntity != null) {
+                    callBack.onSuccess(productResponseEntity);
+                }
+                removeSubscription(key);
+            }
+        });
+        subscriptionMap.put(key, subscription);
+    }
+
     public void unSubscribe(ApiCallBack callBack) {
         if (callBack == null) {
             return;
@@ -1239,6 +1288,9 @@ public class DataManager {
 
         @GET("api/v4/campaign_rules/{id}")
         Observable<ResponseEntity<CampaignRuleDetailEntity>> getCampaignRule(@Path("id") int id);
+
+        @GET("api/get_new_app")
+        Observable<GetNewAppEntity> getNewApp();
     }
 
 }

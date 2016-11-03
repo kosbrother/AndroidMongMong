@@ -15,16 +15,48 @@ import com.facebook.applinks.AppLinkData;
 import com.kosbrother.mongmongwoo.MainActivity;
 import com.kosbrother.mongmongwoo.R;
 import com.kosbrother.mongmongwoo.Settings;
+import com.kosbrother.mongmongwoo.api.DataManager;
 import com.kosbrother.mongmongwoo.appindex.IndexActivity;
+import com.kosbrother.mongmongwoo.entity.GetNewAppEntity;
 import com.viewpagerindicator.CirclePageIndicator;
 
-public class LaunchActivity extends FragmentActivity implements AppLinkData.CompletionHandler {
+public class LaunchActivity extends FragmentActivity implements AppLinkData.CompletionHandler, DataManager.ApiCallBack {
 
     private static final int NUM_PAGES = 3;
+    private boolean checkNewVersionAppIsReady = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        checkNewVersionAppIsReady();
+    }
+
+    private void checkNewVersionAppIsReady() {
+        DataManager.getInstance().getNewApp(this);
+    }
+
+    @Override
+    public void onError(String errorMessage) {
+        checkNewVersionAppIsReady = true;
+        fetchDeepLink();
+    }
+
+    @Override
+    public void onSuccess(Object data) {
+        checkNewVersionAppIsReady = true;
+        GetNewAppEntity getNewAppResult = (GetNewAppEntity) data;
+        if (getNewAppResult.isReady()) {
+            Intent intent = new Intent(this, NewAppActivity.class);
+            intent.putExtra(NewAppActivity.EXTRA_STRING_URL, getNewAppResult.getUrl());
+            intent.putExtra(NewAppActivity.EXTRA_STRING_COUPON, getNewAppResult.getCoupon());
+            startActivity(intent);
+            finish();
+        } else {
+            fetchDeepLink();
+        }
+    }
+
+    private void fetchDeepLink() {
         // From facebook deep link
         AppLinkData appLinkData = AppLinkData.createFromActivity(this);
         if (appLinkUriValid(appLinkData)) {
@@ -41,7 +73,11 @@ public class LaunchActivity extends FragmentActivity implements AppLinkData.Comp
 
     @Override
     public void onBackPressed() {
-        startMainActivityThenFinish();
+        if (checkNewVersionAppIsReady) {
+            startMainActivityThenFinish();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     public void onStartButtonClick(View view) {
