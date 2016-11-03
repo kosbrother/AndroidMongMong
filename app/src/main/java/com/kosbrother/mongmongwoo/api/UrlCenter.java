@@ -5,7 +5,7 @@ import com.kosbrother.mongmongwoo.BuildConfig;
 public class UrlCenter {
 
     public static final String HOST_TEST = "http://104.199.129.36";
-    public static final String HOST_PRD = "https://www.mmwooo.com";
+    public static final String HOST_PRD = "https://oldsite.mmwooo.com";
     public static final String HOST = BuildConfig.DEBUG ? HOST_TEST : HOST_PRD;
     public static final String API = "/api";
     public static final String API_V3 = "/api/v3";

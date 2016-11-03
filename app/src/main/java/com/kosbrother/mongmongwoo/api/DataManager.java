@@ -1,5 +1,7 @@
 package com.kosbrother.mongmongwoo.api;
 
+import android.support.annotation.NonNull;
+
 import com.kosbrother.mongmongwoo.BuildConfig;
 import com.kosbrother.mongmongwoo.entity.AndroidVersionEntity;
 import com.kosbrother.mongmongwoo.entity.GetNewAppEntity;
@@ -31,6 +33,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLSession;
+
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -58,7 +64,7 @@ import rx.schedulers.Schedulers;
 public class DataManager {
 
     private static final String DEBUG_URL = "http://104.199.129.36/";
-    private static final String PRD_URL = "https://www.mmwooo.com/";
+    private static final String PRD_URL = "https://oldsite.mmwooo.com/";
     private static final String BASE_URL = BuildConfig.DEBUG ? DEBUG_URL : PRD_URL;
 
     private static DataManager instance;
@@ -70,9 +76,9 @@ public class DataManager {
         if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
             interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-            client = new OkHttpClient().newBuilder().addInterceptor(interceptor).build();
+            client = getBaseBuilder().addInterceptor(interceptor).build();
         } else {
-            client = new OkHttpClient().newBuilder().build();
+            client = getBaseBuilder().build();
         }
 
         Retrofit.Builder builder = new Retrofit.Builder();
@@ -84,6 +90,19 @@ public class DataManager {
 
         networkAPI = retrofit.create(NetworkAPI.class);
         subscriptionMap = new LinkedHashMap<>();
+    }
+
+    @NonNull
+    private OkHttpClient.Builder getBaseBuilder() {
+        return new OkHttpClient().newBuilder()
+                .hostnameVerifier(new HostnameVerifier() {
+                    @Override
+                    public boolean verify(String hostname, SSLSession session) {
+                        HostnameVerifier hv =
+                                HttpsURLConnection.getDefaultHostnameVerifier();
+                        return hv.verify("mmwooo.com", session);
+                    }
+                });
     }
 
     public static DataManager getInstance() {
